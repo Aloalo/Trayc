@@ -6,7 +6,7 @@
 #define TRAYC_OPTIXTEXTUREHANDLER_H
 
 #include <GL/glew.h>
-#include <Trayc/SafeOptix.h>
+#include <optix_world.h>
 #include <map>
 #include <Trayc/Utils.h>
 #include <Engine/Utils/Singleton.h>

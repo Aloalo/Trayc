@@ -6,6 +6,7 @@
 #include <Trayc/Utils.h>
 
 using namespace optix;
+using namespace std;
 
 namespace trayc
 {
@@ -25,10 +26,9 @@ namespace trayc
 
 	void Programs::Init(Context &ctx)
 	{
-		std::string materialPath(Utils::PathToPTX("material_shaders.cu"));
-		std::string contextPath(Utils::PathToPTX("context_shaders.cu"));
-		std::string meshPath(Utils::PathToPTX("triangle_mesh.cu"));
-		//std::string pathBox(Utils::pathToPTX("box.cu"));
+		const string materialPath(Utils::PathToPTX("material_shaders.cu"));
+		const string contextPath(Utils::PathToPTX("context_shaders.cu"));
+		const string meshPath(Utils::PathToPTX("triangle_mesh.cu"));
 
 		rayGeneration = ctx->createProgramFromPTXFile(contextPath, "dof_camera");
 		exception = ctx->createProgramFromPTXFile(contextPath, "exception");

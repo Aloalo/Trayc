@@ -6,7 +6,7 @@
 #define TRAYC_UTILS_H
 
 #include <assimp/mesh.h>
-#include <Trayc/SafeOptix.h>
+#include <optix_world.h>
 #include <string>
 #include <glm/glm.hpp>
 

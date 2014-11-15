@@ -6,7 +6,7 @@
 #define TRAYC_ENTITY_H
 
 #include <glm/glm.hpp>
-#include <Trayc/SafeOptix.h>
+#include <optix_world.h>
 
 namespace trayc
 {

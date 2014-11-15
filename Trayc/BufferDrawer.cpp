@@ -36,7 +36,7 @@ namespace trayc
         glDeleteTextures(1, &textureID);
     }
 
-    unsigned int BufferDrawer::CreateGLBuffer()
+    GLuint BufferDrawer::CreateGLBuffer()
     {
         AllocateBuffer(Environment::Get().bufferWidth, Environment::Get().bufferHeight);
         return outBufferID;
@@ -46,12 +46,12 @@ namespace trayc
     {
         const GLfloat quad[] = 
         { 
-            -1.0f, -1.0f, 0.0f,
-            1.0f, -1.0f, 0.0f,
-            -1.0f,  1.0f, 0.0f,
-            -1.0f,  1.0f, 0.0f,
-            1.0f, -1.0f, 0.0f,
-            1.0f,  1.0f, 0.0f,
+            -1.0f, -1.0f,
+            1.0f, -1.0f,
+            -1.0f, 1.0f,
+            -1.0f, 1.0f,
+            1.0f, -1.0f,
+            1.0f, 1.0f,
         };
 
         glBindTexture(GL_TEXTURE_2D, textureID);
@@ -85,7 +85,7 @@ namespace trayc
             glBindBuffer(GL_ARRAY_BUFFER, verticesID);
             glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
         }
         glBindVertexArray(0);
 

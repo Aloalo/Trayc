@@ -42,11 +42,8 @@ namespace trayc
 		void RenderToPPM(const std::string &name);
 
 		optix::Buffer outBuffer;
-	private:
-		template<class T>
-		static optix::Buffer GetBufferFromVector(const std::vector<T> &vec, RTformat type);
-		static optix::Geometry GetGeometry(const aiMesh *mesh, const aiMaterial *mat = NULL, const std::string &path = Utils::DefTexture(""));
 
+	private:
 		optix::Buffer SSbuffer;
 		AccelHandler accelHandler;
 

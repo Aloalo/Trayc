@@ -1,4 +1,9 @@
-#pragma once
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
+#ifndef TESTER_LABYRINTH_H
+#define TESTER_LABYRINTH_H
 
 #include <vector>
 #include "Box.h"
@@ -43,3 +48,5 @@ private:
 	std::vector<std::pair<std::pair<int, int>, std::pair<int, int> > > wallList;
 	std::vector<trayc::Box> boxVec;
 };
+
+#endif

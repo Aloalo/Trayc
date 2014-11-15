@@ -70,7 +70,7 @@ namespace trayc
 
 				// Read data from file
 				in.seekg(0, ios::end);
-				ifstream::pos_type szp = in.tellg();
+				const ifstream::pos_type szp = in.tellg();
 				in.seekg(0, ios::beg);
 				size = static_cast<unsigned long long int>(szp);
 
@@ -107,6 +107,7 @@ namespace trayc
 				accel_cache_loaded = false;
 				cerr << "no acceleration cache file found\n";
 			}
+            in.close();
 		}
 	}
 

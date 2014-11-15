@@ -1,6 +1,10 @@
-#pragma once
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
 
-#include <Trayc/Macros.h>
+#ifndef TESTER_BOX_H
+#define TESTER_BOX_H
+
 #include <optix_math.h>
 
 namespace trayc
@@ -21,3 +25,5 @@ namespace trayc
 		int matIdx;
 	};
 }
+
+#endif

@@ -1,13 +1,13 @@
-#version 420 core
+#version 330 core
 
-layout (binding = 0) uniform sampler2D renderedTexture;
-layout (location = 0) out vec4 fOut;
+uniform sampler2D renderedTexture;
+out vec4 fOut;
 
 #define FXAA_REDUCE_MIN (1.0 / 128.0)
 #define FXAA_REDUCE_MUL (1.0 / 8.0)
 #define FXAA_SPAN_MAX 8.0
 
-noperspective in vec2 UV;
+in vec2 UV;
 
 void main()
 {

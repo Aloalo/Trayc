@@ -1,3 +1,7 @@
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
 #include "Labyrinth.h"
 #include <ctime>
 #include "LabMaterials.h"

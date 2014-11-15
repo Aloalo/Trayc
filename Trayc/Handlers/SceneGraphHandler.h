@@ -5,7 +5,7 @@
 #ifndef TRAYC_SCENEGRAPHHANDLER_H
 #define TRAYC_SCENEGRAPHHANDLER_H
 
-#include <Trayc/SafeOptix.h>
+#include <optix_world.h>
 #include <vector>
 
 namespace trayc

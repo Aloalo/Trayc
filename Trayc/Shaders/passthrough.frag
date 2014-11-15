@@ -1,6 +1,6 @@
-#version 420 core
+#version 330 core
 
-noperspective in vec2 UV;
+in vec2 UV;
 
 out vec4 FragColor;
 

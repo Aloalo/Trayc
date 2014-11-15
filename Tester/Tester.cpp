@@ -1,3 +1,11 @@
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+    #define NOMINMAX
+#endif
+
 #include <iostream>
 #include <Engine/Engine.h>
 
@@ -5,7 +13,6 @@
 #include <IL/ilu.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
-#include <Trayc/Macros.h>
 #include <optix_math.h>
 
 #include <Trayc/GameEngine.h>
@@ -82,14 +89,14 @@ void RenderingLoop()
 int main(int argc, char *argv[])
 {
     SDLHandler::Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-
+    Environment::Get().screenWidth;
     engine::SDLHandler::CreateGLWindow(
-        "Test",                    // window title
-        SDL_WINDOWPOS_UNDEFINED,   // initial x position
-        SDL_WINDOWPOS_UNDEFINED,   // initial y position
-        640,                       // width, in pixels
-        480,                       // height, in pixels
-        SDL_WINDOW_OPENGL |        // flags
+        "Test",                             // window title
+        SDL_WINDOWPOS_UNDEFINED,            // initial x position
+        SDL_WINDOWPOS_UNDEFINED,            // initial y position
+        Environment::Get().screenWidth,     // width, in pixels
+        Environment::Get().screenHeight,    // height, in pixels
+        SDL_WINDOW_OPENGL |                 // flags
         SDL_WINDOW_RESIZABLE |
         SDL_WINDOW_SHOWN           
         );

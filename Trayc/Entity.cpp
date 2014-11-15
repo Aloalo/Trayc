@@ -41,7 +41,7 @@ namespace trayc
 	
 	void Entity::RecalcMatrix()
 	{
-		mat4 mat(translate(glm::scale(mat4(1.0f), scale), pos));
+		const mat4 mat(translate(glm::scale(mat4(1.0f), scale), pos));
 		trans->setMatrix(false, (float*)&mat, (float*)&inverse(mat));
 	}
 }

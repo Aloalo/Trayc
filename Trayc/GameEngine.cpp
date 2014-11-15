@@ -12,7 +12,7 @@ using namespace engine;
 namespace trayc
 {
 	GameEngine::GameEngine(void)
-		: player(new Player(engine::Camera(glm::vec3(7.0f, 9.2f, -6.0f), (float)Environment::Get().screenWidth.x / Environment::Get().screenHeight.x, 120.0f))),
+		: player(Camera(glm::vec3(7.0f, 9.2f, -6.0f), (float)Environment::Get().screenWidth.x / Environment::Get().screenHeight.x, 60.0f), 7.0f, 0.008f),
 		mouseLocked(true)
 	{
 		Environment::Get().ctx = Context::create();
@@ -22,7 +22,6 @@ namespace trayc
 
 	GameEngine::~GameEngine(void)
 	{
-		delete player;
 	}
 
     void GameEngine::HandleEvent(const SDL_Event &e)
@@ -40,7 +39,7 @@ namespace trayc
             if(e.key.keysym.sym == SDLK_o)
                 tracer.RenderToPPM("screen.ppm");
         }
-        player->HandleEvent(e);
+        player.HandleEvent(e);
     }
 
 	/*void GameEngine::mouseClick(const reng::MouseClickEvent &e)
@@ -64,8 +63,8 @@ namespace trayc
 		tracer.GetLight(0).pos = make_float3(0.f, 30.f, 0.f) + 5.f * make_float3(cosf(timepassed), -sinf(timepassed), -sinf(timepassed));
 
 		tracer.UpdateLight(0);
-		player->Update(deltaTime);
-		tracer.SetCamera(player->GetCam());
+		player.Update(deltaTime);
+		tracer.SetCamera(player.cam);
 	}
 
 	void GameEngine::Init()
@@ -73,7 +72,7 @@ namespace trayc
 		try
 		{
 			tracer.CompileSceneGraph();
-			tracer.SetCamera(player->GetCam());
+			tracer.SetCamera(player.cam);
 			drawer.Init(tracer.outBuffer);
 		}
 		catch(exception &ex)

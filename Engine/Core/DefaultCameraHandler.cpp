@@ -41,6 +41,17 @@ namespace engine
         if(e.repeat)
             return;
 
+        if(e.type == SDL_KEYDOWN && e.keysym.sym == SDLK_9)
+        {
+            speed *= 2.0f;
+            return;
+        }
+        else if(e.type == SDL_KEYDOWN && e.keysym.sym == SDLK_0)
+        {
+            speed *= 0.5f;
+            return;
+        }
+
         const int mod = e.type == SDL_KEYDOWN ? 1 : -1;
         switch(e.keysym.sym)
         {

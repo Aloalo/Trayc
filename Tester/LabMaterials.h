@@ -1,6 +1,11 @@
-#pragma once
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
 
-#include <Trayc/SafeOptix.h>
+#ifndef TESTER_LABMATERIALS_H
+#define TESTER_LABMATERIALS_H
+
+#include <optix_world.h>
 #include <map>
 
 class LabMaterials
@@ -21,3 +26,4 @@ public:
 	std::map<int, optix::Material> labmat;
 };
 
+#endif

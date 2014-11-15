@@ -5,9 +5,8 @@
 #ifndef TRAYC_BUFFERDRAWER_H
 #define TRAYC_BUFFERDRAWER_H
 
-
 #include <Engine/GL/Program.h>
-#include <Trayc/SafeOptix.h>
+#include <optix_world.h>
 #include <Engine/Utils/Setting.h>
 
 namespace trayc

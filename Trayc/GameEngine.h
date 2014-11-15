@@ -7,7 +7,7 @@
 
 #include <Engine/Core/Updateable.h>
 #include <Engine/Core/EventListener.h>
-#include <Trayc/Player.h>
+#include <Engine/Core/DefaultCameraHandler.h>
 #include <Trayc/OptixTracer.h>
 #include <Trayc/BufferDrawer.h>
 
@@ -29,7 +29,7 @@ namespace trayc
 		void Init();
 		void Draw();
 
-		Player *player;
+		engine::DefaultCameraHandler player;
 		OptixTracer tracer;
 	private:
 		BufferDrawer drawer;

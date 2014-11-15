@@ -5,7 +5,7 @@
 #ifndef TRAYC_ACCELHANDLER_H
 #define TRAYC_ACCELHANDLER_H
 
-#include <Trayc/SafeOptix.h>
+#include <optix_world.h>
 #include <string>
 
 namespace trayc

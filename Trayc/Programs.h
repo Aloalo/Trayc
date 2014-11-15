@@ -5,7 +5,7 @@
 #ifndef TRAYC_PROGRAMS_H
 #define TRAYC_PROGRAMS_H
 
-#include <Trayc/SafeOptix.h>
+#include <optix_world.h>
 
 namespace trayc
 {

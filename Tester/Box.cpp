@@ -1,3 +1,7 @@
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
 #include "Box.h"
 
 using namespace optix;

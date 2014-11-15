@@ -1,3 +1,7 @@
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
 #include "LabMaterials.h"
 #include <Trayc/Programs.h>
 #include <Trayc/Environment.h>

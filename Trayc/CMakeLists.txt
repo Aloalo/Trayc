@@ -5,11 +5,8 @@ set(Trayc_HDRS
     Entity.h
     Environment.h
     GameEngine.h
-    Macros.h
     OptixTracer.h
-    Player.h
     Programs.h
-    SafeOptix.h
     Utils.h
 )
 
@@ -19,7 +16,6 @@ set(Trayc_SRCS
     Environment.cpp
     GameEngine.cpp
     OptixTracer.cpp
-    Player.cpp
     Programs.cpp
     Utils.cpp
 )
