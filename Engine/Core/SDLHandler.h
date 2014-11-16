@@ -23,10 +23,11 @@ namespace engine
         static void SwapBuffers();
 
         static void GetWindowSize(int &w, int &h);
-        static void SetMousePositionToWindowCenter();
 
         static void CleanUp();
 
+        static SDL_version compiled;
+        static SDL_version linked;
     private:
         static SDL_Window *window;
         static SDL_GLContext opengl_context;

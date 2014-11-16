@@ -85,7 +85,6 @@ namespace trayc
 	OptixTracer::OptixTracer(void) :
 		SETTING(useInternalReflections),
 		SETTING(shadowSamples),
-		SETTING(useSchlick),
 		SETTING(maxRayDepth),
 		SETTING(MSAA),
 		SETTING(renderingDivisionLevel),
@@ -127,7 +126,6 @@ namespace trayc
 
 		ctx["max_depth"]->setInt(maxRayDepth);
 		ctx["shadow_samples"]->setInt(shadowSamples);
-		ctx["use_schlick"]->setInt(useSchlick);
 		ctx["use_internal_reflections"]->setInt(useInternalReflections);
 
 		outBuffer = ctx->createBufferFromGLBO(RT_BUFFER_OUTPUT, GLBO);
@@ -138,11 +136,6 @@ namespace trayc
 		SSbuffer = ctx->createBuffer(RT_BUFFER_OUTPUT);
 		SSbuffer->setFormat(RT_FORMAT_UNSIGNED_BYTE4);
 		SSbuffer->setSize(SSbufferWidth, SSbufferHeight);
-
-		Buffer lightBuffer = ctx->createBuffer(RT_BUFFER_INPUT);
-		lightBuffer->setFormat(RT_FORMAT_USER);
-		lightBuffer->setElementSize(sizeof(BasicLight));
-		ctx["lights"]->setBuffer(lightBuffer);
 
 		ctx->setRayGenerationProgram(0, Programs::rayGeneration);
 		ctx["AAlevel"]->setInt(MSAA);
@@ -207,16 +200,21 @@ namespace trayc
 
 	void OptixTracer::CompileSceneGraph()
 	{
-		ctx["lights"]->getBuffer()->setSize(lights.size());
-		memcpy(ctx["lights"]->getBuffer()->map(), (const void*)lights.data(), lights.size() * sizeof(BasicLight));
-		ctx["lights"]->getBuffer()->unmap();
+        Buffer lightBuffer = ctx->createBuffer(RT_BUFFER_INPUT);
+        lightBuffer->setFormat(RT_FORMAT_USER);
+        lightBuffer->setElementSize(sizeof(BasicLight));
+        ctx["lights"]->setBuffer(lightBuffer);
 
-		GeometryGroup geometrygroup = ctx->createGeometryGroup();
+		lightBuffer->setSize(lights.size());
+		memcpy(lightBuffer->map(), (const void*)lights.data(), lights.size() * sizeof(BasicLight));
+		lightBuffer->unmap();
+
+		geometrygroup = ctx->createGeometryGroup();
 		geometrygroup->setChildCount(gis.size());
 		for(int i = 0; i < gis.size(); ++i)
 			geometrygroup->setChild(i, gis[i]);
 
-		Transform trans = ctx->createTransform();
+		trans = ctx->createTransform();
 		trans->setChild(geometrygroup);
 		const float s = 0.05f;
 		trans->setMatrix(false, (float*)&glm::scale(glm::mat4(1.0f), glm::vec3(s)), (float*)&glm::inverse(glm::scale(glm::mat4(1.0f), glm::vec3(s))));
@@ -248,7 +246,13 @@ namespace trayc
 
 	void OptixTracer::ClearSceneGraph()
 	{
+        ctx["lights"]->getBuffer()->destroy();
+        lights.clear();
+        for(auto instance : gis)
+            instance->destroy();
 		gis.clear();
+        geometrygroup->destroy();
+        trans->destroy();
 	}
 
 	void OptixTracer::Trace(unsigned int entryPoint, RTsize width, RTsize height)
@@ -291,13 +295,13 @@ namespace trayc
 		RTsize w, h;
 		SSbuffer->getSize(w, h);
 
-		const int rdl = 540;
+		const int rdl = 270;
 		const int tmp = renderingDivisionLevel;
 		renderingDivisionLevel = rdl;
-		ctx["AAlevel"]->setInt(4);
+		ctx["AAlevel"]->setInt(2);
 		ctx["renderingDivisionLevel"]->setInt(rdl);
 		ctx["dof_samples"]->setInt(1);
-		ctx["shadow_samples"]->setInt(256);
+		ctx["shadow_samples"]->setInt(128);
 		ctx["output_buffer"]->setBuffer(SSbuffer);
 		Trace(0, w, h);
 		ctx["output_buffer"]->setBuffer(outBuffer);

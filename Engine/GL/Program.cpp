@@ -12,6 +12,10 @@ using namespace std;
 
 namespace engine
 {
+    Program::Program(void)
+    {
+    }
+
     Program::Program(const VertexShader &vs, const GeometryShader &gs, const FragmentShader &fs)
     {
         Init(&vs, &gs, &fs);

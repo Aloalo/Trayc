@@ -32,7 +32,7 @@ RT_PROGRAM void mesh_intersect(int primIdx)
 	{
 		if(rtPotentialIntersection(t))
 		{
-			if(texcoord_buffer.size() == 0 || idx.x < 0 || idx.y < 0 || idx.z < 0)
+			if(texcoord_buffer.size() == 0)
 				texcoord = make_float3(0.0f, 0.0f, 0.0f);
 			else 
 			{
@@ -44,7 +44,7 @@ RT_PROGRAM void mesh_intersect(int primIdx)
 			
 			geometric_normal = normalize(n);
 
-			if(normal_buffer.size() == 0 || idx.x < 0 || idx.y < 0 || idx.z < 0)
+			if(normal_buffer.size() == 0)
 				shading_normal = geometric_normal;
 			else
 			{

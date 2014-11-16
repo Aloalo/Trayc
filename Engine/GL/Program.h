@@ -17,10 +17,9 @@ namespace engine
     class Program
     {
     public:
-        GLuint id;
-
-        Program(const VertexShader &vs, const FragmentShader &fs);
+        Program(void);
         Program(const VertexShader &vs, const GeometryShader &gs, const FragmentShader &fs);
+        Program(const VertexShader &vs, const FragmentShader &fs);
         Program(const char *name);
 
         void Delete();
@@ -47,12 +46,13 @@ namespace engine
         void SetUniform(const GLchar *name, GLsizei cnt, const glm::vec4 *x);
         //void bindSamplerObjectToSampler(const char *samplerName, const TextureSampler& tex);
 
-    private:
         void Init(const VertexShader *vs, const GeometryShader *gs, const FragmentShader *fs, const char *name = NULL);
 
+    private:
         void Attach(const Shader &sh) const;
         void Detach(const Shader &sh) const;
 
+        GLuint id;
         std::map<const GLchar*, GLint> uniformLocations;
     };
 }

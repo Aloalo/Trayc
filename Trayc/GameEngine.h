@@ -22,8 +22,6 @@ namespace trayc
 
         void HandleEvent(const SDL_Event &e);
 
-        /*void mouseClick(const reng::MouseClickEvent &e);*/
-
 		void Update(float deltaTime);
 
 		void Init();

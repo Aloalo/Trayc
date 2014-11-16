@@ -4,6 +4,7 @@
 
 #include <Engine/Core/SDLHandler.h>
 #include <Engine/Common/ErrorCheck.h>
+#include <AntTweakBar.h>
 #include <iostream>
 
 using namespace std;
@@ -12,15 +13,20 @@ namespace engine
 {
     SDL_Window *SDLHandler::window;
     SDL_GLContext SDLHandler::opengl_context;
+    SDL_version SDLHandler::compiled;
+    SDL_version SDLHandler::linked;
 
     void SDLHandler::Init(Uint32 flags)
     {
         SDLErrCheck(SDL_Init(flags));
         SDLErrCheck(SDL_SetRelativeMouseMode(SDL_TRUE));
+        SDL_VERSION(&compiled);
+        SDL_GetVersion(&linked);
     }
 
     void SDLHandler::CleanUp()
     {
+        TwTerminate();
         SDL_GL_DeleteContext(opengl_context);
         SDL_DestroyWindow(window);
         SDL_Quit();
@@ -30,11 +36,6 @@ namespace engine
     {
         cout << "GLEW version: " << glewGetString(GLEW_VERSION) << endl << endl;
 
-        SDL_version compiled;
-        SDL_version linked;
-
-        SDL_VERSION(&compiled);
-        SDL_GetVersion(&linked);
         cout << "Compiled against SDL version "  << static_cast<int>(compiled.major) << "." << 
                                                      static_cast<int>(compiled.minor)  << "." <<  
                                                      static_cast<int>(compiled.patch) << endl;
@@ -71,6 +72,15 @@ namespace engine
         glewExperimental = GL_TRUE;
         GLEWErrCheck(glewInit());
         GLErrCheck(true);
+
+        if(profile == SDL_GL_CONTEXT_PROFILE_CORE)
+            TwInit(TW_OPENGL_CORE, NULL);
+        else
+            TwInit(TW_OPENGL, NULL);
+
+        int w, h;
+        SDL_GetWindowSize(window, &w, &h);
+        TwWindowSize(w, h);
     }
 
     void SDLHandler::SwapBuffers()
@@ -81,12 +91,5 @@ namespace engine
     void SDLHandler::GetWindowSize(int &w, int &h)
     {
         SDL_GetWindowSize(window, &w, &h);
-    }
-
-    void SDLHandler::SetMousePositionToWindowCenter()
-    {
-        int w, h;
-        SDL_GetWindowSize(window, &w, &h);
-        SDL_WarpMouseInWindow(window, w / 2, h / 2);
     }
 }

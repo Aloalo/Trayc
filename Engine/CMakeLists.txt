@@ -111,4 +111,5 @@ target_link_libraries(Engine
     ${SDL2_LIBRARY} 
     ${GLEW_LIBRARY} 
     ${OPENGL_LIBRARIES}
+    ${ANTTWEAKBAR_LIBRARY}
 )

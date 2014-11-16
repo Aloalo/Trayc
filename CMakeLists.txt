@@ -79,6 +79,7 @@ function(OPTIX_add_sample_executable target_name)
     optixu
     optix
     ${optix_rpath}
+    ${ANTTWEAKBAR_LIBRARY}
     )
   if(USING_GNU_CXX)
     target_link_libraries( ${target_name} m ) # Explicitly link against math library (C samples don't do that by default)
@@ -99,6 +100,7 @@ find_package(DevIL REQUIRED)
 find_package(CUDA 2.3 REQUIRED)
 find_package(OptiX REQUIRED)
 find_package(Assimp REQUIRED)
+find_package(AntTweakBar REQUIRED)
 
 include_directories(
     ${SDL2_INCLUDE_DIR} 
@@ -106,6 +108,7 @@ include_directories(
     ${OPENGL_INCLUDE_DIRS}
     ${CUDA_INCLUDE_DIRS}
     ${ASSIMP_INCLUDE_DIR}
+    ${ANTTWEAKBAR_INCLUDE_DIR}
     "${OptiX_INCLUDE}"
     "${IL_INCLUDE_DIR}/.."
     "${PROJECT_SOURCE_DIR}"

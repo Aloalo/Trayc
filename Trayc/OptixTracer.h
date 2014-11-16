@@ -47,6 +47,8 @@ namespace trayc
 		optix::Buffer SSbuffer;
 		AccelHandler accelHandler;
 
+        optix::Transform trans;
+        optix::GeometryGroup geometrygroup;
 		std::vector<optix::GeometryInstance> gis;
 		std::vector<BasicLight> lights;
 
@@ -54,7 +56,6 @@ namespace trayc
 		engine::Setting<int> renderingDivisionLevel;
 		engine::Setting<int> shadowSamples;
 		engine::Setting<int> dofSamples;
-		engine::Setting<int> useSchlick;
 		engine::Setting<int> useInternalReflections;
 		engine::Setting<int> MSAA;
 		engine::Setting<int> SSbufferWidth;

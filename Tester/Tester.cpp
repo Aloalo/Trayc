@@ -14,6 +14,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <optix_math.h>
+#include <AntTweakBar.h>
 
 #include <Trayc/GameEngine.h>
 #include <Trayc/Environment.h>
@@ -27,57 +28,51 @@ using namespace optix;
 using namespace std;
 using namespace trayc;
 
-struct Junk;
-
-GameEngine *ptr;
+GameEngine gameEngine;
 LabMaterials mat;
 
-void addLabyrinth(const Labyrinth &lab)
+void TW_CALL LoadSponza(void *userData);
+void TW_CALL LoadNissan(void *userData);
+void TW_CALL LoadLabyrinth(void *userData);
+void TW_CALL RenderPPM(void *userData);
+
+struct BarHandler
 {
-	string pathFloor = Utils::PathToPTX("rectangleAA.cu");
-	string pathBox = Utils::PathToPTX("box.cu");
+    BarHandler(void)
+        : labSize(15)
+    {
+    }
 
-	optix::Program boxAABB = ctx->createProgramFromPTXFile(pathBox, "box_bounds");
-	optix::Program boxIntersect = ctx->createProgramFromPTXFile(pathBox, "box_intersect");
+    void CreateTweakBars()
+    {
+        TwBar *loadbar;
+        loadbar = TwNewBar("Tests");
+        TwAddButton(loadbar, "Load Nissan", LoadNissan, NULL, " label='Load Nissan' ");
+        TwAddButton(loadbar, "Load Sponza", LoadSponza, NULL, " label='Load Sponza' ");
+        TwAddButton(loadbar, "Load Labyrinth", LoadLabyrinth, NULL, " label='Load Labyrinth' ");
+        TwAddButton(loadbar, "High Quality Screen Shot", RenderPPM, NULL, " label='High Quality Screen Shot' ");
+        TwAddVarRW(loadbar, "Labyrinth Size", TW_TYPE_INT32, &labSize, " label='Labyrinth Size' ");
+    }
 
-	const vector<Box> &walls = lab.getWalls();
-	int n = walls.size();
-	for(int i = 0; i < n; ++i)
-	{
-		Geometry box = ctx->createGeometry();
-		box->setPrimitiveCount(1);
-		box->setBoundingBoxProgram(boxAABB);
-		box->setIntersectionProgram(boxIntersect);
-		box["boxmin"]->setFloat(walls[i].boxmin);
-		box["boxmax"]->setFloat(walls[i].boxmax);
-		ptr->tracer.AddGeometryInstance(ctx->createGeometryInstance(box, &mat.getLabyrinthMaterial(walls[i].matIdx), 
-			&mat.getLabyrinthMaterial(walls[i].matIdx)+1));
-	}
+    int labSize;
+};
 
-	Geometry floor = ctx->createGeometry();
-	floor->setPrimitiveCount(1);
-	floor->setBoundingBoxProgram(ctx->createProgramFromPTXFile(pathFloor, "bounds"));
-	floor->setIntersectionProgram(ctx->createProgramFromPTXFile(pathFloor, "intersect"));
-
-	float rw = lab.getRealWidth(), rh = lab.getRealHeight();
-	floor["plane_normal"]->setFloat(0.0f, 1.0f, 0.0f);
-	floor["recmin"]->setFloat(-rw / 2.0f, 0.0f, -rh / 2.0f);
-	floor["recmax"]->setFloat(rw / 2.0f, 0.0f, rh / 2.0f);
-
-	ptr->tracer.AddGeometryInstance(ctx->createGeometryInstance(floor, &mat.getLabyrinthMaterial(LabMaterials::WALL), 
-		&mat.getLabyrinthMaterial(LabMaterials::WALL)+1));
-}
+BarHandler barHandler;
 
 void RenderingLoop()
 {
-    EventHandler::AddEventListener(ptr);
-    EventHandler::AddUpdateable(ptr);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+
+    EventHandler::AddEventListener(&gameEngine);
+    EventHandler::AddUpdateable(&gameEngine);
 
     do
     {
         glClear(GL_COLOR_BUFFER_BIT);
-        ptr->Draw();
+        gameEngine.Draw();
         // Swap buffers
+        TwDraw();
         SDLHandler::SwapBuffers();
         EventHandler::ProcessPolledEvents();
         EventHandler::Update();
@@ -85,10 +80,6 @@ void RenderingLoop()
     } while(!EventHandler::Quit());
 
 }
-
-void LoadSponza();
-void LoadNissan();
-void LoadLabyrinth();
 
 int main(int argc, char *argv[])
 {
@@ -111,26 +102,23 @@ int main(int argc, char *argv[])
     ilInit();
     iluInit();
 
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
+    barHandler.CreateTweakBars();
 
-	ptr = new GameEngine();
-    //LoadSponza();
-    //LoadNissan();
-    LoadLabyrinth();
-	ctx->setExceptionEnabled(RT_EXCEPTION_ALL, true);
-
-    ptr->Init();
+    gameEngine.Init();
+    ctx->setExceptionEnabled(RT_EXCEPTION_ALL, false);
+    mat.createLabMaterials();
+    
     RenderingLoop();
 
     SDLHandler::CleanUp();
 
-	delete ptr;
 	return 0;
 }
 
-void LoadSponza()
+void TW_CALL LoadSponza(void *userData)
 {
+    gameEngine.tracer.ClearSceneGraph();
+
     try
 	{
 		Assimp::Importer importer;
@@ -140,7 +128,7 @@ void LoadSponza()
 		    printf("%s\n", importer.GetErrorString());
 		    exit(-1);
 		}
-		ptr->tracer.AddScene(Utils::Resource("crytek-sponza/"), scene);
+		gameEngine.tracer.AddScene(Utils::Resource("crytek-sponza/"), scene);
 	}
 	catch(exception &ex)
 	{
@@ -148,7 +136,7 @@ void LoadSponza()
 		exit(-1);
 	}
 
-	ptr->tracer.AddLight(BasicLight(//light0 - point light
+	gameEngine.tracer.AddLight(BasicLight(//light0 - point light
 		make_float3(0.0f, 30.0f, 10.0f), //pos/dir
 		make_float3(2.0f), //color
 		make_float3(1.0f, 0.01f, 0.0005f),//attenuation
@@ -159,11 +147,13 @@ void LoadSponza()
 		1, //casts_shadows
 		0 //is_directional
 		));
+
+    gameEngine.tracer.CompileSceneGraph();
 }
 
-void LoadNissan()
+void TW_CALL LoadNissan(void *userData)
 {
-    mat.createLabMaterials();
+    gameEngine.tracer.ClearSceneGraph();
     try
 	{
 		Assimp::Importer importer;
@@ -175,7 +165,7 @@ void LoadNissan()
 			printf("%s\n", importer.GetErrorString());
 			exit(-1);
 		}
-		ptr->tracer.AddScene(mat.getLabyrinthMaterial(LabMaterials::MIRROR), nissan);
+		gameEngine.tracer.AddScene(mat.getLabyrinthMaterial(LabMaterials::MIRROR), nissan);
         cout << "Imported file: " + Utils::Resource("nissan/nissan.obj") << endl;
 	}
 	catch(exception &ex)
@@ -184,7 +174,7 @@ void LoadNissan()
 		exit(-1);
 	}
 
-	ptr->tracer.AddLight(BasicLight(//light2 - directional light
+	gameEngine.tracer.AddLight(BasicLight(//light2 - directional light
 		make_float3(1, 1, 1), //pos/dir
 		make_float3(0.1f), //color
 		make_float3(0.0f), //attenuation
@@ -195,19 +185,57 @@ void LoadNissan()
 		1, //casts_shadows
 		1 //is_directional
 		));
+
+    gameEngine.tracer.CompileSceneGraph();
 }
 
-void LoadLabyrinth()
+void addLabyrinth(const Labyrinth &lab)
 {
-    mat.createLabMaterials();
+    string pathFloor = Utils::PathToPTX("rectangleAA.cu");
+    string pathBox = Utils::PathToPTX("box.cu");
+
+    optix::Program boxAABB = ctx->createProgramFromPTXFile(pathBox, "box_bounds");
+    optix::Program boxIntersect = ctx->createProgramFromPTXFile(pathBox, "box_intersect");
+
+    const vector<Box> &walls = lab.getWalls();
+    int n = walls.size();
+    for(int i = 0; i < n; ++i)
+    {
+        Geometry box = ctx->createGeometry();
+        box->setPrimitiveCount(1);
+        box->setBoundingBoxProgram(boxAABB);
+        box->setIntersectionProgram(boxIntersect);
+        box["boxmin"]->setFloat(walls[i].boxmin);
+        box["boxmax"]->setFloat(walls[i].boxmax);
+        gameEngine.tracer.AddGeometryInstance(ctx->createGeometryInstance(box, &mat.getLabyrinthMaterial(walls[i].matIdx), 
+            &mat.getLabyrinthMaterial(walls[i].matIdx)+1));
+    }
+
+    Geometry floor = ctx->createGeometry();
+    floor->setPrimitiveCount(1);
+    floor->setBoundingBoxProgram(ctx->createProgramFromPTXFile(pathFloor, "bounds"));
+    floor->setIntersectionProgram(ctx->createProgramFromPTXFile(pathFloor, "intersect"));
+
+    float rw = lab.getRealWidth(), rh = lab.getRealHeight();
+    floor["plane_normal"]->setFloat(0.0f, 1.0f, 0.0f);
+    floor["recmin"]->setFloat(-rw / 2.0f, 0.0f, -rh / 2.0f);
+    floor["recmax"]->setFloat(rw / 2.0f, 0.0f, rh / 2.0f);
+
+    gameEngine.tracer.AddGeometryInstance(ctx->createGeometryInstance(floor, &mat.getLabyrinthMaterial(LabMaterials::WALL), 
+        &mat.getLabyrinthMaterial(LabMaterials::WALL)+1));
+}
+
+void TW_CALL LoadLabyrinth(void *userData)
+{
+    gameEngine.tracer.ClearSceneGraph();
 	Labyrinth lab;
-	lab.generateLabyrinth(15, 15);
+	lab.generateLabyrinth(barHandler.labSize, barHandler.labSize);
 	addLabyrinth(lab);
 
-	ptr->tracer.AddLight(BasicLight(//light0 - point light
+	gameEngine.tracer.AddLight(BasicLight(//light0 - point light
 		make_float3(0.0f, 30.0f, 10.0f), //pos/dir
 		make_float3(2.0f), //color
-		make_float3(1.0f, 0.1f, 0.0005f),//attenuation
+		make_float3(1.0f, 0.01f, 0.001f),//attenuation
 		make_float3(0.0f, 0.0f, 0.0f), //spot_direction
 		360.0f, //spot_cutoff
 		0.0f, //spot_exponent
@@ -215,4 +243,11 @@ void LoadLabyrinth()
 		1, //casts_shadows
 		0 //is_directional
 		));
+
+    gameEngine.tracer.CompileSceneGraph();
+}
+
+void TW_CALL RenderPPM(void *userData)
+{
+    gameEngine.tracer.RenderToPPM("screen.ppm");
 }

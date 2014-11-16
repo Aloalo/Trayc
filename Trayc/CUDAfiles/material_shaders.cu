@@ -78,7 +78,7 @@ RT_PROGRAM void closest_hit_glass()
 				result += (1.0f - reflection) * refraction_color * cutoff_color;
 		}
 
-		float3 r = reflect(i, n);
+		const float3 r = reflect(i, n);
 
 		const float importance = prd_radiance.importance * reflection * optix::luminance(reflection_color * beer_attenuation);
 		if(importance > importance_cutoff && (!inside || (inside && use_internal_reflections)))

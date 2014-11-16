@@ -15,13 +15,8 @@ using namespace engine;
 namespace trayc
 {
     BufferDrawer::BufferDrawer(void)
-        : SETTING(textureFilter), p(VertexShader(Utils::Shader("passthrough").c_str()), FragmentShader(Utils::Shader(postProcess ? "fxaa" : "passthrough").c_str())), SETTING(postProcess)
+        : SETTING(textureFilter), SETTING(postProcess)
     {
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &verticesID);
-        glGenTextures(1, &textureID);
-        glGenBuffers(1, &outBufferID);
-
         glDataType = GL_UNSIGNED_BYTE;
         glFormat = GL_BGRA;
         glTextureFormat = GL_RGBA8;
@@ -41,12 +36,19 @@ namespace trayc
 
     GLuint BufferDrawer::CreateGLBuffer()
     {
+        glGenBuffers(1, &outBufferID);
         AllocateBuffer(Environment::Get().bufferWidth, Environment::Get().bufferHeight);
         return outBufferID;
     }
 
-    void BufferDrawer::Init(const Buffer &buffer)
+    void BufferDrawer::Init(int bufferElementSize)
     {
+        p.Init(&VertexShader(Utils::Shader("passthrough").c_str()), nullptr, &FragmentShader(Utils::Shader(postProcess ? "fxaa" : "passthrough").c_str()));
+
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &verticesID);
+        glGenTextures(1, &textureID);
+
         const GLfloat quad[] = 
         { 
             -1.0f, -1.0f,
@@ -68,12 +70,11 @@ namespace trayc
 
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, outBufferID);
         {
-            RTsize elementSize = buffer->getElementSize();
-            if(elementSize % 8 == 0)
+            if(bufferElementSize % 8 == 0)
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 8);
-            else if(elementSize % 4 == 0)
+            else if(bufferElementSize % 4 == 0)
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-            else if(elementSize % 2 == 0)
+            else if(bufferElementSize % 2 == 0)
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
             else
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -105,13 +106,14 @@ namespace trayc
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureID);
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, outBufferID);
-
         glTexImage2D(GL_TEXTURE_2D, 0, glTextureFormat, Environment::Get().bufferWidth.x, Environment::Get().bufferHeight.x, 0, glFormat, glDataType, nullptr);
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
         p.Use();
 
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
 

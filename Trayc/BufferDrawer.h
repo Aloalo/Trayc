@@ -23,7 +23,7 @@ namespace trayc
 		void CleanUP();
 
 		GLuint CreateGLBuffer();
-		void Init(const optix::Buffer &buffer);
+		void Init(int bufferElementSize);
 		void Draw(optix::Buffer &buffer);
 		void AllocateBuffer(int width, int height);
 

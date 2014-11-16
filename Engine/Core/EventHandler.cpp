@@ -3,6 +3,8 @@
 */
 
 #include <Engine/Core/EventHandler.h>
+#include <Engine/Core/SDLHandler.h>
+#include <AntTweakBar.h>
 #include "SDL.h"
 
 using namespace std;
@@ -21,6 +23,9 @@ namespace engine
         SDL_Event test_event;
         while(SDL_PollEvent(&test_event))
         {
+            if(TwEventSDL(&test_event, SDLHandler::linked.major, SDLHandler::linked.minor))
+                continue;
+
             if(test_event.type == SDL_QUIT)
                 quit = true;
             else if(test_event.type == SDL_KEYDOWN && test_event.key.keysym.sym == SDLK_LSHIFT)
