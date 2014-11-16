@@ -13,10 +13,10 @@ rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 
 RT_PROGRAM void intersect(int primIdx)
 {
-	float t = dot(recmin - ray.origin, plane_normal) / dot(ray.direction, plane_normal);
+	const float t = dot(recmin - ray.origin, plane_normal) / dot(ray.direction, plane_normal);
 	if(t > ray.tmin && t < ray.tmax)
 	{
-		float3 p = ray.origin + ray.direction * t;
+		const float3 p = ray.origin + ray.direction * t;
 
 		if(isBetween(recmin, recmax, p))
 			if(rtPotentialIntersection(t))

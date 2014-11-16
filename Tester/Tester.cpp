@@ -86,6 +86,10 @@ void RenderingLoop()
 
 }
 
+void LoadSponza();
+void LoadNissan();
+void LoadLabyrinth();
+
 int main(int argc, char *argv[])
 {
     SDLHandler::Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
@@ -110,38 +114,39 @@ int main(int argc, char *argv[])
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
 
-    //TextureHandler::generateDefaultTex();
-
 	ptr = new GameEngine();
-	mat.createLabMaterials();
+    //LoadSponza();
+    //LoadNissan();
+    LoadLabyrinth();
+	ctx->setExceptionEnabled(RT_EXCEPTION_ALL, true);
 
-	try
+    ptr->Init();
+    RenderingLoop();
+
+    SDLHandler::CleanUp();
+
+	delete ptr;
+	return 0;
+}
+
+void LoadSponza()
+{
+    try
 	{
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(Utils::Resource("crytek-sponza/sponza.obj"), aiProcessPreset_TargetRealtime_MaxQuality);
 		if(!scene)
 		{
-		printf("%s\n", importer.GetErrorString());
-		return 0;
+		    printf("%s\n", importer.GetErrorString());
+		    exit(-1);
 		}
 		ptr->tracer.AddScene(Utils::Resource("crytek-sponza/"), scene);
-		
-		/*const aiScene* nissan = importer.ReadFile(Utils::resource("nissan/nissan.obj"), aiProcessPreset_TargetRealtime_MaxQuality);
-		if(!nissan)
-		{
-			printf("%s\n", importer.GetErrorString());
-			return 0;
-		}
-		ptr->tracer.addScene(mat.getLabyrinthMaterial(LabMaterials::MIRROR), nissan);*/
 	}
 	catch(exception &ex)
 	{
 		printf("%s\n", ex.what());
-		return 0;
+		exit(-1);
 	}
-	/*Labyrinth lab;
-	lab.generateLabyrinth(15, 15);
-	addLabyrinth(lab);*/
 
 	ptr->tracer.AddLight(BasicLight(//light0 - point light
 		make_float3(0.0f, 30.0f, 10.0f), //pos/dir
@@ -154,18 +159,30 @@ int main(int argc, char *argv[])
 		1, //casts_shadows
 		0 //is_directional
 		));
+}
 
-	ptr->tracer.AddLight(BasicLight(//light1 - spot light
-		make_float3(0.0f, 30.0f, 0.0f), //pos/dir
-		make_float3(2.0f), //color
-		make_float3(1.0f, 0.001f, 0.001f), //attenuation
-		make_float3(0.0f, 0.0f, 0.0f), //spot_direction
-		22.5f, //spot_cutoff
-		32.0f, //spot_exponent
-		0.25f, //radius
-		1, //casts_shadows
-		0 //is_directional
-		));
+void LoadNissan()
+{
+    mat.createLabMaterials();
+    try
+	{
+		Assimp::Importer importer;
+		
+		const aiScene* nissan = importer.ReadFile(Utils::Resource("nissan/nissan.obj"), aiProcessPreset_TargetRealtime_MaxQuality);
+        cout << "Loaded file: " + Utils::Resource("nissan/nissan.obj") << endl;
+		if(!nissan)
+		{
+			printf("%s\n", importer.GetErrorString());
+			exit(-1);
+		}
+		ptr->tracer.AddScene(mat.getLabyrinthMaterial(LabMaterials::MIRROR), nissan);
+        cout << "Imported file: " + Utils::Resource("nissan/nissan.obj") << endl;
+	}
+	catch(exception &ex)
+	{
+		printf("%s\n", ex.what());
+		exit(-1);
+	}
 
 	ptr->tracer.AddLight(BasicLight(//light2 - directional light
 		make_float3(1, 1, 1), //pos/dir
@@ -175,16 +192,27 @@ int main(int argc, char *argv[])
 		360.0f, //spot_cutoff
 		0.0f, //spot_exponent
 		0.0f, //radius
-		0, //casts_shadows
+		1, //casts_shadows
 		1 //is_directional
 		));
-	ctx->setExceptionEnabled(RT_EXCEPTION_ALL, true);
+}
 
-    ptr->Init();
-    RenderingLoop();
+void LoadLabyrinth()
+{
+    mat.createLabMaterials();
+	Labyrinth lab;
+	lab.generateLabyrinth(15, 15);
+	addLabyrinth(lab);
 
-    SDLHandler::CleanUp();
-
-	delete ptr;
-	return 0;
+	ptr->tracer.AddLight(BasicLight(//light0 - point light
+		make_float3(0.0f, 30.0f, 10.0f), //pos/dir
+		make_float3(2.0f), //color
+		make_float3(1.0f, 0.1f, 0.0005f),//attenuation
+		make_float3(0.0f, 0.0f, 0.0f), //spot_direction
+		360.0f, //spot_cutoff
+		0.0f, //spot_exponent
+		0.25f, //radius
+		1, //casts_shadows
+		0 //is_directional
+		));
 }

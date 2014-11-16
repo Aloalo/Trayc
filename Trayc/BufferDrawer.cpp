@@ -28,12 +28,15 @@ namespace trayc
     }
 
 
-    BufferDrawer::~BufferDrawer(void)
+    void BufferDrawer::CleanUP()
     {
+        cout << "Cleaning up BufferDrawer ... ";
+        p.Delete();
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &verticesID);
         glDeleteBuffers(1, &outBufferID);
         glDeleteTextures(1, &textureID);
+        cout << "DONE" << endl;
     }
 
     GLuint BufferDrawer::CreateGLBuffer()

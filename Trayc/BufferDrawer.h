@@ -19,7 +19,8 @@ namespace trayc
 	{
 	public:
 		BufferDrawer(void);
-		~BufferDrawer(void);
+
+		void CleanUP();
 
 		GLuint CreateGLBuffer();
 		void Init(const optix::Buffer &buffer);

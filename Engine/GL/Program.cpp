@@ -36,8 +36,10 @@ namespace engine
         f.close();
     }
 
-    Program::~Program(void)
+    void Program::Delete()
     {
+        glDeleteProgram(id);
+        id = 0;
     }
 
     void Program::Init(const VertexShader *vs, const GeometryShader *gs, const FragmentShader *fs, const char *name)

@@ -21,14 +21,9 @@ namespace engine
         SDL_Event test_event;
         while(SDL_PollEvent(&test_event))
         {
-            if(test_event.type == SDL_QUIT || (test_event.type == SDL_KEYDOWN && test_event.key.keysym.sym == SDLK_ESCAPE))
-            {
+            if(test_event.type == SDL_QUIT)
                 quit = true;
-                ClearEventListenerList();
-                ClearUpdateableList();
-                return;
-            }
-            if(test_event.type == SDL_KEYDOWN && test_event.key.keysym.sym == SDLK_LSHIFT)
+            else if(test_event.type == SDL_KEYDOWN && test_event.key.keysym.sym == SDLK_LSHIFT)
             {
                 SDL_SetRelativeMouseMode(SDL_FALSE);
                 SDL_ShowCursor(1);
@@ -59,11 +54,6 @@ namespace engine
         //TODO_JURE finish
     }
 
-    void EventHandler::ClearEventListenerList()
-    {
-        listenerList.clear();
-    }
-
     bool EventHandler::Quit()
     {
         return quit;
@@ -90,10 +80,5 @@ namespace engine
     void EventHandler::RemoveUpdateable(const Updateable *updateable)
     {
         //TODO_JURE finish
-    }
-
-    void EventHandler::ClearUpdateableList()
-    {
-        updateableList.clear();
     }
 }

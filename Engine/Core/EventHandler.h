@@ -20,7 +20,6 @@ namespace engine
         static void ProcessPolledEvents();
         static void AddEventListener(EventListener *listener);
         static void RemoveEventListener(const EventListener *listener);
-        static void ClearEventListenerList();
 
         //Has quit event occured?
         static bool Quit();
@@ -29,7 +28,6 @@ namespace engine
         static void Update();
         static void AddUpdateable(Updateable *updateable);
         static void RemoveUpdateable(const Updateable *updateable);
-        static void ClearUpdateableList();
 
     private:
         static bool quit;

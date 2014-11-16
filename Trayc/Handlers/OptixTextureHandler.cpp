@@ -57,7 +57,7 @@ namespace trayc
     optix::TextureSampler OptixTextureHandler::Get(const string &path, GLfloat anisotropy, RTwrapmode wrapMode, const string &def, GLenum format)
     {
         if(existingTextures.find(path) != existingTextures.end())
-            return existingTextures[path];
+            return existingTextures[path].first;
 
         ILuint imageID;
         ILboolean success;
@@ -101,14 +101,27 @@ namespace trayc
 
         ilDeleteImages(1, &imageID);
 
-        optix::TextureSampler sampler = ctx->createTextureSamplerFromGLImage(texID, RT_TARGET_GL_TEXTURE_2D);
+        TextureSampler sampler = ctx->createTextureSamplerFromGLImage(texID, RT_TARGET_GL_TEXTURE_2D);
         sampler->setWrapMode(0, wrapMode);
         sampler->setWrapMode(1, wrapMode);
         sampler->setWrapMode(2, wrapMode);
         sampler->setIndexingMode(RT_TEXTURE_INDEX_NORMALIZED_COORDINATES);
         sampler->setFilteringModes(RT_FILTER_LINEAR, RT_FILTER_LINEAR, RT_FILTER_NONE);
-        existingTextures[path] = sampler;
+        existingTextures[path] = pair<TextureSampler, GLuint>(sampler, texID);
 
         return sampler;
     }
+
+    void OptixTextureHandler::CleanUP()
+    {
+        cout << "Cleaning up OptixTextureHandler ... ";
+        for(auto sampler : existingTextures)
+        {
+            sampler.second.first->destroy();
+            glDeleteTextures(1, &sampler.second.second);
+        }
+        existingTextures.clear();
+        cout << "DONE" << endl;
+    }
+
 }

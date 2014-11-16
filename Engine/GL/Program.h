@@ -22,7 +22,8 @@ namespace engine
         Program(const VertexShader &vs, const FragmentShader &fs);
         Program(const VertexShader &vs, const GeometryShader &gs, const FragmentShader &fs);
         Program(const char *name);
-        ~Program(void);
+
+        void Delete();
 
         void Use() const;
 

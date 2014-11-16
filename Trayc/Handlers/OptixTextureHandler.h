@@ -21,10 +21,12 @@ namespace trayc
 		optix::TextureSampler Get(const std::string &path, GLfloat anisotropy = 0.0f, RTwrapmode wrapMode = RT_WRAP_REPEAT, 
 			const std::string &def = Utils::DefTexture("error.png"), GLenum format = GL_RGBA8);
 
+        void CleanUP();
+
 	private:
 		OptixTextureHandler(void);
 		friend Singleton<OptixTextureHandler>;
-        std::map<std::string, optix::TextureSampler> existingTextures;
+        std::map<std::string, std::pair<optix::TextureSampler, GLuint> > existingTextures;
 	};
 }
 

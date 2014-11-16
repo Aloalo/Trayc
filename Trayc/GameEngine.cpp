@@ -28,6 +28,10 @@ namespace trayc
     {
         switch (e.type)
         {
+        case SDL_QUIT:
+            OptixTextureHandler::Get().CleanUP();
+            drawer.CleanUP();
+            break;
         case SDL_WINDOWEVENT:
             if(e.window.event == SDL_WINDOWEVENT_RESIZED)
             {
@@ -35,9 +39,11 @@ namespace trayc
                 Environment::Get().screenHeight = e.window.data2;
                 glViewport(0, 0, e.window.data1, e.window.data2);
             }
+            break;
         case SDL_KEYDOWN:
             if(e.key.keysym.sym == SDLK_o)
                 tracer.RenderToPPM("screen.ppm");
+            break;
         }
         player.HandleEvent(e);
     }
