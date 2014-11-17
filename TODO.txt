@@ -2,7 +2,7 @@ Opcenito:
 -optimize CUDA shaders
      -indices (int3, short3, byte3)
      -control flow
--remove SceneGraphHandler, AccelHandler, Programs, Entity?
+-fix Programs?
 -remove devil and assimp dependency from Trayc
 -scene description files
 -Make tests prettier

@@ -38,8 +38,9 @@ void RenderingLoop()
     {
         glClear(GL_COLOR_BUFFER_BIT);
         gameEngine.Draw();
-        // Swap buffers
         TwDraw();
+
+        // Swap buffers
         SDLHandler::SwapBuffers();
         EventHandler::ProcessPolledEvents();
         EventHandler::Update();

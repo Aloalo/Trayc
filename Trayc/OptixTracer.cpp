@@ -231,10 +231,10 @@ namespace trayc
 
 		geometrygroup->setAcceleration(ctx->createAcceleration("Sbvh", "Bvh"));
 
-		accelHandler.SetMesh(Utils::Resource("accelCaches/accel.accelcache"));
-		accelHandler.LoadAccelCache(geometrygroup);
+		const string filename = Utils::Resource("accelCaches/accel.accelcache");
+		accelHandler.LoadAccelCache(filename, geometrygroup);
 
-		if(!accelHandler.accel_cache_loaded)
+		if(!accelHandler.accel_cache_loaded && gis.size() > 0)
 		{
 			Acceleration accel = ctx->createAcceleration("Sbvh", "Bvh");
 
@@ -244,7 +244,7 @@ namespace trayc
 			geometrygroup->setAcceleration(accel);
 			ctx->launch(0, 0, 0);
 
-			accelHandler.SaveAccelCache(geometrygroup);
+			accelHandler.SaveAccelCache(filename, geometrygroup);
 		}
 		ctx->validate();
 		ctx->compile();
