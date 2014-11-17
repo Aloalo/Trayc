@@ -61,9 +61,6 @@ RT_PROGRAM void dof_camera()
 				prd.depth = 0;
 
 				rtTrace(top_object, ray_dof, prd);
-				
-				if(fabs(fmaxf((result + prd.result) / (count + 1.0f) - result / count)) < EPS)
-					break;
 				count += 1.0f;
 				result += prd.result;
 			}

@@ -5,6 +5,7 @@
 #include <Trayc/BufferDrawer.h>
 #include <Trayc/Environment.h>
 #include <Trayc/Utils.h>
+#include <Engine/Common/ErrorCheck.h>
 #include <iostream>
 
 using namespace std;
@@ -94,12 +95,7 @@ namespace trayc
         }
         glBindVertexArray(0);
 
-        GLenum err;
-        while((err = glGetError()) != GL_NO_ERROR)
-        {
-            cerr << "OpenGL error: 0x" << hex << err << endl;
-            system("pause");
-        }
+        GLErrCheck(true);
     }
 
     void BufferDrawer::Draw(optix::Buffer &buffer)
@@ -125,14 +121,6 @@ namespace trayc
             glBufferData(GL_ARRAY_BUFFER, width * height * sizeof(uchar4), nullptr, GL_STREAM_DRAW);
         }
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-        GLenum err;
-        while((err = glGetError()) != GL_NO_ERROR)
-        {
-            cerr << "OpenGL error: 0x" << hex << err << endl;
-            system("pause");
-        }
     }
 
     void BufferDrawer::SetOutBufferTextureFilter(GLenum textureFilter)

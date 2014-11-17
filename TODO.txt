@@ -2,10 +2,10 @@ Opcenito:
 -optimize CUDA shaders
      -indices (int3, short3, byte3)
      -control flow
--fix settings??
--bind settings to anttweaklibrary
+-remove SceneGraphHandler, AccelHandler, Programs, Entity?
 -remove devil and assimp dependency from Trayc
 -scene description files
+-Make tests prettier
 
 Grafika:
 -beter spherical light sampling

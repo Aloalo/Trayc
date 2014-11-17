@@ -92,4 +92,10 @@ namespace engine
     {
         SDL_GetWindowSize(window, &w, &h);
     }
+
+    void SDLHandler::SetWindowSize(int w, int h)
+    {
+        SDL_SetWindowSize(window, w, h);
+    }
+
 }

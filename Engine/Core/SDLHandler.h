@@ -23,6 +23,7 @@ namespace engine
         static void SwapBuffers();
 
         static void GetWindowSize(int &w, int &h);
+        static void SetWindowSize(int w, int h);
 
         static void CleanUp();
 

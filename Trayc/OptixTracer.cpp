@@ -83,13 +83,21 @@ namespace trayc
     //HELPER FUNCTIONS
 
 	OptixTracer::OptixTracer(void) :
+        SETTING(apertureRadius),
+        SETTING(focalLength),
+
 		SETTING(shadowSamples),
 		SETTING(maxRayDepth),
 		SETTING(MSAA),
-		SETTING(renderingDivisionLevel),
-		SETTING(SSbufferWidth),
-		SETTING(SSbufferHeight),
-		SETTING(dofSamples)
+        SETTING(dofSamples),
+
+        SETTING(SSshadowSamples),
+        SETTING(SSmaxRayDepth),
+        SETTING(SSMSAA),
+        SETTING(SSrenderingDivisionLevel),
+        SETTING(SSdofSamples),
+        SETTING(SSbufferWidth),
+        SETTING(SSbufferHeight)
 	{
 	}
 
@@ -107,47 +115,50 @@ namespace trayc
 	void OptixTracer::Initialize(unsigned int GLBO)
 	{
 		ctx = Context::create();
-		printf("Available device memory: %d MB\n", ctx->getAvailableDeviceMemory(0) >> 20);
 
 		Programs::Init(ctx);
 
 		ctx->setRayTypeCount(2);
 		ctx->setEntryPointCount(1);
 		ctx->setCPUNumThreads(4);
-		ctx->setStackSize(768 + 256 * maxRayDepth);
 
 		ctx["radiance_ray_type"]->setUint(0);
 		ctx["shadow_ray_type"]->setUint(1);
 		ctx["scene_epsilon"]->setFloat(1.e-2f);
 		ctx["importance_cutoff"]->setFloat(0.01f);
-		ctx["renderingDivisionLevel"]->setInt(renderingDivisionLevel);
 		ctx["ambient_light_color"]->setFloat(0.3f, 0.3f, 0.3f);
 
-		ctx["max_depth"]->setInt(maxRayDepth);
-		ctx["shadow_samples"]->setInt(shadowSamples);
-
 		outBuffer = ctx->createBufferFromGLBO(RT_BUFFER_OUTPUT, GLBO);
-		outBuffer->setFormat(RT_FORMAT_UNSIGNED_BYTE4);
-		outBuffer->setSize(Environment::Get().bufferWidth, Environment::Get().bufferHeight);
+        outBuffer->setFormat(RT_FORMAT_UNSIGNED_BYTE4);
 		ctx["output_buffer"]->setBuffer(outBuffer);
 
 		SSbuffer = ctx->createBuffer(RT_BUFFER_OUTPUT);
 		SSbuffer->setFormat(RT_FORMAT_UNSIGNED_BYTE4);
-		SSbuffer->setSize(SSbufferWidth, SSbufferHeight);
 
 		ctx->setRayGenerationProgram(0, Programs::rayGeneration);
-		ctx["AAlevel"]->setInt(MSAA);
-		ctx["focal_length"]->setFloat(10.0f);
-		ctx["aperture_radius"]->setFloat(0.025f);
-		ctx["dof_samples"]->setInt(dofSamples);
-		ctx["AAlevel"]->setInt(MSAA);
 
 		ctx->setMissProgram(0, Programs::envmapMiss);
 		ctx["envmap"]->setTextureSampler(OptixTextureHandler::Get().Get(Utils::DefTexture("environment.jpg")));
 
 		ctx->setExceptionProgram(0, Programs::exception);
 		ctx["bad_color"]->setFloat(1.0f, 0.0f, 0.0f);
+
+        ApplySettings();
 	}
+
+
+    void OptixTracer::ApplySettings()
+    {
+        ctx->setStackSize(768 + 256 * maxRayDepth);
+        ctx["renderingDivisionLevel"]->setInt(1);
+        ctx["max_depth"]->setInt(maxRayDepth);
+        ctx["shadow_samples"]->setInt(shadowSamples);
+        outBuffer->setSize(Environment::Get().bufferWidth, Environment::Get().bufferHeight);
+        ctx["AAlevel"]->setInt(MSAA);
+        ctx["focal_length"]->setFloat(focalLength);
+        ctx["aperture_radius"]->setFloat(apertureRadius);
+        ctx["dof_samples"]->setInt(dofSamples);
+    }
 
 	void OptixTracer::AddMesh(const string &path, const aiMesh *mesh, const aiMaterial *mat)
 	{
@@ -237,8 +248,6 @@ namespace trayc
 		}
 		ctx->validate();
 		ctx->compile();
-
-		printf("Available device memory after compile: %d MB\n", ctx->getAvailableDeviceMemory(0) >> 20);
 	}
 
 
@@ -253,7 +262,7 @@ namespace trayc
         trans->destroy();
 	}
 
-	void OptixTracer::Trace(unsigned int entryPoint, RTsize width, RTsize height)
+	void OptixTracer::Trace(unsigned int entryPoint, RTsize width, RTsize height, int renderingDivisionLevel)
 	{
 		static int frame = 1;
 		frame++;
@@ -263,7 +272,7 @@ namespace trayc
 			ctx["myStripe"]->setInt(i);
 			ctx->launch(entryPoint, width, height / renderingDivisionLevel);
             if(renderingDivisionLevel > 1)
-                printf("DONE %d / %d\n", i + 1, renderingDivisionLevel);
+                cout << "DONE " << i + 1 << "/" << renderingDivisionLevel << endl;
 		}
 	}
 
@@ -290,24 +299,24 @@ namespace trayc
 
 	void OptixTracer::RenderToPPM(const std::string &name)
 	{
-		RTsize w, h;
-		SSbuffer->getSize(w, h);
+        const RTsize w = SSbufferWidth;
+        const RTsize h = SSbufferHeight;
+        SSbuffer->setSize(w, h);
 
-		const int rdl = 270;
-		const int tmp = renderingDivisionLevel;
-		renderingDivisionLevel = rdl;
-		ctx["AAlevel"]->setInt(2);
-		ctx["renderingDivisionLevel"]->setInt(rdl);
-		ctx["dof_samples"]->setInt(1);
-		ctx["shadow_samples"]->setInt(128);
+        ctx->setStackSize(768 + 256 * SSmaxRayDepth);
+		ctx["AAlevel"]->setInt(SSMSAA);
+		ctx["renderingDivisionLevel"]->setInt(SSrenderingDivisionLevel);
+		ctx["dof_samples"]->setInt(SSdofSamples);
+		ctx["shadow_samples"]->setInt(SSshadowSamples);
 		ctx["output_buffer"]->setBuffer(SSbuffer);
-		Trace(0, w, h);
+		Trace(0, w, h, SSrenderingDivisionLevel);
 		ctx["output_buffer"]->setBuffer(outBuffer);
 		ctx["shadow_samples"]->setInt(shadowSamples);
-		renderingDivisionLevel = tmp;
 		ctx["dof_samples"]->setInt(dofSamples);
-		ctx["renderingDivisionLevel"]->setInt(renderingDivisionLevel);
+		ctx["renderingDivisionLevel"]->setInt(1);
 		ctx["AAlevel"]->setInt(MSAA);
+        ctx->setStackSize(768 + 256 * maxRayDepth);
+
 		
 		const int k = 4;
 

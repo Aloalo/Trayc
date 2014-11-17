@@ -53,9 +53,4 @@ namespace trayc
 	{
 		return abs(x - y) < eps;
 	}
-
-	void Utils::Print(const float3 &x)
-	{
-		printf("%.2f %.2f %.2f\n", x.x, x.y, x.z);
-	}
 }

@@ -36,8 +36,7 @@ set(Trayc_Handlers_SRCS
 
 set(Trayc_GL_SHADERS
     Shaders/fxaa.frag
-    Shaders/passthrough.vert
-    Shaders/passthrough.frag
+    Shaders/fxaa.vert
 )
 
 set(Trayc_CUDA_FILES

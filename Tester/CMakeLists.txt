@@ -4,10 +4,11 @@ OPTIX_add_sample_executable(Tester
     LabMaterials.cpp
     Labyrinth.cpp
     Box.cpp
+    TweakBarHandler.cpp
+    TweakBarHandler.h
     LabMaterials.h
     Labyrinth.h
     Box.h
-    Settings.ini
     CUDAfiles/shaders.cu
     CUDAfiles/rectangleAA.cu
     CUDAfiles/box.cu

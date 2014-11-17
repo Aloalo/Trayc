@@ -18,14 +18,19 @@ namespace trayc
 	{
 	public:
 		GameEngine(void);
-		~GameEngine(void);
 
         void HandleEvent(const SDL_Event &e);
-
 		void Update(float deltaTime);
+
+        void ApplySettings();
+
+        void ResizeWindow(int w, int h);
+        void ResizeOutBuffer(int w, int h);
 
 		void Init();
 		void Draw();
+
+        engine::Setting<float> FOV;
 
 		engine::DefaultCameraHandler player;
         OptixTracer tracer;

@@ -75,7 +75,6 @@ namespace trayc
             {
                 error = ilGetError();
                 cerr << "Image load failed " + def + " - IL reports error: " << error << " - " << iluErrorString(error) << endl;
-                system("pause");
             }
         }
 
@@ -91,7 +90,6 @@ namespace trayc
         {
             error = ilGetError();
             cerr << "Image conversion failed - IL reports error: " << error << " - " << iluErrorString(error) << endl;
-            system("pause");
         }
 
         GLuint texID;

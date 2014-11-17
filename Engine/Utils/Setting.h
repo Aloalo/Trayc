@@ -17,7 +17,8 @@ namespace engine
 		Setting(const std::string &name) :
 			name(name)
 		{
-			x = InitialSettings::get()[name];
+            void *value = InitialSettings::Get()[name];
+			x = *(T*)&value;
 		}
 
 		operator T&()

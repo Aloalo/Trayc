@@ -4,6 +4,7 @@
 
 #include <Trayc/GameEngine.h>
 #include <Trayc/Environment.h>
+#include <Engine/Core/SDLHandler.h>
 
 using namespace std;
 using namespace optix;
@@ -12,12 +13,8 @@ using namespace engine;
 namespace trayc
 {
 	GameEngine::GameEngine(void)
-		: player(Camera(glm::vec3(7.0f, 9.2f, -6.0f), (float)Environment::Get().screenWidth.x / Environment::Get().screenHeight.x, 90.0f), 7.0f, 0.008f)
-	{
-	}
-
-
-	GameEngine::~GameEngine(void)
+		: SETTING(FOV),
+        player(Camera(glm::vec3(7.0f, 9.2f, -6.0f), (float)Environment::Get().screenWidth.x / Environment::Get().screenHeight.x, FOV), 7.0f, 0.008f)
 	{
 	}
 
@@ -73,9 +70,36 @@ namespace trayc
 		}
 		catch(exception &ex)
 		{
-			puts(ex.what());
-            system("pause");
+			cerr << ex.what() << endl;
 			exit(0);
 		}
 	}
+
+
+    void GameEngine::ApplySettings()
+    {
+        player.cam.FoV = FOV;
+        ResizeWindow(Environment::Get().screenWidth, Environment::Get().screenHeight);
+        ResizeOutBuffer(Environment::Get().bufferWidth, Environment::Get().bufferHeight);
+        tracer.ApplySettings();
+    }
+
+    void GameEngine::ResizeWindow(int w, int h)
+    {
+        SDLHandler::SetWindowSize(w, h);
+        Environment::Get().screenWidth = w;
+        Environment::Get().screenHeight = h;
+        player.cam.aspectRatio = static_cast<float>(w) / static_cast<float>(h);
+        glViewport(0, 0, w, h);
+    }
+
+    void GameEngine::ResizeOutBuffer(int w, int h)
+    {
+        Environment::Get().bufferWidth = w;
+        Environment::Get().bufferHeight = h;
+        tracer.outBuffer->setSize(w, h);
+        tracer.outBuffer->unregisterGLBuffer();
+        bufferDrawer.AllocateBuffer(w, h);
+        tracer.outBuffer->registerGLBuffer();
+    }
 }

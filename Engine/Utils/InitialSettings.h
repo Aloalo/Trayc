@@ -13,16 +13,16 @@ namespace engine
 {
 	struct InitialSettings
 	{
-		unsigned int& operator[](const std::string &variableName);
+		void* operator[](const std::string &variableName);
 
-		static InitialSettings& get();
+		static InitialSettings& Get();
 
 	private:
 		InitialSettings(const std::string &path);
 
 		static InitialSettings *instance;
 
-		std::map<std::string, unsigned int> values;
+		std::map<std::string, void*> values;
 		std::map<std::string, unsigned int> format;
 	};
 }
