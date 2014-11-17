@@ -56,7 +56,6 @@ namespace trayc
 		engine::Setting<int> renderingDivisionLevel;
 		engine::Setting<int> shadowSamples;
 		engine::Setting<int> dofSamples;
-		engine::Setting<int> useInternalReflections;
 		engine::Setting<int> MSAA;
 		engine::Setting<int> SSbufferWidth;
 		engine::Setting<int> SSbufferHeight;

@@ -12,8 +12,7 @@ using namespace engine;
 namespace trayc
 {
 	GameEngine::GameEngine(void)
-		: player(Camera(glm::vec3(7.0f, 9.2f, -6.0f), (float)Environment::Get().screenWidth.x / Environment::Get().screenHeight.x, 90.0f), 7.0f, 0.008f),
-		mouseLocked(true)
+		: player(Camera(glm::vec3(7.0f, 9.2f, -6.0f), (float)Environment::Get().screenWidth.x / Environment::Get().screenHeight.x, 90.0f), 7.0f, 0.008f)
 	{
 	}
 
@@ -28,7 +27,7 @@ namespace trayc
         {
         case SDL_QUIT:
             OptixTextureHandler::Get().CleanUP();
-            drawer.CleanUP();
+            bufferDrawer.CleanUP();
             break;
         case SDL_WINDOWEVENT:
             if(e.window.event == SDL_WINDOWEVENT_RESIZED)
@@ -53,8 +52,8 @@ namespace trayc
 		try
 		{
             Environment::Get().ctx = Context::create();
-            tracer.Initialize(drawer.CreateGLBuffer());
-            drawer.Init(tracer.outBuffer->getElementSize());
+            tracer.Initialize(bufferDrawer.CreateGLBuffer());
+            bufferDrawer.Init(tracer.outBuffer->getElementSize());
 			tracer.CompileSceneGraph();
 			tracer.SetCamera(player.cam);
 		}
@@ -70,7 +69,7 @@ namespace trayc
 		try
 		{
 			tracer.Trace(0, Environment::Get().bufferWidth, Environment::Get().bufferHeight);
-			drawer.Draw(tracer.outBuffer);
+			bufferDrawer.Draw(tracer.outBuffer);
 		}
 		catch(exception &ex)
 		{

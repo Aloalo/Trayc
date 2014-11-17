@@ -1,6 +1,7 @@
 #version 330 core
 
 uniform sampler2D renderedTexture;
+uniform bool useFxaa;
 out vec4 fOut;
 
 #define FXAA_REDUCE_MIN (1.0 / 128.0)
@@ -11,6 +12,12 @@ in vec2 UV;
 
 void main()
 {
+    if(!useFxaa)
+    {
+        fOut = texture(renderedTexture, UV);
+        return;
+    }
+    
 	vec2 texSize = vec2(textureSize(renderedTexture, 0));
 	vec2 texelSize = vec2(1.0 / texSize);
 

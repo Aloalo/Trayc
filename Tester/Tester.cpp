@@ -52,6 +52,34 @@ struct BarHandler
         TwAddButton(loadbar, "Load Labyrinth", LoadLabyrinth, NULL, " label='Load Labyrinth' ");
         TwAddButton(loadbar, "High Quality Screen Shot", RenderPPM, NULL, " label='High Quality Screen Shot' ");
         TwAddVarRW(loadbar, "Labyrinth Size", TW_TYPE_INT32, &labSize, " label='Labyrinth Size' ");
+
+        TwBar *rtsettings;
+        rtsettings = TwNewBar("Real Time Settings");
+        TwAddVarCB(rtsettings, "FXAA", TW_TYPE_INT32, SetFXAA, GetFXAA, nullptr, "");
+        TwAddVarCB(rtsettings, "Screen texture filtering", TW_TYPE_INT32, SetTextureFilter, GetTextureFilter, nullptr, "");
+    }
+
+    static void TW_CALL SetFXAA(const void *value, void *clientData)
+    {
+        gameEngine.bufferDrawer.SetUseFxaa(*static_cast<const int*>(value));
+    }
+    static void TW_CALL GetFXAA(void *value, void *clientData)
+    {
+        *(int*)(value) = gameEngine.bufferDrawer.useFxaa.x;
+    }
+    static void TW_CALL SetTextureFilter(const void *value, void *clientData)
+    {
+        if(*static_cast<const int*>(value) == 1)
+            gameEngine.bufferDrawer.SetOutBufferTextureFilter(GL_LINEAR);
+        else
+            gameEngine.bufferDrawer.SetOutBufferTextureFilter(GL_NEAREST);
+    }
+    static void TW_CALL GetTextureFilter(void *value, void *clientData)
+    {
+        if(gameEngine.bufferDrawer.textureFilter == GL_LINEAR)
+            *(int*)(value) = 1;
+        else
+            *(int*)(value) = 0;
     }
 
     int labSize;

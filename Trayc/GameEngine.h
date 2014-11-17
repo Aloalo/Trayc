@@ -28,10 +28,8 @@ namespace trayc
 		void Draw();
 
 		engine::DefaultCameraHandler player;
-		OptixTracer tracer;
-	private:
-		BufferDrawer drawer;
-		bool mouseLocked;
+        OptixTracer tracer;
+        BufferDrawer bufferDrawer;
 	};
 }
 

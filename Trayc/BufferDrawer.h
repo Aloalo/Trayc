@@ -27,13 +27,16 @@ namespace trayc
 		void Draw(optix::Buffer &buffer);
 		void AllocateBuffer(int width, int height);
 
+        void SetOutBufferTextureFilter(GLenum textureFilter);
+        void SetUseFxaa(bool useFxaa);
+
+        engine::Setting<int> textureFilter;
+        engine::Setting<int> useFxaa;
+
 	private:
 		GLenum glDataType;
 		GLenum glFormat;
 		GLenum glTextureFormat;
-
-		engine::Setting<int> textureFilter;
-		engine::Setting<int> postProcess;
 
         GLuint textureID;
         GLuint verticesID;

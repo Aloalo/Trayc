@@ -15,7 +15,7 @@ using namespace engine;
 namespace trayc
 {
     BufferDrawer::BufferDrawer(void)
-        : SETTING(textureFilter), SETTING(postProcess)
+        : SETTING(textureFilter), SETTING(useFxaa)
     {
         glDataType = GL_UNSIGNED_BYTE;
         glFormat = GL_BGRA;
@@ -43,7 +43,7 @@ namespace trayc
 
     void BufferDrawer::Init(int bufferElementSize)
     {
-        p.Init(&VertexShader(Utils::Shader("passthrough").c_str()), nullptr, &FragmentShader(Utils::Shader(postProcess ? "fxaa" : "passthrough").c_str()));
+        p.Init(&VertexShader(Utils::Shader("fxaa").c_str()), nullptr, &FragmentShader(Utils::Shader("fxaa").c_str()));
 
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &verticesID);
@@ -83,6 +83,7 @@ namespace trayc
 
         p.Use();
         p.SetUniform("renderedTexture", 0);
+        p.SetUniform("useFxaa", useFxaa);
 
         glBindVertexArray(VAO);
         {
@@ -133,4 +134,23 @@ namespace trayc
             system("pause");
         }
     }
+
+    void BufferDrawer::SetOutBufferTextureFilter(GLenum textureFilter)
+    {
+        this->textureFilter = textureFilter;
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, textureFilter);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, textureFilter);
+        }
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    void BufferDrawer::SetUseFxaa(bool useFxaa)
+    {
+        this->useFxaa = useFxaa;
+        p.SetUniform("useFxaa", useFxaa);
+    }
+
+
 }

@@ -83,7 +83,6 @@ namespace trayc
     //HELPER FUNCTIONS
 
 	OptixTracer::OptixTracer(void) :
-		SETTING(useInternalReflections),
 		SETTING(shadowSamples),
 		SETTING(maxRayDepth),
 		SETTING(MSAA),
@@ -126,7 +125,6 @@ namespace trayc
 
 		ctx["max_depth"]->setInt(maxRayDepth);
 		ctx["shadow_samples"]->setInt(shadowSamples);
-		ctx["use_internal_reflections"]->setInt(useInternalReflections);
 
 		outBuffer = ctx->createBufferFromGLBO(RT_BUFFER_OUTPUT, GLBO);
 		outBuffer->setFormat(RT_FORMAT_UNSIGNED_BYTE4);

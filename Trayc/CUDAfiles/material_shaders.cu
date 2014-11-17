@@ -29,7 +29,6 @@ rtDeclareVariable(float, refraction_index, , );
 rtDeclareVariable(float3, refraction_color, , );
 rtDeclareVariable(float3, reflection_color, , );
 rtDeclareVariable(float3, extinction_constant, , );
-rtDeclareVariable(int, use_internal_reflections, , );
 
 RT_PROGRAM void closest_hit_glass()
 {
@@ -44,8 +43,6 @@ RT_PROGRAM void closest_hit_glass()
                                         exp(extinction_constant * t_hit) :
                                         make_float3(1.0f);
 
-	bool inside = false;
-
 	if(prd_radiance.depth < max_depth)
 	{
 		float3 t;
@@ -56,10 +53,7 @@ RT_PROGRAM void closest_hit_glass()
 			if(cos_theta < 0.0f)
 				cos_theta = -cos_theta;
 			else
-			{
-				inside = true;
 				cos_theta = dot(t, n);
-			}
 
 			reflection = fresnel_schlick(cos_theta, fresnel_exponent, fresnel_minimum, fresnel_maximum);
 
@@ -81,7 +75,7 @@ RT_PROGRAM void closest_hit_glass()
 		const float3 r = reflect(i, n);
 
 		const float importance = prd_radiance.importance * reflection * optix::luminance(reflection_color * beer_attenuation);
-		if(importance > importance_cutoff && (!inside || (inside && use_internal_reflections)))
+		if(importance > importance_cutoff)
 		{
 			const optix::Ray ray(h, r, radiance_ray_type, scene_epsilon);
 			PerRayData_radiance refl_prd;
