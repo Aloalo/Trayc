@@ -5,7 +5,7 @@
 #ifndef EN_GEOMETRY_H
 #define EN_GEOMETRY_H
 
-#include <Engine/Geometry/Mesh.h>
+#include <Engine/Geometry/TriangleMesh.h>
 #include <map>
 
 namespace engine

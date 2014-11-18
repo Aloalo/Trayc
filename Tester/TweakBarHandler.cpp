@@ -4,18 +4,25 @@
 
 #include "TweakBarHandler.h"
 #include <optix_world.h>
+
 #include <optix_math.h>
 #include <Trayc/Environment.h>
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
+#include <Trayc/Handlers/OptixTextureHandler.h>
+#include <Trayc/Utils.h>
 #include <Engine/Core/SDLHandler.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace trayc;
 using namespace engine;
 using namespace optix;
 using namespace std;
+using namespace glm;
 
 GameEngine *TweakBarHandler::gameEngine = nullptr;
+map<std::string, engine::Scene> TweakBarHandler::tests;
 int TweakBarHandler::labSize = 15;
 LabMaterials TweakBarHandler::mat;
 RTsize TweakBarHandler::bw;
@@ -79,28 +86,14 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TwAddVarRW(camerasettings, "Aparture Radius", TW_TYPE_FLOAT, &gameEngine->tracer.apertureRadius.x, "");
     TwAddVarRW(camerasettings, "Focal Length", TW_TYPE_FLOAT, &gameEngine->tracer.focalLength.x, "");
     TwAddButton(camerasettings, "Apply", ApplySettings, NULL, " label='Apply' ");
+
+    //LoadTests();
 }
 
 void TW_CALL TweakBarHandler::LoadSponza(void *userData)
 {
     gameEngine->tracer.ClearSceneGraph();
-
-    try
-    {
-        Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(Utils::Resource("crytek-sponza/sponza.obj"), aiProcessPreset_TargetRealtime_MaxQuality);
-        if(!scene)
-        {
-            printf("%s\n", importer.GetErrorString());
-            exit(-1);
-        }
-        gameEngine->tracer.AddScene(Utils::Resource("crytek-sponza/"), scene);
-    }
-    catch(exception &ex)
-    {
-        printf("%s\n", ex.what());
-        exit(-1);
-    }
+    gameEngine->tracer.AddScene(LoadTest(Utils::Resource("crytek-sponza/sponza.obj"), Utils::Resource("crytek-sponza/"), scale(mat4(1.0f), vec3(0.05f))));
 
     gameEngine->tracer.AddLight(BasicLight(//light0 - point light
         make_float3(0.0f, 30.0f, 10.0f), //pos/dir
@@ -120,29 +113,27 @@ void TW_CALL TweakBarHandler::LoadSponza(void *userData)
 void TW_CALL TweakBarHandler::LoadNissan(void *userData)
 {
     gameEngine->tracer.ClearSceneGraph();
-    try
-    {
-        Assimp::Importer importer;
+    const mat4 trnissan = scale(translate(mat4(1.0f), vec3(0.0f, -50.0f, 0.0f)), vec3(0.1f));
+    gameEngine->tracer.AddScene(LoadTest(Utils::Resource("nissan/nissan.obj"), Utils::Resource("nissan/"), trnissan), mat.getLabyrinthMaterial(LabMaterials::MIRROR));
 
-        const aiScene* nissan = importer.ReadFile(Utils::Resource("nissan/nissan.obj"), aiProcessPreset_TargetRealtime_MaxQuality);
-        cout << "Loaded file: " + Utils::Resource("nissan/nissan.obj") << endl;
-        if(!nissan)
-        {
-            printf("%s\n", importer.GetErrorString());
-            exit(-1);
-        }
-        gameEngine->tracer.AddScene(mat.getLabyrinthMaterial(LabMaterials::MIRROR), nissan);
-        cout << "Imported file: " + Utils::Resource("nissan/nissan.obj") << endl;
-    }
-    catch(exception &ex)
-    {
-        printf("%s\n", ex.what());
-        exit(-1);
-    }
+    const mat4 teapottr = scale(translate(mat4(1.0f), vec3(50.0f, -54.0f, 0.0f)), vec3(0.1f));
+    gameEngine->tracer.AddScene(LoadTest(Utils::Resource("teapot/teapot.obj"), Utils::Resource("teapot/"), teapottr), mat.getLabyrinthMaterial(LabMaterials::GLASS));
+
+    Geometry floor = ctx->createGeometry();
+    floor->setPrimitiveCount(1);
+    floor->setBoundingBoxProgram(mat.floorAABB);
+    floor->setIntersectionProgram(mat.floorIntersect);
+
+    floor["plane_normal"]->setFloat(0.0f, 1.0f, 0.0f);
+    floor["recmin"]->setFloat(-80.0f, -59.0f, -80.0f);
+    floor["recmax"]->setFloat(80.0f, -59.0f, 80.0f);
+
+    gameEngine->tracer.AddGeometryInstance(ctx->createGeometryInstance(floor, &mat.getLabyrinthMaterial(LabMaterials::WALL), 
+        &mat.getLabyrinthMaterial(LabMaterials::WALL)+1));
 
     gameEngine->tracer.AddLight(BasicLight(//light2 - directional light
         make_float3(1, 1, 1), //pos/dir
-        make_float3(0.1f), //color
+        make_float3(0.4f), //color
         make_float3(0.0f), //attenuation
         make_float3(0.0f), //spot_direction
         360.0f, //spot_cutoff
@@ -157,20 +148,14 @@ void TW_CALL TweakBarHandler::LoadNissan(void *userData)
 
 void TweakBarHandler::addLabyrinth(const Labyrinth &lab)
 {
-    string pathFloor = Utils::PathToPTX("rectangleAA.cu");
-    string pathBox = Utils::PathToPTX("box.cu");
-
-    optix::Program boxAABB = ctx->createProgramFromPTXFile(pathBox, "box_bounds");
-    optix::Program boxIntersect = ctx->createProgramFromPTXFile(pathBox, "box_intersect");
-
     const vector<Box> &walls = lab.getWalls();
     int n = walls.size();
     for(int i = 0; i < n; ++i)
     {
         Geometry box = ctx->createGeometry();
         box->setPrimitiveCount(1);
-        box->setBoundingBoxProgram(boxAABB);
-        box->setIntersectionProgram(boxIntersect);
+        box->setBoundingBoxProgram(mat.boxAABB);
+        box->setIntersectionProgram(mat.boxIntersect);
         box["boxmin"]->setFloat(walls[i].boxmin);
         box["boxmax"]->setFloat(walls[i].boxmax);
         gameEngine->tracer.AddGeometryInstance(ctx->createGeometryInstance(box, &mat.getLabyrinthMaterial(walls[i].matIdx), 
@@ -179,8 +164,8 @@ void TweakBarHandler::addLabyrinth(const Labyrinth &lab)
 
     Geometry floor = ctx->createGeometry();
     floor->setPrimitiveCount(1);
-    floor->setBoundingBoxProgram(ctx->createProgramFromPTXFile(pathFloor, "bounds"));
-    floor->setIntersectionProgram(ctx->createProgramFromPTXFile(pathFloor, "intersect"));
+    floor->setBoundingBoxProgram(mat.floorAABB);
+    floor->setIntersectionProgram(mat.floorIntersect);
 
     float rw = lab.getRealWidth(), rh = lab.getRealHeight();
     floor["plane_normal"]->setFloat(0.0f, 1.0f, 0.0f);
@@ -250,4 +235,92 @@ void TW_CALL TweakBarHandler::ApplySettings(void *userData)
     Environment::Get().bufferWidth = bw;
     Environment::Get().bufferHeight = bh;
     gameEngine->ApplySettings();
+}
+
+const engine::Scene& TweakBarHandler::LoadTest(const string &test, const string &path, const mat4 &transform)
+{
+    if(tests.find(test) != tests.end())
+        return tests[test];
+
+    Assimp::Importer importer;
+    const aiScene* aiscene = importer.ReadFile(test, aiProcessPreset_TargetRealtime_MaxQuality);
+    if(!aiscene)
+    {
+        cerr << importer.GetErrorString() << endl;
+        exit(-1);
+    }
+    cout << "Loaded file: " + test << endl;
+
+    tests[test] = Scene();
+    Scene &scene = tests[test];
+    for(int i = 0; i < aiscene->mNumMeshes; ++i)
+    {
+        scene.meshes.push_back(TriangleMesh());
+        TriangleMesh &mesh = scene.meshes[i];
+        const aiMesh *aimesh = aiscene->mMeshes[i];
+        const aiMaterial *aimaterial = aiscene->mMaterials[aimesh->mMaterialIndex];
+        for(int i = 0; i < aimesh->mNumFaces; ++i)
+            mesh.indices.push_back(ivec3(aimesh->mFaces[i].mIndices[0], aimesh->mFaces[i].mIndices[1], aimesh->mFaces[i].mIndices[2]));
+        const bool hasNormalMap = aimaterial == nullptr ? false : aimaterial->GetTextureCount(aiTextureType_NORMALS) || aimaterial->GetTextureCount(aiTextureType_HEIGHT);
+
+        for(int i = 0; i < aimesh->mNumVertices; ++i)
+        {
+            mesh.positions.push_back(vec3(transform * vec4(*(vec3*)(&aimesh->mVertices[i]), 1.0)));
+            mesh.normals.push_back(*(vec3*)(&aimesh->mNormals[i]));
+            if(hasNormalMap)
+            {
+                mesh.tangents.push_back(*(vec3*)(&aimesh->mTangents[i]));
+                mesh.bitangents.push_back(*(vec3*)(&aimesh->mBitangents[i]));
+            }
+
+            if(aimesh->HasTextureCoords(0))
+                mesh.uvs.push_back(vec2(aimesh->mTextureCoords[0][i].x, aimesh->mTextureCoords[0][i].y));
+            mesh.materialIndex = aimesh->mMaterialIndex;
+        }
+    }
+    for(int i = 0; i < aiscene->mNumMaterials; ++i)
+    {
+        scene.materials.push_back(engine::Material());
+        engine::Material &material = scene.materials[i];
+        material.index = i;
+        const aiMaterial *aimaterial = aiscene->mMaterials[i];
+
+        aiColor3D color;
+        aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, color);
+        material.Ka = *(vec3*)(&color);
+
+        aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+        material.Kd = *(vec3*)(&color);
+
+        aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, color);
+        material.Ks = *(vec3*)(&color);
+
+        aimaterial->Get(AI_MATKEY_COLOR_REFLECTIVE, color);
+        material.reflectivity = *(vec3*)(&color);
+
+        aimaterial->Get(AI_MATKEY_REFRACTI, material.IoR);
+
+        aiString name;
+        if(aimaterial->GetTextureCount(aiTextureType_DIFFUSE) != 0)
+        {
+            aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &name, NULL, NULL, NULL, NULL, NULL);
+            material.diffuse_map = path + string(name.C_Str());
+        }
+        if(aimaterial->GetTextureCount(aiTextureType_SPECULAR) != 0)
+        {
+            aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &name, NULL, NULL, NULL, NULL, NULL);
+            material.specular_map = path + string(name.C_Str());
+        }
+        if(aimaterial->GetTextureCount(aiTextureType_NORMALS) != 0)
+        {
+            aimaterial->GetTexture(aiTextureType_NORMALS, 0, &name, NULL, NULL, NULL, NULL, NULL);
+            material.normal_map = path + string(name.C_Str());
+        }
+        else if(aimaterial->GetTextureCount(aiTextureType_HEIGHT) != 0)
+        {
+            aimaterial->GetTexture(aiTextureType_HEIGHT, 0, &name, NULL, NULL, NULL, NULL, NULL);
+            material.normal_map = path + string(name.C_Str());
+        }
+    }
+    return scene;
 }

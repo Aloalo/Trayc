@@ -4,6 +4,7 @@
 
 #include <Trayc/GameEngine.h>
 #include <Trayc/Environment.h>
+#include <Trayc/Handlers/OptixTextureHandler.h>
 #include <Engine/Core/SDLHandler.h>
 
 using namespace std;
@@ -14,7 +15,7 @@ namespace trayc
 {
 	GameEngine::GameEngine(void)
 		: SETTING(FOV),
-        player(Camera(glm::vec3(7.0f, 9.2f, -6.0f), (float)Environment::Get().screenWidth.x / Environment::Get().screenHeight.x, FOV), 7.0f, 0.008f)
+        player(Camera(glm::vec3(7.0f, 9.2f, -6.0f), (float)Environment::Get().screenWidth.x / Environment::Get().screenHeight.x, FOV), 7.0f, 0.006f)
 	{
 	}
 

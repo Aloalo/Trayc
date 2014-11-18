@@ -34,11 +34,6 @@ namespace trayc
 		return "../Resources/Shaders/" + name;
 	}
 
-	float3 Utils::aiToOptix(const aiVector3D &vec)
-	{
-		return make_float3(vec.x, vec.y, vec.z);
-	}
-
 	float3 Utils::glmToOptix(const vec3 &vec)
 	{
 		return make_float3(vec.x, vec.y, vec.z);

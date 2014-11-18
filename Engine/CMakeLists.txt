@@ -41,18 +41,18 @@ set(Engine_Core_HDRS
 )
 
 set(Engine_Geometry_SRCS
-    Geometry/Mesh.cpp
+    Geometry/TriangleMesh.cpp
     Geometry/IndexContainer.cpp
-    Geometry/VertexAttributeArray.cpp
-    Geometry/VertexAttribute.cpp
+    Geometry/Scene.cpp
+    Geometry/Material.cpp
 )
 
 set(Engine_Geometry_HDRS
     Geometry/Geometry.h
-    Geometry/Mesh.h
+    Geometry/TriangleMesh.h
     Geometry/IndexContainer.h
-    Geometry/VertexAttributeArray.h
-    Geometry/VertexAttribute.h
+    Geometry/Scene.h
+    Geometry/Material.h
 )
 
 set(Engine_GL_SRCS
@@ -61,20 +61,14 @@ set(Engine_GL_SRCS
     GL/GeometryShader.cpp
     GL/FragmentShader.cpp
     GL/Program.cpp
-    GL/VertexBufferObject.cpp
-    GL/FrameBuffer.cpp
 )
 
 set(Engine_GL_HDRS
-    GL/GLUtils.h
     GL/Shader.h
-    GL/Renderer.h
     GL/VertexShader.h
     GL/GeometryShader.h
     GL/FragmentShader.h
     GL/Program.h
-    GL/VertexBufferObject.h
-    GL/FrameBuffer.h
 )
 
 set(Engine_Utils_HDRS

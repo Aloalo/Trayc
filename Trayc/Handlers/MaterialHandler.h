@@ -5,22 +5,22 @@
 #ifndef TRAYC_MATERIALHANDLER_H
 #define TRAYC_MATERIALHANDLER_H
 
-
-#include <assimp/material.h>
-#include <Trayc/Handlers/OptixTextureHandler.h>
-#include <Engine/Utils/Singleton.h>
+#include <Engine/Geometry/Material.h>
+#include <optix_world.h>
+#include <map>
 
 namespace trayc
 {
-	class MaterialHandler : public Singleton<MaterialHandler>
+    //caches materials by index
+	class MaterialHandler
 	{
-	public:
-		optix::Material CreateMaterial(const std::string &path, const aiMaterial *mat);
-		std::string GetTextureName(const aiMaterial *mat, aiTextureType type, const std::string &path, const std::string &def = "error.png") const;
+    public:
+        optix::Material CreateMaterial(const engine::Material &mat);
+        //destroy currently active materials
+        void Clear();
 
 	private:
-		MaterialHandler(void);
-		friend Singleton<MaterialHandler>;
+        std::map<int, optix::Material> materials;
 	};
 }
 

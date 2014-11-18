@@ -14,7 +14,7 @@ namespace engine
     vector<EventListener*> EventHandler::listenerList;
     vector<Updateable*> EventHandler::updateableList;
     bool EventHandler::quit = false;
-    bool EventHandler::isCursorFree = false;
+    bool EventHandler::isCursorFree = true;
     float EventHandler::timeStep = 1.0f / 60.0f;
     float EventHandler::accumulator = 0.0f;
 
@@ -23,25 +23,28 @@ namespace engine
         SDL_Event test_event;
         while(SDL_PollEvent(&test_event))
         {
-            if(TwEventSDL(&test_event, SDLHandler::linked.major, SDLHandler::linked.minor))
-                continue;
-
             if(test_event.type == SDL_QUIT)
                 quit = true;
             else if(test_event.type == SDL_KEYDOWN && test_event.key.keysym.sym == SDLK_LSHIFT)
             {
-                SDL_SetRelativeMouseMode(SDL_FALSE);
-                SDL_ShowCursor(1);
-                isCursorFree = false;
+                if(isCursorFree)
+                {
+                    SDL_SetRelativeMouseMode(SDL_FALSE);
+                    SDL_ShowCursor(1);
+                }
+                else
+                {
+                    SDL_SetRelativeMouseMode(SDL_TRUE);
+                    SDL_ShowCursor(0);
+                }
+                isCursorFree = !isCursorFree;
             }
-            else if(test_event.type == SDL_KEYUP && test_event.key.keysym.sym == SDLK_LSHIFT)
+            if(isCursorFree == false)
             {
-                SDL_SetRelativeMouseMode(SDL_TRUE);
-                SDL_ShowCursor(0);
-                isCursorFree = true;
+                TwEventSDL(&test_event, SDLHandler::linked.major, SDLHandler::linked.minor);
+                if(test_event.type == SDL_MOUSEMOTION)
+                    continue;
             }
-            else if(test_event.type == SDL_MOUSEMOTION && isCursorFree == false)
-                continue;
 
             for(EventListener *listener : listenerList)
                 if(listener->active)

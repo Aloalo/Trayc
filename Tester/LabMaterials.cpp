@@ -5,6 +5,8 @@
 #include "LabMaterials.h"
 #include <Trayc/Programs.h>
 #include <Trayc/Environment.h>
+#include <Trayc/Utils.h>
+#include <Trayc/Handlers/OptixTextureHandler.h>
 
 using namespace optix;
 using namespace trayc;
@@ -27,9 +29,15 @@ Material& LabMaterials::getLabyrinthMaterial(int mat)
 void LabMaterials::createLabMaterials()
 {
 	string shaders = Utils::PathToPTX("shaders.cu");
+    string pathFloor = Utils::PathToPTX("rectangleAA.cu");
+    string pathBox = Utils::PathToPTX("box.cu");
 
 	Program closestHitSolid = ctx->createProgramFromPTXFile(shaders, "closest_hit_phong");
 	Program anyHitSolid = ctx->createProgramFromPTXFile(shaders, "any_hit");
+    boxAABB = ctx->createProgramFromPTXFile(pathBox, "box_bounds");
+    boxIntersect = ctx->createProgramFromPTXFile(pathBox, "box_intersect");
+    floorAABB = ctx->createProgramFromPTXFile(pathFloor, "bounds");
+    floorIntersect = ctx->createProgramFromPTXFile(pathFloor, "intersect");
 
 
 	Material wallMaterial = ctx->createMaterial();

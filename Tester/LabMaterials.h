@@ -24,6 +24,11 @@ public:
 	optix::Material& getLabyrinthMaterial(int mat);
 	void createLabMaterials();
 	std::map<int, optix::Material> labmat;
+
+    optix::Program boxAABB;
+    optix::Program boxIntersect;
+    optix::Program floorAABB;
+    optix::Program floorIntersect;
 };
 
 #endif

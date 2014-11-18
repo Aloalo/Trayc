@@ -29,54 +29,21 @@ namespace trayc
         return ret;
     }
 
-    static inline Geometry GetGeometry(const aiMesh *mesh, const aiMaterial *mat = nullptr, const std::string &path = Utils::DefTexture(""))
+    static inline Geometry GetGeometry(const TriangleMesh &mesh, const engine::Material &mat = engine::Material())
     {
-        vector<int3> indices;
-        indices.reserve(mesh->mNumFaces);
-        for(int i = 0; i < mesh->mNumFaces; ++i)
-            indices.push_back(make_int3(mesh->mFaces[i].mIndices[0], mesh->mFaces[i].mIndices[1], mesh->mFaces[i].mIndices[2]));
-
-        vector<float3> vertexData;
-        vertexData.reserve(mesh->mNumVertices);
-        vector<float3> normalData;
-        normalData.reserve(mesh->mNumVertices);
-        vector<float3> tangentData;
-        tangentData.reserve(mesh->mNumVertices);
-        vector<float3> bitangentData;
-        bitangentData.reserve(mesh->mNumVertices);
-        vector<float2> uvData;
-        uvData.reserve(mesh->mNumVertices);
-
-        const bool hasNormalMap = mat == NULL ? false : mat->GetTextureCount(aiTextureType_NORMALS) || mat->GetTextureCount(aiTextureType_HEIGHT);
-
-        for(int i = 0; i < mesh->mNumVertices; ++i)
-        {
-            vertexData.push_back(Utils::aiToOptix(mesh->mVertices[i]));
-            normalData.push_back(Utils::aiToOptix(mesh->mNormals[i]));
-            if(hasNormalMap)
-            {
-                tangentData.push_back(Utils::aiToOptix(mesh->mTangents[i]));
-                bitangentData.push_back(Utils::aiToOptix(mesh->mBitangents[i]));
-            }
-
-            if(mesh->HasTextureCoords(0))
-                uvData.push_back(make_float2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y));
-        }
-
         Geometry gMesh = ctx->createGeometry();
-        gMesh->setPrimitiveCount(indices.size());
+        gMesh->setPrimitiveCount(mesh.indices.size());
         gMesh->setBoundingBoxProgram(Programs::meshBoundingBox);
         gMesh->setIntersectionProgram(Programs::meshIntersect);
 
-        gMesh["vertex_buffer"]->setBuffer(GetBufferFromVector(vertexData, RT_FORMAT_FLOAT3));
-        gMesh["normal_buffer"]->setBuffer(GetBufferFromVector(normalData, RT_FORMAT_FLOAT3));
-        gMesh["tangent_buffer"]->setBuffer(GetBufferFromVector(tangentData, RT_FORMAT_FLOAT3));
-        gMesh["bitangent_buffer"]->setBuffer(GetBufferFromVector(bitangentData, RT_FORMAT_FLOAT3));
-        gMesh["normal_map"]->setTextureSampler(OptixTextureHandler::Get().Get(
-            MaterialHandler::Get().GetTextureName(mat, aiTextureType_HEIGHT, path, "bumpDefault.png")));
+        gMesh["vertex_buffer"]->setBuffer(GetBufferFromVector(mesh.positions, RT_FORMAT_FLOAT3));
+        gMesh["normal_buffer"]->setBuffer(GetBufferFromVector(mesh.normals, RT_FORMAT_FLOAT3));
+        gMesh["tangent_buffer"]->setBuffer(GetBufferFromVector(mesh.tangents, RT_FORMAT_FLOAT3));
+        gMesh["bitangent_buffer"]->setBuffer(GetBufferFromVector(mesh.bitangents, RT_FORMAT_FLOAT3));
+        gMesh["normal_map"]->setTextureSampler(OptixTextureHandler::Get().Get(mat.normal_map, 0.0f, RT_WRAP_REPEAT, Utils::DefTexture("bumpDefault.png")));
 
-        gMesh["texcoord_buffer"]->setBuffer(GetBufferFromVector(uvData, RT_FORMAT_FLOAT2));
-        gMesh["index_buffer"]->setBuffer(GetBufferFromVector(indices, RT_FORMAT_INT3));
+        gMesh["texcoord_buffer"]->setBuffer(GetBufferFromVector(mesh.uvs, RT_FORMAT_FLOAT2));
+        gMesh["index_buffer"]->setBuffer(GetBufferFromVector(mesh.indices, RT_FORMAT_INT3));
 
         return gMesh;
     }
@@ -160,10 +127,17 @@ namespace trayc
         ctx["dof_samples"]->setInt(dofSamples);
     }
 
-	void OptixTracer::AddMesh(const string &path, const aiMesh *mesh, const aiMaterial *mat)
+    void OptixTracer::AddScene(const Scene &scene)
+    {
+        const int ctMeshes = scene.meshes.size();
+        for(int i = 0; i < ctMeshes; ++i)
+            AddMesh(scene.meshes[i], scene.materials[scene.meshes[i].materialIndex]);
+    }
+
+	void OptixTracer::AddMesh(const TriangleMesh &mesh, const engine::Material &mat)
 	{
-		const Geometry gMesh = GetGeometry(mesh, mat, path);
-		const Material material = MaterialHandler::Get().CreateMaterial(path, mat);
+		const Geometry gMesh = GetGeometry(mesh, mat);
+        const optix::Material material = matHandler.CreateMaterial(mat);
 
 		GeometryInstance inst = ctx->createGeometryInstance();
 		inst->setMaterialCount(1);
@@ -173,7 +147,14 @@ namespace trayc
 		gis.push_back(inst);
 	}
 
-	void OptixTracer::AddMesh(const optix::Material mat, const aiMesh *mesh)
+    void OptixTracer::AddScene(const Scene &scene, const optix::Material mat)
+    {   
+        const int ctMeshes = scene.meshes.size();
+        for(int i = 0; i < ctMeshes; ++i)
+            AddMesh(scene.meshes[i], mat);
+    }
+
+	void OptixTracer::AddMesh(const TriangleMesh &mesh, const optix::Material mat)
 	{
 		const Geometry gMesh = GetGeometry(mesh);
 
@@ -183,18 +164,6 @@ namespace trayc
 		inst->setMaterial(0, mat);
 
 		gis.push_back(inst);
-	}
-
-	void OptixTracer::AddScene(const std::string &path, const aiScene *scene)
-	{
-		for(int i = 0; i < scene->mNumMeshes; ++i)
-			AddMesh(path, scene->mMeshes[i], scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]);
-	}
-
-	void OptixTracer::AddScene(const optix::Material mat, const aiScene * scene)
-	{
-		for(int i = 0; i < scene->mNumMeshes; ++i)
-			AddMesh(mat, scene->mMeshes[i]);
 	}
 
 	void OptixTracer::AddLight(const BasicLight &light)
@@ -223,19 +192,15 @@ namespace trayc
 		for(int i = 0; i < gis.size(); ++i)
 			geometrygroup->setChild(i, gis[i]);
 
-		trans = ctx->createTransform();
-		trans->setChild(geometrygroup);
-		const float s = 0.05f;
-		trans->setMatrix(false, (float*)&glm::scale(glm::mat4(1.0f), glm::vec3(s)), (float*)&glm::inverse(glm::scale(glm::mat4(1.0f), glm::vec3(s))));
-		ctx["top_object"]->set(trans);
+		ctx["top_object"]->set(geometrygroup);
 
 		geometrygroup->setAcceleration(ctx->createAcceleration("Sbvh", "Bvh"));
 
-		const string filename = Utils::Resource("accelCaches/accel.accelcache");
-		accelHandler.LoadAccelCache(filename, geometrygroup);
-
 		if(!accelHandler.accel_cache_loaded && gis.size() > 0)
 		{
+            const string filename = Utils::Resource("accelCaches/accel.accelcache");
+            accelHandler.LoadAccelCache(filename, geometrygroup);
+
 			Acceleration accel = ctx->createAcceleration("Sbvh", "Bvh");
 
 			accel->setProperty("index_buffer_name", "index_buffer");
@@ -256,10 +221,14 @@ namespace trayc
         ctx["lights"]->getBuffer()->destroy();
         lights.clear();
         for(auto instance : gis)
+        {
+            instance->getGeometry()->destroy();
             instance->destroy();
+        }
 		gis.clear();
         geometrygroup->destroy();
-        trans->destroy();
+
+        matHandler.Clear();
 	}
 
 	void OptixTracer::Trace(unsigned int entryPoint, RTsize width, RTsize height, int renderingDivisionLevel)
@@ -304,19 +273,22 @@ namespace trayc
         SSbuffer->setSize(w, h);
 
         ctx->setStackSize(768 + 256 * SSmaxRayDepth);
+        ctx["max_depth"]->setInt(SSmaxRayDepth);
 		ctx["AAlevel"]->setInt(SSMSAA);
 		ctx["renderingDivisionLevel"]->setInt(SSrenderingDivisionLevel);
 		ctx["dof_samples"]->setInt(SSdofSamples);
 		ctx["shadow_samples"]->setInt(SSshadowSamples);
 		ctx["output_buffer"]->setBuffer(SSbuffer);
+
 		Trace(0, w, h, SSrenderingDivisionLevel);
+
 		ctx["output_buffer"]->setBuffer(outBuffer);
 		ctx["shadow_samples"]->setInt(shadowSamples);
 		ctx["dof_samples"]->setInt(dofSamples);
 		ctx["renderingDivisionLevel"]->setInt(1);
 		ctx["AAlevel"]->setInt(MSAA);
+        ctx["max_depth"]->setInt(maxRayDepth);
         ctx->setStackSize(768 + 256 * maxRayDepth);
-
 		
 		const int k = 4;
 

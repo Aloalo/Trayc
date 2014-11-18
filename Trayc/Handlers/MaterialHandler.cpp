@@ -1,6 +1,10 @@
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
 #include <Trayc/Handlers/MaterialHandler.h>
 #include <Trayc/Programs.h>
-#include <Trayc/Utils.h>
+#include <Trayc/Handlers/OptixTextureHandler.h>
 #include <Trayc/Environment.h>
 
 using namespace std;
@@ -8,43 +12,35 @@ using namespace optix;
 
 namespace trayc
 {
-	MaterialHandler::MaterialHandler(void)
-	{
-	}
+    optix::Material MaterialHandler::CreateMaterial(const engine::Material &mat)
+    {
+        if(materials.find(mat.index) != materials.end())
+            return materials[mat.index];
 
-	Material MaterialHandler::CreateMaterial(const string &path, const aiMaterial *mat)
-	{
-		Material material = ctx->createMaterial();
+        optix::Material material = ctx->createMaterial();
 
-		material->setClosestHitProgram(0, Programs::closestHitMesh);
-		material->setAnyHitProgram(1, Programs::anyHitSolid);
+        material->setClosestHitProgram(0, Programs::closestHitMesh);
+        material->setAnyHitProgram(1, Programs::anyHitSolid);
 
-		aiColor3D color;
-		mat->Get(AI_MATKEY_COLOR_AMBIENT, color);
-		material["Ka"]->setFloat(make_float3(color.r, color.g, color.b));
+        material["Ka"]->setFloat(*(float3*)&mat.Ka);
+        material["Kd"]->setFloat(*(float3*)&mat.Kd);
+        material["Ks"]->setFloat(*(float3*)&mat.Ks);
+        material["reflectivity"]->setFloat(*(float3*)&mat.reflectivity);
 
-		mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-		material["Kd"]->setFloat(make_float3(color.r, color.g, color.b));
+        material["diffuse_map"]->setTextureSampler(OptixTextureHandler::Get().Get(mat.diffuse_map));
+        material["specular_map"]->setTextureSampler(OptixTextureHandler::Get().Get(mat.specular_map));
 
-		mat->Get(AI_MATKEY_COLOR_SPECULAR, color);
-		material["Ks"]->setFloat(make_float3(color.r, color.g, color.b));
+        materials[mat.index] = material;
 
-		mat->Get(AI_MATKEY_COLOR_REFLECTIVE, color);
-		material["reflectivity"]->setFloat(make_float3(color.r, color.g, color.b));
+        return material;
+    }
 
-		material["diffuse_map"]->setTextureSampler(OptixTextureHandler::Get().Get(GetTextureName(mat, aiTextureType_DIFFUSE, path, "diffDefault.png")));
-		material["specular_map"]->setTextureSampler(OptixTextureHandler::Get().Get(GetTextureName(mat, aiTextureType_SPECULAR, path, "specDefault.png")));
+    void MaterialHandler::Clear()
+    {
+        for(auto item : materials)
+            item.second->destroy();
 
-		return material;
-	}
+        materials.clear();
+    }
 
-	string MaterialHandler::GetTextureName(const aiMaterial *mat, aiTextureType type, const string &path, const string &def) const
-	{
-		aiString name;
-		if(mat == NULL || mat->GetTextureCount(type) == 0)
-			return Utils::DefTexture(def);
-
-		mat->GetTexture(type, 0, &name, NULL, NULL, NULL, NULL, NULL);
-		return path + string(name.C_Str());
-	}
 }

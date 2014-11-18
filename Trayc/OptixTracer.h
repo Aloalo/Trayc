@@ -5,7 +5,7 @@
 #ifndef TRAYC_OPTIXTRACER_H
 #define TRAYC_OPTIXTRACER_H
 
-#include <assimp/scene.h>
+#include <eNGINE/Geometry/Scene.h>
 #include <Trayc/Handlers/MaterialHandler.h>
 #include <Trayc/Handlers/AccelHandler.h>
 #include <Engine/Core/Camera.h>
@@ -24,10 +24,13 @@ namespace trayc
 		void Initialize(unsigned int GLBO);
         void ApplySettings();
 		
-		void AddScene(const std::string &path, const aiScene *scene);
-		void AddMesh(const std::string &path, const aiMesh *mesh, const aiMaterial *mat);
-		void AddScene(const optix::Material mat, const aiScene *scene);
-		void AddMesh(const optix::Material mat, const aiMesh *mesh);
+		void AddScene(const engine::Scene &scene);
+		void AddMesh(const engine::TriangleMesh &mesh, const engine::Material &mat);
+
+        //Add scene so that all meshes have mat as their material
+		void AddScene(const engine::Scene &scene, const optix::Material mat);
+		void AddMesh(const engine::TriangleMesh &mesh, const optix::Material mat);
+
 		void AddGeometryInstance(const optix::GeometryInstance gi);
 		void AddLight(const BasicLight &light);
 
@@ -67,8 +70,8 @@ namespace trayc
 	private:
 		optix::Buffer SSbuffer;
 		AccelHandler accelHandler;
+        MaterialHandler matHandler;
 
-        optix::Transform trans;
         optix::GeometryGroup geometrygroup;
 		std::vector<optix::GeometryInstance> gis;
 		std::vector<BasicLight> lights;

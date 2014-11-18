@@ -5,7 +5,6 @@
 #ifndef TRAYC_UTILS_H
 #define TRAYC_UTILS_H
 
-#include <assimp/mesh.h>
 #include <optix_world.h>
 #include <string>
 #include <glm/glm.hpp>
@@ -24,7 +23,6 @@ namespace trayc
 		static std::string Shader(const std::string &name);
 		static std::string PathToPTX(const std::string &filename);
 
-		static optix::float3 aiToOptix(const aiVector3D &vec);
 		static optix::float3 glmToOptix(const glm::vec3 &vec);
 		static bool Equals(const optix::float3 &x, const optix::float3 &y);
 		static bool Equals(float x, float y);

@@ -3,9 +3,8 @@ Opcenito:
      -indices (int3, short3, byte3)
      -control flow
 -fix Programs?
--remove devil and assimp dependency from Trayc
 -scene description files
--Make tests prettier
+-moving light in tests
 
 Grafika:
 -beter spherical light sampling

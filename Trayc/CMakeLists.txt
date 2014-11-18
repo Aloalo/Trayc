@@ -67,7 +67,6 @@ target_link_libraries(Trayc
     ${OPENGL_LIBRARIES}
     ${IL_LIBRARIES}
     ${ILU_LIBRARIES}
-    ${ASSIMP_LIBRARY}
     optix
     optixu
 )
