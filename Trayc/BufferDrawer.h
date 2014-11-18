@@ -11,21 +11,21 @@
 
 namespace trayc
 {
-	/*
-	draws the optix::Buffer on the whole screen
-	void init(const optix::Buffer &buffer) must be called each time buffer type changes
-	*/
-	class BufferDrawer
-	{
-	public:
-		BufferDrawer(void);
+    /*
+    draws the optix::Buffer on the whole screen
+    void init(const optix::Buffer &buffer) must be called each time buffer type changes
+    */
+    class BufferDrawer
+    {
+    public:
+        BufferDrawer(void);
 
-		void CleanUP();
+        void CleanUP();
 
-		GLuint CreateGLBuffer();
-		void Init(int bufferElementSize);
-		void Draw(optix::Buffer &buffer);
-		void AllocateBuffer(int width, int height);
+        GLuint CreateGLBuffer();
+        void Init(int bufferElementSize);
+        void Draw(optix::Buffer &buffer);
+        void AllocateBuffer(int width, int height);
 
         void SetOutBufferTextureFilter(GLenum textureFilter);
         void SetUseFxaa(bool useFxaa);
@@ -33,10 +33,10 @@ namespace trayc
         engine::Setting<int> textureFilter;
         engine::Setting<int> useFxaa;
 
-	private:
-		GLenum glDataType;
-		GLenum glFormat;
-		GLenum glTextureFormat;
+    private:
+        GLenum glDataType;
+        GLenum glFormat;
+        GLenum glTextureFormat;
 
         GLuint textureID;
         GLuint verticesID;
@@ -44,7 +44,7 @@ namespace trayc
         GLuint VAO;
 
         engine::Program p;
-	};
+    };
 }
 
 #endif

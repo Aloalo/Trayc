@@ -12,16 +12,16 @@
 namespace trayc
 {
     //caches materials by index
-	class MaterialHandler
-	{
+    class MaterialHandler
+    {
     public:
         optix::Material CreateMaterial(const engine::Material &mat);
         //destroy currently active materials
         void Clear();
 
-	private:
+    private:
         std::map<int, optix::Material> materials;
-	};
+    };
 }
 
 #endif

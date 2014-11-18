@@ -6,6 +6,6 @@ out vec2 UV;
 
 void main()
 {
-	gl_Position = vertexPosition_modelspace;
-	UV = (vertexPosition_modelspace.xy + vec2(1, 1)) * 0.5;
+    gl_Position = vertexPosition_modelspace;
+    UV = (vertexPosition_modelspace.xy + vec2(1, 1)) * 0.5;
 }

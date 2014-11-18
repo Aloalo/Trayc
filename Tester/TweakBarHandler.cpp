@@ -86,8 +86,6 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TwAddVarRW(camerasettings, "Aparture Radius", TW_TYPE_FLOAT, &gameEngine->tracer.apertureRadius.x, "");
     TwAddVarRW(camerasettings, "Focal Length", TW_TYPE_FLOAT, &gameEngine->tracer.focalLength.x, "");
     TwAddButton(camerasettings, "Apply", ApplySettings, NULL, " label='Apply' ");
-
-    //LoadTests();
 }
 
 void TW_CALL TweakBarHandler::LoadSponza(void *userData)
@@ -190,7 +188,7 @@ void TW_CALL TweakBarHandler::LoadLabyrinth(void *userData)
         make_float3(0.0f, 0.0f, 0.0f), //spot_direction
         360.0f, //spot_cutoff
         0.0f, //spot_exponent
-        0.25f, //radius
+        1.0f, //radius
         1, //casts_shadows
         0 //is_directional
         ));

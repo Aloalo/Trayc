@@ -18,8 +18,8 @@ void main()
         return;
     }
     
-	vec2 texSize = vec2(textureSize(renderedTexture, 0));
-	vec2 texelSize = vec2(1.0 / texSize);
+    vec2 texSize = vec2(textureSize(renderedTexture, 0));
+    vec2 texelSize = vec2(1.0 / texSize);
 
     vec3 rgbNW = texture(renderedTexture,UV + vec2(-1.0, -1.0) * texelSize).xyz;
     vec3 rgbNE = texture(renderedTexture,UV + vec2( 1.0, -1.0) * texelSize).xyz;
@@ -44,19 +44,19 @@ void main()
     float rcpDirMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + dirReduce);
     dir = min(vec2(FXAA_SPAN_MAX, FXAA_SPAN_MAX), max(vec2(-FXAA_SPAN_MAX, -FXAA_SPAN_MAX), dir * rcpDirMin)) * texelSize;
 
-	/*if(dot(dir, dir) > 0.00005)
-		fOut = vec4(1.0, 1.0, 1.0, 1.0);
-	else
-		fOut = vec4(0.0, 0.0, 0.0, 1.0);
-	return;*/
+    /*if(dot(dir, dir) > 0.00005)
+        fOut = vec4(1.0, 1.0, 1.0, 1.0);
+    else
+        fOut = vec4(0.0, 0.0, 0.0, 1.0);
+    return;*/
 
     vec3 rgbA = 0.5 * (
         texture(renderedTexture, UV + dir * (1.0 / 3.0 - 0.5)).xyz+
-		texture(renderedTexture, UV + dir * (2.0 / 3.0 - 0.5)).xyz);
+        texture(renderedTexture, UV + dir * (2.0 / 3.0 - 0.5)).xyz);
 
     vec3 rgbB = rgbA * 0.5 + 0.25 * (
         texture(renderedTexture, UV + dir * -0.5).xyz+
-		texture(renderedTexture, UV + dir * 0.5).xyz);
+        texture(renderedTexture, UV + dir * 0.5).xyz);
 
     float lumaB = dot(rgbB, luma);
 

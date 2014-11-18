@@ -13,9 +13,9 @@ using namespace optix;
 
 namespace trayc
 {
-	OptixTextureHandler::OptixTextureHandler()
-	{
-	}
+    OptixTextureHandler::OptixTextureHandler()
+    {
+    }
 
     static inline ILboolean convertAndGetType(GLenum format, GLenum &type)
     {

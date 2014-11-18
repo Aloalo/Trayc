@@ -11,29 +11,29 @@
 
 namespace engine
 {
-	template<class T>
-	struct Setting
-	{
-		Setting(const std::string &name) :
-			name(name)
-		{
+    template<class T>
+    struct Setting
+    {
+        Setting(const std::string &name) :
+            name(name)
+        {
             void *value = InitialSettings::Get()[name];
-			x = *(T*)&value;
-		}
+            x = *(T*)&value;
+        }
 
-		operator T&()
-		{
-			return x;
-		}
+        operator T&()
+        {
+            return x;
+        }
 
-		T& operator=(const T &v)
-		{
-			return x = v;
-		}
+        T& operator=(const T &v)
+        {
+            return x = v;
+        }
 
-		T x;
-		std::string name;
-	};
+        T x;
+        std::string name;
+    };
 }
 
 #endif

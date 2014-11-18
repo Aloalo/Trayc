@@ -14,38 +14,38 @@
 
 namespace trayc
 {
-	//handles optix traceing
-	class OptixTracer
-	{
-	public:
-		OptixTracer(void);
-		~OptixTracer(void);
+    //handles optix traceing
+    class OptixTracer
+    {
+    public:
+        OptixTracer(void);
+        ~OptixTracer(void);
 
-		void Initialize(unsigned int GLBO);
+        void Initialize(unsigned int GLBO);
         void ApplySettings();
-		
-		void AddScene(const engine::Scene &scene);
-		void AddMesh(const engine::TriangleMesh &mesh, const engine::Material &mat);
+        
+        void AddScene(const engine::Scene &scene);
+        void AddMesh(const engine::TriangleMesh &mesh, const engine::Material &mat);
 
         //Add scene so that all meshes have mat as their material
-		void AddScene(const engine::Scene &scene, const optix::Material mat);
-		void AddMesh(const engine::TriangleMesh &mesh, const optix::Material mat);
+        void AddScene(const engine::Scene &scene, const optix::Material mat);
+        void AddMesh(const engine::TriangleMesh &mesh, const optix::Material mat);
 
-		void AddGeometryInstance(const optix::GeometryInstance gi);
-		void AddLight(const BasicLight &light);
+        void AddGeometryInstance(const optix::GeometryInstance gi);
+        void AddLight(const BasicLight &light);
 
-		void CompileSceneGraph();
-		void ClearSceneGraph();
-		void Trace(unsigned int entryPoint, RTsize width, RTsize height, int renderingDivisionLevel = 1);
+        void CompileSceneGraph();
+        void ClearSceneGraph();
+        void Trace(unsigned int entryPoint, RTsize width, RTsize height, int renderingDivisionLevel = 1);
 
-		BasicLight& GetLight(int i);
-		void UpdateLight(int idx);
-		
-		void SetBufferSize(int w, int h);
-		void SetCamera(const engine::Camera &cam);
-		void RenderToPPM(const std::string &name);
+        BasicLight& GetLight(int i);
+        void UpdateLight(int idx);
+        
+        void SetBufferSize(int w, int h);
+        void SetCamera(const engine::Camera &cam);
+        void RenderToPPM(const std::string &name);
 
-		optix::Buffer outBuffer;
+        optix::Buffer outBuffer;
 
         //camera
         engine::Setting<float> apertureRadius;
@@ -67,15 +67,15 @@ namespace trayc
         engine::Setting<int> SSbufferHeight;
 
 
-	private:
-		optix::Buffer SSbuffer;
-		AccelHandler accelHandler;
+    private:
+        optix::Buffer SSbuffer;
+        AccelHandler accelHandler;
         MaterialHandler matHandler;
 
         optix::GeometryGroup geometrygroup;
-		std::vector<optix::GeometryInstance> gis;
-		std::vector<BasicLight> lights;
-	};
+        std::vector<optix::GeometryInstance> gis;
+        std::vector<BasicLight> lights;
+    };
 };
 
 #endif

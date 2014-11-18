@@ -2,12 +2,9 @@ Opcenito:
 -optimize CUDA shaders
      -indices (int3, short3, byte3)
      -control flow
--fix Programs?
--scene description files
 -moving light in tests
 
 Grafika:
--beter spherical light sampling
 -area lights
 -mipmaping (optix release)
 -glass/reflective mesh

@@ -8,23 +8,23 @@ using namespace std;
 
 namespace engine
 {
-	InitialSettings *InitialSettings::instance = 0;
+    InitialSettings *InitialSettings::instance = 0;
 
-	InitialSettings& InitialSettings::Get()
-	{
-		if(instance)
-			return *instance;
-		return *(instance = new InitialSettings("Settings.ini"));
-	}
+    InitialSettings& InitialSettings::Get()
+    {
+        if(instance)
+            return *instance;
+        return *(instance = new InitialSettings("Settings.ini"));
+    }
 
-	InitialSettings::InitialSettings(const string &path)
-	{	
-		format["GL_NEAREST"] = GL_NEAREST;
-		format["GL_LINEAR"] = GL_LINEAR;
+    InitialSettings::InitialSettings(const string &path)
+    {    
+        format["GL_NEAREST"] = GL_NEAREST;
+        format["GL_LINEAR"] = GL_LINEAR;
 
-		ifstream f(path);
-		if(f.is_open())
-		{
+        ifstream f(path);
+        if(f.is_open())
+        {
             while(!f.eof())
             {
                 string name, value;
@@ -49,18 +49,18 @@ namespace engine
                     }
                 }
             }
-		}
-		else
-		{
-			cerr << "Cannot open graphics settings" << endl;
-			exit(-1);
-		}
-		f.close();
-	}
+        }
+        else
+        {
+            cerr << "Cannot open graphics settings" << endl;
+            exit(-1);
+        }
+        f.close();
+    }
 
 
-	void* InitialSettings::operator[](const string &variableName)
-	{
-		return values[variableName];
-	}
+    void* InitialSettings::operator[](const string &variableName)
+    {
+        return values[variableName];
+    }
 }

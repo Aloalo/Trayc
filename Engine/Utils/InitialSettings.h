@@ -11,20 +11,20 @@
 
 namespace engine
 {
-	struct InitialSettings
-	{
-		void* operator[](const std::string &variableName);
+    struct InitialSettings
+    {
+        void* operator[](const std::string &variableName);
 
-		static InitialSettings& Get();
+        static InitialSettings& Get();
 
-	private:
-		InitialSettings(const std::string &path);
+    private:
+        InitialSettings(const std::string &path);
 
-		static InitialSettings *instance;
+        static InitialSettings *instance;
 
-		std::map<std::string, void*> values;
-		std::map<std::string, unsigned int> format;
-	};
+        std::map<std::string, void*> values;
+        std::map<std::string, unsigned int> format;
+    };
 }
 
 #endif

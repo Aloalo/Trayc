@@ -13,11 +13,11 @@ using namespace engine;
 
 namespace trayc
 {
-	GameEngine::GameEngine(void)
-		: SETTING(FOV),
+    GameEngine::GameEngine(void)
+        : SETTING(FOV),
         player(Camera(glm::vec3(7.0f, 9.2f, -6.0f), (float)Environment::Get().screenWidth.x / Environment::Get().screenHeight.x, FOV), 7.0f, 0.006f)
-	{
-	}
+    {
+    }
 
     void GameEngine::HandleEvent(const SDL_Event &e)
     {
@@ -39,42 +39,42 @@ namespace trayc
         player.HandleEvent(e);
     }
 
-	void GameEngine::Update(float deltaTime)
-	{
-		player.Update(deltaTime);
-		tracer.SetCamera(player.cam);
-	}
+    void GameEngine::Update(float deltaTime)
+    {
+        player.Update(deltaTime);
+        tracer.SetCamera(player.cam);
+    }
 
-	void GameEngine::Init()
-	{
-		try
-		{
+    void GameEngine::Init()
+    {
+        try
+        {
             Environment::Get().ctx = Context::create();
             tracer.Initialize(bufferDrawer.CreateGLBuffer());
             bufferDrawer.Init(tracer.outBuffer->getElementSize());
-			tracer.CompileSceneGraph();
-			tracer.SetCamera(player.cam);
-		}
-		catch(exception &ex)
-		{
-			cerr << ex.what() << endl;
-			exit(-1);
-		}
-	}
+            tracer.CompileSceneGraph();
+            tracer.SetCamera(player.cam);
+        }
+        catch(exception &ex)
+        {
+            cerr << ex.what() << endl;
+            exit(-1);
+        }
+    }
 
-	void GameEngine::Draw()
-	{
-		try
-		{
-			tracer.Trace(0, Environment::Get().bufferWidth, Environment::Get().bufferHeight);
-			bufferDrawer.Draw(tracer.outBuffer);
-		}
-		catch(exception &ex)
-		{
-			cerr << ex.what() << endl;
-			exit(0);
-		}
-	}
+    void GameEngine::Draw()
+    {
+        try
+        {
+            tracer.Trace(0, Environment::Get().bufferWidth, Environment::Get().bufferHeight);
+            bufferDrawer.Draw(tracer.outBuffer);
+        }
+        catch(exception &ex)
+        {
+            cerr << ex.what() << endl;
+            exit(0);
+        }
+    }
 
 
     void GameEngine::ApplySettings()

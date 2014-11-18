@@ -6,13 +6,13 @@
 
 namespace trayc
 {
-	Environment::Environment(void) :
-		SETTING(screenHeight),
-		SETTING(screenWidth),
-		SETTING(bufferHeight),
-		SETTING(bufferWidth)
-	{
-	}
+    Environment::Environment(void) :
+        SETTING(screenHeight),
+        SETTING(screenWidth),
+        SETTING(bufferHeight),
+        SETTING(bufferWidth)
+    {
+    }
 
-	optix::Context &ctx = Environment::Get().ctx;
+    optix::Context &ctx = Environment::Get().ctx;
 }

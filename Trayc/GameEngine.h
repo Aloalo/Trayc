@@ -13,29 +13,29 @@
 
 namespace trayc
 {
-	class GameEngine :
-		public engine::Updateable, public engine::EventListener
-	{
-	public:
-		GameEngine(void);
+    class GameEngine :
+        public engine::Updateable, public engine::EventListener
+    {
+    public:
+        GameEngine(void);
 
         void HandleEvent(const SDL_Event &e);
-		void Update(float deltaTime);
+        void Update(float deltaTime);
 
         void ApplySettings();
 
         void ResizeWindow(int w, int h);
         void ResizeOutBuffer(int w, int h);
 
-		void Init();
-		void Draw();
+        void Init();
+        void Draw();
 
         engine::Setting<float> FOV;
 
-		engine::DefaultCameraHandler player;
+        engine::DefaultCameraHandler player;
         OptixTracer tracer;
         BufferDrawer bufferDrawer;
-	};
+    };
 }
 
 #endif

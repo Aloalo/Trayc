@@ -11,22 +11,22 @@
 
 namespace trayc
 {
-	class Environment : public Singleton<Environment>
-	{
-	public:
-		engine::Setting<int> screenWidth;
-		engine::Setting<int> screenHeight;
-		engine::Setting<int> bufferWidth;
-		engine::Setting<int> bufferHeight;
+    class Environment : public Singleton<Environment>
+    {
+    public:
+        engine::Setting<int> screenWidth;
+        engine::Setting<int> screenHeight;
+        engine::Setting<int> bufferWidth;
+        engine::Setting<int> bufferHeight;
 
-		optix::Context ctx;
+        optix::Context ctx;
 
-	private:
-		Environment(void);
-		friend Singleton<Environment>;
-	};
+    private:
+        Environment(void);
+        friend Singleton<Environment>;
+    };
 
-	extern optix::Context &ctx;
+    extern optix::Context &ctx;
 }
 
 #endif

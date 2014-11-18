@@ -49,13 +49,13 @@ namespace trayc
     }
     //HELPER FUNCTIONS
 
-	OptixTracer::OptixTracer(void) :
+    OptixTracer::OptixTracer(void) :
         SETTING(apertureRadius),
         SETTING(focalLength),
 
-		SETTING(shadowSamples),
-		SETTING(maxRayDepth),
-		SETTING(MSAA),
+        SETTING(shadowSamples),
+        SETTING(maxRayDepth),
+        SETTING(MSAA),
         SETTING(dofSamples),
 
         SETTING(SSshadowSamples),
@@ -65,53 +65,53 @@ namespace trayc
         SETTING(SSdofSamples),
         SETTING(SSbufferWidth),
         SETTING(SSbufferHeight)
-	{
-	}
+    {
+    }
 
-	OptixTracer::~OptixTracer(void)
-	{
-	}
+    OptixTracer::~OptixTracer(void)
+    {
+    }
 
-	void OptixTracer::SetBufferSize(int w, int h)
-	{
-		w = max(1, w);
-		h = max(1, h);
-		outBuffer->setSize(w, h);
-	}
+    void OptixTracer::SetBufferSize(int w, int h)
+    {
+        w = max(1, w);
+        h = max(1, h);
+        outBuffer->setSize(w, h);
+    }
 
-	void OptixTracer::Initialize(unsigned int GLBO)
-	{
-		ctx = Context::create();
+    void OptixTracer::Initialize(unsigned int GLBO)
+    {
+        ctx = Context::create();
 
-		Programs::Init(ctx);
+        Programs::Init(ctx);
 
-		ctx->setRayTypeCount(2);
-		ctx->setEntryPointCount(1);
-		ctx->setCPUNumThreads(4);
+        ctx->setRayTypeCount(2);
+        ctx->setEntryPointCount(1);
+        ctx->setCPUNumThreads(4);
 
-		ctx["radiance_ray_type"]->setUint(0);
-		ctx["shadow_ray_type"]->setUint(1);
-		ctx["scene_epsilon"]->setFloat(1.e-2f);
-		ctx["importance_cutoff"]->setFloat(0.01f);
-		ctx["ambient_light_color"]->setFloat(0.3f, 0.3f, 0.3f);
+        ctx["radiance_ray_type"]->setUint(0);
+        ctx["shadow_ray_type"]->setUint(1);
+        ctx["scene_epsilon"]->setFloat(1.e-2f);
+        ctx["importance_cutoff"]->setFloat(0.01f);
+        ctx["ambient_light_color"]->setFloat(0.3f, 0.3f, 0.3f);
 
-		outBuffer = ctx->createBufferFromGLBO(RT_BUFFER_OUTPUT, GLBO);
+        outBuffer = ctx->createBufferFromGLBO(RT_BUFFER_OUTPUT, GLBO);
         outBuffer->setFormat(RT_FORMAT_UNSIGNED_BYTE4);
-		ctx["output_buffer"]->setBuffer(outBuffer);
+        ctx["output_buffer"]->setBuffer(outBuffer);
 
-		SSbuffer = ctx->createBuffer(RT_BUFFER_OUTPUT);
-		SSbuffer->setFormat(RT_FORMAT_UNSIGNED_BYTE4);
+        SSbuffer = ctx->createBuffer(RT_BUFFER_OUTPUT);
+        SSbuffer->setFormat(RT_FORMAT_UNSIGNED_BYTE4);
 
-		ctx->setRayGenerationProgram(0, Programs::rayGeneration);
+        ctx->setRayGenerationProgram(0, Programs::rayGeneration);
 
-		ctx->setMissProgram(0, Programs::envmapMiss);
-		ctx["envmap"]->setTextureSampler(OptixTextureHandler::Get().Get(Utils::DefTexture("environment.jpg")));
+        ctx->setMissProgram(0, Programs::envmapMiss);
+        ctx["envmap"]->setTextureSampler(OptixTextureHandler::Get().Get(Utils::DefTexture("environment.jpg")));
 
-		ctx->setExceptionProgram(0, Programs::exception);
-		ctx["bad_color"]->setFloat(1.0f, 0.0f, 0.0f);
+        ctx->setExceptionProgram(0, Programs::exception);
+        ctx["bad_color"]->setFloat(1.0f, 0.0f, 0.0f);
 
         ApplySettings();
-	}
+    }
 
 
     void OptixTracer::ApplySettings()
@@ -134,18 +134,18 @@ namespace trayc
             AddMesh(scene.meshes[i], scene.materials[scene.meshes[i].materialIndex]);
     }
 
-	void OptixTracer::AddMesh(const TriangleMesh &mesh, const engine::Material &mat)
-	{
-		const Geometry gMesh = GetGeometry(mesh, mat);
+    void OptixTracer::AddMesh(const TriangleMesh &mesh, const engine::Material &mat)
+    {
+        const Geometry gMesh = GetGeometry(mesh, mat);
         const optix::Material material = matHandler.CreateMaterial(mat);
 
-		GeometryInstance inst = ctx->createGeometryInstance();
-		inst->setMaterialCount(1);
-		inst->setGeometry(gMesh);
-		inst->setMaterial(0, material);
+        GeometryInstance inst = ctx->createGeometryInstance();
+        inst->setMaterialCount(1);
+        inst->setGeometry(gMesh);
+        inst->setMaterial(0, material);
 
-		gis.push_back(inst);
-	}
+        gis.push_back(inst);
+    }
 
     void OptixTracer::AddScene(const Scene &scene, const optix::Material mat)
     {   
@@ -154,70 +154,70 @@ namespace trayc
             AddMesh(scene.meshes[i], mat);
     }
 
-	void OptixTracer::AddMesh(const TriangleMesh &mesh, const optix::Material mat)
-	{
-		const Geometry gMesh = GetGeometry(mesh);
+    void OptixTracer::AddMesh(const TriangleMesh &mesh, const optix::Material mat)
+    {
+        const Geometry gMesh = GetGeometry(mesh);
 
-		GeometryInstance inst = ctx->createGeometryInstance();
-		inst->setMaterialCount(1);
-		inst->setGeometry(gMesh);
-		inst->setMaterial(0, mat);
+        GeometryInstance inst = ctx->createGeometryInstance();
+        inst->setMaterialCount(1);
+        inst->setGeometry(gMesh);
+        inst->setMaterial(0, mat);
 
-		gis.push_back(inst);
-	}
+        gis.push_back(inst);
+    }
 
-	void OptixTracer::AddLight(const BasicLight &light)
-	{
-		lights.push_back(light);
-	}
+    void OptixTracer::AddLight(const BasicLight &light)
+    {
+        lights.push_back(light);
+    }
 
-	void OptixTracer::AddGeometryInstance(const GeometryInstance gi)
-	{
-		gis.push_back(gi);
-	}
+    void OptixTracer::AddGeometryInstance(const GeometryInstance gi)
+    {
+        gis.push_back(gi);
+    }
 
-	void OptixTracer::CompileSceneGraph()
-	{
+    void OptixTracer::CompileSceneGraph()
+    {
         Buffer lightBuffer = ctx->createBuffer(RT_BUFFER_INPUT);
         lightBuffer->setFormat(RT_FORMAT_USER);
         lightBuffer->setElementSize(sizeof(BasicLight));
         ctx["lights"]->setBuffer(lightBuffer);
 
-		lightBuffer->setSize(lights.size());
-		memcpy(lightBuffer->map(), (const void*)lights.data(), lights.size() * sizeof(BasicLight));
-		lightBuffer->unmap();
+        lightBuffer->setSize(lights.size());
+        memcpy(lightBuffer->map(), (const void*)lights.data(), lights.size() * sizeof(BasicLight));
+        lightBuffer->unmap();
 
-		geometrygroup = ctx->createGeometryGroup();
-		geometrygroup->setChildCount(gis.size());
-		for(int i = 0; i < gis.size(); ++i)
-			geometrygroup->setChild(i, gis[i]);
+        geometrygroup = ctx->createGeometryGroup();
+        geometrygroup->setChildCount(gis.size());
+        for(int i = 0; i < gis.size(); ++i)
+            geometrygroup->setChild(i, gis[i]);
 
-		ctx["top_object"]->set(geometrygroup);
+        ctx["top_object"]->set(geometrygroup);
 
-		geometrygroup->setAcceleration(ctx->createAcceleration("Sbvh", "Bvh"));
+        geometrygroup->setAcceleration(ctx->createAcceleration("Sbvh", "Bvh"));
 
-		if(!accelHandler.accel_cache_loaded && gis.size() > 0)
-		{
+        if(!accelHandler.accel_cache_loaded && gis.size() > 0)
+        {
             const string filename = Utils::Resource("accelCaches/accel.accelcache");
             accelHandler.LoadAccelCache(filename, geometrygroup);
 
-			Acceleration accel = ctx->createAcceleration("Sbvh", "Bvh");
+            Acceleration accel = ctx->createAcceleration("Sbvh", "Bvh");
 
-			accel->setProperty("index_buffer_name", "index_buffer");
-			accel->setProperty("vertex_buffer_name", "vertex_buffer");
-			accel->markDirty();
-			geometrygroup->setAcceleration(accel);
-			ctx->launch(0, 0, 0);
+            accel->setProperty("index_buffer_name", "index_buffer");
+            accel->setProperty("vertex_buffer_name", "vertex_buffer");
+            accel->markDirty();
+            geometrygroup->setAcceleration(accel);
+            ctx->launch(0, 0, 0);
 
-			accelHandler.SaveAccelCache(filename, geometrygroup);
-		}
-		ctx->validate();
-		ctx->compile();
-	}
+            accelHandler.SaveAccelCache(filename, geometrygroup);
+        }
+        ctx->validate();
+        ctx->compile();
+    }
 
 
-	void OptixTracer::ClearSceneGraph()
-	{
+    void OptixTracer::ClearSceneGraph()
+    {
         ctx["lights"]->getBuffer()->destroy();
         lights.clear();
         for(auto instance : gis)
@@ -225,82 +225,82 @@ namespace trayc
             instance->getGeometry()->destroy();
             instance->destroy();
         }
-		gis.clear();
+        gis.clear();
         geometrygroup->destroy();
 
         matHandler.Clear();
-	}
+    }
 
-	void OptixTracer::Trace(unsigned int entryPoint, RTsize width, RTsize height, int renderingDivisionLevel)
-	{
-		static int frame = 1;
-		frame++;
-		ctx["frame"]->setInt(frame);
-		for(int i = 0; i < renderingDivisionLevel; ++i)
-		{
-			ctx["myStripe"]->setInt(i);
-			ctx->launch(entryPoint, width, height / renderingDivisionLevel);
+    void OptixTracer::Trace(unsigned int entryPoint, RTsize width, RTsize height, int renderingDivisionLevel)
+    {
+        static int frame = 1;
+        frame++;
+        ctx["frame"]->setInt(frame);
+        for(int i = 0; i < renderingDivisionLevel; ++i)
+        {
+            ctx["myStripe"]->setInt(i);
+            ctx->launch(entryPoint, width, height / renderingDivisionLevel);
             if(renderingDivisionLevel > 1)
                 cout << "DONE " << i + 1 << "/" << renderingDivisionLevel << endl;
-		}
-	}
+        }
+    }
 
-	BasicLight& OptixTracer::GetLight(int i)
-	{
-		return lights[i];
-	}
+    BasicLight& OptixTracer::GetLight(int i)
+    {
+        return lights[i];
+    }
 
-	void OptixTracer::UpdateLight(int idx)
-	{
-		memcpy(static_cast<void*>((static_cast<BasicLight*>(ctx["lights"]->getBuffer()->map())+idx)), static_cast<const BasicLight*>(lights.data()+idx), sizeof(BasicLight));
-		ctx["lights"]->getBuffer()->unmap();
-	}
+    void OptixTracer::UpdateLight(int idx)
+    {
+        memcpy(static_cast<void*>((static_cast<BasicLight*>(ctx["lights"]->getBuffer()->map())+idx)), static_cast<const BasicLight*>(lights.data()+idx), sizeof(BasicLight));
+        ctx["lights"]->getBuffer()->unmap();
+    }
 
-	void OptixTracer::SetCamera(const Camera &cam)
-	{
-		const float tanfov = tanf(cam.FoV * Utils::pi / 360.0f) * 0.5f;
+    void OptixTracer::SetCamera(const Camera &cam)
+    {
+        const float tanfov = tanf(cam.FoV * Utils::pi / 360.0f) * 0.5f;
 
-		ctx["eye"]->setFloat(Utils::glmToOptix(cam.position));
-		ctx["U"]->setFloat(Utils::glmToOptix(cam.GetRight() * tanfov * cam.aspectRatio));
-		ctx["V"]->setFloat(Utils::glmToOptix(cam.GetUp() * tanfov));
-		ctx["W"]->setFloat(Utils::glmToOptix(cam.GetDirection()));
-	}
+        ctx["eye"]->setFloat(Utils::glmToOptix(cam.position));
+        ctx["U"]->setFloat(Utils::glmToOptix(cam.GetRight() * tanfov * cam.aspectRatio));
+        ctx["V"]->setFloat(Utils::glmToOptix(cam.GetUp() * tanfov));
+        ctx["W"]->setFloat(Utils::glmToOptix(cam.GetDirection()));
+    }
 
-	void OptixTracer::RenderToPPM(const std::string &name)
-	{
+    void OptixTracer::RenderToPPM(const std::string &name)
+    {
         const RTsize w = SSbufferWidth;
         const RTsize h = SSbufferHeight;
         SSbuffer->setSize(w, h);
 
         ctx->setStackSize(768 + 256 * SSmaxRayDepth);
         ctx["max_depth"]->setInt(SSmaxRayDepth);
-		ctx["AAlevel"]->setInt(SSMSAA);
-		ctx["renderingDivisionLevel"]->setInt(SSrenderingDivisionLevel);
-		ctx["dof_samples"]->setInt(SSdofSamples);
-		ctx["shadow_samples"]->setInt(SSshadowSamples);
-		ctx["output_buffer"]->setBuffer(SSbuffer);
+        ctx["AAlevel"]->setInt(SSMSAA);
+        ctx["renderingDivisionLevel"]->setInt(SSrenderingDivisionLevel);
+        ctx["dof_samples"]->setInt(SSdofSamples);
+        ctx["shadow_samples"]->setInt(SSshadowSamples);
+        ctx["output_buffer"]->setBuffer(SSbuffer);
 
-		Trace(0, w, h, SSrenderingDivisionLevel);
+        Trace(0, w, h, SSrenderingDivisionLevel);
 
-		ctx["output_buffer"]->setBuffer(outBuffer);
-		ctx["shadow_samples"]->setInt(shadowSamples);
-		ctx["dof_samples"]->setInt(dofSamples);
-		ctx["renderingDivisionLevel"]->setInt(1);
-		ctx["AAlevel"]->setInt(MSAA);
+        ctx["output_buffer"]->setBuffer(outBuffer);
+        ctx["shadow_samples"]->setInt(shadowSamples);
+        ctx["dof_samples"]->setInt(dofSamples);
+        ctx["renderingDivisionLevel"]->setInt(1);
+        ctx["AAlevel"]->setInt(MSAA);
         ctx["max_depth"]->setInt(maxRayDepth);
         ctx->setStackSize(768 + 256 * maxRayDepth);
-		
-		const int k = 4;
+        
+        const int k = 4;
 
-		unsigned char *out = (unsigned char*)SSbuffer->map();
-		{
-			std::ofstream ofs(name, std::ios::out | std::ios::binary);
-			ofs << "P6\n" << w << " " << h << "\n255\n";
-			for(int i = h-1; i >= 0; --i)
-				for(int j = 0; j < w; ++j)
-					ofs << out[(i*w+j)*k + 2] << out[(i*w+j)*k + 1] << out[(i*w+j)*k + 0];
-				ofs.close();
-		}
-		SSbuffer->unmap();
-	}
+        unsigned char *out = (unsigned char*)SSbuffer->map();
+        {
+            std::ofstream ofs(name, std::ios::out | std::ios::binary);
+            ofs << "P6\n" << w << " " << h << "\n255\n";
+            for(int i = h-1; i >= 0; --i)
+                for(int j = 0; j < w; ++j)
+                    ofs << out[(i*w+j)*k + 2] << out[(i*w+j)*k + 1] << out[(i*w+j)*k + 0];
+                ofs.close();
+        }
+        SSbuffer->unmap();
+    }
 }

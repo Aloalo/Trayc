@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 
     SDLHandler::CleanUp();
 
-	return 0;
+    return 0;
 }
 
 

@@ -13,23 +13,23 @@ rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 
 RT_PROGRAM void intersect(int primIdx)
 {
-	const float t = dot(recmin - ray.origin, plane_normal) / dot(ray.direction, plane_normal);
-	if(t > ray.tmin && t < ray.tmax)
-	{
-		const float3 p = ray.origin + ray.direction * t;
+    const float t = dot(recmin - ray.origin, plane_normal) / dot(ray.direction, plane_normal);
+    if(t > ray.tmin && t < ray.tmax)
+    {
+        const float3 p = ray.origin + ray.direction * t;
 
-		if(isBetween(recmin, recmax, p))
-			if(rtPotentialIntersection(t))
-			{
-				shading_normal = geometric_normal = plane_normal;
-				rtReportIntersection(0);
-			}
-	}
+        if(isBetween(recmin, recmax, p))
+            if(rtPotentialIntersection(t))
+            {
+                shading_normal = geometric_normal = plane_normal;
+                rtReportIntersection(0);
+            }
+    }
 }
 
 RT_PROGRAM void bounds(int, float result[6])
 {
-	optix::Aabb* aabb = (optix::Aabb*)result;
-	aabb->set(recmin, recmax);
+    optix::Aabb* aabb = (optix::Aabb*)result;
+    aabb->set(recmin, recmax);
 }
 
