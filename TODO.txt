@@ -2,19 +2,18 @@ Opcenito:
 -optimize CUDA shaders
      -indices (int3, short3, byte3)
      -control flow
--moving light in tests
+-moving lights in tests
 
 Grafika:
 -area lights
 -mipmaping (optix release)
--glass/reflective mesh
+-glass/reflective mesh textures
 -parallax mapping
 
 -distributed ray tracing
 	-motion blur
 	-diffuse reflections
 	-fuzzy transparency
-    -ambient occlusion
 -global illumination
 	-(bidirectional) path tracing
 	-photon mapping

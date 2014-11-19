@@ -53,10 +53,10 @@ function(OPTIX_add_sample_executable target_name)
   # creation of the output file names, and we want this to be unique for each target in
   # the SDK.
   CUDA_GET_SOURCES_AND_OPTIONS(source_files cmake_options options ${ARGN})
-
+  message(STATUS "NVCC options" ${options})
   # Create the rules to build the PTX from the CUDA files.
   CUDA_WRAP_SRCS( "" PTX generated_files ${source_files} ${cmake_options}
-    OPTIONS ${options} )
+    OPTIONS ${options})
 
   # Here is where we create the rule to make the executable.  We define a target name and
   # list all the source files used to create the target.  In addition we also pass along

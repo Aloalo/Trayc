@@ -47,6 +47,7 @@ void LabMaterials::createLabMaterials()
     wallMaterial["Kd"]->setFloat(0.8f, 0.8f, 0.8f);
     wallMaterial["Ks"]->setFloat(0.8f, 0.8f, 0.8f);
     wallMaterial["phong_exp"]->setFloat(88.0f);
+    wallMaterial["reflectivity"]->setFloat(0.0f, 0.0f, 0.0f);
     wallMaterial["ambient_map"]->setTextureSampler(OptixTextureHandler::Get().Get(Utils::DefTexture("opacityDefault.png")));
     labmat[WALL] = wallMaterial;
 

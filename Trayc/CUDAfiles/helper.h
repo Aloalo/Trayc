@@ -11,17 +11,17 @@ __constant__ float EPS = 1e-4f;
 
 static __device__ __inline__ bool equals(float x, float y)
 {
-    return abs(x - y) < EPS;
+    return fabsf(x - y) < EPS;
 }
 
 static __device__ __inline__ bool isZero(const float3 &x)
 {
-    return abs(x.x) < EPS && abs(x.y) < EPS, abs(x.z) < EPS;
+    return fabsf(x.x) < EPS && fabsf(x.y) < EPS, fabsf(x.z) < EPS;
 }
 
 static __device__ __inline__ bool isZero(float x)
 {
-    return abs(x) < EPS;
+    return fabsf(x) < EPS;
 }
 
 static __device__ __inline__ bool isBetween(const float3 &a, const float3 &b, const float3 &x)
@@ -40,9 +40,9 @@ static __device__ __inline__ float3 exp(const float3 &x)
 
 static __device__ __inline__ float3 schlick(float nDi, const float3 &rgb)
 {
-    const float r = fresnel_schlick(nDi, 5, rgb.x, 1);
-    const float g = fresnel_schlick(nDi, 5, rgb.y, 1);
-    const float b = fresnel_schlick(nDi, 5, rgb.z, 1);
+    const float r = fresnel_schlick(nDi, 5.0f, rgb.x, 1.0f);
+    const float g = fresnel_schlick(nDi, 5.0f, rgb.y, 1.0f);
+    const float b = fresnel_schlick(nDi, 5.0f, rgb.z, 1.0f);
     return make_float3(r, g, b);
 }
 

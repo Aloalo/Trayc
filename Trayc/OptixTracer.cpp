@@ -52,17 +52,20 @@ namespace trayc
     OptixTracer::OptixTracer(void) :
         SETTING(apertureRadius),
         SETTING(focalLength),
+        SETTING(AOsamplingRadius),
 
-        SETTING(shadowSamples),
         SETTING(maxRayDepth),
-        SETTING(MSAA),
+        SETTING(shadowSamples),
         SETTING(dofSamples),
+        SETTING(ambientOcclusionSamples),
+        SETTING(MSAA),
 
-        SETTING(SSshadowSamples),
         SETTING(SSmaxRayDepth),
+        SETTING(SSshadowSamples),
+        SETTING(SSdofSamples),
+        SETTING(SSambientOcclusionSamples),
         SETTING(SSMSAA),
         SETTING(SSrenderingDivisionLevel),
-        SETTING(SSdofSamples),
         SETTING(SSbufferWidth),
         SETTING(SSbufferHeight)
     {
@@ -92,6 +95,7 @@ namespace trayc
         ctx["scene_epsilon"]->setFloat(0.01f);
         ctx["importance_cutoff"]->setFloat(0.01f);
         ctx["ambient_light_color"]->setFloat(0.3f, 0.3f, 0.3f);
+        ctx["frame"]->setUint(0);
 
         outBuffer = ctx->createBufferFromGLBO(RT_BUFFER_OUTPUT, GLBO);
         outBuffer->setFormat(RT_FORMAT_UNSIGNED_BYTE4);
@@ -118,11 +122,13 @@ namespace trayc
         ctx["renderingDivisionLevel"]->setInt(1);
         ctx["max_depth"]->setInt(maxRayDepth);
         ctx["shadow_samples"]->setInt(shadowSamples);
+        ctx["ambient_occlusion_samples"]->setInt(ambientOcclusionSamples);
         outBuffer->setSize(Environment::Get().bufferWidth, Environment::Get().bufferHeight);
         ctx["AAlevel"]->setInt(MSAA);
         ctx["focal_length"]->setFloat(focalLength);
         ctx["aperture_radius"]->setFloat(apertureRadius);
         ctx["dof_samples"]->setInt(dofSamples);
+        ctx["ao_sampling_radius"]->setFloat(AOsamplingRadius);
     }
 
     void OptixTracer::AddScene(const Scene &scene)
@@ -231,9 +237,9 @@ namespace trayc
 
     void OptixTracer::Trace(unsigned int entryPoint, RTsize width, RTsize height, int renderingDivisionLevel)
     {
-        static int frame = 1;
+        static unsigned int frame = 1;
+        ctx["frame"]->setUint(frame);
         frame++;
-        ctx["frame"]->setInt(frame);
         for(int i = 0; i < renderingDivisionLevel; ++i)
         {
             ctx["myStripe"]->setInt(i);
@@ -276,6 +282,7 @@ namespace trayc
         ctx["renderingDivisionLevel"]->setInt(SSrenderingDivisionLevel);
         ctx["dof_samples"]->setInt(SSdofSamples);
         ctx["shadow_samples"]->setInt(SSshadowSamples);
+        ctx["ambient_occlusion_samples"]->setInt(SSambientOcclusionSamples);
         ctx["output_buffer"]->setBuffer(SSbuffer);
 
         Trace(0, w, h, SSrenderingDivisionLevel);
@@ -283,6 +290,7 @@ namespace trayc
         ctx["output_buffer"]->setBuffer(outBuffer);
         ctx["shadow_samples"]->setInt(shadowSamples);
         ctx["dof_samples"]->setInt(dofSamples);
+        ctx["ambient_occlusion_samples"]->setInt(ambientOcclusionSamples);
         ctx["renderingDivisionLevel"]->setInt(1);
         ctx["AAlevel"]->setInt(MSAA);
         ctx["max_depth"]->setInt(maxRayDepth);

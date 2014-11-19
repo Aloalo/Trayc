@@ -92,3 +92,9 @@ static __host__ __device__ __inline__ unsigned int rot_seed( unsigned int seed, 
 {
     return seed ^ frame;
 }
+
+// generate a random number from the normal distribution
+static __device__ __inline__ float gaussian(uint &seed)
+{
+    return sqrtf(-2.0f * logf(rnd(seed))) * cos(2.0f * M_PIf * rnd(seed));
+}

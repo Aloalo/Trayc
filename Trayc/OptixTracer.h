@@ -47,22 +47,25 @@ namespace trayc
 
         optix::Buffer outBuffer;
 
-        //camera
+        //general
         engine::Setting<float> apertureRadius;
         engine::Setting<float> focalLength;
+        engine::Setting<float> AOsamplingRadius;
 
         //real time
         engine::Setting<int> maxRayDepth;
         engine::Setting<int> shadowSamples;
         engine::Setting<int> dofSamples;
+        engine::Setting<int> ambientOcclusionSamples;
         engine::Setting<int> MSAA;
 
         //screenshot
         engine::Setting<int> SSmaxRayDepth;
-        engine::Setting<int> SSrenderingDivisionLevel;
         engine::Setting<int> SSshadowSamples;
         engine::Setting<int> SSdofSamples;
+        engine::Setting<int> SSambientOcclusionSamples;
         engine::Setting<int> SSMSAA;
+        engine::Setting<int> SSrenderingDivisionLevel;
         engine::Setting<int> SSbufferWidth;
         engine::Setting<int> SSbufferHeight;
 

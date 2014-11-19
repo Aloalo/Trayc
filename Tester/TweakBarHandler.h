@@ -42,9 +42,6 @@ private:
     //out buffer
     static RTsize bw;
     static RTsize bh;
-    //SS buffer
-    static RTsize sbw;
-    static RTsize sbh;
 };
 
 #endif

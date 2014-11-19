@@ -27,16 +27,12 @@ int TweakBarHandler::labSize = 15;
 LabMaterials TweakBarHandler::mat;
 RTsize TweakBarHandler::bw;
 RTsize TweakBarHandler::bh;
-RTsize TweakBarHandler::sbw;
-RTsize TweakBarHandler::sbh;
 
 
 void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
 {
     bw = Environment::Get().bufferWidth;
     bh = Environment::Get().bufferHeight;
-    sbw = gameEngine->tracer.SSbufferWidth;
-    sbh = gameEngine->tracer.SSbufferHeight;
     TweakBarHandler::gameEngine = gameEngine;
     mat.createLabMaterials();
 
@@ -62,6 +58,7 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TwAddVarRW(rtsettings, "maxRayDepth", TW_TYPE_INT32, &gameEngine->tracer.maxRayDepth.x, "");
     TwAddVarRW(rtsettings, "shadowSamples", TW_TYPE_INT32, &gameEngine->tracer.shadowSamples.x, "");
     TwAddVarRW(rtsettings, "dofSamples", TW_TYPE_INT32, &gameEngine->tracer.dofSamples.x, "");
+    TwAddVarRW(rtsettings, "ambientOcclusionSamples", TW_TYPE_INT32, &gameEngine->tracer.ambientOcclusionSamples.x, "");
     TwAddVarRW(rtsettings, "MSAA", TW_TYPE_INT32, &gameEngine->tracer.MSAA.x, "");
     TwAddButton(rtsettings, "Apply", ApplySettings, NULL, " label='Apply' ");
 
@@ -69,23 +66,25 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     sssettings = TwNewBar("sssettings");
     TwDefine(" sssettings label='Screenshot Settings' ");
     TwDefine(" sssettings iconified=true ");
-    TwAddVarRW(sssettings, "Screenshot Width", TW_TYPE_INT32, &sbw, "");
-    TwAddVarRW(sssettings, "Screenshot Height", TW_TYPE_INT32, &sbh, "");
+    TwAddVarRW(sssettings, "Screenshot Width", TW_TYPE_INT32, &gameEngine->tracer.SSbufferWidth.x, "");
+    TwAddVarRW(sssettings, "Screenshot Height", TW_TYPE_INT32, &gameEngine->tracer.SSbufferHeight.x, "");
     TwAddVarRW(sssettings, "maxRayDepth", TW_TYPE_INT32, &gameEngine->tracer.SSmaxRayDepth.x, "");
     TwAddVarRW(sssettings, "renderingDivisionLevel", TW_TYPE_INT32, &gameEngine->tracer.SSrenderingDivisionLevel.x, "");
     TwAddVarRW(sssettings, "shadowSamples", TW_TYPE_INT32, &gameEngine->tracer.SSshadowSamples.x, "");
     TwAddVarRW(sssettings, "dofSamples", TW_TYPE_INT32, &gameEngine->tracer.SSdofSamples.x, "");
+    TwAddVarRW(sssettings, "ambientOcclusionSamples", TW_TYPE_INT32, &gameEngine->tracer.SSambientOcclusionSamples.x, "");
     TwAddVarRW(sssettings, "MSAA", TW_TYPE_INT32, &gameEngine->tracer.SSMSAA.x, "");
     TwAddButton(sssettings, "High Quality Screenshot", RenderPPM, NULL, " label='High Quality Screenshot' ");
 
-    TwBar *camerasettings;
-    camerasettings = TwNewBar("camerasettings");
-    TwDefine(" camerasettings label='Camera Settings' ");
-    TwDefine(" camerasettings iconified=true ");
-    TwAddVarRW(camerasettings, "FOV", TW_TYPE_FLOAT, &gameEngine->FOV.x, "");
-    TwAddVarRW(camerasettings, "Aparture Radius", TW_TYPE_FLOAT, &gameEngine->tracer.apertureRadius.x, "");
-    TwAddVarRW(camerasettings, "Focal Length", TW_TYPE_FLOAT, &gameEngine->tracer.focalLength.x, "");
-    TwAddButton(camerasettings, "Apply", ApplySettings, NULL, " label='Apply' ");
+    TwBar *generalsettings;
+    generalsettings = TwNewBar("generalsettings");
+    TwDefine(" generalsettings label='General Settings' ");
+    TwDefine(" generalsettings iconified=true ");
+    TwAddVarRW(generalsettings, "FOV", TW_TYPE_FLOAT, &gameEngine->FOV.x, "");
+    TwAddVarRW(generalsettings, "Aparture Radius", TW_TYPE_FLOAT, &gameEngine->tracer.apertureRadius.x, "");
+    TwAddVarRW(generalsettings, "Focal Length", TW_TYPE_FLOAT, &gameEngine->tracer.focalLength.x, "");
+    TwAddVarRW(generalsettings, "AO Sampling Radius", TW_TYPE_FLOAT, &gameEngine->tracer.AOsamplingRadius.x, "");
+    TwAddButton(generalsettings, "Apply", ApplySettings, NULL, " label='Apply' ");
 }
 
 void TW_CALL TweakBarHandler::LoadSponza(void *userData)

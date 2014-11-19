@@ -11,8 +11,6 @@ rtDeclareVariable(float3, W, , );
 rtDeclareVariable(int, renderingDivisionLevel, , "Number of horizontal stripes");
 rtDeclareVariable(int, myStripe, , "Current stripe");
 
-rtBuffer<uchar4, 2> output_buffer;
-
 rtDeclareVariable(int, AAlevel, , );
 rtDeclareVariable(float, aperture_radius, , );
 rtDeclareVariable(float, focal_length, , );

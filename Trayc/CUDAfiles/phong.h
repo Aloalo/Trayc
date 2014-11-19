@@ -5,6 +5,10 @@
 #include "lights.h"
 #include "random.h"
 
+rtBuffer<uchar4, 2> output_buffer;
+rtDeclareVariable(unsigned int, frame, , );
+
+
 rtDeclareVariable(rtObject, top_object, , );
 rtDeclareVariable(uint2, launch_index, rtLaunchIndex, );
 
@@ -15,7 +19,9 @@ rtDeclareVariable(PerRayData_shadow,   prd_shadow, rtPayload, );
 
 rtDeclareVariable(int, max_depth, , );
 rtDeclareVariable(int, shadow_samples, , );
-
+rtDeclareVariable(int, diffuse_reflection_samples, , ) = 1;
+rtDeclareVariable(int, ambient_occlusion_samples, , );
+rtDeclareVariable(float, ao_sampling_radius, , );
 rtBuffer<BasicLight> lights;
 
 rtDeclareVariable(float3, ambient_light_color, , );
@@ -24,19 +30,48 @@ rtDeclareVariable(unsigned int, shadow_ray_type, , );
 rtDeclareVariable(float, importance_cutoff, , );
 rtDeclareVariable(float, scene_epsilon, , );
 
+static __device__ __inline__ float ambientOcclusion(const float3 &hit_point, const float3 &normal, unsigned int &seed)
+{
+    if(ambient_occlusion_samples > 0)
+    {
+        float occlusion = 0.0f;
+        for(int k = 0; k < ambient_occlusion_samples; ++k)
+        {
+            const float lambda = rnd(seed) * pi2;
+            const float phi = acosf(2.0f * rnd(seed) - 1.0f);
+            const float sinphi = sinf(phi);
+
+            float3 sampleVector = make_float3(sinf(phi) * cosf(lambda), sinf(phi) * sinf(lambda), cosf(phi)) * ao_sampling_radius;
+            if(dot(normal, sampleVector) < 0.0f)
+                sampleVector = -sampleVector;
+
+            PerRayData_shadow shadow_prd;
+            shadow_prd.attenuation = 1.0f;
+            const optix::Ray shadow_ray(hit_point, sampleVector, shadow_ray_type, scene_epsilon, 1.0f);
+            rtTrace(top_object, shadow_ray, shadow_prd);
+            occlusion += shadow_prd.attenuation;
+        }
+
+        return occlusion / (float)ambient_occlusion_samples;
+    }
+    return 1.0f;
+}
+
+
 static __device__ __inline__ void phongShadowed()
 {
     prd_shadow.attenuation = 0.0f;
     rtTerminateRay();
 }
 
-static __device__ __inline__ void phongShade(const float3 &p_Ka,
+static __device__ __inline__ void phongShade(const float3 &hit_point,
+                                             const float3 &p_Ka,
                                              const float3 &p_Kd,
                                              const float3 &p_Ks,
                                              const float3 &ffnormal,
-                                             float phong_exp)
+                                             float phong_exp,
+                                             unsigned int &seed)
 {
-    const float3 hit_point = ray.origin + t_hit * ray.direction;
     float3 color = p_Ka * ambient_light_color;
 
     for(int i = 0; i < lights.size(); ++i)
@@ -45,7 +80,7 @@ static __device__ __inline__ void phongShade(const float3 &p_Ka,
 
         float attenuation = 0.0f;
         float Ldist = 0.0f;
-        float3 L = make_float3(0.0f);
+        float3 L;
 
         if(light.is_directional) // directional light?
         {
@@ -55,8 +90,9 @@ static __device__ __inline__ void phongShade(const float3 &p_Ka,
         }
         else // point light or spotlight
         {
-            L = normalize(light.pos - hit_point);
-            Ldist = length(light.pos - hit_point);
+            L = light.pos - hit_point;
+            Ldist = length(L);
+            L *= (1.0f / Ldist);
             attenuation = 1.0f / (light.attenuation.x + light.attenuation.y * Ldist + light.attenuation.z * Ldist * Ldist);
 
             if(light.spot_cutoff <= 90.0f) // spotlight?
@@ -76,12 +112,12 @@ static __device__ __inline__ void phongShade(const float3 &p_Ka,
         if(nDl > 0.0f && attenuation > 0.0f)
         {
             PerRayData_shadow shadow_prd;
-            shadow_prd.attenuation = 1.0f;
 
             if(shadow_samples > 0 && light.casts_shadows)
             {
                 if(shadow_samples == 1)
                 {
+                    shadow_prd.attenuation = 1.0f;
                     const optix::Ray sray(hit_point, L, shadow_ray_type, scene_epsilon, Ldist);
                     rtTrace(top_object, sray, shadow_prd);
                     attenuation *= shadow_prd.attenuation;
@@ -89,7 +125,6 @@ static __device__ __inline__ void phongShade(const float3 &p_Ka,
                 else
                 {
                     float lighthit = 0.0f;
-                    unsigned int seed = (launch_index.x * 1920 + launch_index.y) * launch_index.x * launch_index.y;
                     for(int k = 0; k < shadow_samples; ++k)
                     {
                         const float3 u = normalize(make_float3(L.y - L.z, -L.x, L.x));
@@ -116,7 +151,7 @@ static __device__ __inline__ void phongShade(const float3 &p_Ka,
 
                 const float3 H = normalize(L - ray.direction);
                 const float nDh = dot(ffnormal, H);
-                if(nDh > 0.0f && p_Ks.x > 0.0f && p_Ks.y > 0.0f && p_Ks.z > 0.0f)
+                if(nDh > 0.0f)
                     color += p_Ks * light_color * powf(nDh, phong_exp);
             }
         }
@@ -126,23 +161,30 @@ static __device__ __inline__ void phongShade(const float3 &p_Ka,
     prd_radiance.result = color;
 }
 
-static __device__ __inline__ void phongReflect(const float3 &ffnormal, const float3 &reflectivity)
+static __device__ __inline__ void phongReflect(const float3 &hit_point, const float3 &ffnormal, const float3 &reflectivity)
 {
-    const float3 r = schlick(-dot(ffnormal, ray.direction), reflectivity);
-
-    const float importance = prd_radiance.importance * optix::luminance(r);
-
-    //reflection ray
-    if(importance > importance_cutoff && prd_radiance.depth < max_depth)
+    if(fmaxf(reflectivity) > 0.0f)
     {
-        const float3 hit_point = ray.origin + t_hit * ray.direction;
+        const float3 r = schlick(-dot(ffnormal, ray.direction), reflectivity);
+        const float importance = prd_radiance.importance * optix::luminance(r);
 
-        PerRayData_radiance refl_prd;
-        refl_prd.importance = importance;
-        refl_prd.depth = prd_radiance.depth+1;
-        const float3 R = reflect(ray.direction, ffnormal);
-        const optix::Ray refl_ray(hit_point, R, radiance_ray_type, scene_epsilon);
-        rtTrace(top_object, refl_ray, refl_prd);
-        prd_radiance.result += r * refl_prd.result;
+        //reflection ray
+        if(importance > importance_cutoff && prd_radiance.depth < max_depth)
+        {
+            if(diffuse_reflection_samples == 1)
+            {
+                PerRayData_radiance refl_prd;
+                refl_prd.importance = importance;
+                refl_prd.depth = prd_radiance.depth+1;
+                const float3 R = reflect(ray.direction, ffnormal);
+                const optix::Ray refl_ray(hit_point, R, radiance_ray_type, scene_epsilon);
+                rtTrace(top_object, refl_ray, refl_prd);
+                prd_radiance.result += r * refl_prd.result;
+            }
+            else
+            {
+                //TODO diffuse reflections
+            }
+        }
     }
 }

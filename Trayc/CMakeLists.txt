@@ -58,7 +58,6 @@ add_library(Trayc STATIC
     ${Trayc_Handlers_SRCS}
     ${Trayc_CUDA_FILES}
     ${ptx_files}
-    ${Trayc_GL_SHADERS}
 )
 
 target_link_libraries(Trayc 
