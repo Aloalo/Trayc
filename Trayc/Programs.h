@@ -6,28 +6,20 @@
 #define TRAYC_PROGRAMS_H
 
 #include <optix_world.h>
+#include <Engine/Utils/Singleton.h>
+#include <map>
+#include <string>
 
 namespace trayc
 {
-    class Programs
+    class ProgramHandler : public Singleton<ProgramHandler>
     {
     public:
+        using Singleton<ProgramHandler>::Get;
 
-        static void Init(optix::Context &ctx);
-
-        static optix::Program anyHitSolid;
-        static optix::Program closestHitMesh;
-        static optix::Program closestHitGlass;
-        static optix::Program anyHitGlass;
-
-        static optix::Program meshBoundingBox;
-        static optix::Program meshIntersect;
-
-        static optix::Program rayGeneration;
-        static optix::Program exception;
-        static optix::Program envmapMiss;
-        static optix::Program gradientMiss;
-        static optix::Program solidMiss;
+        optix::Program Get(const std::string &filename, const std::string &programName);
+    private:
+        std::map<std::string, optix::Program> programs;
     };
 }
 

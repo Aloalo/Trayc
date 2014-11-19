@@ -68,8 +68,6 @@ namespace trayc
 
         if(!success)
         {
-            error = ilGetError();
-            cerr << "Image load failed " + path + " - IL reports error: " << error << " - " << iluErrorString(error) << endl;
             success = ilLoadImage((const ILstring)def.c_str());
             if(!success)
             {
@@ -105,7 +103,7 @@ namespace trayc
         sampler->setWrapMode(2, wrapMode);
         sampler->setIndexingMode(RT_TEXTURE_INDEX_NORMALIZED_COORDINATES);
         sampler->setFilteringModes(RT_FILTER_LINEAR, RT_FILTER_LINEAR, RT_FILTER_NONE);
-        existingTextures[path] = pair<TextureSampler, GLuint>(sampler, texID);
+        existingTextures[path == "" ? def : path] = pair<TextureSampler, GLuint>(sampler, texID);
 
         return sampler;
     }

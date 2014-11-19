@@ -18,7 +18,8 @@ RT_PROGRAM void closest_hit_phong()
     const float3 world_shade_normal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD, shading_normal));
     const float3 ffnormal = faceforward(world_shade_normal, -ray.direction, world_geo_normal);
 
-    phongShade(Ka, Kd, Ks, ffnormal, phong_exp, reflectivity);
+    phongShade(Ka, Kd, Ks, ffnormal, phong_exp);
+    phongReflect(ffnormal, reflectivity);
 }
 
 RT_PROGRAM void any_hit()

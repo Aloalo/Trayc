@@ -13,6 +13,6 @@ namespace trayc
         SETTING(bufferWidth)
     {
     }
-
+    
     optix::Context &ctx = Environment::Get().ctx;
 }

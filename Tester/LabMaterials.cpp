@@ -62,8 +62,8 @@ void LabMaterials::createLabMaterials()
     labmat[MIRROR] = mirrorMaterial;
 
     Material glassMaterial = ctx->createMaterial();
-    glassMaterial->setClosestHitProgram(0, Programs::closestHitGlass);
-    glassMaterial->setAnyHitProgram(1, Programs::anyHitGlass);
+    glassMaterial->setClosestHitProgram(0, ProgramHandler::Get().Get("material_shaders.cu", "closest_hit_glass"));
+    glassMaterial->setAnyHitProgram(1, ProgramHandler::Get().Get("material_shaders.cu", "any_hit_glass"));
     glassMaterial["importance_cutoff"]->setFloat(1e-2f);
     glassMaterial["cutoff_color"]->setFloat(0.55f, 0.55f, 0.55f);
     glassMaterial["fresnel_exponent"]->setFloat(3.0f);

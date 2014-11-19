@@ -30,12 +30,11 @@ static __device__ __inline__ void phongShadowed()
     rtTerminateRay();
 }
 
-static __device__ __inline__ void phongShade(float3 p_Ka,
-                               float3 p_Kd,
-                               float3 p_Ks,
-                               float3 ffnormal,
-                               float  phong_exp,
-                               float3 reflectivity)
+static __device__ __inline__ void phongShade(const float3 &p_Ka,
+                                             const float3 &p_Kd,
+                                             const float3 &p_Ks,
+                                             const float3 &ffnormal,
+                                             float phong_exp)
 {
     const float3 hit_point = ray.origin + t_hit * ray.direction;
     float3 color = p_Ka * ambient_light_color;
@@ -123,25 +122,27 @@ static __device__ __inline__ void phongShade(float3 p_Ka,
         }
     }
 
-    if(fmaxf(reflectivity) > 0.0f)
-    {
-        const float3 r = schlick(-dot(ffnormal, ray.direction), reflectivity);
-
-        const float importance = prd_radiance.importance * optix::luminance(r);
-
-        //reflection ray
-        if(importance > importance_cutoff && prd_radiance.depth < max_depth)
-        {
-            PerRayData_radiance refl_prd;
-            refl_prd.importance = importance;
-            refl_prd.depth = prd_radiance.depth+1;
-            const float3 R = reflect(ray.direction, ffnormal);
-            const optix::Ray refl_ray(hit_point, R, radiance_ray_type, scene_epsilon);
-            rtTrace(top_object, refl_ray, refl_prd);
-            color += r * refl_prd.result;
-        }
-    }
-
     // pass the color back up the tree
     prd_radiance.result = color;
+}
+
+static __device__ __inline__ void phongReflect(const float3 &ffnormal, const float3 &reflectivity)
+{
+    const float3 r = schlick(-dot(ffnormal, ray.direction), reflectivity);
+
+    const float importance = prd_radiance.importance * optix::luminance(r);
+
+    //reflection ray
+    if(importance > importance_cutoff && prd_radiance.depth < max_depth)
+    {
+        const float3 hit_point = ray.origin + t_hit * ray.direction;
+
+        PerRayData_radiance refl_prd;
+        refl_prd.importance = importance;
+        refl_prd.depth = prd_radiance.depth+1;
+        const float3 R = reflect(ray.direction, ffnormal);
+        const optix::Ray refl_ray(hit_point, R, radiance_ray_type, scene_epsilon);
+        rtTrace(top_object, refl_ray, refl_prd);
+        prd_radiance.result += r * refl_prd.result;
+    }
 }

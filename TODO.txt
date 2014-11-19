@@ -14,7 +14,7 @@ Grafika:
 	-motion blur
 	-diffuse reflections
 	-fuzzy transparency
-    -ambient oclusion (via RT and GL)
+    -ambient occlusion
 -global illumination
 	-(bidirectional) path tracing
 	-photon mapping

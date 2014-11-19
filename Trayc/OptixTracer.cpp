@@ -33,8 +33,8 @@ namespace trayc
     {
         Geometry gMesh = ctx->createGeometry();
         gMesh->setPrimitiveCount(mesh.indices.size());
-        gMesh->setBoundingBoxProgram(Programs::meshBoundingBox);
-        gMesh->setIntersectionProgram(Programs::meshIntersect);
+        gMesh->setBoundingBoxProgram(ProgramHandler::Get().Get("triangle_mesh.cu", "mesh_bounds"));
+        gMesh->setIntersectionProgram(ProgramHandler::Get().Get("triangle_mesh.cu", "mesh_intersect"));
 
         gMesh["vertex_buffer"]->setBuffer(GetBufferFromVector(mesh.positions, RT_FORMAT_FLOAT3));
         gMesh["normal_buffer"]->setBuffer(GetBufferFromVector(mesh.normals, RT_FORMAT_FLOAT3));
@@ -83,15 +83,13 @@ namespace trayc
     {
         ctx = Context::create();
 
-        Programs::Init(ctx);
-
         ctx->setRayTypeCount(2);
         ctx->setEntryPointCount(1);
         ctx->setCPUNumThreads(4);
 
         ctx["radiance_ray_type"]->setUint(0);
         ctx["shadow_ray_type"]->setUint(1);
-        ctx["scene_epsilon"]->setFloat(1.e-2f);
+        ctx["scene_epsilon"]->setFloat(0.01f);
         ctx["importance_cutoff"]->setFloat(0.01f);
         ctx["ambient_light_color"]->setFloat(0.3f, 0.3f, 0.3f);
 
@@ -102,12 +100,12 @@ namespace trayc
         SSbuffer = ctx->createBuffer(RT_BUFFER_OUTPUT);
         SSbuffer->setFormat(RT_FORMAT_UNSIGNED_BYTE4);
 
-        ctx->setRayGenerationProgram(0, Programs::rayGeneration);
+        ctx->setRayGenerationProgram(0, ProgramHandler::Get().Get("context_shaders.cu", "dof_camera"));
 
-        ctx->setMissProgram(0, Programs::envmapMiss);
+        ctx->setMissProgram(0, ProgramHandler::Get().Get("context_shaders.cu", "envmap_miss"));
         ctx["envmap"]->setTextureSampler(OptixTextureHandler::Get().Get(Utils::DefTexture("environment.jpg")));
 
-        ctx->setExceptionProgram(0, Programs::exception);
+        ctx->setExceptionProgram(0, ProgramHandler::Get().Get("context_shaders.cu", "exception"));
         ctx["bad_color"]->setFloat(1.0f, 0.0f, 0.0f);
 
         ApplySettings();
