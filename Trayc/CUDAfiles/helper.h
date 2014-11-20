@@ -1,4 +1,9 @@
-#pragma once
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
+#ifndef TRAYC_CONTEXT_SHADERS_H
+#define TRAYC_CONTEXT_SHADERS_H
 
 #include <optix.h>
 #include <optix_math.h>
@@ -66,3 +71,4 @@ struct PerRayData_shadow
     float attenuation;
 };
 
+#endif

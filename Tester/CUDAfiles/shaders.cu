@@ -12,7 +12,7 @@ rtDeclareVariable(float3, Ks, , );
 rtDeclareVariable(float, phong_exp, , );
 rtDeclareVariable(float3, reflectivity, , );
 
-RT_PROGRAM void closest_hit_phong()
+RT_PROGRAM void closest_hit_reflective()
 {
     const float3 world_geo_normal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD, geometric_normal));
     const float3 world_shade_normal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD, shading_normal));
@@ -27,7 +27,7 @@ RT_PROGRAM void closest_hit_phong()
     prd_radiance.result *= ambientOcclusion(hit_point, ffnormal, seed);
 }
 
-RT_PROGRAM void any_hit()
+RT_PROGRAM void any_hit_solid()
 {
     phongShadowed();
 }

@@ -15,6 +15,9 @@
 #include <assimp/postprocess.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <Trayc/Programs.h>
+
+
 using namespace trayc;
 using namespace engine;
 using namespace optix;
@@ -127,8 +130,8 @@ void TW_CALL TweakBarHandler::LoadNissan(void *userData)
 
     Geometry floor = ctx->createGeometry();
     floor->setPrimitiveCount(1);
-    floor->setBoundingBoxProgram(mat.floorAABB);
-    floor->setIntersectionProgram(mat.floorIntersect);
+    floor->setBoundingBoxProgram(ProgramHandler::Get().Get("rectangleAA.cu", "bounds"));
+    floor->setIntersectionProgram(ProgramHandler::Get().Get("rectangleAA.cu", "interect"));
 
     floor["plane_normal"]->setFloat(0.0f, 1.0f, 0.0f);
     floor["recmin"]->setFloat(-80.0f, -59.0f, -80.0f);
@@ -157,6 +160,17 @@ void TW_CALL TweakBarHandler::LoadMustang(void *userData)
     gameEngine->tracer.ClearSceneGraph();
     const mat4 trmustang = scale(translate(mat4(1.0f), vec3(100.0f, -50.0f, 0.0f)), vec3(0.025f));
     gameEngine->tracer.AddScene(LoadTest(Utils::Resource("mustang/mustang.obj"), Utils::Resource("mustang/"), trmustang), mat.getLabyrinthMaterial(LabMaterials::WALL));
+
+    Geometry sphere = ctx->createGeometry();
+    sphere->setPrimitiveCount(1);
+    sphere->setBoundingBoxProgram(ProgramHandler::Get().Get("sphere.cu", "bounds"));
+    sphere->setIntersectionProgram(ProgramHandler::Get().Get("sphere.cu", "intersect"));
+
+    sphere["sphere"]->setFloat(0.0f, 0.0f, 0.0f, 1.0f);
+
+    gameEngine->tracer.AddGeometryInstance(ctx->createGeometryInstance(sphere, &mat.getLabyrinthMaterial(LabMaterials::MIRROR), 
+        &mat.getLabyrinthMaterial(LabMaterials::MIRROR)+1));
+
     gameEngine->tracer.CompileSceneGraph();
 }
 
@@ -168,8 +182,8 @@ void TweakBarHandler::addLabyrinth(const Labyrinth &lab)
     {
         Geometry box = ctx->createGeometry();
         box->setPrimitiveCount(1);
-        box->setBoundingBoxProgram(mat.boxAABB);
-        box->setIntersectionProgram(mat.boxIntersect);
+        box->setBoundingBoxProgram(ProgramHandler::Get().Get("box.cu", "bounds"));
+        box->setIntersectionProgram(ProgramHandler::Get().Get("box.cu", "intersect"));
         box["boxmin"]->setFloat(walls[i].boxmin);
         box["boxmax"]->setFloat(walls[i].boxmax);
         gameEngine->tracer.AddGeometryInstance(ctx->createGeometryInstance(box, &mat.getLabyrinthMaterial(walls[i].matIdx), 
@@ -178,8 +192,8 @@ void TweakBarHandler::addLabyrinth(const Labyrinth &lab)
 
     Geometry floor = ctx->createGeometry();
     floor->setPrimitiveCount(1);
-    floor->setBoundingBoxProgram(mat.floorAABB);
-    floor->setIntersectionProgram(mat.floorIntersect);
+    floor->setBoundingBoxProgram(ProgramHandler::Get().Get("rectangleAA.cu", "bounds"));
+    floor->setIntersectionProgram(ProgramHandler::Get().Get("rectangleAA.cu", "intersect"));
 
     float rw = lab.getRealWidth(), rh = lab.getRealHeight();
     floor["plane_normal"]->setFloat(0.0f, 1.0f, 0.0f);

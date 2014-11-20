@@ -33,8 +33,8 @@ namespace trayc
     {
         Geometry gMesh = ctx->createGeometry();
         gMesh->setPrimitiveCount(mesh.indices.size());
-        gMesh->setBoundingBoxProgram(ProgramHandler::Get().Get("triangle_mesh.cu", "mesh_bounds"));
-        gMesh->setIntersectionProgram(ProgramHandler::Get().Get("triangle_mesh.cu", "mesh_intersect"));
+        gMesh->setBoundingBoxProgram(ProgramHandler::Get().Get("triangle_mesh.cu", "bounds"));
+        gMesh->setIntersectionProgram(ProgramHandler::Get().Get("triangle_mesh.cu", "intersect"));
 
         gMesh["vertex_buffer"]->setBuffer(GetBufferFromVector(mesh.positions, RT_FORMAT_FLOAT3));
         gMesh["normal_buffer"]->setBuffer(GetBufferFromVector(mesh.normals, RT_FORMAT_FLOAT3));
@@ -95,7 +95,7 @@ namespace trayc
         ctx["scene_epsilon"]->setFloat(0.01f);
         ctx["importance_cutoff"]->setFloat(0.01f);
         ctx["ambient_light_color"]->setFloat(0.3f, 0.3f, 0.3f);
-        ctx["frame"]->setUint(0);
+        ctx["frame"]->setUint(1);
 
         outBuffer = ctx->createBufferFromGLBO(RT_BUFFER_OUTPUT, GLBO);
         outBuffer->setFormat(RT_FORMAT_UNSIGNED_BYTE4);
@@ -111,6 +111,10 @@ namespace trayc
 
         ctx->setExceptionProgram(0, ProgramHandler::Get().Get("context_shaders.cu", "exception"));
         ctx["bad_color"]->setFloat(1.0f, 0.0f, 0.0f);
+
+        lightMaterial = ctx->createMaterial();
+        lightMaterial->setClosestHitProgram(0, ProgramHandler::Get().Get("material_shaders.cu", "closest_hit_light"));
+        lightMaterial->setAnyHitProgram(1, ProgramHandler::Get().Get("material_shaders.cu", "any_hit_light"));
 
         ApplySettings();
     }
@@ -182,6 +186,22 @@ namespace trayc
 
     void OptixTracer::CompileSceneGraph()
     {
+        //white spheres for lights
+        for(const auto &light : lights)
+            if(!light.is_directional)
+            {
+                Geometry sphere = ctx->createGeometry();
+                sphere->setPrimitiveCount(1);
+                sphere->setBoundingBoxProgram(ProgramHandler::Get().Get("sphere.cu", "bounds"));
+                sphere->setIntersectionProgram(ProgramHandler::Get().Get("sphere.cu", "intersect"));
+                sphere["sphere"]->setFloat(light.pos.x, light.pos.y, light.pos.z, light.radius);
+                GeometryInstance inst = ctx->createGeometryInstance();
+                inst->setMaterialCount(1);
+                inst->setGeometry(sphere);
+                inst->setMaterial(0, lightMaterial);
+                gis.push_back(inst);
+            }
+
         Buffer lightBuffer = ctx->createBuffer(RT_BUFFER_INPUT);
         lightBuffer->setFormat(RT_FORMAT_USER);
         lightBuffer->setElementSize(sizeof(BasicLight));
@@ -211,7 +231,16 @@ namespace trayc
             accel->setProperty("vertex_buffer_name", "vertex_buffer");
             accel->markDirty();
             geometrygroup->setAcceleration(accel);
-            ctx->launch(0, 0, 0);
+            try
+            {
+                ctx->launch(0, 0, 0);
+            }
+            catch (exception &e)
+            {
+                cerr << e.what() << endl;
+                exit(-1);
+            }
+            
 
             accelHandler.SaveAccelCache(filename, geometrygroup);
         }
@@ -237,9 +266,9 @@ namespace trayc
 
     void OptixTracer::Trace(unsigned int entryPoint, RTsize width, RTsize height, int renderingDivisionLevel)
     {
-        static unsigned int frame = 1;
-        ctx["frame"]->setUint(frame);
-        frame++;
+        //static unsigned int frame = 1;
+        //ctx["frame"]->setUint(frame);
+        //frame++;
         for(int i = 0; i < renderingDivisionLevel; ++i)
         {
             ctx["myStripe"]->setInt(i);

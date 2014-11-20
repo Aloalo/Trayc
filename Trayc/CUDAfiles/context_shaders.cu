@@ -1,4 +1,8 @@
-#include "phong.h"
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
+#include <Trayc/CUDAfiles/phong.h>
 
 //
 // Pinhole/DOF camera implementation

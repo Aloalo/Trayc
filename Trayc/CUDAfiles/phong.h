@@ -1,9 +1,16 @@
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
+#ifndef TRAYC_PHONG_H
+#define TRAYC_PHONG_H
+
 #include <optix_world.h>
 #include <optixu/optixu_math_namespace.h>
 #include <optixu/optixu_math.h>
-#include "helper.h"
-#include "lights.h"
-#include "random.h"
+#include <Trayc/CUDAfiles/helper.h>
+#include <Trayc/CUDAfiles/lights.h>
+#include <Trayc/CUDAfiles/random.h>
 
 rtBuffer<uchar4, 2> output_buffer;
 rtDeclareVariable(unsigned int, frame, , );
@@ -41,7 +48,7 @@ static __device__ __inline__ float ambientOcclusion(const float3 &hit_point, con
             const float phi = acosf(2.0f * rnd(seed) - 1.0f);
             const float sinphi = sinf(phi);
 
-            float3 sampleVector = make_float3(sinf(phi) * cosf(lambda), sinf(phi) * sinf(lambda), cosf(phi)) * ao_sampling_radius;
+            float3 sampleVector = make_float3(sinphi * cosf(lambda), sinphi * sinf(lambda), cosf(phi)) * ao_sampling_radius;
             if(dot(normal, sampleVector) < 0.0f)
                 sampleVector = -sampleVector;
 
@@ -188,3 +195,5 @@ static __device__ __inline__ void phongReflect(const float3 &hit_point, const fl
         }
     }
 }
+
+#endif

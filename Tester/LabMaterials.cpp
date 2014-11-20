@@ -28,17 +28,12 @@ Material& LabMaterials::getLabyrinthMaterial(int mat)
 
 void LabMaterials::createLabMaterials()
 {
-    string shaders = Utils::PathToPTX("shaders.cu");
-    string pathFloor = Utils::PathToPTX("rectangleAA.cu");
-    string pathBox = Utils::PathToPTX("box.cu");
-
-    Program closestHitSolid = ctx->createProgramFromPTXFile(shaders, "closest_hit_phong");
-    Program anyHitSolid = ctx->createProgramFromPTXFile(shaders, "any_hit");
-    boxAABB = ctx->createProgramFromPTXFile(pathBox, "box_bounds");
-    boxIntersect = ctx->createProgramFromPTXFile(pathBox, "box_intersect");
-    floorAABB = ctx->createProgramFromPTXFile(pathFloor, "bounds");
-    floorIntersect = ctx->createProgramFromPTXFile(pathFloor, "intersect");
-
+    Program closestHitSolid = ProgramHandler::Get().Get("shaders.cu", "closest_hit_reflective");
+    Program anyHitSolid = ProgramHandler::Get().Get("shaders.cu", "any_hit_solid");
+    Program boxAABB = ProgramHandler::Get().Get("box.cu", "bounds");
+    Program boxIntersect = ProgramHandler::Get().Get("box.cu", "intersect");
+    Program floorAABB = ProgramHandler::Get().Get("rectangleAA.cu", "bounds");
+    Program floorIntersect = ProgramHandler::Get().Get("rectangleAA.cu", "intersect");
 
     Material wallMaterial = ctx->createMaterial();
     wallMaterial->setClosestHitProgram(0, closestHitSolid);

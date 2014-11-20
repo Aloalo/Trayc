@@ -1,4 +1,9 @@
-#pragma once
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
+#ifndef TRAYC_LIGHTS_H
+#define TRAYC_LIGHTS_H
 
 #include <optixu/optixu_vector_types.h>
 
@@ -27,3 +32,5 @@ struct BasicLight
     int casts_shadows;
     int is_directional;
 };
+
+#endif

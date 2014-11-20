@@ -78,6 +78,7 @@ namespace trayc
         optix::GeometryGroup geometrygroup;
         std::vector<optix::GeometryInstance> gis;
         std::vector<BasicLight> lights;
+        optix::Material lightMaterial;
     };
 };
 

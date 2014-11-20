@@ -1,3 +1,7 @@
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
 #include <optix.h>
 #include <optixu/optixu_math_namespace.h>
 #include <optixu/optixu_matrix_namespace.h>
@@ -18,7 +22,7 @@ rtDeclareVariable(float3, geometric_normal, attribute geometric_normal, );
 rtDeclareVariable(float3, shading_normal, attribute shading_normal, ); 
 rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 
-RT_PROGRAM void mesh_intersect(int primIdx)
+RT_PROGRAM void intersect(int primIdx)
 {
     const int3 &idx = index_buffer[primIdx];
 
@@ -70,7 +74,7 @@ RT_PROGRAM void mesh_intersect(int primIdx)
     }
 }
 
-RT_PROGRAM void mesh_bounds(int primIdx, float result[6])
+RT_PROGRAM void bounds(int primIdx, float result[6])
 {  
     const int3 &idx = index_buffer[primIdx];
 

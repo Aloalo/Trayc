@@ -1,4 +1,8 @@
-#include "phong.h"
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
+#include <Trayc/CUDAfiles/phong.h>
 
 rtDeclareVariable(float3, shading_normal, attribute shading_normal, ); 
 rtDeclareVariable(float3, geometric_normal, attribute geometric_normal, ); 
@@ -167,7 +171,7 @@ RT_PROGRAM void closest_hit_reflective()
 }
 
 //
-// Terminates and fully attenuates ray after any hit
+// Terminates and fully attenuates ray after any hit if not opaque
 //
 RT_PROGRAM void any_hit_solid()
 {
@@ -175,4 +179,20 @@ RT_PROGRAM void any_hit_solid()
     if(opacity < importance_cutoff)
         rtIgnoreIntersection();
     phongShadowed();
+}
+
+//
+// Ignores intersection
+//
+RT_PROGRAM void closest_hit_light()
+{
+    prd_radiance.result = make_float3(1.0f, 1.0f, 1.0f);
+}
+
+//
+// Ignores intersection
+//
+RT_PROGRAM void any_hit_light()
+{
+    rtIgnoreIntersection();
 }

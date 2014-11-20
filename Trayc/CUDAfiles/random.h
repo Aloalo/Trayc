@@ -1,3 +1,10 @@
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
+#ifndef TRAYC_RANDOM_H
+#define TRAYC_RANDOM_H
+
 #include <optixu/optixu_math_namespace.h>
 
 template<unsigned int N>
@@ -98,3 +105,5 @@ static __device__ __inline__ float gaussian(uint &seed)
 {
     return sqrtf(-2.0f * logf(rnd(seed))) * cos(2.0f * M_PIf * rnd(seed));
 }
+
+#endif

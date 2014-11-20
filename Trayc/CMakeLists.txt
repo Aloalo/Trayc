@@ -43,6 +43,7 @@ set(Trayc_CUDA_FILES
     CUDAfiles/lights.h
     CUDAfiles/phong.h
     CUDAfiles/random.h
+    CUDAfiles/sphere.cu
 )
 
 source_group(Handlers FILES ${Trayc_Handlers_HDRS} ${Trayc_Handlers_SRCS})

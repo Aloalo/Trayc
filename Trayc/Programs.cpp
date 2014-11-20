@@ -13,12 +13,13 @@ namespace trayc
 {
     optix::Program ProgramHandler::Get(const std::string &filename, const std::string &programName)
     {
-        if(programs.find(programName) != programs.end())
-            return programs[programName];
+        const string name = filename + programName;
+        if(programs.find(name) != programs.end())
+            return programs[name];
 
         const string path(Utils::PathToPTX(filename));
         optix::Program prog = ctx->createProgramFromPTXFile(path, programName);
-        programs[programName] = prog;
+        programs[name] = prog;
         return prog;
     }
 
