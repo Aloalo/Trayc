@@ -89,9 +89,9 @@ RT_PROGRAM void closest_hit_glass()
             result += reflection * reflection_color * cutoff_color;
     }
 
-    const uint2 screen = output_buffer.size();
-    unsigned int seed = tea<16>(screen.x * launch_index.y + launch_index.x, frame);
-    result = result * beer_attenuation * ambientOcclusion(h, n, seed);
+    //const uint2 screen = output_buffer.size();
+    //unsigned int seed = tea<16>(screen.x * launch_index.y + launch_index.x, frame);
+    result = result * beer_attenuation;// * ambientOcclusion(h, n, seed);
     prd_radiance.result = result;
 }
 

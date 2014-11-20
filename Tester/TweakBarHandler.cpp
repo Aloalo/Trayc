@@ -41,7 +41,9 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TwBar *loadbar;
     loadbar = TwNewBar("Tests");
     TwAddButton(loadbar, "Load Nissan", LoadNissan, NULL, " label='Load Nissan' ");
+    TwAddButton(loadbar, "Load Mustang", LoadMustang, NULL, " label='Load Mustang' ");
     TwAddButton(loadbar, "Load Sponza", LoadSponza, NULL, " label='Load Sponza' ");
+    TwAddButton(loadbar, "Load SponzaAO", LoadSponzaAO, NULL, " label='Load SponzaAO' ");
     TwAddButton(loadbar, "Load Labyrinth", LoadLabyrinth, NULL, " label='Load Labyrinth' ");
     TwAddVarRW(loadbar, "Labyrinth Size", TW_TYPE_INT32, &labSize, " label='Labyrinth Size' ");
 
@@ -107,6 +109,13 @@ void TW_CALL TweakBarHandler::LoadSponza(void *userData)
     gameEngine->tracer.CompileSceneGraph();
 }
 
+void TW_CALL TweakBarHandler::LoadSponzaAO(void *userData)
+{
+    gameEngine->tracer.ClearSceneGraph();
+    gameEngine->tracer.AddScene(LoadTest(Utils::Resource("crytek-sponza/sponza.obj"), Utils::Resource("crytek-sponza/"), scale(mat4(1.0f), vec3(0.05f))), mat.getLabyrinthMaterial(LabMaterials::WALL));
+    gameEngine->tracer.CompileSceneGraph();
+}
+
 void TW_CALL TweakBarHandler::LoadNissan(void *userData)
 {
     gameEngine->tracer.ClearSceneGraph();
@@ -140,6 +149,14 @@ void TW_CALL TweakBarHandler::LoadNissan(void *userData)
         1 //is_directional
         ));
 
+    gameEngine->tracer.CompileSceneGraph();
+}
+
+void TW_CALL TweakBarHandler::LoadMustang(void *userData)
+{
+    gameEngine->tracer.ClearSceneGraph();
+    const mat4 trmustang = scale(translate(mat4(1.0f), vec3(100.0f, -50.0f, 0.0f)), vec3(0.025f));
+    gameEngine->tracer.AddScene(LoadTest(Utils::Resource("mustang/mustang.obj"), Utils::Resource("mustang/"), trmustang), mat.getLabyrinthMaterial(LabMaterials::WALL));
     gameEngine->tracer.CompileSceneGraph();
 }
 

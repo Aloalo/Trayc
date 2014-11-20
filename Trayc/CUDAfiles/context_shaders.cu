@@ -40,7 +40,7 @@ RT_PROGRAM void dof_camera()
             result += prd.result;
             count += 1.0f;
 
-            for(int k = 1; k < dof_samples; ++k)
+            for(int k = 0; k < dof_samples; ++k)
             {
                 const float2 d_dof = make_float2(AAlevel * newLaunchIndex.x + i, AAlevel * newLaunchIndex.y + j) / screen * 2.f - 1.f;
                 const float3 ray_direction_dof = normalize(d_dof.x * U + d_dof.y * V + W);

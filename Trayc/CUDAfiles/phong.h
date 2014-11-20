@@ -37,7 +37,7 @@ static __device__ __inline__ float ambientOcclusion(const float3 &hit_point, con
         float occlusion = 0.0f;
         for(int k = 0; k < ambient_occlusion_samples; ++k)
         {
-            const float lambda = rnd(seed) * pi2;
+            const float lambda = rnd(seed) * pi2 - pi;
             const float phi = acosf(2.0f * rnd(seed) - 1.0f);
             const float sinphi = sinf(phi);
 
