@@ -24,6 +24,8 @@ namespace trayc
         switch (e.type)
         {
         case SDL_QUIT:
+            tracer.ClearSceneGraph();
+            tracer.matHandler.Clear();
             OptixTextureHandler::Get().CleanUP();
             bufferDrawer.CleanUP();
             break;

@@ -60,16 +60,17 @@ namespace trayc
             return existingTextures[path].first;
 
         ILuint imageID;
-        ILboolean success;
         ILenum error;
         ilGenImages(1, &imageID);
         ilBindImage(imageID);
-        success = ilLoadImage((const ILstring)path.c_str());
+        const ILboolean success = ilLoadImage((const ILstring)path.c_str());
 
         if(!success)
         {
-            success = ilLoadImage((const ILstring)def.c_str());
-            if(!success)
+            if(existingTextures.find(def) != existingTextures.end())
+                return existingTextures[def].first;
+            const ILboolean defsuccess = ilLoadImage((const ILstring)def.c_str());
+            if(!defsuccess)
             {
                 error = ilGetError();
                 cerr << "Image load failed " + def + " - IL reports error: " << error << " - " << iluErrorString(error) << endl;
@@ -82,9 +83,7 @@ namespace trayc
             iluFlipImage();
 
         GLenum type;
-        success = convertAndGetType(format, type);
-
-        if(!success)
+        if(!convertAndGetType(format, type))
         {
             error = ilGetError();
             cerr << "Image conversion failed - IL reports error: " << error << " - " << iluErrorString(error) << endl;
@@ -103,7 +102,7 @@ namespace trayc
         sampler->setWrapMode(2, wrapMode);
         sampler->setIndexingMode(RT_TEXTURE_INDEX_NORMALIZED_COORDINATES);
         sampler->setFilteringModes(RT_FILTER_LINEAR, RT_FILTER_LINEAR, RT_FILTER_NONE);
-        existingTextures[path == "" ? def : path] = pair<TextureSampler, GLuint>(sampler, texID);
+        existingTextures[success ? path : def] = pair<TextureSampler, GLuint>(sampler, texID);
 
         return sampler;
     }

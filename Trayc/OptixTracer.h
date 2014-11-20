@@ -17,6 +17,7 @@ namespace trayc
     //handles optix traceing
     class OptixTracer
     {
+        friend class GameEngine;
     public:
         OptixTracer(void);
         ~OptixTracer(void);

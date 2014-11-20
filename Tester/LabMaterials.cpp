@@ -43,7 +43,6 @@ void LabMaterials::createLabMaterials()
     wallMaterial["Ks"]->setFloat(0.8f, 0.8f, 0.8f);
     wallMaterial["phong_exp"]->setFloat(88.0f);
     wallMaterial["reflectivity"]->setFloat(0.0f, 0.0f, 0.0f);
-    wallMaterial["ambient_map"]->setTextureSampler(OptixTextureHandler::Get().Get(Utils::DefTexture("opacityDefault.png")));
     labmat[WALL] = wallMaterial;
 
     Material mirrorMaterial = ctx->createMaterial();
@@ -52,7 +51,6 @@ void LabMaterials::createLabMaterials()
     mirrorMaterial["Ka"]->setFloat(0.3f, 0.3f, 0.3f);
     mirrorMaterial["Kd"]->setFloat(0.7f, 0.7f, 0.7f);
     mirrorMaterial["Ks"]->setFloat(0.8f, 0.8f, 0.8f);
-    mirrorMaterial["ambient_map"]->setTextureSampler(OptixTextureHandler::Get().Get(Utils::DefTexture("opacityDefault.png")));
     mirrorMaterial["phong_exp"]->setFloat(88.0f);
     mirrorMaterial["reflectivity"]->setFloat(0.7f, 0.7f, 0.7f);
     labmat[MIRROR] = mirrorMaterial;
