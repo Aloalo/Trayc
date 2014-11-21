@@ -2,19 +2,19 @@ project(Trayc)
 
 set(Trayc_HDRS
     BufferDrawer.h
+    SceneGraph.h
     Environment.h
     GameEngine.h
     OptixTracer.h
-    Programs.h
     Utils.h
 )
 
 set(Trayc_SRCS
     BufferDrawer.cpp
+    SceneGraph.cpp
     Environment.cpp
     GameEngine.cpp
     OptixTracer.cpp
-    Programs.cpp
     Utils.cpp
 )
 
@@ -22,12 +22,14 @@ set(Trayc_Handlers_HDRS
     Handlers/AccelHandler.h
     Handlers/MaterialHandler.h
     Handlers/OptixTextureHandler.h
+    Handlers/ProgramHandler.h
 )
 
 set(Trayc_Handlers_SRCS
     Handlers/AccelHandler.cpp
     Handlers/MaterialHandler.cpp
     Handlers/OptixTextureHandler.cpp
+    Handlers/ProgramHandler.cpp
 )
 
 set(Trayc_GL_SHADERS

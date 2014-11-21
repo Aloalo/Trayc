@@ -14,7 +14,7 @@ using namespace engine;
 namespace trayc
 {
     GameEngine::GameEngine(void)
-        : SETTING(FOV),
+    : SETTING(FOV), SETTING(frameRandomSeed), frame(0), framesPassed(0), FPS(0.0f),
         player(Camera(glm::vec3(7.0f, 9.2f, -6.0f), (float)Environment::Get().screenWidth.x / Environment::Get().screenHeight.x, FOV), 7.0f, 0.006f)
     {
     }
@@ -37,12 +37,25 @@ namespace trayc
                 glViewport(0, 0, e.window.data1, e.window.data2);
             }
             break;
+        //case SDL_MOUSEMOTION:
+        //    tracer.SetCameraDir(player.cam);
+        //    break;
         }
         player.HandleEvent(e);
     }
 
     void GameEngine::Update(float deltaTime)
     {
+        static float timePassed = 0.0f;
+        timePassed += deltaTime;
+
+        if(timePassed > 1.0f)
+        {
+            FPS = (float) framesPassed / timePassed;
+            timePassed = 0.0f;
+            framesPassed = 0;
+        }
+
         player.Update(deltaTime);
         tracer.SetCamera(player.cam);
     }
@@ -66,15 +79,19 @@ namespace trayc
 
     void GameEngine::Draw()
     {
+        ++framesPassed;
+
         try
         {
-            tracer.Trace(0, Environment::Get().bufferWidth, Environment::Get().bufferHeight);
+            ++frame;
+            unsigned int rndSeed = frameRandomSeed ? frame : 1337;
+            tracer.Trace(0, Environment::Get().bufferWidth, Environment::Get().bufferHeight, 1, rndSeed);
             bufferDrawer.Draw(tracer.outBuffer);
         }
         catch(exception &ex)
         {
             cerr << ex.what() << endl;
-            exit(0);
+            exit(-1);
         }
     }
 

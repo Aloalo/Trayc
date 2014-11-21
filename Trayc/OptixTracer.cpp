@@ -5,7 +5,7 @@
 #include <Trayc/OptixTracer.h>
 #include <Trayc/Utils.h>
 #include <Trayc/Environment.h>
-#include <Trayc/Programs.h>
+#include <Trayc/Handlers/ProgramHandler.h>
 #include <Trayc/Handlers/OptixTextureHandler.h>
 #include <ctime>
 #include <fstream>
@@ -95,7 +95,6 @@ namespace trayc
         ctx["scene_epsilon"]->setFloat(0.01f);
         ctx["importance_cutoff"]->setFloat(0.01f);
         ctx["ambient_light_color"]->setFloat(0.3f, 0.3f, 0.3f);
-        ctx["frame"]->setUint(1);
 
         outBuffer = ctx->createBufferFromGLBO(RT_BUFFER_OUTPUT, GLBO);
         outBuffer->setFormat(RT_FORMAT_UNSIGNED_BYTE4);
@@ -115,6 +114,8 @@ namespace trayc
         lightMaterial = ctx->createMaterial();
         lightMaterial->setClosestHitProgram(0, ProgramHandler::Get().Get("material_shaders.cu", "closest_hit_light"));
         lightMaterial->setAnyHitProgram(1, ProgramHandler::Get().Get("material_shaders.cu", "any_hit_light"));
+
+        geometrygroup = ctx->createGeometryGroup();
 
         ApplySettings();
     }
@@ -152,7 +153,7 @@ namespace trayc
         inst->setGeometry(gMesh);
         inst->setMaterial(0, material);
 
-        gis.push_back(inst);
+        geometrygroup->addChild(inst);
     }
 
     void OptixTracer::AddScene(const Scene &scene, const optix::Material mat)
@@ -171,7 +172,7 @@ namespace trayc
         inst->setGeometry(gMesh);
         inst->setMaterial(0, mat);
 
-        gis.push_back(inst);
+        geometrygroup->addChild(inst);
     }
 
     void OptixTracer::AddLight(const BasicLight &light)
@@ -181,7 +182,7 @@ namespace trayc
 
     void OptixTracer::AddGeometryInstance(const GeometryInstance gi)
     {
-        gis.push_back(gi);
+        geometrygroup->addChild(gi);
     }
 
     void OptixTracer::CompileSceneGraph()
@@ -199,7 +200,7 @@ namespace trayc
                 inst->setMaterialCount(1);
                 inst->setGeometry(sphere);
                 inst->setMaterial(0, lightMaterial);
-                gis.push_back(inst);
+                geometrygroup->addChild(inst);
             }
 
         Buffer lightBuffer = ctx->createBuffer(RT_BUFFER_INPUT);
@@ -211,16 +212,11 @@ namespace trayc
         memcpy(lightBuffer->map(), (const void*)lights.data(), lights.size() * sizeof(BasicLight));
         lightBuffer->unmap();
 
-        geometrygroup = ctx->createGeometryGroup();
-        geometrygroup->setChildCount(gis.size());
-        for(int i = 0; i < gis.size(); ++i)
-            geometrygroup->setChild(i, gis[i]);
-
         ctx["top_object"]->set(geometrygroup);
 
         geometrygroup->setAcceleration(ctx->createAcceleration("Sbvh", "Bvh"));
 
-        if(!accelHandler.accel_cache_loaded && gis.size() > 0)
+        if(!accelHandler.accel_cache_loaded && geometrygroup->getChildCount() > 0)
         {
             const string filename = Utils::Resource("accelCaches/accel.accelcache");
             accelHandler.LoadAccelCache(filename, geometrygroup);
@@ -253,22 +249,20 @@ namespace trayc
     {
         ctx["lights"]->getBuffer()->destroy();
         lights.clear();
-        for(auto instance : gis)
+        const int ctChildren = geometrygroup->getChildCount();
+        for(int i = ctChildren - 1; i >= 0; --i)
         {
-            instance->getGeometry()->destroy();
-            instance->destroy();
+            geometrygroup->getChild(i)->getGeometry()->destroy();
+            geometrygroup->getChild(i)->destroy();
+            geometrygroup->removeChild(i);
         }
-        gis.clear();
-        geometrygroup->destroy();
-
+        geometrygroup->getAcceleration()->destroy();
         matHandler.Clear();
     }
 
-    void OptixTracer::Trace(unsigned int entryPoint, RTsize width, RTsize height, int renderingDivisionLevel)
+    void OptixTracer::Trace(unsigned int entryPoint, RTsize width, RTsize height, int renderingDivisionLevel, unsigned int rndSeed)
     {
-        //static unsigned int frame = 1;
-        //ctx["frame"]->setUint(frame);
-        //frame++;
+        ctx["rnd_seed"]->setUint(rndSeed);
         for(int i = 0; i < renderingDivisionLevel; ++i)
         {
             ctx["myStripe"]->setInt(i);
@@ -293,10 +287,23 @@ namespace trayc
     {
         const float tanfov = tanf(cam.FoV * Utils::pi / 360.0f) * 0.5f;
 
-        ctx["eye"]->setFloat(Utils::glmToOptix(cam.position));
-        ctx["U"]->setFloat(Utils::glmToOptix(cam.GetRight() * tanfov * cam.aspectRatio));
-        ctx["V"]->setFloat(Utils::glmToOptix(cam.GetUp() * tanfov));
-        ctx["W"]->setFloat(Utils::glmToOptix(cam.GetDirection()));
+        ctx["eye"]->setFloat(*(float3*)(&cam.position));
+        ctx["U"]->setFloat(*(float3*)&(cam.GetRight() * tanfov * cam.aspectRatio));
+        ctx["V"]->setFloat(*(float3*)&(cam.GetUp() * tanfov));
+        ctx["W"]->setFloat(*(float3*)&cam.GetDirection());
+    }
+
+    void OptixTracer::SetCameraPos(const glm::vec3 &pos)
+    {
+        ctx["eye"]->setFloat(*(float3*)(&pos));
+    }
+
+    void OptixTracer::SetCameraDir(const Camera &cam)
+    {
+        const float tanfov = tanf(cam.FoV * Utils::pi / 360.0f) * 0.5f;
+        ctx["U"]->setFloat(*(float3*)&(cam.GetRight() * tanfov * cam.aspectRatio));
+        ctx["V"]->setFloat(*(float3*)&(cam.GetUp() * tanfov));
+        ctx["W"]->setFloat(*(float3*)&cam.GetDirection());
     }
 
     void OptixTracer::RenderToPPM(const std::string &name)
@@ -314,7 +321,7 @@ namespace trayc
         ctx["ambient_occlusion_samples"]->setInt(SSambientOcclusionSamples);
         ctx["output_buffer"]->setBuffer(SSbuffer);
 
-        Trace(0, w, h, SSrenderingDivisionLevel);
+        Trace(0, w, h, SSrenderingDivisionLevel, 1337);
 
         ctx["output_buffer"]->setBuffer(outBuffer);
         ctx["shadow_samples"]->setInt(shadowSamples);

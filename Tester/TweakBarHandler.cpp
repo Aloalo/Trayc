@@ -15,7 +15,7 @@
 #include <assimp/postprocess.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <Trayc/Programs.h>
+#include <Trayc/Handlers/ProgramHandler.h>
 
 
 using namespace trayc;
@@ -54,8 +54,8 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     rtsettings = TwNewBar("rtsettings");
     TwDefine(" rtsettings label='Real Time Settings' ");
     TwDefine(" rtsettings iconified=true ");
-    TwAddVarCB(rtsettings, "FXAA", TW_TYPE_INT32, SetFXAA, GetFXAA, nullptr, "");
-    TwAddVarCB(rtsettings, "Screen texture filtering", TW_TYPE_INT32, SetTextureFilter, GetTextureFilter, nullptr, "");
+    TwAddVarCB(rtsettings, "FXAA", TW_TYPE_BOOL8, SetFXAA, GetFXAA, nullptr, "");
+    TwAddVarCB(rtsettings, "Screen texture filtering", TW_TYPE_BOOL8, SetTextureFilter, GetTextureFilter, nullptr, "");
     TwAddVarRW(rtsettings, "Screen Width", TW_TYPE_INT32, &Environment::Get().screenWidth.x, "");
     TwAddVarRW(rtsettings, "Screen Height", TW_TYPE_INT32, &Environment::Get().screenHeight.x, "");
     TwAddVarRW(rtsettings, "OutBuffer Width", TW_TYPE_INT32, &bw, "");
@@ -89,6 +89,8 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TwAddVarRW(generalsettings, "Aparture Radius", TW_TYPE_FLOAT, &gameEngine->tracer.apertureRadius.x, "");
     TwAddVarRW(generalsettings, "Focal Length", TW_TYPE_FLOAT, &gameEngine->tracer.focalLength.x, "");
     TwAddVarRW(generalsettings, "AO Sampling Radius", TW_TYPE_FLOAT, &gameEngine->tracer.AOsamplingRadius.x, "");
+    TwAddVarRW(generalsettings, "Time based random seed", TW_TYPE_BOOL8, &gameEngine->frameRandomSeed.x, "");
+    TwAddVarRO(generalsettings, "FPS", TW_TYPE_FLOAT, &gameEngine->FPS, "");
     TwAddButton(generalsettings, "Apply", ApplySettings, NULL, " label='Apply' ");
 }
 
@@ -131,7 +133,7 @@ void TW_CALL TweakBarHandler::LoadNissan(void *userData)
     Geometry floor = ctx->createGeometry();
     floor->setPrimitiveCount(1);
     floor->setBoundingBoxProgram(ProgramHandler::Get().Get("rectangleAA.cu", "bounds"));
-    floor->setIntersectionProgram(ProgramHandler::Get().Get("rectangleAA.cu", "interect"));
+    floor->setIntersectionProgram(ProgramHandler::Get().Get("rectangleAA.cu", "intersect"));
 
     floor["plane_normal"]->setFloat(0.0f, 1.0f, 0.0f);
     floor["recmin"]->setFloat(-80.0f, -59.0f, -80.0f);
@@ -160,17 +162,6 @@ void TW_CALL TweakBarHandler::LoadMustang(void *userData)
     gameEngine->tracer.ClearSceneGraph();
     const mat4 trmustang = scale(translate(mat4(1.0f), vec3(100.0f, -50.0f, 0.0f)), vec3(0.025f));
     gameEngine->tracer.AddScene(LoadTest(Utils::Resource("mustang/mustang.obj"), Utils::Resource("mustang/"), trmustang), mat.getLabyrinthMaterial(LabMaterials::WALL));
-
-    Geometry sphere = ctx->createGeometry();
-    sphere->setPrimitiveCount(1);
-    sphere->setBoundingBoxProgram(ProgramHandler::Get().Get("sphere.cu", "bounds"));
-    sphere->setIntersectionProgram(ProgramHandler::Get().Get("sphere.cu", "intersect"));
-
-    sphere["sphere"]->setFloat(0.0f, 0.0f, 0.0f, 1.0f);
-
-    gameEngine->tracer.AddGeometryInstance(ctx->createGeometryInstance(sphere, &mat.getLabyrinthMaterial(LabMaterials::MIRROR), 
-        &mat.getLabyrinthMaterial(LabMaterials::MIRROR)+1));
-
     gameEngine->tracer.CompileSceneGraph();
 }
 
@@ -233,17 +224,17 @@ void TW_CALL TweakBarHandler::RenderPPM(void *userData)
 
 void TW_CALL TweakBarHandler::SetFXAA(const void *value, void *clientData)
 {
-    gameEngine->bufferDrawer.SetUseFxaa(*static_cast<const int*>(value));
+    gameEngine->bufferDrawer.SetUseFxaa(*static_cast<const bool*>(value));
 }
 
 void TW_CALL TweakBarHandler::GetFXAA(void *value, void *clientData)
 {
-    *(int*)(value) = gameEngine->bufferDrawer.useFxaa.x;
+    *(bool*)(value) = gameEngine->bufferDrawer.useFxaa.x;
 }
 
 void TW_CALL TweakBarHandler::SetTextureFilter(const void *value, void *clientData)
 {
-    if(*static_cast<const int*>(value) == 1)
+    if(*static_cast<const bool*>(value) == 1)
         gameEngine->bufferDrawer.SetOutBufferTextureFilter(GL_LINEAR);
     else
         gameEngine->bufferDrawer.SetOutBufferTextureFilter(GL_NEAREST);
@@ -252,9 +243,9 @@ void TW_CALL TweakBarHandler::SetTextureFilter(const void *value, void *clientDa
 void TW_CALL TweakBarHandler::GetTextureFilter(void *value, void *clientData)
 {
     if(gameEngine->bufferDrawer.textureFilter == GL_LINEAR)
-        *(int*)(value) = 1;
+        *(bool*)(value) = 1;
     else
-        *(int*)(value) = 0;
+        *(bool*)(value) = 0;
 }
 
 void TW_CALL TweakBarHandler::ApplySettings(void *userData)

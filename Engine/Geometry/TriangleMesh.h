@@ -26,6 +26,9 @@ namespace engine
         //index to the scene's material array
         int materialIndex;
         GLenum orientation;
+
+        //glm::mat4 transform;
+        //bool isStatic;
     };
 }
 

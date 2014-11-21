@@ -30,7 +30,14 @@ namespace trayc
         void Init();
         void Draw();
 
+        unsigned int frame;
+        //for fps calculation
+        int framesPassed;
+        float FPS;
+
+        //general
         engine::Setting<float> FOV;
+        engine::Setting<bool> frameRandomSeed;
 
         engine::DefaultCameraHandler player;
         OptixTracer tracer;

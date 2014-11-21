@@ -94,7 +94,7 @@ RT_PROGRAM void closest_hit_glass()
     }
 
     //const uint2 screen = output_buffer.size();
-    //unsigned int seed = tea<16>(screen.x * launch_index.y + launch_index.x, frame);
+    //unsigned int seed = tea<16>(screen.x * launch_index.y + launch_index.x, rnd_seed);
     result = result * beer_attenuation;// * ambientOcclusion(h, n, seed);
     prd_radiance.result = result;
 }
@@ -130,12 +130,12 @@ RT_PROGRAM void closest_hit_solid()
     const float3 hit_point = ray.origin + t_hit * ray.direction;
 
     const uint2 screen = output_buffer.size();
-    unsigned int seed = tea<16>(screen.x*launch_index.y+launch_index.x, frame);
+    unsigned int seed = tea<16>(screen.x*launch_index.y+launch_index.x, rnd_seed);
 
     //phongShade(ffnormal, make_float3(0.0f), make_float3(0.0f), make_float3(0.0f), phong_exp, reflectivity);
     //phongShade(make_float3(abs(ffnormal.x), abs(ffnormal.y), abs(ffnormal.z)), make_float3(0.0f), make_float3(0.0f), make_float3(0.0f), phong_exp, reflectivity);
     phongShade(hit_point, make_float3(pKd) * Ka, make_float3(pKd) * Kd, make_float3(pKs) * Ks, ffnormal, pKs.w * 255.0f, seed);
-    prd_radiance.result *= ambientOcclusion(hit_point, world_geometric_normal, seed);
+    prd_radiance.result *= ambientOcclusion(hit_point, ffnormal, seed);
 }
 
 rtDeclareVariable(float3, reflectivity, , );     
@@ -163,7 +163,7 @@ RT_PROGRAM void closest_hit_reflective()
     const float3 hit_point = ray.origin + t_hit * ray.direction;
 
     const uint2 screen = output_buffer.size();
-    unsigned int seed = tea<16>(screen.x*launch_index.y+launch_index.x, frame);
+    unsigned int seed = tea<16>(screen.x*launch_index.y+launch_index.x, rnd_seed);
 
     phongShade(hit_point, make_float3(pKd) * Ka, make_float3(pKd) * Kd, make_float3(pKs) * Ks, ffnormal, pKs.w * 255.0f, seed);
     phongReflect(hit_point, ffnormal, reflectivity);

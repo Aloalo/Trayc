@@ -13,7 +13,7 @@
 #include <Trayc/CUDAfiles/random.h>
 
 rtBuffer<uchar4, 2> output_buffer;
-rtDeclareVariable(unsigned int, frame, , );
+rtDeclareVariable(unsigned int, rnd_seed, , );
 
 
 rtDeclareVariable(rtObject, top_object, , );

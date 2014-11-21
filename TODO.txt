@@ -1,10 +1,9 @@
 Opcenito:
--optimize CUDA shaders
-     -indices (int3, short3, byte3)
-     -control flow
 -moving lights in tests
+-exit when done with SS
 
 Grafika:
+-vertical lines artefact (random seed?)
 -area lights
 -mipmaping (optix release)
 -glass/reflective mesh textures

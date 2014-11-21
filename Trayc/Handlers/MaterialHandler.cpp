@@ -3,7 +3,7 @@
 */
 
 #include <Trayc/Handlers/MaterialHandler.h>
-#include <Trayc/Programs.h>
+#include <Trayc/Handlers/ProgramHandler.h>
 #include <Trayc/Handlers/OptixTextureHandler.h>
 #include <Trayc/Environment.h>
 

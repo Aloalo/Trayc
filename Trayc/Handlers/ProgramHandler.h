@@ -2,8 +2,8 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 
-#ifndef TRAYC_PROGRAMS_H
-#define TRAYC_PROGRAMS_H
+#ifndef TRAYC_PROGRAMHANDLER_H
+#define TRAYC_PROGRAMHANDLER_H
 
 #include <optix_world.h>
 #include <Engine/Utils/Singleton.h>

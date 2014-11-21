@@ -2,7 +2,7 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 
-#include <Trayc/Programs.h>
+#include <Trayc/Handlers/ProgramHandler.h>
 #include <Trayc/Utils.h>
 #include <Trayc/Environment.h>
 
