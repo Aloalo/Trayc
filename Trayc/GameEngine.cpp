@@ -6,6 +6,7 @@
 #include <Trayc/Environment.h>
 #include <Trayc/Handlers/OptixTextureHandler.h>
 #include <Engine/Core/SDLHandler.h>
+#include <Engine/Core/EventHandler.h>
 
 using namespace std;
 using namespace optix;
@@ -14,9 +15,18 @@ using namespace engine;
 namespace trayc
 {
     GameEngine::GameEngine(void)
-    : SETTING(FOV), SETTING(frameRandomSeed), frame(0), framesPassed(0), FPS(0.0f),
-        player(Camera(glm::vec3(7.0f, 9.2f, -6.0f), (float)Environment::Get().screenWidth.x / Environment::Get().screenHeight.x, FOV), 7.0f, 0.006f)
+        : closeAfterSS(false), frame(0), framesPassed(0), FPS(0.0f),
+          SETTING(FOV), SETTING(frameRandomSeed),
+          player(Camera(glm::vec3(7.0f, 9.2f, -6.0f), (float)Environment::Get().screenWidth.x / Environment::Get().screenHeight.x, FOV), 7.0f, 0.006f)
     {
+    }
+
+    void GameEngine::CleanUp()
+    {
+        tracer.ClearSceneGraph();
+        tracer.matHandler.Clear();
+        OptixTextureHandler::Get().CleanUP();
+        bufferDrawer.CleanUP();
     }
 
     void GameEngine::HandleEvent(const SDL_Event &e)
@@ -24,10 +34,7 @@ namespace trayc
         switch (e.type)
         {
         case SDL_QUIT:
-            tracer.ClearSceneGraph();
-            tracer.matHandler.Clear();
-            OptixTextureHandler::Get().CleanUP();
-            bufferDrawer.CleanUP();
+            CleanUp();
             break;
         case SDL_WINDOWEVENT:
             if(e.window.event == SDL_WINDOWEVENT_RESIZED)
@@ -67,13 +74,13 @@ namespace trayc
             Environment::Get().ctx = Context::create();
             tracer.Initialize(bufferDrawer.CreateGLBuffer());
             bufferDrawer.Init(tracer.outBuffer->getElementSize());
-            tracer.CompileSceneGraph();
+            tracer.CompileSceneGraph("", false);
             tracer.SetCamera(player.cam);
         }
         catch(exception &ex)
         {
             cerr << ex.what() << endl;
-            exit(-1);
+            EventHandler::SetQuit();
         }
     }
 
@@ -91,10 +98,9 @@ namespace trayc
         catch(exception &ex)
         {
             cerr << ex.what() << endl;
-            exit(-1);
+            EventHandler::SetQuit();
         }
     }
-
 
     void GameEngine::ApplySettings()
     {
@@ -122,4 +128,12 @@ namespace trayc
         bufferDrawer.AllocateBuffer(w, h);
         tracer.outBuffer->registerGLBuffer();
     }
+
+    void GameEngine::HighQualitySS(const std::string &name)
+    {
+        tracer.RenderToPPM(name);
+        if(closeAfterSS)
+            EventHandler::SetQuit();
+    }
+
 }

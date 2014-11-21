@@ -7,6 +7,7 @@
 #include <Trayc/Environment.h>
 #include <Trayc/Handlers/ProgramHandler.h>
 #include <Trayc/Handlers/OptixTextureHandler.h>
+#include <Engine/Core/EventHandler.h>
 #include <ctime>
 #include <fstream>
 #include <glm/gtc/matrix_transform.hpp>
@@ -115,7 +116,17 @@ namespace trayc
         lightMaterial->setClosestHitProgram(0, ProgramHandler::Get().Get("material_shaders.cu", "closest_hit_light"));
         lightMaterial->setAnyHitProgram(1, ProgramHandler::Get().Get("material_shaders.cu", "any_hit_light"));
 
-        geometrygroup = ctx->createGeometryGroup();
+        staticGG = ctx->createGeometryGroup();
+        lightsGG = ctx->createGeometryGroup();
+        lightsGG->setAcceleration(ctx->createAcceleration("NoAccel", "NoAccel"));
+
+        topNode = ctx->createGroup();
+        topNode->setAcceleration(ctx->createAcceleration("NoAccel", "NoAccel"));
+        topNode->addChild(staticGG);
+        topNode->addChild(lightsGG);
+
+        ctx["top_object"]->set(topNode);
+        ctx["top_shadower"]->set(staticGG);
 
         ApplySettings();
     }
@@ -153,7 +164,7 @@ namespace trayc
         inst->setGeometry(gMesh);
         inst->setMaterial(0, material);
 
-        geometrygroup->addChild(inst);
+        staticGG->addChild(inst);
     }
 
     void OptixTracer::AddScene(const Scene &scene, const optix::Material mat)
@@ -172,7 +183,7 @@ namespace trayc
         inst->setGeometry(gMesh);
         inst->setMaterial(0, mat);
 
-        geometrygroup->addChild(inst);
+        staticGG->addChild(inst);
     }
 
     void OptixTracer::AddLight(const BasicLight &light)
@@ -182,10 +193,10 @@ namespace trayc
 
     void OptixTracer::AddGeometryInstance(const GeometryInstance gi)
     {
-        geometrygroup->addChild(gi);
+        staticGG->addChild(gi);
     }
 
-    void OptixTracer::CompileSceneGraph()
+    void OptixTracer::CompileSceneGraph(const std::string accelLocation, bool cacheAccel)
     {
         //white spheres for lights
         for(const auto &light : lights)
@@ -200,7 +211,7 @@ namespace trayc
                 inst->setMaterialCount(1);
                 inst->setGeometry(sphere);
                 inst->setMaterial(0, lightMaterial);
-                geometrygroup->addChild(inst);
+                lightsGG->addChild(inst);
             }
 
         Buffer lightBuffer = ctx->createBuffer(RT_BUFFER_INPUT);
@@ -212,21 +223,18 @@ namespace trayc
         memcpy(lightBuffer->map(), (const void*)lights.data(), lights.size() * sizeof(BasicLight));
         lightBuffer->unmap();
 
-        ctx["top_object"]->set(geometrygroup);
+        Acceleration accel = ctx->createAcceleration("Sbvh", "Bvh");
+        accel->setProperty("index_buffer_name", "index_buffer");
+        accel->setProperty("vertex_buffer_name", "vertex_buffer");
+        accel->markDirty();
+        staticGG->setAcceleration(accel);
 
-        geometrygroup->setAcceleration(ctx->createAcceleration("Sbvh", "Bvh"));
-
-        if(!accelHandler.accel_cache_loaded && geometrygroup->getChildCount() > 0)
+        if(staticGG->getChildCount() > 0)
         {
-            const string filename = Utils::Resource("accelCaches/accel.accelcache");
-            accelHandler.LoadAccelCache(filename, geometrygroup);
+            bool success = false;
+            if(cacheAccel)
+                success = accelHandler.LoadAccelCache(accelLocation, staticGG);
 
-            Acceleration accel = ctx->createAcceleration("Sbvh", "Bvh");
-
-            accel->setProperty("index_buffer_name", "index_buffer");
-            accel->setProperty("vertex_buffer_name", "vertex_buffer");
-            accel->markDirty();
-            geometrygroup->setAcceleration(accel);
             try
             {
                 ctx->launch(0, 0, 0);
@@ -234,11 +242,12 @@ namespace trayc
             catch (exception &e)
             {
                 cerr << e.what() << endl;
-                exit(-1);
+                EventHandler::SetQuit();
+                return;
             }
-            
 
-            accelHandler.SaveAccelCache(filename, geometrygroup);
+            if(!success && cacheAccel)
+                accelHandler.SaveAccelCache(accelLocation, staticGG);
         }
         ctx->validate();
         ctx->compile();
@@ -249,14 +258,24 @@ namespace trayc
     {
         ctx["lights"]->getBuffer()->destroy();
         lights.clear();
-        const int ctChildren = geometrygroup->getChildCount();
-        for(int i = ctChildren - 1; i >= 0; --i)
+        const int ctStatic = staticGG->getChildCount();
+        for(int i = ctStatic - 1; i >= 0; --i)
         {
-            geometrygroup->getChild(i)->getGeometry()->destroy();
-            geometrygroup->getChild(i)->destroy();
-            geometrygroup->removeChild(i);
+            staticGG->getChild(i)->getGeometry()->destroy();
+            staticGG->getChild(i)->destroy();
+            staticGG->removeChild(i);
         }
-        geometrygroup->getAcceleration()->destroy();
+
+        const int ctLights = lightsGG->getChildCount();
+        for(int i = ctLights - 1; i >= 0; --i)
+        {
+            lightsGG->getChild(i)->getGeometry()->destroy();
+            lightsGG->getChild(i)->destroy();
+            lightsGG->removeChild(i);
+        }
+
+        staticGG->getAcceleration()->destroy();
+        lightsGG->getAcceleration()->markDirty();
         matHandler.Clear();
     }
 

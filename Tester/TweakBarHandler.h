@@ -27,7 +27,7 @@ private:
     static void TW_CALL LoadSponzaAO(void *userData);
     static void TW_CALL LoadLabyrinth(void *userData);
 
-    static void TW_CALL RenderPPM(void *userData);
+    static void TW_CALL ScreenShot(void *userData);
     
     static void TW_CALL SetFXAA(const void *value, void *clientData);
     static void TW_CALL GetFXAA(void *value, void *clientData);

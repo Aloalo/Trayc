@@ -17,6 +17,7 @@ rtDeclareVariable(unsigned int, rnd_seed, , );
 
 
 rtDeclareVariable(rtObject, top_object, , );
+rtDeclareVariable(rtObject, top_shadower, , );
 rtDeclareVariable(uint2, launch_index, rtLaunchIndex, );
 
 rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
@@ -44,7 +45,7 @@ static __device__ __inline__ float ambientOcclusion(const float3 &hit_point, con
         float occlusion = 0.0f;
         for(int k = 0; k < ambient_occlusion_samples; ++k)
         {
-            const float lambda = rnd(seed) * pi2 - pi;
+            const float lambda = rnd(seed) * pi2;
             const float phi = acosf(2.0f * rnd(seed) - 1.0f);
             const float sinphi = sinf(phi);
 
@@ -55,7 +56,7 @@ static __device__ __inline__ float ambientOcclusion(const float3 &hit_point, con
             PerRayData_shadow shadow_prd;
             shadow_prd.attenuation = 1.0f;
             const optix::Ray shadow_ray(hit_point, sampleVector, shadow_ray_type, scene_epsilon, 1.0f);
-            rtTrace(top_object, shadow_ray, shadow_prd);
+            rtTrace(top_shadower, shadow_ray, shadow_prd);
             occlusion += shadow_prd.attenuation;
         }
 
@@ -81,7 +82,8 @@ static __device__ __inline__ void phongShade(const float3 &hit_point,
 {
     float3 color = p_Ka * ambient_light_color;
 
-    for(int i = 0; i < lights.size(); ++i)
+    const int ctLights = lights.size();
+    for(int i = 0; i < ctLights; ++i)
     {
         const BasicLight &light = lights[i];
 
@@ -118,15 +120,14 @@ static __device__ __inline__ void phongShade(const float3 &hit_point,
 
         if(nDl > 0.0f && attenuation > 0.0f)
         {
-            PerRayData_shadow shadow_prd;
-
             if(shadow_samples > 0 && light.casts_shadows)
             {
                 if(shadow_samples == 1)
                 {
+                    PerRayData_shadow shadow_prd;
                     shadow_prd.attenuation = 1.0f;
                     const optix::Ray sray(hit_point, L, shadow_ray_type, scene_epsilon, Ldist);
-                    rtTrace(top_object, sray, shadow_prd);
+                    rtTrace(top_shadower, sray, shadow_prd);
                     attenuation *= shadow_prd.attenuation;
                 }
                 else
@@ -141,9 +142,10 @@ static __device__ __inline__ void phongShade(const float3 &hit_point,
                         const float3 lightpoint =  r * (cosf(t) * u + sinf(t) * cross(L, u)) + light.pos;
                         const float3 Ldir = lightpoint - hit_point;
 
+                        PerRayData_shadow shadow_prd;
                         shadow_prd.attenuation = 1.0f;
                         const optix::Ray shadow_ray(hit_point, normalize(Ldir), shadow_ray_type, scene_epsilon, length(Ldir));
-                        rtTrace(top_object, shadow_ray, shadow_prd);
+                        rtTrace(top_shadower, shadow_ray, shadow_prd);
                         lighthit += shadow_prd.attenuation;
                     }
                     
@@ -178,20 +180,14 @@ static __device__ __inline__ void phongReflect(const float3 &hit_point, const fl
         //reflection ray
         if(importance > importance_cutoff && prd_radiance.depth < max_depth)
         {
-            if(diffuse_reflection_samples == 1)
-            {
-                PerRayData_radiance refl_prd;
-                refl_prd.importance = importance;
-                refl_prd.depth = prd_radiance.depth+1;
-                const float3 R = reflect(ray.direction, ffnormal);
-                const optix::Ray refl_ray(hit_point, R, radiance_ray_type, scene_epsilon);
-                rtTrace(top_object, refl_ray, refl_prd);
-                prd_radiance.result += r * refl_prd.result;
-            }
-            else
-            {
-                //TODO diffuse reflections
-            }
+            PerRayData_radiance refl_prd;
+            refl_prd.importance = importance;
+            refl_prd.depth = prd_radiance.depth+1;
+            const float3 R = reflect(ray.direction, ffnormal);
+            const optix::Ray refl_ray(hit_point, R, radiance_ray_type, scene_epsilon);
+            rtTrace(top_object, refl_ray, refl_prd);
+            prd_radiance.result += r * refl_prd.result;
+            //TODO diffuse reflections
         }
     }
 }

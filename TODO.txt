@@ -1,9 +1,8 @@
 Opcenito:
 -moving lights in tests
--exit when done with SS
 
 Grafika:
--vertical lines artefact (random seed?)
+-vertical lines artefact???
 -area lights
 -mipmaping (optix release)
 -glass/reflective mesh textures

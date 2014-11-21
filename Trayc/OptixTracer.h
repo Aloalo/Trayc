@@ -36,7 +36,7 @@ namespace trayc
         void AddGeometryInstance(const optix::GeometryInstance gi);
         void AddLight(const BasicLight &light);
 
-        void CompileSceneGraph();
+        void CompileSceneGraph(const std::string accelLocation, bool cacheAccel);
         void ClearSceneGraph();
         void Trace(unsigned int entryPoint, RTsize width, RTsize height, int renderingDivisionLevel, unsigned int rndSeed);
 
@@ -81,7 +81,9 @@ namespace trayc
         AccelHandler accelHandler;
         MaterialHandler matHandler;
 
-        optix::GeometryGroup geometrygroup;
+        optix::GeometryGroup staticGG;
+        optix::GeometryGroup lightsGG;
+        optix::Group topNode;
         std::vector<BasicLight> lights;
         optix::Material lightMaterial;
     };

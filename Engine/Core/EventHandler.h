@@ -23,6 +23,8 @@ namespace engine
 
         //Has quit event occured?
         static bool Quit();
+        //Set quit event
+        static void SetQuit();
 
         //update handling
         static void Update();

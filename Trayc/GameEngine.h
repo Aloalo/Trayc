@@ -19,6 +19,8 @@ namespace trayc
     public:
         GameEngine(void);
 
+        void CleanUp();
+
         void HandleEvent(const SDL_Event &e);
         void Update(float deltaTime);
 
@@ -29,7 +31,12 @@ namespace trayc
 
         void Init();
         void Draw();
+        //take screen shot
+        void HighQualitySS(const std::string &name);
 
+        bool closeAfterSS;
+
+        //random seed
         unsigned int frame;
         //for fps calculation
         int framesPassed;

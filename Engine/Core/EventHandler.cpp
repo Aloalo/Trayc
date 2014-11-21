@@ -46,9 +46,15 @@ namespace engine
                     continue;
             }
 
+            if(quit == true)
+                test_event.type = SDL_QUIT;
+
             for(EventListener *listener : listenerList)
                 if(listener->active)
                     listener->HandleEvent(test_event);
+
+            if(quit == true)
+                break;
         }
     }
 
@@ -89,4 +95,10 @@ namespace engine
     {
         //TODO_JURE finish
     }
+
+    void EventHandler::SetQuit()
+    {
+        quit = true;
+    }
+
 }

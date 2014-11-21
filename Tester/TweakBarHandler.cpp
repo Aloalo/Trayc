@@ -4,18 +4,18 @@
 
 #include "TweakBarHandler.h"
 #include <optix_world.h>
-
 #include <optix_math.h>
+
 #include <Trayc/Environment.h>
 #include <Trayc/Handlers/OptixTextureHandler.h>
-#include <Trayc/Utils.h>
+#include <Trayc/Handlers/ProgramHandler.h>
 #include <Engine/Core/SDLHandler.h>
+#include <Engine/Core/EventHandler.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <Trayc/Handlers/ProgramHandler.h>
 
 
 using namespace trayc;
@@ -79,12 +79,14 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TwAddVarRW(sssettings, "dofSamples", TW_TYPE_INT32, &gameEngine->tracer.SSdofSamples.x, "");
     TwAddVarRW(sssettings, "ambientOcclusionSamples", TW_TYPE_INT32, &gameEngine->tracer.SSambientOcclusionSamples.x, "");
     TwAddVarRW(sssettings, "MSAA", TW_TYPE_INT32, &gameEngine->tracer.SSMSAA.x, "");
-    TwAddButton(sssettings, "High Quality Screenshot", RenderPPM, NULL, " label='High Quality Screenshot' ");
+    TwAddVarRW(sssettings, "Close When Done", TW_TYPE_BOOL8, &gameEngine->closeAfterSS, "");
+    TwAddButton(sssettings, "High Quality Screenshot", ScreenShot, NULL, " label='High Quality Screenshot' ");
 
     TwBar *generalsettings;
     generalsettings = TwNewBar("generalsettings");
     TwDefine(" generalsettings label='General Settings' ");
     TwDefine(" generalsettings iconified=true ");
+    TwDefine(" generalsettings refresh=0.1 ");
     TwAddVarRW(generalsettings, "FOV", TW_TYPE_FLOAT, &gameEngine->FOV.x, "");
     TwAddVarRW(generalsettings, "Aparture Radius", TW_TYPE_FLOAT, &gameEngine->tracer.apertureRadius.x, "");
     TwAddVarRW(generalsettings, "Focal Length", TW_TYPE_FLOAT, &gameEngine->tracer.focalLength.x, "");
@@ -97,7 +99,8 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
 void TW_CALL TweakBarHandler::LoadSponza(void *userData)
 {
     gameEngine->tracer.ClearSceneGraph();
-    gameEngine->tracer.AddScene(LoadTest(Utils::Resource("crytek-sponza/sponza.obj"), Utils::Resource("crytek-sponza/"), scale(mat4(1.0f), vec3(0.05f))));
+    const string location = Utils::Resource("crytek-sponza/");
+    gameEngine->tracer.AddScene(LoadTest(location + "/sponza.obj", location, scale(mat4(1.0f), vec3(0.05f))));
 
     gameEngine->tracer.AddLight(BasicLight(//light0 - point light
         make_float3(0.0f, 30.0f, 10.0f), //pos/dir
@@ -111,14 +114,15 @@ void TW_CALL TweakBarHandler::LoadSponza(void *userData)
         0 //is_directional
         ));
 
-    gameEngine->tracer.CompileSceneGraph();
+    gameEngine->tracer.CompileSceneGraph(location + "accel.accelcache", true);
 }
 
 void TW_CALL TweakBarHandler::LoadSponzaAO(void *userData)
 {
     gameEngine->tracer.ClearSceneGraph();
-    gameEngine->tracer.AddScene(LoadTest(Utils::Resource("crytek-sponza/sponza.obj"), Utils::Resource("crytek-sponza/"), scale(mat4(1.0f), vec3(0.05f))), mat.getLabyrinthMaterial(LabMaterials::WALL));
-    gameEngine->tracer.CompileSceneGraph();
+    const string location = Utils::Resource("crytek-sponza/");
+    gameEngine->tracer.AddScene(LoadTest(location + "/sponza.obj", location, scale(mat4(1.0f), vec3(0.05f))), mat.getLabyrinthMaterial(LabMaterials::WALL));
+    gameEngine->tracer.CompileSceneGraph(location + "accelAO.accelcache", true);
 }
 
 void TW_CALL TweakBarHandler::LoadNissan(void *userData)
@@ -154,7 +158,7 @@ void TW_CALL TweakBarHandler::LoadNissan(void *userData)
         1 //is_directional
         ));
 
-    gameEngine->tracer.CompileSceneGraph();
+    gameEngine->tracer.CompileSceneGraph(Utils::Resource("nissan/") + "accel.accelcache", true);
 }
 
 void TW_CALL TweakBarHandler::LoadMustang(void *userData)
@@ -162,7 +166,7 @@ void TW_CALL TweakBarHandler::LoadMustang(void *userData)
     gameEngine->tracer.ClearSceneGraph();
     const mat4 trmustang = scale(translate(mat4(1.0f), vec3(100.0f, -50.0f, 0.0f)), vec3(0.025f));
     gameEngine->tracer.AddScene(LoadTest(Utils::Resource("mustang/mustang.obj"), Utils::Resource("mustang/"), trmustang), mat.getLabyrinthMaterial(LabMaterials::WALL));
-    gameEngine->tracer.CompileSceneGraph();
+    gameEngine->tracer.CompileSceneGraph(Utils::Resource("mustang/") + "accel.accelcache", true);
 }
 
 void TweakBarHandler::addLabyrinth(const Labyrinth &lab)
@@ -214,12 +218,12 @@ void TW_CALL TweakBarHandler::LoadLabyrinth(void *userData)
         0 //is_directional
         ));
 
-    gameEngine->tracer.CompileSceneGraph();
+    gameEngine->tracer.CompileSceneGraph("", false);
 }
 
-void TW_CALL TweakBarHandler::RenderPPM(void *userData)
+void TW_CALL TweakBarHandler::ScreenShot(void *userData)
 {
-    gameEngine->tracer.RenderToPPM("screen.ppm");
+    gameEngine->HighQualitySS("screen.ppm");
 }
 
 void TW_CALL TweakBarHandler::SetFXAA(const void *value, void *clientData)
@@ -266,7 +270,8 @@ const engine::Scene& TweakBarHandler::LoadTest(const string &test, const string 
     if(!aiscene)
     {
         cerr << importer.GetErrorString() << endl;
-        exit(-1);
+        EventHandler::SetQuit();
+        return Scene();
     }
     cout << "Loaded file: " + test << endl;
 
