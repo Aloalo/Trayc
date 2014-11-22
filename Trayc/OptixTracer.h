@@ -56,6 +56,7 @@ namespace trayc
         engine::Setting<float> apertureRadius;
         engine::Setting<float> focalLength;
         engine::Setting<float> AOsamplingRadius;
+        engine::Setting<float> bloomExp;
 
         //real time
         engine::Setting<int> maxRayDepth;
@@ -86,7 +87,6 @@ namespace trayc
         optix::GeometryGroup lightsGG;
         optix::Group topNode;
         std::vector<BasicLight> lights;
-        optix::Material lightMaterial;
     };
 };
 

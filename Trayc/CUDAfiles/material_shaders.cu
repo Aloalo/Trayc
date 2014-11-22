@@ -187,12 +187,29 @@ RT_PROGRAM void any_hit_solid()
     phongShadowed();
 }
 
+rtDeclareVariable(float, light_brightness, attribute light_brightness, );
+rtDeclareVariable(float3, light_color, , );
+
 //
-// Ignores intersection
+// Light with bloom effect
 //
 RT_PROGRAM void closest_hit_light()
 {
-    prd_radiance.result = make_float3(1.0f, 1.0f, 1.0f);
+    if(light_brightness >= 1.0f)
+    {
+        prd_radiance.result = light_color;
+        return;
+    }
+
+    const float3 hit_point = ray.origin + t_hit * ray.direction;
+
+    const optix::Ray ray(hit_point, ray.direction, radiance_ray_type, scene_epsilon);
+    PerRayData_radiance new_prd;
+    new_prd.depth = prd_radiance.depth;
+    new_prd.importance = prd_radiance.importance;
+
+    rtTrace(top_object, ray, new_prd);
+    prd_radiance.result = new_prd.result + light_color * light_brightness;
 }
 
 //

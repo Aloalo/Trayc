@@ -71,7 +71,7 @@ static __device__ __inline__ void phongShade(const float3 &hit_point,
     {
         const BasicLight &light = lights[i];
 
-        if(fmaxf(light.color) == 0.0f)
+        if(fmaxf(light.color) < importance_cutoff)
             continue;
 
         float attenuation = 0.0f;

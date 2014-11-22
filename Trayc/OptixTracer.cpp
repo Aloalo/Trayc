@@ -54,6 +54,7 @@ namespace trayc
         SETTING(apertureRadius),
         SETTING(focalLength),
         SETTING(AOsamplingRadius),
+        SETTING(bloomExp),
 
         SETTING(maxRayDepth),
         SETTING(shadowSamples),
@@ -112,10 +113,6 @@ namespace trayc
         ctx->setExceptionProgram(0, ProgramHandler::Get().Get("context_shaders.cu", "exception"));
         ctx["bad_color"]->setFloat(1.0f, 0.0f, 0.0f);
 
-        lightMaterial = ctx->createMaterial();
-        lightMaterial->setClosestHitProgram(0, ProgramHandler::Get().Get("material_shaders.cu", "closest_hit_light"));
-        lightMaterial->setAnyHitProgram(1, ProgramHandler::Get().Get("material_shaders.cu", "any_hit_light"));
-
         staticGG = ctx->createGeometryGroup();
         lightsGG = ctx->createGeometryGroup();
         lightsGG->setAcceleration(ctx->createAcceleration("NoAccel", "NoAccel"));
@@ -145,6 +142,7 @@ namespace trayc
         ctx["aperture_radius"]->setFloat(apertureRadius);
         ctx["dof_samples"]->setInt(dofSamples);
         ctx["ao_sampling_radius"]->setFloat(AOsamplingRadius);
+        ctx["bloom_exponent"]->setFloat(bloomExp);
     }
 
     void OptixTracer::AddScene(const Scene &scene)
@@ -204,6 +202,11 @@ namespace trayc
             const BasicLight &light = lights[i];
             if(!light.is_directional)
             {
+                optix::Material lightMaterial = ctx->createMaterial();
+                lightMaterial->setClosestHitProgram(0, ProgramHandler::Get().Get("material_shaders.cu", "closest_hit_light"));
+                lightMaterial->setAnyHitProgram(1, ProgramHandler::Get().Get("material_shaders.cu", "any_hit_light"));
+                lightMaterial["light_color"]->setFloat(light.color);
+
                 Geometry sphere = ctx->createGeometry();
                 sphere->setPrimitiveCount(1);
                 sphere->setBoundingBoxProgram(ProgramHandler::Get().Get("light.cu", "bounds"));
@@ -273,6 +276,7 @@ namespace trayc
         for(int i = ctLights - 1; i >= 0; --i)
         {
             lightsGG->getChild(i)->getGeometry()->destroy();
+            lightsGG->getChild(i)->getMaterial(0)->destroy();
             lightsGG->getChild(i)->destroy();
             lightsGG->removeChild(i);
         }
@@ -308,6 +312,7 @@ namespace trayc
     {
         memcpy(static_cast<void*>((static_cast<BasicLight*>(ctx["lights"]->getBuffer()->map())+idx)), static_cast<const BasicLight*>(lights.data()+idx), sizeof(BasicLight));
         ctx["lights"]->getBuffer()->unmap();
+        lightsGG->getChild(idx)->getMaterial(0)["light_color"]->setFloat(lights[idx].color);
     }
 
     void OptixTracer::SetCamera(const Camera &cam)

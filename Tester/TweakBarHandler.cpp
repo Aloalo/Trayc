@@ -106,6 +106,7 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TwAddVarRW(generalsettings, "Aparture Radius", TW_TYPE_FLOAT, &gameEngine->tracer.apertureRadius.x, "");
     TwAddVarRW(generalsettings, "Focal Length", TW_TYPE_FLOAT, &gameEngine->tracer.focalLength.x, "");
     TwAddVarRW(generalsettings, "AO Sampling Radius", TW_TYPE_FLOAT, &gameEngine->tracer.AOsamplingRadius.x, "");
+    TwAddVarRW(generalsettings, "Light Bloom Exponent", TW_TYPE_FLOAT, &gameEngine->tracer.bloomExp.x, "");
     TwAddVarRW(generalsettings, "Time based random seed", TW_TYPE_BOOL8, &gameEngine->frameRandomSeed.x, "");
     TwAddVarRO(generalsettings, "FPS", TW_TYPE_FLOAT, &gameEngine->FPS, "");
     TwAddButton(generalsettings, "Apply", ApplySettings, NULL, " label='Apply' ");
@@ -141,10 +142,11 @@ void TW_CALL TweakBarHandler::LoadSponza(void *userData)
     const string location = Utils::Resource("crytek-sponza/");
     gameEngine->tracer.AddScene(LoadTest(location + "/sponza.obj", location, scale(mat4(1.0f), vec3(0.05f))));
 
-    gameEngine->tracer.AddLight(spotlight);
+    //gameEngine->tracer.AddLight(spotlight);
     gameEngine->tracer.AddLight(BasicLight(//light0 - point light
         make_float3(0.0f, 20.0f, 0.0f), //pos/dir
-        make_float3(2.0f), //color
+        //make_float3(2.0f), //color
+        make_float3(2.0f, 0.0f, 0.0f), //color
         make_float3(1.0f, 0.01f, 0.0005f),//attenuation
         make_float3(0.0f, 0.0f, 0.0f), //spot_direction
         360.0f, //spot_cutoff

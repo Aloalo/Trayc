@@ -6,41 +6,41 @@
 
 using namespace optix;
 
-rtDeclareVariable(int, light_idx, , );
+rtDeclareVariable(float, bloom_exponent, , );
 
-rtDeclareVariable(float3, geometric_normal, attribute geometric_normal, ); 
-rtDeclareVariable(float3, shading_normal, attribute shading_normal, );
+rtDeclareVariable(int, light_idx, , );
+rtDeclareVariable(float, light_brightness, attribute light_brightness, );
+rtDeclareVariable(float, importance_cutoff, , );
 
 RT_PROGRAM void intersect(int)
 {
+
     const float3 center = lights[light_idx].pos;
-    const float3 O = ray.origin - center;
-    const float3 D = ray.direction;
     const float radius = lights[light_idx].radius;
+    const float bloomFactor = 2.0f;
+    const float bloomRadius = bloomFactor * radius;
 
-    const float b = dot(O, D);
-    const float c = dot(O, O) - radius * radius;
-    const float disc = b * b - c;
-    if(disc > 0.0f)
+    const float t = dot(ray.direction, center - ray.origin);
+    const float3 planePoint = ray.origin + t * ray.direction;
+
+    const float hitDistToCenter2 = dot(planePoint - center, planePoint - center);
+    const float bloomRadius2 = bloomRadius * bloomRadius;
+    const float adjusted_t = t + sqrtf(bloomRadius2 - hitDistToCenter2);
+
+    
+    light_brightness = 1.0f;
+    if(hitDistToCenter2 <= radius * radius)
     {
-        const float sdisc = sqrtf(disc);
-        const float root1 = (-b - sdisc);
-
-        bool check_second = true;
-        if(rtPotentialIntersection(root1))
+        if(rtPotentialIntersection(adjusted_t))
+            rtReportIntersection(0);
+    }
+    else if(hitDistToCenter2 <= bloomRadius2 || fmaxf(lights[light_idx].color) > importance_cutoff)
+    {
+        if(rtPotentialIntersection(adjusted_t))
         {
-            shading_normal = geometric_normal = (O + root1 * D) / radius;
-            if(rtReportIntersection(0))
-                check_second = false;
-        } 
-        if(check_second)
-        {
-            const float root2 = (-b + sdisc);
-            if(rtPotentialIntersection(root2))
-            {
-                shading_normal = geometric_normal = (O + root2*D)/radius;
-                rtReportIntersection(0);
-            }
+            const float bloom = 1.0f - (sqrtf(hitDistToCenter2) - radius) / (radius * (bloomFactor - 1));
+            light_brightness = powf(bloom, bloom_exponent);
+            rtReportIntersection(0);
         }
     }
 }
