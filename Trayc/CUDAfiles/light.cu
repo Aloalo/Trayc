@@ -2,22 +2,21 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 
-#include <optix_world.h>
+#include <Trayc/CUDAfiles/common.h>
 
 using namespace optix;
 
-rtDeclareVariable(float4, sphere, , );
+rtDeclareVariable(int, light_idx, , );
 
 rtDeclareVariable(float3, geometric_normal, attribute geometric_normal, ); 
-rtDeclareVariable(float3, shading_normal, attribute shading_normal, ); 
-rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
+rtDeclareVariable(float3, shading_normal, attribute shading_normal, );
 
 RT_PROGRAM void intersect(int)
 {
-    const float3 center = make_float3(sphere);
+    const float3 center = lights[light_idx].pos;
     const float3 O = ray.origin - center;
     const float3 D = ray.direction;
-    const float radius = sphere.w;
+    const float radius = lights[light_idx].radius;
 
     const float b = dot(O, D);
     const float c = dot(O, O) - radius * radius;
@@ -48,8 +47,8 @@ RT_PROGRAM void intersect(int)
 
 RT_PROGRAM void bounds(int, float result[6])
 {
-    const float3 cen = make_float3( sphere );
-    const float3 rad = make_float3( sphere.w );
+    const float3 cen = lights[light_idx].pos;
+    const float3 rad = make_float3(lights[light_idx].radius);
 
     optix::Aabb* aabb = (optix::Aabb*)result;
 

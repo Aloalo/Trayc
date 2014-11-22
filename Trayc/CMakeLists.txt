@@ -43,9 +43,11 @@ set(Trayc_CUDA_FILES
     CUDAfiles/triangle_mesh.cu
     CUDAfiles/helper.h
     CUDAfiles/lights.h
+    CUDAfiles/common.h
     CUDAfiles/phong.h
     CUDAfiles/random.h
     CUDAfiles/sphere.cu
+    CUDAfiles/light.cu
 )
 
 source_group(Handlers FILES ${Trayc_Handlers_HDRS} ${Trayc_Handlers_SRCS})

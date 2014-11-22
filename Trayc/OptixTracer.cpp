@@ -199,20 +199,23 @@ namespace trayc
     void OptixTracer::CompileSceneGraph(const std::string accelLocation, bool cacheAccel)
     {
         //white spheres for lights
-        for(const auto &light : lights)
+        for(int i = 0; i < lights.size(); ++i)
+        {
+            const BasicLight &light = lights[i];
             if(!light.is_directional)
             {
                 Geometry sphere = ctx->createGeometry();
                 sphere->setPrimitiveCount(1);
-                sphere->setBoundingBoxProgram(ProgramHandler::Get().Get("sphere.cu", "bounds"));
-                sphere->setIntersectionProgram(ProgramHandler::Get().Get("sphere.cu", "intersect"));
-                sphere["sphere"]->setFloat(light.pos.x, light.pos.y, light.pos.z, light.radius);
+                sphere->setBoundingBoxProgram(ProgramHandler::Get().Get("light.cu", "bounds"));
+                sphere->setIntersectionProgram(ProgramHandler::Get().Get("light.cu", "intersect"));
+                sphere["light_idx"]->setInt(i);
                 GeometryInstance inst = ctx->createGeometryInstance();
                 inst->setMaterialCount(1);
                 inst->setGeometry(sphere);
                 inst->setMaterial(0, lightMaterial);
                 lightsGG->addChild(inst);
             }
+        }
 
         Buffer lightBuffer = ctx->createBuffer(RT_BUFFER_INPUT);
         lightBuffer->setFormat(RT_FORMAT_USER);
@@ -287,8 +290,13 @@ namespace trayc
             ctx["myStripe"]->setInt(i);
             ctx->launch(entryPoint, width, height / renderingDivisionLevel);
             if(renderingDivisionLevel > 1)
-                cout << "DONE " << i + 1 << "/" << renderingDivisionLevel << endl;
+                cout << "Rendered Stripe: " << i + 1 << "/" << renderingDivisionLevel << endl;
         }
+    }
+
+    int OptixTracer::GetNumLights() const
+    {
+        return lights.size();
     }
 
     BasicLight& OptixTracer::GetLight(int i)

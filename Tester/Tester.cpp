@@ -25,6 +25,7 @@ using namespace std;
 using namespace trayc;
 
 GameEngine gameEngine;
+TweakBarHandler twBarHandler;
 
 void RenderingLoop()
 {
@@ -33,6 +34,9 @@ void RenderingLoop()
 
     EventHandler::AddEventListener(&gameEngine);
     EventHandler::AddUpdateable(&gameEngine);
+    EventHandler::AddEventListener(&twBarHandler);
+    EventHandler::AddUpdateable(&twBarHandler);
+
 
     do
     {

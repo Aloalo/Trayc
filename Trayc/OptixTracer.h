@@ -40,6 +40,7 @@ namespace trayc
         void ClearSceneGraph();
         void Trace(unsigned int entryPoint, RTsize width, RTsize height, int renderingDivisionLevel, unsigned int rndSeed);
 
+        int GetNumLights() const;
         BasicLight& GetLight(int i);
         void UpdateLight(int idx);
         

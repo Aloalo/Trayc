@@ -8,11 +8,13 @@
 #include <AntTweakBar.h>
 #include <Trayc/GameEngine.h>
 #include <Engine/Geometry/Scene.h>
+#include <Engine/Core/EventListener.h>
+#include <Engine/Core/Updateable.h>
 #include <map>
 #include "Labyrinth.h"
 #include "LabMaterials.h"
 
-class TweakBarHandler
+class TweakBarHandler : public engine::EventListener, public engine::Updateable
 {
 public:
     static void CreateTweakBars(trayc::GameEngine *gameEngine);
@@ -35,11 +37,18 @@ private:
     static void TW_CALL GetTextureFilter(void *value, void *clientData);
     static void TW_CALL ApplySettings(void *userData);
 
+    void HandleEvent(const SDL_Event &e);
+    void Update(float dt);
+
+
     static trayc::GameEngine *gameEngine;
 
     static LabMaterials mat;
     static int labSize;
     static std::map<std::string, engine::Scene> tests;
+    static BasicLight spotlight;
+    static bool inSponza;
+    static bool movingLight;
 
     //out buffer
     static RTsize bw;

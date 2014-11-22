@@ -1,3 +1,7 @@
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
 #include <Trayc/CUDAfiles/phong.h>
 
 rtDeclareVariable(float3, shading_normal, attribute shading_normal, ); 

@@ -59,16 +59,4 @@ static __device__ __inline__ uchar4 make_color(const float3 &c)
         255u);                                                 /* A */
 }
 
-struct PerRayData_radiance
-{
-    float3 result;
-    float importance;
-    int depth;
-};
-
-struct PerRayData_shadow
-{
-    float attenuation;
-};
-
 #endif

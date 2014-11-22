@@ -31,6 +31,19 @@ int TweakBarHandler::labSize = 15;
 LabMaterials TweakBarHandler::mat;
 RTsize TweakBarHandler::bw;
 RTsize TweakBarHandler::bh;
+BasicLight TweakBarHandler::spotlight = BasicLight(//light0 - point light
+                                            make_float3(0.0f, 30.0f, 10.0f), //pos/dir
+                                            make_float3(0.0f), //color
+                                            make_float3(1.0f, 0.01f, 0.0005f),//attenuation
+                                            make_float3(0.0f, 0.0f, 0.0f), //spot_direction
+                                            90.0f, //spot_cutoff
+                                            30.0f, //spot_exponent
+                                            0.1f, //radius
+                                            1, //casts_shadows
+                                            0 //is_directional
+                                            );
+bool TweakBarHandler::inSponza = false;
+bool TweakBarHandler::movingLight = true;
 
 void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
 {
@@ -39,7 +52,9 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TweakBarHandler::gameEngine = gameEngine;
     mat.createLabMaterials();
 
-    TwDefine(" GLOBAL help='Trayc library tester.\nPress [w/a/s/d/q/e] to move and use the mouse to rotate the camera.\nPress [shift] to release mouse.\nPress [9/0] to speed up or speed down.' ");
+    TwDefine(" GLOBAL help='Trayc library tester.\nPress [w/a/s/d/q/e] to move and use the mouse to rotate the camera.\nPress [shift] to "
+        "release mouse.\nPress [9/0] to speed up or speed down.\nPress left mose button to meve the spotlight and right to activate/deactivate it.\n"
+        "Press p to start/stop the moving light' ");
 
     TwBar *loadbar;
     loadbar = TwNewBar("Tests");
@@ -98,10 +113,12 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
 
 void TW_CALL TweakBarHandler::LoadCornellBox(void *userData)
 {
+    inSponza = false;
     gameEngine->tracer.ClearSceneGraph();
     const string location = Utils::Resource("CornellBox/");
     gameEngine->tracer.AddScene(LoadTest(location + "/CornellBox-Water.obj", location, mat4(1.0f)));
 
+    gameEngine->tracer.AddLight(spotlight);
     gameEngine->tracer.AddLight(BasicLight(//light0 - point light
         make_float3(0.0f, 1.0f, -0.9f), //pos/dir
         make_float3(1.0f), //color
@@ -119,12 +136,14 @@ void TW_CALL TweakBarHandler::LoadCornellBox(void *userData)
 
 void TW_CALL TweakBarHandler::LoadSponza(void *userData)
 {
+    inSponza = true;
     gameEngine->tracer.ClearSceneGraph();
     const string location = Utils::Resource("crytek-sponza/");
     gameEngine->tracer.AddScene(LoadTest(location + "/sponza.obj", location, scale(mat4(1.0f), vec3(0.05f))));
 
+    gameEngine->tracer.AddLight(spotlight);
     gameEngine->tracer.AddLight(BasicLight(//light0 - point light
-        make_float3(0.0f, 30.0f, 10.0f), //pos/dir
+        make_float3(0.0f, 20.0f, 0.0f), //pos/dir
         make_float3(2.0f), //color
         make_float3(1.0f, 0.01f, 0.0005f),//attenuation
         make_float3(0.0f, 0.0f, 0.0f), //spot_direction
@@ -135,11 +154,13 @@ void TW_CALL TweakBarHandler::LoadSponza(void *userData)
         0 //is_directional
         ));
 
+
     gameEngine->tracer.CompileSceneGraph(location + "accel.accelcache", true);
 }
 
 void TW_CALL TweakBarHandler::LoadNissan(void *userData)
 {
+    inSponza = false;
     gameEngine->tracer.ClearSceneGraph();
     const mat4 trnissan = scale(translate(mat4(1.0f), vec3(0.0f, -50.0f, 0.0f)), vec3(0.1f));
     gameEngine->tracer.AddScene(LoadTest(Utils::Resource("nissan/nissan.obj"), Utils::Resource("nissan/"), trnissan), mat.getLabyrinthMaterial(LabMaterials::MIRROR));
@@ -159,6 +180,7 @@ void TW_CALL TweakBarHandler::LoadNissan(void *userData)
     gameEngine->tracer.AddGeometryInstance(ctx->createGeometryInstance(floor, &mat.getLabyrinthMaterial(LabMaterials::WALL), 
         &mat.getLabyrinthMaterial(LabMaterials::WALL)+1));
 
+    gameEngine->tracer.AddLight(spotlight);
     gameEngine->tracer.AddLight(BasicLight(//light2 - directional light
         make_float3(1, 1, 1), //pos/dir
         make_float3(0.4f), //color
@@ -176,9 +198,11 @@ void TW_CALL TweakBarHandler::LoadNissan(void *userData)
 
 void TW_CALL TweakBarHandler::LoadMustang(void *userData)
 {
+    inSponza = false;
     gameEngine->tracer.ClearSceneGraph();
     const mat4 trmustang = scale(translate(mat4(1.0f), vec3(100.0f, -50.0f, 0.0f)), vec3(0.025f));
     gameEngine->tracer.AddScene(LoadTest(Utils::Resource("mustang/mustang.obj"), Utils::Resource("mustang/"), trmustang), mat.getLabyrinthMaterial(LabMaterials::WALL));
+    gameEngine->tracer.AddLight(spotlight);
     gameEngine->tracer.CompileSceneGraph(Utils::Resource("mustang/") + "accel.accelcache", true);
 }
 
@@ -214,11 +238,13 @@ void TweakBarHandler::addLabyrinth(const Labyrinth &lab)
 
 void TW_CALL TweakBarHandler::LoadLabyrinth(void *userData)
 {
+    inSponza = false;
     gameEngine->tracer.ClearSceneGraph();
     Labyrinth lab;
     lab.generateLabyrinth(labSize, labSize);
     TweakBarHandler::addLabyrinth(lab);
 
+    gameEngine->tracer.AddLight(spotlight);
     gameEngine->tracer.AddLight(BasicLight(//light0 - point light
         make_float3(0.0f, 30.0f, 10.0f), //pos/dir
         make_float3(2.0f), //color
@@ -361,4 +387,44 @@ const engine::Scene& TweakBarHandler::LoadTest(const string &test, const string 
         }
     }
     return scene;
+}
+
+void TweakBarHandler::HandleEvent(const SDL_Event &e)
+{
+    if(e.type == SDL_MOUSEBUTTONDOWN)
+    {
+        if(gameEngine->tracer.GetNumLights() > 0)
+        {
+            BasicLight &light = gameEngine->tracer.GetLight(0);
+            if(e.button.button == SDL_BUTTON_RIGHT)
+            {
+                if(fmaxf(light.color) == 0.0f)
+                    light.color = make_float3(2.0f);
+                else
+                    light.color = make_float3(0.0f);
+            }
+            else if(e.button.button == SDL_BUTTON_LEFT)
+            {
+                const float3 dir = *(float3*)&gameEngine->player.cam.GetDirection();
+                light.pos = *(float3*)&gameEngine->player.GetPosition() + dir;
+                light.spot_direction = dir;
+            }
+            gameEngine->tracer.UpdateLight(0);
+        }
+    }
+    else if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_p)
+        movingLight = !movingLight;
+}
+
+void TweakBarHandler::Update(float dt)
+{
+    static float time_passed = 0.0f;
+    if(inSponza && movingLight && gameEngine->tracer.GetNumLights() > 0)
+    {
+        time_passed += dt;
+        BasicLight &light = gameEngine->tracer.GetLight(1);
+        light.pos.x = 22.0f * cosf(time_passed * 0.5f);
+        light.pos.y = 16.0f + 15.0f * sinf(time_passed * 0.5f);
+        gameEngine->tracer.UpdateLight(1);
+    }
 }

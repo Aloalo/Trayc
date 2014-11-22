@@ -1,6 +1,4 @@
 Opcenito:
--move declared variables from phong to a new header.\
--moving lights in tests
 
 Grafika:
 -vertical lines artefact???

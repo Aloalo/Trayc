@@ -5,39 +5,22 @@
 #ifndef TRAYC_PHONG_H
 #define TRAYC_PHONG_H
 
-#include <optix_world.h>
+#include <Trayc/CUDAfiles/common.h>
 #include <optixu/optixu_math_namespace.h>
 #include <optixu/optixu_math.h>
 #include <Trayc/CUDAfiles/helper.h>
-#include <Trayc/CUDAfiles/lights.h>
 #include <Trayc/CUDAfiles/random.h>
 
-rtBuffer<uchar4, 2> output_buffer;
-rtDeclareVariable(unsigned int, rnd_seed, , );
-rtDeclareVariable(int, renderingDivisionLevel, , "Number of horizontal stripes");
-rtDeclareVariable(int, myStripe, , "Current stripe");
-
-rtDeclareVariable(rtObject, top_object, , );
 rtDeclareVariable(rtObject, top_shadower, , );
-rtDeclareVariable(uint2, launch_index, rtLaunchIndex, );
-
-rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
-rtDeclareVariable(float, t_hit, rtIntersectionDistance, );
-rtDeclareVariable(PerRayData_radiance, prd_radiance, rtPayload, );
-rtDeclareVariable(PerRayData_shadow,   prd_shadow, rtPayload, );
 
 rtDeclareVariable(int, max_depth, , );
 rtDeclareVariable(int, shadow_samples, , );
 rtDeclareVariable(int, diffuse_reflection_samples, , ) = 1;
 rtDeclareVariable(int, ambient_occlusion_samples, , );
 rtDeclareVariable(float, ao_sampling_radius, , );
-rtBuffer<BasicLight> lights;
 
 rtDeclareVariable(float3, ambient_light_color, , );
-rtDeclareVariable(unsigned int, radiance_ray_type, , );
-rtDeclareVariable(unsigned int, shadow_ray_type, , );
 rtDeclareVariable(float, importance_cutoff, , );
-rtDeclareVariable(float, scene_epsilon, , );
 
 static __device__ __inline__ float ambientOcclusion(const float3 &hit_point, const float3 &normal, unsigned int &seed)
 {
@@ -87,6 +70,9 @@ static __device__ __inline__ void phongShade(const float3 &hit_point,
     for(int i = 0; i < ctLights; ++i)
     {
         const BasicLight &light = lights[i];
+
+        if(fmaxf(light.color) == 0.0f)
+            continue;
 
         float attenuation = 0.0f;
         float Ldist = 0.0f;

@@ -2,7 +2,10 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 
-#include <Trayc/CUDAfiles/phong.h>
+#include <Trayc/CUDAfiles/common.h>
+#include <Trayc/CUDAfiles/random.h>
+#include <Trayc/CUDAfiles/helper.h>
+#include <optix_math.h>
 
 //
 // Pinhole/DOF camera implementation

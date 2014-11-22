@@ -1,3 +1,7 @@
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
 #include <Trayc/CUDAfiles/helper.h>
 #include <optix_world.h>
 
