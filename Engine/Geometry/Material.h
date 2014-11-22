@@ -18,6 +18,7 @@ namespace engine
         glm::vec3 Ks;
         glm::vec3 reflectivity;
         float IoR;
+        float phongExponent;
 
         std::string diffuse_map;
         std::string specular_map;

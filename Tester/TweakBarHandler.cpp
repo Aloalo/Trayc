@@ -9,14 +9,15 @@
 #include <Trayc/Environment.h>
 #include <Trayc/Handlers/OptixTextureHandler.h>
 #include <Trayc/Handlers/ProgramHandler.h>
+
 #include <Engine/Core/SDLHandler.h>
 #include <Engine/Core/EventHandler.h>
+
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+
 #include <glm/gtc/matrix_transform.hpp>
-
-
 
 using namespace trayc;
 using namespace engine;
@@ -31,7 +32,6 @@ LabMaterials TweakBarHandler::mat;
 RTsize TweakBarHandler::bw;
 RTsize TweakBarHandler::bh;
 
-
 void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
 {
     bw = Environment::Get().bufferWidth;
@@ -45,8 +45,8 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     loadbar = TwNewBar("Tests");
     TwAddButton(loadbar, "Load Nissan", LoadNissan, NULL, " label='Load Nissan' ");
     TwAddButton(loadbar, "Load Mustang", LoadMustang, NULL, " label='Load Mustang' ");
+    TwAddButton(loadbar, "Load Cornell Box", LoadCornellBox, NULL, " label='Load Cornell Box' ");
     TwAddButton(loadbar, "Load Sponza", LoadSponza, NULL, " label='Load Sponza' ");
-    TwAddButton(loadbar, "Load SponzaAO", LoadSponzaAO, NULL, " label='Load SponzaAO' ");
     TwAddButton(loadbar, "Load Labyrinth", LoadLabyrinth, NULL, " label='Load Labyrinth' ");
     TwAddVarRW(loadbar, "Labyrinth Size", TW_TYPE_INT32, &labSize, " label='Labyrinth Size' ");
 
@@ -96,6 +96,27 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TwAddButton(generalsettings, "Apply", ApplySettings, NULL, " label='Apply' ");
 }
 
+void TW_CALL TweakBarHandler::LoadCornellBox(void *userData)
+{
+    gameEngine->tracer.ClearSceneGraph();
+    const string location = Utils::Resource("CornellBox/");
+    gameEngine->tracer.AddScene(LoadTest(location + "/CornellBox-Water.obj", location, mat4(1.0f)));
+
+    gameEngine->tracer.AddLight(BasicLight(//light0 - point light
+        make_float3(0.0f, 1.0f, -0.9f), //pos/dir
+        make_float3(1.0f), //color
+        make_float3(1.0f, 0.01f, 0.0005f),//attenuation
+        make_float3(0.0f, 0.0f, 0.0f), //spot_direction
+        360.0f, //spot_cutoff
+        0.0f, //spot_exponent
+        0.065f, //radius
+        1, //casts_shadows
+        0 //is_directional
+        ));
+
+    gameEngine->tracer.CompileSceneGraph(location + "accel.accelcache", true);
+}
+
 void TW_CALL TweakBarHandler::LoadSponza(void *userData)
 {
     gameEngine->tracer.ClearSceneGraph();
@@ -115,14 +136,6 @@ void TW_CALL TweakBarHandler::LoadSponza(void *userData)
         ));
 
     gameEngine->tracer.CompileSceneGraph(location + "accel.accelcache", true);
-}
-
-void TW_CALL TweakBarHandler::LoadSponzaAO(void *userData)
-{
-    gameEngine->tracer.ClearSceneGraph();
-    const string location = Utils::Resource("crytek-sponza/");
-    gameEngine->tracer.AddScene(LoadTest(location + "/sponza.obj", location, scale(mat4(1.0f), vec3(0.05f))), mat.getLabyrinthMaterial(LabMaterials::WALL));
-    gameEngine->tracer.CompileSceneGraph(location + "accelAO.accelcache", true);
 }
 
 void TW_CALL TweakBarHandler::LoadNissan(void *userData)
@@ -319,10 +332,11 @@ const engine::Scene& TweakBarHandler::LoadTest(const string &test, const string 
         aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, color);
         material.Ks = *(vec3*)(&color);
 
-        aimaterial->Get(AI_MATKEY_COLOR_REFLECTIVE, color);
+        aimaterial->Get(AI_MATKEY_COLOR_EMISSIVE, color);
         material.reflectivity = *(vec3*)(&color);
 
         aimaterial->Get(AI_MATKEY_REFRACTI, material.IoR);
+        aimaterial->Get(AI_MATKEY_SHININESS, material.phongExponent);
 
         aiString name;
         if(aimaterial->GetTextureCount(aiTextureType_DIFFUSE) != 0)

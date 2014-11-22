@@ -12,9 +12,6 @@ rtDeclareVariable(float3, U, , );
 rtDeclareVariable(float3, V, , );
 rtDeclareVariable(float3, W, , );
 
-rtDeclareVariable(int, renderingDivisionLevel, , "Number of horizontal stripes");
-rtDeclareVariable(int, myStripe, , "Current stripe");
-
 rtDeclareVariable(int, AAlevel, , );
 rtDeclareVariable(float, aperture_radius, , );
 rtDeclareVariable(float, focal_length, , );
@@ -25,7 +22,7 @@ RT_PROGRAM void dof_camera()
     const float2 screen = make_float2(output_buffer.size() * AAlevel);
     float3 result = make_float3(0.0f);
     const uint2 newLaunchIndex = make_uint2(launch_index.x, launch_index.y + myStripe * output_buffer.size().y / renderingDivisionLevel);
-    unsigned int seed = (launch_index.x * 1920 + launch_index.y) * launch_index.x * launch_index.y;
+    unsigned int seed = tea<1>(screen.x * newLaunchIndex.y + newLaunchIndex.x, rnd_seed);
     float count = 0.0f;
 
     for(int i = 0; i < AAlevel; ++i)

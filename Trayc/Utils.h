@@ -23,7 +23,6 @@ namespace trayc
         static std::string Shader(const std::string &name);
         static std::string PathToPTX(const std::string &filename);
 
-        static optix::float3 glmToOptix(const glm::vec3 &vec);
         static bool Equals(const optix::float3 &x, const optix::float3 &y);
         static bool Equals(float x, float y);
     };

@@ -42,7 +42,7 @@ namespace engine
             if(isCursorFree == false)
             {
                 TwEventSDL(&test_event, SDLHandler::linked.major, SDLHandler::linked.minor);
-                if(test_event.type == SDL_MOUSEMOTION)
+                if(test_event.type == SDL_MOUSEMOTION || test_event.type == SDL_MOUSEBUTTONDOWN)
                     continue;
             }
 

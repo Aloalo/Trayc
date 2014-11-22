@@ -58,7 +58,6 @@ void LabMaterials::createLabMaterials()
     Material glassMaterial = ctx->createMaterial();
     glassMaterial->setClosestHitProgram(0, ProgramHandler::Get().Get("material_shaders.cu", "closest_hit_glass"));
     glassMaterial->setAnyHitProgram(1, ProgramHandler::Get().Get("material_shaders.cu", "any_hit_glass"));
-    glassMaterial["importance_cutoff"]->setFloat(1e-2f);
     glassMaterial["cutoff_color"]->setFloat(0.55f, 0.55f, 0.55f);
     glassMaterial["fresnel_exponent"]->setFloat(3.0f);
     glassMaterial["fresnel_minimum"]->setFloat(0.1f);
@@ -67,7 +66,7 @@ void LabMaterials::createLabMaterials()
     glassMaterial["refraction_color"]->setFloat(1.0f, 1.0f, 1.0f);
     glassMaterial["reflection_color"]->setFloat(1.0f, 1.0f, 1.0f);
     float3 extinction = make_float3(.80f, .80f, .80f);
-    glassMaterial["extinction_constant"]->setFloat(log(extinction.x), log(extinction.y), log(extinction.z));
-    glassMaterial["shadow_attenuation"]->setFloat(0.4f, 0.4f, 0.4f);
+    glassMaterial["extinction_constant"]->setFloat(logf(extinction.x), logf(extinction.y), logf(extinction.z));
+    glassMaterial["shadow_attenuation"]->setFloat(0.6f, 0.6f, 0.6f);
     labmat[GLASS] = glassMaterial;
 }

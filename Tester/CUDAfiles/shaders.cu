@@ -20,7 +20,8 @@ RT_PROGRAM void closest_hit_reflective()
     const float3 hit_point = ray.origin + t_hit * ray.direction;
 
     const uint2 &screen = output_buffer.size();
-    unsigned int seed = tea<1>(screen.x * launch_index.y + launch_index.x, rnd_seed);
+    const uint2 newLaunchIndex = make_uint2(launch_index.x, launch_index.y + myStripe * output_buffer.size().y / renderingDivisionLevel);
+    unsigned int seed = tea<1>(screen.x * newLaunchIndex.y + newLaunchIndex.x, rnd_seed);
 
     phongShade(hit_point, Ka, Kd, Ks, ffnormal, phong_exp, seed);
     phongReflect(hit_point, ffnormal, reflectivity);

@@ -21,10 +21,10 @@ private:
     static const engine::Scene& LoadTest(const std::string &test, const std::string &path, const glm::mat4 &transform);
 
     static void TW_CALL LoadSponza(void *userData);
+    static void TW_CALL LoadCornellBox(void *userData);
     static void TW_CALL LoadNissan(void *userData);
     static void addLabyrinth(const Labyrinth &lab);
     static void TW_CALL LoadMustang(void *userData);
-    static void TW_CALL LoadSponzaAO(void *userData);
     static void TW_CALL LoadLabyrinth(void *userData);
 
     static void TW_CALL ScreenShot(void *userData);

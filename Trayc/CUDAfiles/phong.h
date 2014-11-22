@@ -14,7 +14,8 @@
 
 rtBuffer<uchar4, 2> output_buffer;
 rtDeclareVariable(unsigned int, rnd_seed, , );
-
+rtDeclareVariable(int, renderingDivisionLevel, , "Number of horizontal stripes");
+rtDeclareVariable(int, myStripe, , "Current stripe");
 
 rtDeclareVariable(rtObject, top_object, , );
 rtDeclareVariable(rtObject, top_shadower, , );

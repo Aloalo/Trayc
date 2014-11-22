@@ -34,11 +34,6 @@ namespace trayc
         return "../Resources/Shaders/" + name;
     }
 
-    float3 Utils::glmToOptix(const vec3 &vec)
-    {
-        return make_float3(vec.x, vec.y, vec.z);
-    }
-
     bool Utils::Equals(const float3 &x, const float3 &y)
     {
         return abs(x.x - y.x) < eps && abs(x.y - y.y) < eps && abs(x.z - y.z) < eps;

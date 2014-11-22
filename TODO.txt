@@ -1,9 +1,10 @@
 Opcenito:
+-move declared variables from phong to a new header.\
 -moving lights in tests
 
 Grafika:
 -vertical lines artefact???
--area lights
+-area lights (rectangle)
 -mipmaping (optix release)
 -glass/reflective mesh textures
 -parallax mapping

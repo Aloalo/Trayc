@@ -44,9 +44,6 @@ namespace trayc
                 glViewport(0, 0, e.window.data1, e.window.data2);
             }
             break;
-        //case SDL_MOUSEMOTION:
-        //    tracer.SetCameraDir(player.cam);
-        //    break;
         }
         player.HandleEvent(e);
     }

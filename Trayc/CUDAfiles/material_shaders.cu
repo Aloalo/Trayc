@@ -102,6 +102,7 @@ RT_PROGRAM void closest_hit_glass()
 rtDeclareVariable(float3, Ka, , );
 rtDeclareVariable(float3, Kd, , );
 rtDeclareVariable(float3, Ks, , );
+rtDeclareVariable(float, phong_exponent, , );
 rtTextureSampler<uchar4, 2, cudaReadModeNormalizedFloat> diffuse_map;
 rtTextureSampler<uchar4, 2, cudaReadModeNormalizedFloat> specular_map;
 
@@ -130,13 +131,14 @@ RT_PROGRAM void closest_hit_solid()
     const float3 hit_point = ray.origin + t_hit * ray.direction;
 
     const uint2 &screen = output_buffer.size();
-    unsigned int seed = tea<1>(screen.x * launch_index.y + launch_index.x, rnd_seed);
+    const uint2 newLaunchIndex = make_uint2(launch_index.x, launch_index.y + myStripe * output_buffer.size().y / renderingDivisionLevel);
+    unsigned int seed = tea<1>(screen.x * newLaunchIndex.y + newLaunchIndex.x, rnd_seed);
 
     const float occlusion = ambientOcclusion(hit_point, ffnormal, seed);
     
     //phongShade(ffnormal, make_float3(0.0f), make_float3(0.0f), make_float3(0.0f), phong_exp, reflectivity);
     //phongShade(make_float3(abs(ffnormal.x), abs(ffnormal.y), abs(ffnormal.z)), make_float3(0.0f), make_float3(0.0f), make_float3(0.0f), phong_exp, reflectivity);
-    phongShade(hit_point, make_float3(pKd) * Ka, make_float3(pKd) * Kd, make_float3(pKs) * Ks, ffnormal, pKs.w * 255.0f, seed);
+    phongShade(hit_point, make_float3(pKd) * Ka, make_float3(pKd) * Kd, make_float3(pKs) * Ks, ffnormal, pKs.w * 255.0f * phong_exponent, seed);
     prd_radiance.result *= occlusion;
 }
 
@@ -163,7 +165,8 @@ RT_PROGRAM void closest_hit_reflective()
     const float3 hit_point = ray.origin + t_hit * ray.direction;
 
     const uint2 &screen = output_buffer.size();
-    unsigned int seed = tea<1>(screen.x*launch_index.y+launch_index.x, rnd_seed);
+    const uint2 newLaunchIndex = make_uint2(launch_index.x, launch_index.y + myStripe * output_buffer.size().y / renderingDivisionLevel);
+    unsigned int seed = tea<1>(screen.x * newLaunchIndex.y + newLaunchIndex.x, rnd_seed);
 
     const float occlusion = ambientOcclusion(hit_point, ffnormal, seed);
 
