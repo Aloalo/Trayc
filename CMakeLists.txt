@@ -5,6 +5,8 @@ project(Tracing)
 set(BIN_DIR ${Tester_SOURCE_DIR}/bin)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
+set(USE_FAST_MATH TRUE)
+
 # Include all CMake Macros.
 include(Macros)
 # Determine information about the compiler

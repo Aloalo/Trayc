@@ -46,7 +46,8 @@ private:
     static LabMaterials mat;
     static int labSize;
     static std::map<std::string, engine::Scene> tests;
-    static BasicLight spotlight;
+    static BasicLight pointlight;
+    static optix::float3 mainLightColor;
     static bool inSponza;
     static bool movingLight;
 

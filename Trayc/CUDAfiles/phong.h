@@ -78,7 +78,7 @@ static __device__ __inline__ void phongShade(const float3 &hit_point,
         float Ldist = 0.0f;
         float3 L;
 
-        if(light.is_directional) // directional light?
+        if(light.flags & 1) // directional light?
         {
             attenuation = 1.0f;
             L = normalize(light.pos);
@@ -105,11 +105,11 @@ static __device__ __inline__ void phongShade(const float3 &hit_point,
 
         const float nDl = dot(ffnormal, L);
 
-        if(nDl > 0.0f && attenuation > 0.0f)
+        if(nDl > 0.0f && attenuation > importance_cutoff)
         {
-            if(shadow_samples > 0 && light.casts_shadows)
+            if(shadow_samples > 0 && (light.flags & 2))
             {
-                if(shadow_samples == 1)
+                if(shadow_samples == 1 || light.flags == LightFlags::SHADOWS_DIRECTIONAL)
                 {
                     PerRayData_shadow shadow_prd;
                     shadow_prd.attenuation = 1.0f;
@@ -140,7 +140,7 @@ static __device__ __inline__ void phongShade(const float3 &hit_point,
                 }
             }
 
-            if(attenuation > 0.0f)
+            if(attenuation > importance_cutoff)
             {
                 const float3 light_color = light.color * attenuation;
                 color += p_Kd * nDl * light_color;
@@ -159,7 +159,7 @@ static __device__ __inline__ void phongShade(const float3 &hit_point,
 
 static __device__ __inline__ void phongReflect(const float3 &hit_point, const float3 &ffnormal, const float3 &reflectivity)
 {
-    if(fmaxf(reflectivity) > 0.0f)
+    if(fmaxf(reflectivity) > importance_cutoff)
     {
         const float3 r = schlick(-dot(ffnormal, ray.direction), reflectivity);
         const float importance = prd_radiance.importance * optix::luminance(r);

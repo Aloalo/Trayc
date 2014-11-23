@@ -38,7 +38,7 @@ RT_PROGRAM void closest_hit_glass()
 {
     const float3 h = ray.origin + t_hit * ray.direction;
     const float3 n = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD, shading_normal)); // normal
-    const float3 &i = ray.direction;// incident direction
+    const float3 i = ray.direction;// incident direction
 
     float reflection = 1.0f;
     float3 result = make_float3(0.0f);
@@ -93,10 +93,7 @@ RT_PROGRAM void closest_hit_glass()
             result += reflection * reflection_color * cutoff_color;
     }
 
-    //const uint2 screen = output_buffer.size();
-    //unsigned int seed = tea<16>(screen.x * launch_index.y + launch_index.x, rnd_seed);
-    result = result * beer_attenuation;// * ambientOcclusion(h, n, seed);
-    prd_radiance.result = result;
+    prd_radiance.result = result * beer_attenuation;
 }
 
 rtDeclareVariable(float3, Ka, , );

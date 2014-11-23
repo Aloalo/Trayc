@@ -31,19 +31,20 @@ int TweakBarHandler::labSize = 15;
 LabMaterials TweakBarHandler::mat;
 RTsize TweakBarHandler::bw;
 RTsize TweakBarHandler::bh;
-BasicLight TweakBarHandler::spotlight = BasicLight(//light0 - point light
+BasicLight TweakBarHandler::pointlight = BasicLight(//light0 - point light
                                             make_float3(0.0f, 30.0f, 10.0f), //pos/dir
                                             make_float3(0.0f), //color
-                                            make_float3(1.0f, 0.01f, 0.0005f),//attenuation
+                                            make_float3(1.0f, 0.025f, 0.0005f),//attenuation
                                             make_float3(0.0f, 0.0f, 0.0f), //spot_direction
-                                            90.0f, //spot_cutoff
-                                            30.0f, //spot_exponent
+                                            360.0f, //spot_cutoff
+                                            0.0f, //spot_exponent
                                             0.1f, //radius
-                                            1, //casts_shadows
-                                            0 //is_directional
+                                            LightFlags::SHADOWS_POINT
                                             );
 bool TweakBarHandler::inSponza = false;
 bool TweakBarHandler::movingLight = true;
+float3 TweakBarHandler::mainLightColor = make_float3(0.0f);
+
 
 void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
 {
@@ -52,9 +53,13 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TweakBarHandler::gameEngine = gameEngine;
     mat.createLabMaterials();
 
-    TwDefine(" GLOBAL help='Trayc library tester.\nPress [w/a/s/d/q/e] to move and use the mouse to rotate the camera.\nPress [shift] to "
-        "release mouse.\nPress [9/0] to speed up or speed down.\nPress left mose button to meve the spotlight and right to activate/deactivate it.\n"
-        "Press p to start/stop the moving light' ");
+    TwDefine(" GLOBAL help='Trayc library tester.\n"
+        "Press [w/a/s/d/q/e] to move and use the mouse to rotate the camera.\n"
+        "Press [shift] to release mouse.\n"
+        "Press [9/0] to speed up or speed down.\n"
+        "Press left mouse button to spawn a point light and right click to activate/deactivate it.\n"
+        "Press [p] to start/stop the moving light in Sponza test\n"
+        "Press [l] to turn on/off the scenes main light' ");
 
     TwBar *loadbar;
     loadbar = TwNewBar("Tests");
@@ -63,7 +68,7 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TwAddButton(loadbar, "Load Cornell Box", LoadCornellBox, NULL, " label='Load Cornell Box' ");
     TwAddButton(loadbar, "Load Sponza", LoadSponza, NULL, " label='Load Sponza' ");
     TwAddButton(loadbar, "Load Labyrinth", LoadLabyrinth, NULL, " label='Load Labyrinth' ");
-    TwAddVarRW(loadbar, "Labyrinth Size", TW_TYPE_INT32, &labSize, " label='Labyrinth Size' ");
+    TwAddVarRW(loadbar, "Labyrinth Size", TW_TYPE_INT32, &labSize, " label='Labyrinth Size' min=2 max=199 ");
 
     TwBar *rtsettings;
     rtsettings = TwNewBar("rtsettings");
@@ -71,29 +76,29 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TwDefine(" rtsettings iconified=true ");
     TwAddVarCB(rtsettings, "FXAA", TW_TYPE_BOOL8, SetFXAA, GetFXAA, nullptr, "");
     TwAddVarCB(rtsettings, "Screen texture filtering", TW_TYPE_BOOL8, SetTextureFilter, GetTextureFilter, nullptr, "");
-    TwAddVarRW(rtsettings, "Screen Width", TW_TYPE_INT32, &Environment::Get().screenWidth.x, "");
-    TwAddVarRW(rtsettings, "Screen Height", TW_TYPE_INT32, &Environment::Get().screenHeight.x, "");
-    TwAddVarRW(rtsettings, "OutBuffer Width", TW_TYPE_INT32, &bw, "");
-    TwAddVarRW(rtsettings, "OutBuffer Height", TW_TYPE_INT32, &bh, "");
-    TwAddVarRW(rtsettings, "maxRayDepth", TW_TYPE_INT32, &gameEngine->tracer.maxRayDepth.x, "");
-    TwAddVarRW(rtsettings, "shadowSamples", TW_TYPE_INT32, &gameEngine->tracer.shadowSamples.x, "");
-    TwAddVarRW(rtsettings, "dofSamples", TW_TYPE_INT32, &gameEngine->tracer.dofSamples.x, "");
-    TwAddVarRW(rtsettings, "ambientOcclusionSamples", TW_TYPE_INT32, &gameEngine->tracer.ambientOcclusionSamples.x, "");
-    TwAddVarRW(rtsettings, "MSAA", TW_TYPE_INT32, &gameEngine->tracer.MSAA.x, "");
+    TwAddVarRW(rtsettings, "Screen Width", TW_TYPE_INT32, &Environment::Get().screenWidth.x, "min=100 max=1920");
+    TwAddVarRW(rtsettings, "Screen Height", TW_TYPE_INT32, &Environment::Get().screenHeight.x, "min=100 max=1080");
+    TwAddVarRW(rtsettings, "OutBuffer Width", TW_TYPE_INT32, &bw, "min=100 max=3840");
+    TwAddVarRW(rtsettings, "OutBuffer Height", TW_TYPE_INT32, &bh, "min=100 max=2160");
+    TwAddVarRW(rtsettings, "maxRayDepth", TW_TYPE_INT32, &gameEngine->tracer.maxRayDepth.x, "min=0 max=100");
+    TwAddVarRW(rtsettings, "shadowSamples", TW_TYPE_INT32, &gameEngine->tracer.shadowSamples.x, "min=0 max=1024");
+    TwAddVarRW(rtsettings, "dofSamples", TW_TYPE_INT32, &gameEngine->tracer.dofSamples.x, "min=0 max=1024");
+    TwAddVarRW(rtsettings, "ambientOcclusionSamples", TW_TYPE_INT32, &gameEngine->tracer.ambientOcclusionSamples.x, "min=0 max=1024");
+    TwAddVarRW(rtsettings, "MSAA", TW_TYPE_INT32, &gameEngine->tracer.MSAA.x, "min=1 max=16");
     TwAddButton(rtsettings, "Apply", ApplySettings, NULL, " label='Apply' ");
 
     TwBar *sssettings;
     sssettings = TwNewBar("sssettings");
     TwDefine(" sssettings label='Screenshot Settings' ");
     TwDefine(" sssettings iconified=true ");
-    TwAddVarRW(sssettings, "Screenshot Width", TW_TYPE_INT32, &gameEngine->tracer.SSbufferWidth.x, "");
-    TwAddVarRW(sssettings, "Screenshot Height", TW_TYPE_INT32, &gameEngine->tracer.SSbufferHeight.x, "");
-    TwAddVarRW(sssettings, "maxRayDepth", TW_TYPE_INT32, &gameEngine->tracer.SSmaxRayDepth.x, "");
-    TwAddVarRW(sssettings, "renderingDivisionLevel", TW_TYPE_INT32, &gameEngine->tracer.SSrenderingDivisionLevel.x, "");
-    TwAddVarRW(sssettings, "shadowSamples", TW_TYPE_INT32, &gameEngine->tracer.SSshadowSamples.x, "");
-    TwAddVarRW(sssettings, "dofSamples", TW_TYPE_INT32, &gameEngine->tracer.SSdofSamples.x, "");
-    TwAddVarRW(sssettings, "ambientOcclusionSamples", TW_TYPE_INT32, &gameEngine->tracer.SSambientOcclusionSamples.x, "");
-    TwAddVarRW(sssettings, "MSAA", TW_TYPE_INT32, &gameEngine->tracer.SSMSAA.x, "");
+    TwAddVarRW(sssettings, "Screenshot Width", TW_TYPE_INT32, &gameEngine->tracer.SSbufferWidth.x, "min=100 max=3840");
+    TwAddVarRW(sssettings, "Screenshot Height", TW_TYPE_INT32, &gameEngine->tracer.SSbufferHeight.x, "min=100 max=2160");
+    TwAddVarRW(sssettings, "maxRayDepth", TW_TYPE_INT32, &gameEngine->tracer.SSmaxRayDepth.x, "min=0 max=100");
+    TwAddVarRW(sssettings, "renderingDivisionLevel", TW_TYPE_INT32, &gameEngine->tracer.SSrenderingDivisionLevel.x, "min=1 max=2160");
+    TwAddVarRW(sssettings, "shadowSamples", TW_TYPE_INT32, &gameEngine->tracer.SSshadowSamples.x, "min=0 max=1024");
+    TwAddVarRW(sssettings, "dofSamples", TW_TYPE_INT32, &gameEngine->tracer.SSdofSamples.x, "min=0 max=1024");
+    TwAddVarRW(sssettings, "ambientOcclusionSamples", TW_TYPE_INT32, &gameEngine->tracer.SSambientOcclusionSamples.x, "min=0 max=1024");
+    TwAddVarRW(sssettings, "MSAA", TW_TYPE_INT32, &gameEngine->tracer.SSMSAA.x, "min=1 max=16");
     TwAddVarRW(sssettings, "Close When Done", TW_TYPE_BOOL8, &gameEngine->closeAfterSS, "");
     TwAddButton(sssettings, "High Quality Screenshot", ScreenShot, NULL, " label='High Quality Screenshot' ");
 
@@ -102,11 +107,11 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TwDefine(" generalsettings label='General Settings' ");
     TwDefine(" generalsettings iconified=true ");
     TwDefine(" generalsettings refresh=0.1 ");
-    TwAddVarRW(generalsettings, "FOV", TW_TYPE_FLOAT, &gameEngine->FOV.x, "");
-    TwAddVarRW(generalsettings, "Aparture Radius", TW_TYPE_FLOAT, &gameEngine->tracer.apertureRadius.x, "");
-    TwAddVarRW(generalsettings, "Focal Length", TW_TYPE_FLOAT, &gameEngine->tracer.focalLength.x, "");
-    TwAddVarRW(generalsettings, "AO Sampling Radius", TW_TYPE_FLOAT, &gameEngine->tracer.AOsamplingRadius.x, "");
-    TwAddVarRW(generalsettings, "Light Bloom Exponent", TW_TYPE_FLOAT, &gameEngine->tracer.bloomExp.x, "");
+    TwAddVarRW(generalsettings, "FOV", TW_TYPE_FLOAT, &gameEngine->FOV.x, "min=30 max=120");
+    TwAddVarRW(generalsettings, "Aparture Radius", TW_TYPE_FLOAT, &gameEngine->tracer.apertureRadius.x, "min=0.005 max=1");
+    TwAddVarRW(generalsettings, "Focal Length", TW_TYPE_FLOAT, &gameEngine->tracer.focalLength.x, "min=1");
+    TwAddVarRW(generalsettings, "AO Sampling Radius", TW_TYPE_FLOAT, &gameEngine->tracer.AOsamplingRadius.x, "min=0.1");
+    TwAddVarRW(generalsettings, "Light Bloom Exponent", TW_TYPE_FLOAT, &gameEngine->tracer.bloomExp.x, "min=1 max=512");
     TwAddVarRW(generalsettings, "Time based random seed", TW_TYPE_BOOL8, &gameEngine->frameRandomSeed.x, "");
     TwAddVarRO(generalsettings, "FPS", TW_TYPE_FLOAT, &gameEngine->FPS, "");
     TwAddButton(generalsettings, "Apply", ApplySettings, NULL, " label='Apply' ");
@@ -119,7 +124,7 @@ void TW_CALL TweakBarHandler::LoadCornellBox(void *userData)
     const string location = Utils::Resource("CornellBox/");
     gameEngine->tracer.AddScene(LoadTest(location + "/CornellBox-Water.obj", location, mat4(1.0f)));
 
-    gameEngine->tracer.AddLight(spotlight);
+    gameEngine->tracer.AddLight(pointlight);
     gameEngine->tracer.AddLight(BasicLight(//light0 - point light
         make_float3(0.0f, 1.0f, -0.9f), //pos/dir
         make_float3(1.0f), //color
@@ -128,8 +133,7 @@ void TW_CALL TweakBarHandler::LoadCornellBox(void *userData)
         360.0f, //spot_cutoff
         0.0f, //spot_exponent
         0.065f, //radius
-        1, //casts_shadows
-        0 //is_directional
+        LightFlags::SHADOWS_POINT
         ));
 
     gameEngine->tracer.CompileSceneGraph(location + "accel.accelcache", true);
@@ -142,18 +146,16 @@ void TW_CALL TweakBarHandler::LoadSponza(void *userData)
     const string location = Utils::Resource("crytek-sponza/");
     gameEngine->tracer.AddScene(LoadTest(location + "/sponza.obj", location, scale(mat4(1.0f), vec3(0.05f))));
 
-    gameEngine->tracer.AddLight(spotlight);
+    gameEngine->tracer.AddLight(pointlight);
     gameEngine->tracer.AddLight(BasicLight(//light0 - point light
         make_float3(0.0f, 20.0f, 0.0f), //pos/dir
-        //make_float3(2.0f), //color
         make_float3(2.0f), //color
         make_float3(1.0f, 0.01f, 0.0005f),//attenuation
         make_float3(0.0f, 0.0f, 0.0f), //spot_direction
         360.0f, //spot_cutoff
         0.0f, //spot_exponent
         0.25f, //radius
-        1, //casts_shadows
-        0 //is_directional
+        LightFlags::SHADOWS_POINT
         ));
 
 
@@ -182,7 +184,7 @@ void TW_CALL TweakBarHandler::LoadNissan(void *userData)
     gameEngine->tracer.AddGeometryInstance(ctx->createGeometryInstance(floor, &mat.getLabyrinthMaterial(LabMaterials::WALL), 
         &mat.getLabyrinthMaterial(LabMaterials::WALL)+1));
 
-    gameEngine->tracer.AddLight(spotlight);
+    gameEngine->tracer.AddLight(pointlight);
     gameEngine->tracer.AddLight(BasicLight(//light2 - directional light
         make_float3(1, 1, 1), //pos/dir
         make_float3(0.4f), //color
@@ -191,8 +193,7 @@ void TW_CALL TweakBarHandler::LoadNissan(void *userData)
         360.0f, //spot_cutoff
         0.0f, //spot_exponent
         0.0f, //radius
-        1, //casts_shadows
-        1 //is_directional
+        LightFlags::SHADOWS_DIRECTIONAL
         ));
 
     gameEngine->tracer.CompileSceneGraph(Utils::Resource("nissan/") + "accel.accelcache", true);
@@ -204,7 +205,7 @@ void TW_CALL TweakBarHandler::LoadMustang(void *userData)
     gameEngine->tracer.ClearSceneGraph();
     const mat4 trmustang = scale(translate(mat4(1.0f), vec3(100.0f, -50.0f, 0.0f)), vec3(0.025f));
     gameEngine->tracer.AddScene(LoadTest(Utils::Resource("mustang/mustang.obj"), Utils::Resource("mustang/"), trmustang), mat.getLabyrinthMaterial(LabMaterials::WALL));
-    gameEngine->tracer.AddLight(spotlight);
+    gameEngine->tracer.AddLight(pointlight);
     gameEngine->tracer.CompileSceneGraph(Utils::Resource("mustang/") + "accel.accelcache", true);
 }
 
@@ -246,7 +247,7 @@ void TW_CALL TweakBarHandler::LoadLabyrinth(void *userData)
     lab.generateLabyrinth(labSize, labSize);
     TweakBarHandler::addLabyrinth(lab);
 
-    gameEngine->tracer.AddLight(spotlight);
+    gameEngine->tracer.AddLight(pointlight);
     gameEngine->tracer.AddLight(BasicLight(//light0 - point light
         make_float3(0.0f, 30.0f, 10.0f), //pos/dir
         make_float3(2.0f), //color
@@ -255,8 +256,7 @@ void TW_CALL TweakBarHandler::LoadLabyrinth(void *userData)
         360.0f, //spot_cutoff
         0.0f, //spot_exponent
         1.0f, //radius
-        1, //casts_shadows
-        0 //is_directional
+        LightFlags::SHADOWS_POINT
         ));
 
     gameEngine->tracer.CompileSceneGraph("", false);
@@ -401,7 +401,7 @@ void TweakBarHandler::HandleEvent(const SDL_Event &e)
             if(e.button.button == SDL_BUTTON_RIGHT)
             {
                 if(fmaxf(light.color) == 0.0f)
-                    light.color = make_float3(2.0f);
+                    light.color = make_float3(1.0f);
                 else
                     light.color = make_float3(0.0f);
             }
@@ -416,6 +416,21 @@ void TweakBarHandler::HandleEvent(const SDL_Event &e)
     }
     else if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_p)
         movingLight = !movingLight;
+    else if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_l)
+    {
+        if(gameEngine->tracer.GetNumLights() > 1)
+        {
+            BasicLight &light = gameEngine->tracer.GetLight(1);
+            if(fmaxf(light.color) == 0.0f)
+                light.color = mainLightColor;
+            else
+            {
+                mainLightColor = light.color;
+                light.color = make_float3(0.0f);
+            }
+            gameEngine->tracer.UpdateLight(1);
+        }
+    }
 }
 
 void TweakBarHandler::Update(float dt)

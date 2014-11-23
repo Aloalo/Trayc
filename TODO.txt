@@ -1,7 +1,6 @@
 Opcenito:
 
 Grafika:
--vertical lines artefact???
 -area lights (rectangle)
 -mipmaping (optix release)
 -glass/reflective mesh textures

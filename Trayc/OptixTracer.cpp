@@ -200,7 +200,7 @@ namespace trayc
         for(int i = 0; i < lights.size(); ++i)
         {
             const BasicLight &light = lights[i];
-            if(!light.is_directional)
+            if(light.flags == 2)
             {
                 optix::Material lightMaterial = ctx->createMaterial();
                 lightMaterial->setClosestHitProgram(0, ProgramHandler::Get().Get("material_shaders.cu", "closest_hit_light"));
@@ -312,7 +312,8 @@ namespace trayc
     {
         memcpy(static_cast<void*>((static_cast<BasicLight*>(ctx["lights"]->getBuffer()->map())+idx)), static_cast<const BasicLight*>(lights.data()+idx), sizeof(BasicLight));
         ctx["lights"]->getBuffer()->unmap();
-        lightsGG->getChild(idx)->getMaterial(0)["light_color"]->setFloat(lights[idx].color);
+        if(lightsGG->getChildCount() > idx)
+            lightsGG->getChild(idx)->getMaterial(0)["light_color"]->setFloat(lights[idx].color);
     }
 
     void OptixTracer::SetCamera(const Camera &cam)
