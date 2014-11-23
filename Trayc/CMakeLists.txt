@@ -47,6 +47,8 @@ set(Trayc_CUDA_FILES
     CUDAfiles/phong.h
     CUDAfiles/random.h
     CUDAfiles/sphere.cu
+    CUDAfiles/rectangleAA.cu
+    CUDAfiles/box.cu
     CUDAfiles/light.cu
 )
 

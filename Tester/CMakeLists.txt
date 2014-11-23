@@ -10,8 +10,6 @@ OPTIX_add_sample_executable(Tester
     Labyrinth.h
     Box.h
     CUDAfiles/shaders.cu
-    CUDAfiles/rectangleAA.cu
-    CUDAfiles/box.cu
     )
 
 file(COPY Settings.ini DESTINATION .)
