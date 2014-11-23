@@ -142,11 +142,11 @@ void TW_CALL TweakBarHandler::LoadSponza(void *userData)
     const string location = Utils::Resource("crytek-sponza/");
     gameEngine->tracer.AddScene(LoadTest(location + "/sponza.obj", location, scale(mat4(1.0f), vec3(0.05f))));
 
-    //gameEngine->tracer.AddLight(spotlight);
+    gameEngine->tracer.AddLight(spotlight);
     gameEngine->tracer.AddLight(BasicLight(//light0 - point light
         make_float3(0.0f, 20.0f, 0.0f), //pos/dir
         //make_float3(2.0f), //color
-        make_float3(2.0f, 0.0f, 0.0f), //color
+        make_float3(2.0f), //color
         make_float3(1.0f, 0.01f, 0.0005f),//attenuation
         make_float3(0.0f, 0.0f, 0.0f), //spot_direction
         360.0f, //spot_cutoff
@@ -421,7 +421,7 @@ void TweakBarHandler::HandleEvent(const SDL_Event &e)
 void TweakBarHandler::Update(float dt)
 {
     static float time_passed = 0.0f;
-    if(inSponza && movingLight && gameEngine->tracer.GetNumLights() > 0)
+    if(inSponza && movingLight && gameEngine->tracer.GetNumLights() > 1)
     {
         time_passed += dt;
         BasicLight &light = gameEngine->tracer.GetLight(1);
