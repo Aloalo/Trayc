@@ -56,9 +56,8 @@ void RenderingLoop()
 int main(int argc, char *argv[])
 {
     SDLHandler::Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-    Environment::Get().screenWidth;
     SDLHandler::CreateGLWindow(
-        "Test",                             // window title
+        "Ray Tracing",                             // window title
         SDL_WINDOWPOS_UNDEFINED,            // initial x position
         SDL_WINDOWPOS_UNDEFINED,            // initial y position
         Environment::Get().screenWidth,     // width, in pixels
