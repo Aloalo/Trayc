@@ -94,13 +94,13 @@ namespace engine
 
     void DefaultCameraHandler::WindowResize(const SDL_WindowEvent &e)
     {
-        if(e.windowID == SDL_WINDOWEVENT_RESIZED)
+        if(e.event == SDL_WINDOWEVENT_RESIZED)
             cam.aspectRatio = static_cast<float>(e.data1) / static_cast<float>(e.data2);
     }
 
     void DefaultCameraHandler::Update(float deltaTime)
     {
-        const float cf = 1 - exp(-springiness * deltaTime);
+        const float cf = 1 - expf(-springiness * deltaTime);
         const float dxr = cf * dx;
         const float dyr = cf * dy;
         cam.Rotate(dxr, dyr);
@@ -112,15 +112,15 @@ namespace engine
 
         vec3 v(
             dir.x,
-            dir.z * sin(cam.phiy),
-            dir.z * cos(cam.phiy)
+            dir.z * sinf(cam.phiy),
+            dir.z * cosf(cam.phiy)
             );
         v = vec3(
-            v.x * cos(cam.phix) + v.z * sin(cam.phix),
+            v.x * cosf(cam.phix) + v.z * sinf(cam.phix),
             v.y,
-            -v.x * sin(cam.phix) + v.z * cos(cam.phix)
+            -v.x * sinf(cam.phix) + v.z * cosf(cam.phix)
             );
-        cam.position += deltaTime * speed * normalize(-v + vec3(0, dir.y, 0));
+        cam.position += deltaTime * speed * normalize(vec3(0.0f, dir.y, 0.0f) - v);
     }
 
 

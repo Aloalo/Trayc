@@ -197,7 +197,8 @@ namespace trayc
     void OptixTracer::CompileSceneGraph(const std::string accelLocation, bool cacheAccel)
     {
         //white spheres for lights
-        for(int i = 0; i < lights.size(); ++i)
+        const int ctLights = lights.size();
+        for(int i = 0; i < ctLights; ++i)
         {
             const BasicLight &light = lights[i];
             if(light.flags == 2)
@@ -308,7 +309,7 @@ namespace trayc
         return lights[i];
     }
 
-    void OptixTracer::UpdateLight(int idx)
+    void OptixTracer::UpdateLight(optix::uint idx)
     {
         memcpy(static_cast<void*>((static_cast<BasicLight*>(ctx["lights"]->getBuffer()->map())+idx)), static_cast<const BasicLight*>(lights.data()+idx), sizeof(BasicLight));
         ctx["lights"]->getBuffer()->unmap();
@@ -371,8 +372,8 @@ namespace trayc
         {
             std::ofstream ofs(name, std::ios::out | std::ios::binary);
             ofs << "P6\n" << w << " " << h << "\n255\n";
-            for(int i = h-1; i >= 0; --i)
-                for(int j = 0; j < w; ++j)
+            for(RTsize i = h-1; i >= 0; --i)
+                for(RTsize j = 0; j < w; ++j)
                     ofs << out[(i*w+j)*k + 2] << out[(i*w+j)*k + 1] << out[(i*w+j)*k + 0];
                 ofs.close();
         }

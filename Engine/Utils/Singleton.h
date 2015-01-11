@@ -5,21 +5,23 @@
 #ifndef EN_SINGLETON_H
 #define EN_SINGLETON_H
 
-template<class D>
-struct Singleton
+namespace engine
 {
-    static D& Get()
+    template<class D>
+    struct Singleton
     {
-        if(!instance)
-            instance = new D;
-        return *instance;
-    }
+        static D& Get()
+        {
+            if(!instance)
+                instance = new D;
+            return *instance;
+        }
 
-private:
-    static D *instance;
-};
+    private:
+        static D *instance;
+    };
 
-template<class D>
-D *Singleton<D>::instance = 0;
-
+    template<class D>
+    D *Singleton<D>::instance = 0;
+}
 #endif

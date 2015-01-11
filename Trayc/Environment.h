@@ -11,7 +11,7 @@
 
 namespace trayc
 {
-    class Environment : public Singleton<Environment>
+    class Environment : public engine::Singleton<Environment>
     {
     public:
         engine::Setting<int> screenWidth;
@@ -23,7 +23,7 @@ namespace trayc
 
     private:
         Environment(void);
-        friend Singleton<Environment>;
+        friend engine::Singleton<Environment>;
     };
 
     extern optix::Context &ctx;

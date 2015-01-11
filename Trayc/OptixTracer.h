@@ -42,7 +42,7 @@ namespace trayc
 
         int GetNumLights() const;
         BasicLight& GetLight(int i);
-        void UpdateLight(int idx);
+        void UpdateLight(optix::uint idx);
         
         void SetBufferSize(int w, int h);
         void SetCamera(const engine::Camera &cam);

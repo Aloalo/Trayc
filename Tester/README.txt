@@ -1,4 +1,4 @@
-Tester for the Trayc library.
+Tester for the Trayc library by Jure Ratkovic.
 
 Controls:
    -W/A/S/D/Q/E + mouse: move camera
@@ -7,3 +7,4 @@ Controls:
    -left mouse button: drop secondary light
    -right mouse button: toggle secondary light
    -LSHIFT: release/bind mose to the window (for using the gui, exiting ...)
+   

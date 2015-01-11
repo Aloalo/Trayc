@@ -1,5 +1,8 @@
 Opcenito:
-
+    -Improve camera
+    -update optix and cuda
+    -stl extensions (arraysize)
+    
 Grafika:
 -area lights (rectangle)
 -mipmaping (optix release)

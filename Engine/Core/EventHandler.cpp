@@ -25,7 +25,7 @@ namespace engine
         {
             if(test_event.type == SDL_QUIT)
                 quit = true;
-            else if(test_event.type == SDL_KEYDOWN && test_event.key.keysym.sym == SDLK_LSHIFT)
+            else if(test_event.type == SDL_KEYDOWN && test_event.key.keysym.sym == SDLK_TAB)
             {
                 if(isCursorFree)
                 {
@@ -65,7 +65,7 @@ namespace engine
 
     void EventHandler::RemoveEventListener(const EventListener *listener)
     {
-        //TODO_JURE finish
+        listenerList.erase(find(listenerList.begin(), listenerList.end(), listener));
     }
 
     bool EventHandler::Quit()
@@ -93,7 +93,7 @@ namespace engine
 
     void EventHandler::RemoveUpdateable(const Updateable *updateable)
     {
-        //TODO_JURE finish
+        updateableList.erase(find(updateableList.begin(), updateableList.end(), updateable));
     }
 
     void EventHandler::SetQuit()

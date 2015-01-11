@@ -86,6 +86,10 @@ namespace engine
         else
         {
             const GLint location = glGetUniformLocation(id, name);
+            if(location == -1)
+            {
+                cerr << "Uniform '" << name << "' not in shader '" << id << "'" << endl;
+            }
             uniformLocations[name] = location;
             return location;
         }

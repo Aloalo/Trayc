@@ -12,6 +12,7 @@
 
 #include <Engine/Core/SDLHandler.h>
 #include <Engine/Core/EventHandler.h>
+#include <Engine/Common/MathFunctions.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -55,7 +56,7 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
 
     TwDefine(" GLOBAL help='Trayc library tester.\n"
         "Press [w/a/s/d/q/e] to move and use the mouse to rotate the camera.\n"
-        "Press [shift] to release mouse.\n"
+        "Press [TAB] to release mouse.\n"
         "Press [9/0] to speed up or speed down.\n"
         "Press left mouse button to spawn a point light and right click to activate/deactivate it.\n"
         "Press [p] to start/stop the moving light in Sponza test\n"
@@ -122,7 +123,7 @@ void TW_CALL TweakBarHandler::LoadCornellBox(void *userData)
     inSponza = false;
     gameEngine->tracer.ClearSceneGraph();
     const string location = Utils::Resource("CornellBox/");
-    gameEngine->tracer.AddScene(LoadTest(location + "/CornellBox-Water.obj", location, mat4(1.0f)));
+    gameEngine->tracer.AddScene(LoadTest(location + "/CornellBox-Water.obj", location, I));
 
     gameEngine->tracer.AddLight(pointlight);
     gameEngine->tracer.AddLight(BasicLight(//light0 - point light
@@ -144,7 +145,7 @@ void TW_CALL TweakBarHandler::LoadSponza(void *userData)
     inSponza = true;
     gameEngine->tracer.ClearSceneGraph();
     const string location = Utils::Resource("crytek-sponza/");
-    gameEngine->tracer.AddScene(LoadTest(location + "/sponza.obj", location, scale(mat4(1.0f), vec3(0.05f))));
+    gameEngine->tracer.AddScene(LoadTest(location + "/sponza.obj", location, scale(I, vec3(0.05f))));
 
     gameEngine->tracer.AddLight(pointlight);
     gameEngine->tracer.AddLight(BasicLight(//light0 - point light
@@ -166,10 +167,10 @@ void TW_CALL TweakBarHandler::LoadNissan(void *userData)
 {
     inSponza = false;
     gameEngine->tracer.ClearSceneGraph();
-    const mat4 trnissan = scale(translate(mat4(1.0f), vec3(0.0f, -50.0f, 0.0f)), vec3(0.1f));
+    const mat4 trnissan = scale(translate(I, vec3(0.0f, -50.0f, 0.0f)), vec3(0.1f));
     gameEngine->tracer.AddScene(LoadTest(Utils::Resource("nissan/nissan.obj"), Utils::Resource("nissan/"), trnissan), mat.getLabyrinthMaterial(LabMaterials::MIRROR));
 
-    const mat4 teapottr = scale(translate(mat4(1.0f), vec3(50.0f, -54.0f, 0.0f)), vec3(0.1f));
+    const mat4 teapottr = scale(translate(I, vec3(50.0f, -54.0f, 0.0f)), vec3(0.1f));
     gameEngine->tracer.AddScene(LoadTest(Utils::Resource("teapot/teapot.obj"), Utils::Resource("teapot/"), teapottr), mat.getLabyrinthMaterial(LabMaterials::GLASS));
 
     Geometry floor = ctx->createGeometry();
@@ -203,7 +204,7 @@ void TW_CALL TweakBarHandler::LoadMustang(void *userData)
 {
     inSponza = false;
     gameEngine->tracer.ClearSceneGraph();
-    const mat4 trmustang = scale(translate(mat4(1.0f), vec3(100.0f, -50.0f, 0.0f)), vec3(0.025f));
+    const mat4 trmustang = scale(translate(I, vec3(100.0f, -50.0f, 0.0f)), vec3(0.025f));
     gameEngine->tracer.AddScene(LoadTest(Utils::Resource("mustang/mustang.obj"), Utils::Resource("mustang/"), trmustang), mat.getLabyrinthMaterial(LabMaterials::WALL));
     gameEngine->tracer.AddLight(pointlight);
     gameEngine->tracer.CompileSceneGraph(Utils::Resource("mustang/") + "accel.accelcache", true);
@@ -312,38 +313,38 @@ const engine::Scene& TweakBarHandler::LoadTest(const string &test, const string 
     {
         cerr << importer.GetErrorString() << endl;
         EventHandler::SetQuit();
-        return Scene();
+        return *(Scene*)nullptr;
     }
     cout << "Loaded file: " + test << endl;
 
     tests[test] = Scene();
     Scene &scene = tests[test];
-    for(int i = 0; i < aiscene->mNumMeshes; ++i)
+    for(optix::uint i = 0; i < aiscene->mNumMeshes; ++i)
     {
         scene.meshes.push_back(TriangleMesh());
         TriangleMesh &mesh = scene.meshes[i];
         const aiMesh *aimesh = aiscene->mMeshes[i];
         const aiMaterial *aimaterial = aiscene->mMaterials[aimesh->mMaterialIndex];
-        for(int i = 0; i < aimesh->mNumFaces; ++i)
-            mesh.indices.push_back(ivec3(aimesh->mFaces[i].mIndices[0], aimesh->mFaces[i].mIndices[1], aimesh->mFaces[i].mIndices[2]));
+        for(optix::uint j = 0; j < aimesh->mNumFaces; ++j)
+            mesh.indices.push_back(ivec3(aimesh->mFaces[j].mIndices[0], aimesh->mFaces[j].mIndices[1], aimesh->mFaces[j].mIndices[2]));
         const bool hasNormalMap = aimaterial == nullptr ? false : aimaterial->GetTextureCount(aiTextureType_NORMALS) || aimaterial->GetTextureCount(aiTextureType_HEIGHT);
 
-        for(int i = 0; i < aimesh->mNumVertices; ++i)
+        for(optix::uint j = 0; j < aimesh->mNumVertices; ++j)
         {
-            mesh.positions.push_back(vec3(transform * vec4(*(vec3*)(&aimesh->mVertices[i]), 1.0)));
-            mesh.normals.push_back(*(vec3*)(&aimesh->mNormals[i]));
+            mesh.positions.push_back(vec3(transform * vec4(*(vec3*)(&aimesh->mVertices[j]), 1.0)));
+            mesh.normals.push_back(*(vec3*)(&aimesh->mNormals[j]));
             if(hasNormalMap)
             {
-                mesh.tangents.push_back(*(vec3*)(&aimesh->mTangents[i]));
-                mesh.bitangents.push_back(*(vec3*)(&aimesh->mBitangents[i]));
+                mesh.tangents.push_back(*(vec3*)(&aimesh->mTangents[j]));
+                mesh.bitangents.push_back(*(vec3*)(&aimesh->mBitangents[j]));
             }
 
             if(aimesh->HasTextureCoords(0))
-                mesh.uvs.push_back(vec2(aimesh->mTextureCoords[0][i].x, aimesh->mTextureCoords[0][i].y));
+                mesh.uvs.push_back(vec2(aimesh->mTextureCoords[0][j].x, aimesh->mTextureCoords[0][i].y));
             mesh.materialIndex = aimesh->mMaterialIndex;
         }
     }
-    for(int i = 0; i < aiscene->mNumMaterials; ++i)
+    for(optix::uint i = 0; i < aiscene->mNumMaterials; ++i)
     {
         scene.materials.push_back(engine::Material());
         engine::Material &material = scene.materials[i];

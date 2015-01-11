@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -24,18 +25,12 @@ namespace engine
         ifstream in(sn, ifstream::in);
         if(in)
         {
-            unsigned long long int size = 0ull;
-            in.seekg(0, ios::end);
-            ifstream::pos_type szp = in.tellg();
-            in.seekg(0, ios::beg);
-            size = static_cast<unsigned long long int>(szp);
+            stringstream strStream;
+            strStream << in.rdbuf();
+            string source(strStream.str());
+            source.erase(source.find_last_of('}')+1, source.length());
 
-            char *source = new char[static_cast<size_t>(size)];
-            memset(source, 0, static_cast<size_t>(size));
-            in.read(source, static_cast<streamsize>(size));
-
-            Init2(source, name);
-            delete[] source;
+            Init2(source.c_str(), name);
         }
         else
         {

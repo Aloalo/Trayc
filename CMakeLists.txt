@@ -114,8 +114,10 @@ include_directories(
     "${OptiX_INCLUDE}"
     "${IL_INCLUDE_DIR}/.."
     "${PROJECT_SOURCE_DIR}"
+    "${PROJECT_SOURCE_DIR}/HeaderLibs"
 )
 
 add_subdirectory(Engine)
 add_subdirectory(Trayc)
 add_subdirectory(Tester)
+add_subdirectory(FunctionDrawer)

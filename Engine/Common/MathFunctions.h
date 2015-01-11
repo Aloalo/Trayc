@@ -9,8 +9,10 @@
 
 namespace engine
 {
-    static const float pi = 3.14159165359f;
-    static const float halfpi = pi / 2.0f;
+    static const glm::mat4 O(0.0f);
+    static const glm::mat4 I(1.0f);
+    static const float PI = 3.14159165359f;
+    static const float HALF_PI = PI / 2.0f;
     static const float EPS = 0.0001f;
 
     template<class T>

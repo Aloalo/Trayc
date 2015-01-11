@@ -29,10 +29,10 @@ namespace engine
     {
         phix += yaw;
         phiy += pitch;
-        if(phiy > halfpi)
-            phiy = halfpi;
-        if(phiy < -halfpi)
-            phiy = -halfpi;
+        if(phiy > HALF_PI)
+            phiy = HALF_PI;
+        if(phiy < -HALF_PI)
+            phiy = -HALF_PI;
     }
 
     mat4 Camera::GetProjectionMatrix() const

@@ -75,17 +75,26 @@ set(Engine_Utils_HDRS
     Utils/Singleton.h
     Utils/Setting.h
     Utils/InitialSettings.h
+    Utils/StlExtensions.h
+    Utils/NormalDrawer.h
 )
 
 set(Engine_Utils_SRCS
     Utils/InitialSettings.cpp
+    Utils/NormalDrawer.cpp
+)
+
+set(Engine_GL_SHADERS
+    Shaders/NormalShader.vert
+    Shaders/NormalShader.geom
+    Shaders/NormalShader.frag
 )
 
 source_group(Common FILES ${Engine_Common_SRCS} ${Engine_Common_HDRS})
 source_group(Core FILES ${Engine_Core_SRCS} ${Engine_Core_HDRS})
 source_group(Geometry FILES ${Engine_Geometry_SRCS} ${Engine_Geometry_HDRS})
 source_group(GL FILES ${Engine_GL_SRCS} ${Engine_GL_HDRS})
-source_group(Utils FILES ${Engine_Utils_HDRS}, ${Engine_Utils_SRCS})
+source_group(Utils FILES ${Engine_Utils_SRCS}, ${Engine_Utils_HDRS})
 
 add_library(Engine STATIC
     ${Engine_HDRS}
@@ -107,3 +116,5 @@ target_link_libraries(Engine
     ${OPENGL_LIBRARIES}
     ${ANTTWEAKBAR_LIBRARY}
 )
+
+file(COPY ${Engine_GL_SHADERS} DESTINATION "../Resources/Shaders")

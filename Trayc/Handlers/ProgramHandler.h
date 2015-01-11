@@ -12,10 +12,10 @@
 
 namespace trayc
 {
-    class ProgramHandler : public Singleton<ProgramHandler>
+    class ProgramHandler : public engine::Singleton<ProgramHandler>
     {
     public:
-        using Singleton<ProgramHandler>::Get;
+        using engine::Singleton<ProgramHandler>::Get;
 
         optix::Program Get(const std::string &filename, const std::string &programName);
     private:
