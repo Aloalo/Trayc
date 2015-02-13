@@ -29,4 +29,4 @@ target_link_libraries(FunctionDrawer
 
 file(COPY Shaders DESTINATION .)
 file(COPY Settings.ini DESTINATION .)
-
+file(COPY Function.txt DESTINATION .)

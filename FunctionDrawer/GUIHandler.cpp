@@ -6,15 +6,14 @@
 #include "UserSettings.h"
 #include <GL/glew.h>
 #include <Engine/Core/SDLHandler.h>
+#include <fstream>
 
 using namespace engine;
 using namespace std;
 
 CameraHandler *GUIHandler::camera = nullptr;
 FunctionDrawer * GUIHandler::fDrawer = nullptr;
-string GUIHandler::F = "sin(x) + cos(y)";
-string GUIHandler::Fx = "cos(x)";
-string GUIHandler::Fy = "-sin(y)";
+
 
 void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *fd)
 {
@@ -30,23 +29,22 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *fd)
 
     TwBar *twfunction;
     twfunction = TwNewBar("Function");
-    TwCopyStdStringToClientFunc(CopyStdStringToClient);
-    TwAddVarRW(twfunction, "Function", TW_TYPE_STDSTRING, &F, "");
-    TwAddVarRW(twfunction, "X Derivative", TW_TYPE_STDSTRING, &Fx, "");
-    TwAddVarRW(twfunction, "Y Derivative", TW_TYPE_STDSTRING, &Fy, "");
     TwAddVarRW(twfunction, "Mesh resolution", TW_TYPE_INT32, &UserSettings::Get().ctVertices.x, "min=10 max=5000");
+    TwAddVarRW(twfunction, "X Offset", TW_TYPE_FLOAT, &UserSettings::Get().offsetX.x, "");
+    TwAddVarRW(twfunction, "Y Offset", TW_TYPE_FLOAT, &UserSettings::Get().offsetY.x, "");
+    TwAddVarRW(twfunction, "X Scale", TW_TYPE_FLOAT, &UserSettings::Get().scaleX.x, "min=1");
+    TwAddVarRW(twfunction, "Y Scale", TW_TYPE_FLOAT, &UserSettings::Get().scaleY.x, "min=1");
+    TwAddVarRW(twfunction, "Optimize GPU cache", TW_TYPE_BOOL8, &UserSettings::Get().useOptimization.x, "");
+    TwAddVarRW(twfunction, "Use small data", TW_TYPE_BOOL8, &UserSettings::Get().smallData.x, "");
     TwAddButton(twfunction, "Apply", ApplyFunction, NULL, " label='Apply' ");
 
     TwBar *twBar;
     twBar = TwNewBar("Settings");
-    //TwAddVarCB(twBar, "FXAA", TW_TYPE_BOOL8, SetFXAA, GetFXAA, nullptr, "");
-    //TwAddVarCB(twBar, "SSAA", TW_TYPE_BOOL8, SetTextureFilter, GetTextureFilter, nullptr, "");
+    TwDefine(" Settings iconified=true ");
     TwAddVarRW(twBar, "Screen Width", TW_TYPE_INT32, &UserSettings::Get().screenWidth.x, "min=100 max=1920");
     TwAddVarRW(twBar, "Screen Height", TW_TYPE_INT32, &UserSettings::Get().screenHeight.x, "min=100 max=1080");
     TwAddVarRW(twBar, "FOV", TW_TYPE_FLOAT, &UserSettings::Get().FOV.x, "min=30 max=120");
     TwAddButton(twBar, "Apply", ApplySettings, NULL, " label='Apply' ");
-
-    //TwAddVarRO(twBar, "FPS", TW_TYPE_FLOAT, &gameEngine->FPS, "");
 }
 
 void TW_CALL GUIHandler::ApplySettings(void *userData)
@@ -67,15 +65,17 @@ void GUIHandler::HandleEvent(const SDL_Event &e)
 
 void TW_CALL GUIHandler::ApplyFunction(void *userData)
 {
+    ifstream in("Function.txt");
+    string F, Fx, Fy;
+    getline(in, F);
+    getline(in, Fx);
+    getline(in, Fy);
+    in.close();
+
     fDrawer->SetFunction(F);
     fDrawer->SetXDerivative(Fx);
     fDrawer->SetYDerivative(Fy);
     fDrawer->GenerateIndices(UserSettings::Get().ctVertices);
     fDrawer->GenerateMesh(UserSettings::Get().ctVertices);
-}
-
-void TW_CALL GUIHandler::CopyStdStringToClient(std::string& destinationClientString, const std::string& sourceLibraryString)
-{
-    destinationClientString = sourceLibraryString;
 }
 

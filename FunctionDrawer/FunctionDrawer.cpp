@@ -3,43 +3,41 @@
 */
 
 #include "FunctionDrawer.h"
+#include "UserSettings.h"
 #include <iostream>
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 #include <Engine/Core/EventHandler.h>
 #include <Engine/Common/ErrorCheck.h>
 
+#include <vcacheopt.h>
+#include <half/include/half.hpp>
+
+
 using namespace std;
 using namespace glm;
 using namespace engine;
+using namespace half_float;
+
+struct PackedNormal
+{
+    int z:10; 
+    int y:10;
+    int x:10; 
+    int a:2; 
+};
 
 FunctionDrawer::FunctionDrawer(void)
 {
     glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &PVBO);
-    glGenBuffers(1, &NVBO);
+    glGenBuffers(1, &VBO);
     glGenBuffers(1, &IBO);
-
-    glBindVertexArray(VAO);
-    {
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, PVBO);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-        glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, NVBO);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-    }
-    glBindVertexArray(0);
 }
 
 void FunctionDrawer::CleanUp()
 {
     glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &PVBO);
-    glDeleteBuffers(1, &NVBO);
+    glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &IBO);
 }
 
@@ -60,39 +58,85 @@ void FunctionDrawer::SetYDerivative(const std::string &expressionString)
 
 void FunctionDrawer::GenerateMesh(int ctVertices)
 {
-    const float scale = 20.0f / float(ctVertices - 1); //TODO: setting
+    const vec2 scale = vec2(UserSettings::Get().scaleX.x, UserSettings::Get().scaleY.x) / float(ctVertices - 1); //TODO: setting
+    const vec2 offset(UserSettings::Get().offsetX.x, UserSettings::Get().offsetY.x);
 
-    vector<vec3> positions;
-    positions.reserve(ctVertices * ctVertices);
-    vector<vec3> normals;
-    normals.reserve(ctVertices * ctVertices);
+    vector<unsigned char> vertices;
+    vertices.reserve(ctVertices * ctVertices * 2 * sizeof(vec3));
+
+    int normalSize, positionSize;
+    GLenum positionType, normalType;
+    GLboolean normalNormalize;
+    GLint normalNumElems;
+    if(UserSettings::Get().smallData)
+    {
+        positionSize = 3 * sizeof(half);
+        normalSize = sizeof(int);
+        positionType = GL_HALF_FLOAT;
+        normalType = GL_INT_2_10_10_10_REV;
+        normalNormalize = GL_TRUE;
+        normalNumElems = 4;
+    }
+    else
+    {
+        positionSize = sizeof(vec3);
+        normalSize = sizeof(vec3);
+        positionType = GL_FLOAT;
+        normalType = GL_FLOAT;
+        normalNormalize = GL_FALSE;
+        normalNumElems = 3;
+    }
+    const int vertexSize = normalSize + positionSize;
+
 
     minH = FLT_MAX;
     maxH = -FLT_MAX;
     for(GLuint i = 0; i < ctVertices; ++i)
         for(GLuint j = 0; j < ctVertices; ++j)
         {
-            const vec2 xz(float(i) * scale, float(j) * scale);
+            const vec2 xz = vec2(float(i) , float(j)) * scale + offset;
             const float y = F(xz);
 
             maxH = std::max(maxH, y);
             minH = std::min(minH, y);
 
-            positions.push_back(vec3(xz.x, y, xz.y));
-            normals.push_back(normalize(vec3(Fx(xz), Fy(xz), -1.0f)));
+            const vec3 normal(normalize(vec3(Fx(xz), 1.0f, Fy(xz))));
+            if(UserSettings::Get().smallData)
+            {
+                const half position[3] = {half(xz.x), half(y), half(xz.y)};
+
+                vertices.insert(vertices.end(), vertexSize, 0);
+                const unsigned char *start = &vertices[vertices.size() - vertexSize];
+                memcpy((void*)start, (void*)position, positionSize);
+
+                PackedNormal pNormal;
+                pNormal.x = (int)(normal.x * 511.0f);
+                pNormal.y = (int)(normal.y * 511.0f);
+                pNormal.z = (int)(normal.z * 511.0f);
+
+                memcpy((void*)(start + positionSize), (void*)&pNormal, normalSize);
+            }
+            else
+            {
+                const float position[3] = {xz.x, y, xz.y};
+
+                vertices.insert(vertices.end(), vertexSize, 0);
+                const unsigned char *start = &vertices[vertices.size() - vertexSize];
+                memcpy((void*)start, (void*)position, positionSize);
+                memcpy((void*)(start + positionSize), (void*)&normal, normalSize);
+            }
         }
 
     glBindVertexArray(VAO);
     {
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.data(), GL_STATIC_DRAW);
+
         glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, PVBO);
-        glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(positions[0]), positions.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glVertexAttribPointer(0, 3, positionType, GL_FALSE, vertexSize, (void*)0);
 
         glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, NVBO);
-        glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(normals[0]), normals.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glVertexAttribPointer(1, normalNumElems, normalType, normalNormalize, vertexSize, (void*)positionSize);
     }
     glBindVertexArray(0);
 }
@@ -119,6 +163,31 @@ void FunctionDrawer::GenerateIndices(int ctVertices)
             ind.push_back(bottom_right);
             ind.push_back(bottom_left);
         }
+    }
+
+
+    if(UserSettings::Get().useOptimization)
+    {
+        cout << "Optimizing GPU cache..." << endl;
+        const int tri_count = (ctVertices - 1) * (ctVertices - 1) * 2;
+        VertexCache vertex_cache;
+        int misses = vertex_cache.GetCacheMissCount((int*)&ind[0], tri_count);
+        cout << "Cache misses before optimization: " << misses << endl;
+        cout << "ACMR: " << float(misses) / float(tri_count) << endl;
+
+        VertexCacheOptimizer vco;
+        VertexCacheOptimizer::Result res = vco.Optimize((int*)&ind[0], tri_count);
+        if(res)
+        {
+            cerr << "Cache optimization error: " << res;
+        }
+        else
+        {
+            misses = vertex_cache.GetCacheMissCount((int*)&ind[0], tri_count);
+            cout << "Cache misses after optimization: " << misses << endl;
+            cout << "ACMR: " << float(misses) / float(tri_count) << endl;
+        }
+
     }
 
     indices.SetData(ind);

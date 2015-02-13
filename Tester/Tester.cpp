@@ -37,7 +37,6 @@ void RenderingLoop()
     EventHandler::AddEventListener(&twBarHandler);
     EventHandler::AddUpdateable(&twBarHandler);
 
-
     do
     {
         glClear(GL_COLOR_BUFFER_BIT);

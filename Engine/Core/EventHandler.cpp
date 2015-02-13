@@ -25,7 +25,7 @@ namespace engine
         {
             if(test_event.type == SDL_QUIT)
                 quit = true;
-            else if(test_event.type == SDL_KEYDOWN && test_event.key.keysym.sym == SDLK_TAB)
+            else if(test_event.type == SDL_KEYDOWN && test_event.key.keysym.sym == SDLK_LSHIFT)
             {
                 if(isCursorFree)
                 {

@@ -145,7 +145,7 @@ void TW_CALL TweakBarHandler::LoadSponza(void *userData)
     inSponza = true;
     gameEngine->tracer.ClearSceneGraph();
     const string location = Utils::Resource("crytek-sponza/");
-    gameEngine->tracer.AddScene(LoadTest(location + "/sponza.obj", location, scale(I, vec3(0.05f))));
+    gameEngine->tracer.AddScene(LoadTest(location + "/sponza.obj", location, scale(mat4(1.0f), vec3(0.05f))));
 
     gameEngine->tracer.AddLight(pointlight);
     gameEngine->tracer.AddLight(BasicLight(//light0 - point light
@@ -340,7 +340,7 @@ const engine::Scene& TweakBarHandler::LoadTest(const string &test, const string 
             }
 
             if(aimesh->HasTextureCoords(0))
-                mesh.uvs.push_back(vec2(aimesh->mTextureCoords[0][j].x, aimesh->mTextureCoords[0][i].y));
+                mesh.uvs.push_back(vec2(aimesh->mTextureCoords[0][j].x, aimesh->mTextureCoords[0][j].y));
             mesh.materialIndex = aimesh->mMaterialIndex;
         }
     }

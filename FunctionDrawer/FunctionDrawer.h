@@ -38,8 +38,7 @@ private:
 
     //GL stuff
     GLuint VAO;
-    GLuint PVBO;
-    GLuint NVBO;
+    GLuint VBO;
     GLuint IBO;
 };
 

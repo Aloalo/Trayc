@@ -36,12 +36,12 @@ void RenderingLoop()
 
 
     Program p("Shaders/Simple");
-    p.SetUniform("ambient", vec3(0.1f, 0.1f, 0.1f));
-    p.SetUniform("diffuse", vec3(1.0f, 0.1f, 0.1f));
+    p.SetUniform("ambient", vec3(0.4f, 0.1f, 0.1f));
+    p.SetUniform("diffuse", vec3(0.8f, 0.1f, 0.1f));
     p.SetUniform("specular", vec3(1.0f, 1.0f, 1.0f));
     p.SetUniform("shininess", 128.0f);
     p.SetUniform("lightDirection", normalize(vec3(1.0f, 1.0f, 1.0f)));
-    p.SetUniform("lightIntensity", vec3(1.0f, 1.0f, 1.0f));
+    p.SetUniform("lightIntensity", vec3(0.9f));
     p.SetUniform("M", I);
 
     do
@@ -71,6 +71,7 @@ void RenderingLoop()
     } while(!EventHandler::Quit());
 
     functionDrawer.CleanUp();
+    p.Delete();
 }
 
 int main(int argc, char *argv[])

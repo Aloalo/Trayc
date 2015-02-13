@@ -34,20 +34,16 @@ namespace engine
                 {
                     f >> value;
                     name = name.substr(1);
-                    try
+                    if(value[0] == 'f')
                     {
-                        if(value[0] == 'f')
-                        {
-                            float fl = stof(value.substr(1));
-                            values[name] = (void*)*(unsigned int*)&fl;
-                        }
-                        else
-                            values[name] = (void*)stoi(value);
+                        float fl = stof(value.substr(1));
+                        values[name] = (void*)*(unsigned int*)&fl;
                     }
-                    catch(exception &ex)
-                    {
+                    else if(value.substr(0, 2) == "GL")
                         values[name] = (void*)format[value];
-                    }
+                    else
+                        values[name] = (void*)stoi(value);
+                 
                 }
             }
         }
