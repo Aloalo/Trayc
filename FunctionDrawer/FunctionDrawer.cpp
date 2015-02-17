@@ -21,9 +21,9 @@ using namespace half_float;
 
 struct PackedNormal
 {
-    int z:10; 
-    int y:10;
     int x:10; 
+    int y:10;
+    int z:10; 
     int a:2; 
 };
 
@@ -100,7 +100,7 @@ void FunctionDrawer::GenerateMesh(int ctVertices)
             maxH = std::max(maxH, y);
             minH = std::min(minH, y);
 
-            const vec3 normal(normalize(vec3(Fx(xz), 1.0f, Fy(xz))));
+            const vec3 normal(normalize(-vec3(Fx(xz), -1.0f, Fy(xz))));
             if(UserSettings::Get().smallData)
             {
                 const half position[3] = {half(xz.x), half(y), half(xz.y)};

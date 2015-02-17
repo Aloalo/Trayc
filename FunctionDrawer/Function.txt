@@ -15,5 +15,3 @@ sin(x)^2 + cos(y)^2
 sin(x) + cos(y)
 cos(x)
 -sin(y)
-
-

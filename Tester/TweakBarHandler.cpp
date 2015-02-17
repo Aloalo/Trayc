@@ -325,10 +325,11 @@ const engine::Scene& TweakBarHandler::LoadTest(const string &test, const string 
         TriangleMesh &mesh = scene.meshes[i];
         const aiMesh *aimesh = aiscene->mMeshes[i];
         const aiMaterial *aimaterial = aiscene->mMaterials[aimesh->mMaterialIndex];
+
         for(optix::uint j = 0; j < aimesh->mNumFaces; ++j)
             mesh.indices.push_back(ivec3(aimesh->mFaces[j].mIndices[0], aimesh->mFaces[j].mIndices[1], aimesh->mFaces[j].mIndices[2]));
-        const bool hasNormalMap = aimaterial == nullptr ? false : aimaterial->GetTextureCount(aiTextureType_NORMALS) || aimaterial->GetTextureCount(aiTextureType_HEIGHT);
 
+        const bool hasNormalMap = aimaterial == nullptr ? false : aimaterial->GetTextureCount(aiTextureType_NORMALS) || aimaterial->GetTextureCount(aiTextureType_HEIGHT);
         for(optix::uint j = 0; j < aimesh->mNumVertices; ++j)
         {
             mesh.positions.push_back(vec3(transform * vec4(*(vec3*)(&aimesh->mVertices[j]), 1.0)));
