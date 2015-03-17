@@ -18,7 +18,6 @@ struct UserSettings : public engine::Singleton<UserSettings>
     engine::Setting<float> scaleY;
     engine::Setting<float> offsetX;
     engine::Setting<float> offsetY;
-    engine::Setting<bool> useOptimization;
     engine::Setting<bool> smallData;
 
 private:

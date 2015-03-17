@@ -21,24 +21,36 @@ using namespace half_float;
 
 struct PackedNormal
 {
+    PackedNormal(int x, int y, int z)
+        : x(x), y(y), z(z), a(0)
+    {
+    }
+
     int x:10; 
     int y:10;
     int z:10; 
     int a:2; 
 };
 
+//indices per batch
+static const GLuint ctMaxBatchIndices = (1 << 16)  - 1;
+
 FunctionDrawer::FunctionDrawer(void)
 {
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+    batches.resize(0);
     glGenBuffers(1, &IBO);
+    glGenBuffers(1, &leftoverIBO);
 }
 
 void FunctionDrawer::CleanUp()
 {
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+    for(auto &batch : batches)
+    {
+        glDeleteVertexArrays(1, &batch.VAO);
+        glDeleteBuffers(1, &batch.VBO);
+    }
     glDeleteBuffers(1, &IBO);
+    glDeleteBuffers(1, &leftoverIBO);
 }
 
 void FunctionDrawer::SetFunction(const string &expressionString)
@@ -58,11 +70,12 @@ void FunctionDrawer::SetYDerivative(const std::string &expressionString)
 
 void FunctionDrawer::GenerateMesh(int ctVertices)
 {
+    cout << "Building mesh ... "; 
+
     const vec2 scale = vec2(UserSettings::Get().scaleX.x, UserSettings::Get().scaleY.x) / float(ctVertices - 1); //TODO: setting
     const vec2 offset(UserSettings::Get().offsetX.x, UserSettings::Get().offsetY.x);
 
     vector<unsigned char> vertices;
-    vertices.reserve(ctVertices * ctVertices * 2 * sizeof(vec3));
 
     int normalSize, positionSize;
     GLenum positionType, normalType;
@@ -88,17 +101,21 @@ void FunctionDrawer::GenerateMesh(int ctVertices)
     }
     const int vertexSize = normalSize + positionSize;
 
-
-    minH = FLT_MAX;
-    maxH = -FLT_MAX;
+    try
+    {
+        vertices.reserve(ctVertices * ctVertices * vertexSize);
+    }
+    catch (exception &e)
+    {
+        cerr << "Caught exception: " << e.what() << endl;
+    }
+    
     for(GLuint i = 0; i < ctVertices; ++i)
+    {
         for(GLuint j = 0; j < ctVertices; ++j)
         {
             const vec2 xz = vec2(float(i) , float(j)) * scale + offset;
             const float y = F(xz);
-
-            maxH = std::max(maxH, y);
-            minH = std::min(minH, y);
 
             const vec3 normal(normalize(-vec3(Fx(xz), -1.0f, Fy(xz))));
             if(UserSettings::Get().smallData)
@@ -109,10 +126,7 @@ void FunctionDrawer::GenerateMesh(int ctVertices)
                 const unsigned char *start = &vertices[vertices.size() - vertexSize];
                 memcpy((void*)start, (void*)position, positionSize);
 
-                PackedNormal pNormal;
-                pNormal.x = (int)(normal.x * 511.0f);
-                pNormal.y = (int)(normal.y * 511.0f);
-                pNormal.z = (int)(normal.z * 511.0f);
+                const PackedNormal pNormal((int)(normal.x * 511.0f), (int)(normal.y * 511.0f), (int)(normal.z * 511.0f));
 
                 memcpy((void*)(start + positionSize), (void*)&pNormal, normalSize);
             }
@@ -126,82 +140,151 @@ void FunctionDrawer::GenerateMesh(int ctVertices)
                 memcpy((void*)(start + positionSize), (void*)&normal, normalSize);
             }
         }
-
-    glBindVertexArray(VAO);
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.data(), GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, positionType, GL_FALSE, vertexSize, (void*)0);
-
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, normalNumElems, normalType, normalNormalize, vertexSize, (void*)positionSize);
     }
-    glBindVertexArray(0);
+
+    for(Batch &batch : batches)
+    {
+        glDeleteVertexArrays(1, &batch.VAO);
+        glDeleteBuffers(1, &batch.VBO);
+    }
+
+    const int ctStripesPerBatch = ctMaxBatchIndices / ctVertices;
+    const int ctVerticesPerBatch = ctStripesPerBatch * ctVertices;
+    const int ctBatches = (ctVertices * ctVertices) / ctVerticesPerBatch;
+    batches.resize(ctBatches);
+
+    for(int i = 0; i < ctBatches; ++i)
+    {
+        const int stripeOffset = i * ctVertices * vertexSize;
+
+        glGenVertexArrays(1, &batches[i].VAO);
+        glGenBuffers(1, &batches[i].VBO);
+        batches[i].count = ctIndices;
+
+        glBindVertexArray(batches[i].VAO);
+        {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+
+            glBindBuffer(GL_ARRAY_BUFFER, batches[i].VBO);
+            glBufferData(GL_ARRAY_BUFFER, ctVerticesPerBatch * vertexSize, (void*)(vertices.data()+(i*ctVerticesPerBatch*vertexSize - stripeOffset)), GL_STATIC_DRAW);
+
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, positionType, GL_FALSE, vertexSize, (void*)0);
+
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, normalNumElems, normalType, normalNormalize, vertexSize, (void*)positionSize);
+        }
+        glBindVertexArray(0);
+    }
+
+    //need aditional buffer??
+    const int ctRemainingVert = (ctVertices * ctVertices) % ctVerticesPerBatch;
+    if(ctRemainingVert != 0)
+    {
+        const int ctRemainingStripes = ctVertices - ctStripesPerBatch * ctBatches;
+        const int stripeOffset = ctBatches * ctVertices * vertexSize;
+
+        batches.push_back(Batch());
+        Batch &batch = batches[batches.size() - 1];
+
+        glGenVertexArrays(1, &batch.VAO);
+        glGenBuffers(1, &batch.VBO);
+        batch.count = (ctRemainingStripes - 1) * (ctVertices - 1) * 6;
+
+        glBindVertexArray(batch.VAO);
+        {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, leftoverIBO);
+
+            glBindBuffer(GL_ARRAY_BUFFER, batch.VBO);
+            glBufferData(GL_ARRAY_BUFFER, ctRemainingVert * vertexSize, (void*)(vertices.data()+(ctBatches*ctVerticesPerBatch*vertexSize - stripeOffset)), GL_STATIC_DRAW);
+
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, positionType, GL_FALSE, vertexSize, (void*)0);
+
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, normalNumElems, normalType, normalNormalize, vertexSize, (void*)positionSize);
+        }
+        glBindVertexArray(0);
+    }
+
+    cout << "DONE" << endl; 
 }
 
 void FunctionDrawer::GenerateIndices(int ctVertices)
 {
-    vector<GLuint> ind;
-    ind.reserve((ctVertices - 1) * (ctVertices - 1) * 6);
+    assert(2 * ctVertices < ctMaxBatchIndices);
 
-    for(GLuint i = 0; i < ctVertices - 1; ++i)
+    const int ctStripes = ctMaxBatchIndices / ctVertices;
+    const int ctBatchIndices = ctStripes * ctVertices;
+
+    vector<int> intIndices;
+    intIndices.reserve((ctStripes - 1) * (ctVertices - 1) * 6);
+
+    for(int i = 0; i < ctStripes - 1; ++i)
     {
-        for(GLuint j = 0; j < ctVertices - 1; ++j)
+        for(int j = 0; j < ctVertices - 1; ++j)
         {
-            const GLuint top_left = i + ctVertices * j;
-            const GLuint top_right = top_left + 1;
-            const GLuint bottom_left = top_left + ctVertices;
-            const GLuint bottom_right = bottom_left + 1;
+            const int top_left = i * ctVertices + j;
+            const int top_right = top_left + 1;
+            const int bottom_left = top_left + ctVertices;
+            const int bottom_right = bottom_left + 1;
 
-            ind.push_back(top_left);
-            ind.push_back(top_right);
-            ind.push_back(bottom_left);
+            intIndices.push_back(top_left);
+            intIndices.push_back(top_right);
+            intIndices.push_back(bottom_left);
 
-            ind.push_back(top_right);
-            ind.push_back(bottom_right);
-            ind.push_back(bottom_left);
+            intIndices.push_back(top_right);
+            intIndices.push_back(bottom_right);
+            intIndices.push_back(bottom_left);
         }
     }
 
+    VertexCacheOptimizer vco;
 
-    if(UserSettings::Get().useOptimization)
+    const int ctStripesPerBatch = ctMaxBatchIndices / ctVertices;
+    const int ctVerticesPerBatch = ctStripesPerBatch * ctVertices;
+    const int ctRemainingVert = (ctVertices * ctVertices) % ctVerticesPerBatch;
+    //need another IBO??
+    if(ctRemainingVert != 0)
     {
-        cout << "Optimizing GPU cache..." << endl;
-        const int tri_count = (ctVertices - 1) * (ctVertices - 1) * 2;
-        VertexCache vertex_cache;
-        int misses = vertex_cache.GetCacheMissCount((int*)&ind[0], tri_count);
-        cout << "Cache misses before optimization: " << misses << endl;
-        cout << "ACMR: " << float(misses) / float(tri_count) << endl;
+        const int ctBatches = (ctVertices * ctVertices) / ctVerticesPerBatch;
+        const int ctRemainingStripes = ctVertices - ctStripesPerBatch * ctBatches;
+        const int ctLeftoverIndices = (ctRemainingStripes - 1) * (ctVertices - 1) * 6;
 
-        VertexCacheOptimizer vco;
-        VertexCacheOptimizer::Result res = vco.Optimize((int*)&ind[0], tri_count);
+        const vector<int> leftoverIntIndices(intIndices.begin(), intIndices.begin()+ctLeftoverIndices);
+        /*const VertexCacheOptimizer::Result res = vco.Optimize((int*)&leftoverIntIndices[0], ctLeftoverIndices / 3);
         if(res)
         {
-            cerr << "Cache optimization error: " << res;
-        }
-        else
-        {
-            misses = vertex_cache.GetCacheMissCount((int*)&ind[0], tri_count);
-            cout << "Cache misses after optimization: " << misses << endl;
-            cout << "ACMR: " << float(misses) / float(tri_count) << endl;
-        }
+            cerr << "Cache optimization error: " << res << endl;
+        }*/
 
+        const vector<GLushort> leftoverIndices(leftoverIntIndices.begin(), leftoverIntIndices.end());
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, leftoverIBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, leftoverIndices.size() * sizeof(leftoverIndices[0]), leftoverIndices.data(), GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    indices.SetData(ind);
-    glBindVertexArray(VAO);
+
+    const vector<GLushort> indices(intIndices.begin(), intIndices.end());
+    ctIndices = indices.size();
+    const int ctTriangles = (ctStripes - 1) * (ctVertices - 1) * 2;
+    const VertexCacheOptimizer::Result res = vco.Optimize((int*)&intIndices[0], ctTriangles);
+    if(res)
     {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.GetSizeInBytes(), indices.GetData(), GL_STATIC_DRAW);
+        cerr << "Cache optimization error: " << res << endl;
     }
-    glBindVertexArray(0);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(indices[0]), indices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void FunctionDrawer::Draw() const
 {
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, indices.Size(), indices.GetIndexDataType(), nullptr);
-    glBindVertexArray(0);
+    for(const Batch &batch : batches)
+    {
+        glBindVertexArray(batch.VAO);
+        glDrawElements(GL_TRIANGLES, batch.count, GL_UNSIGNED_SHORT, nullptr);
+        glBindVertexArray(0);
+    }
 }

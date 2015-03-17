@@ -9,7 +9,6 @@ UserSettings::UserSettings(void) :
     SETTING(scaleY),
     SETTING(offsetX),
     SETTING(offsetY),
-    SETTING(useOptimization),
     SETTING(smallData)
 {
 }

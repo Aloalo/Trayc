@@ -29,12 +29,11 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *fd)
 
     TwBar *twfunction;
     twfunction = TwNewBar("Function");
-    TwAddVarRW(twfunction, "Mesh resolution", TW_TYPE_INT32, &UserSettings::Get().ctVertices.x, "min=10 max=5000");
+    TwAddVarRW(twfunction, "Mesh resolution", TW_TYPE_INT32, &UserSettings::Get().ctVertices.x, "min=10 max=7000");
     TwAddVarRW(twfunction, "X Offset", TW_TYPE_FLOAT, &UserSettings::Get().offsetX.x, "");
     TwAddVarRW(twfunction, "Y Offset", TW_TYPE_FLOAT, &UserSettings::Get().offsetY.x, "");
     TwAddVarRW(twfunction, "X Scale", TW_TYPE_FLOAT, &UserSettings::Get().scaleX.x, "min=1");
     TwAddVarRW(twfunction, "Y Scale", TW_TYPE_FLOAT, &UserSettings::Get().scaleY.x, "min=1");
-    TwAddVarRW(twfunction, "Optimize GPU cache", TW_TYPE_BOOL8, &UserSettings::Get().useOptimization.x, "");
     TwAddVarRW(twfunction, "Use small data", TW_TYPE_BOOL8, &UserSettings::Get().smallData.x, "");
     TwAddButton(twfunction, "Apply", ApplyFunction, NULL, " label='Apply' ");
 

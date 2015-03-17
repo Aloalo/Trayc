@@ -11,6 +11,14 @@
 #include <Engine/Geometry/IndexContainer.h>
 #include "TwoVariableFunction.h"
 
+struct Batch
+{
+    GLuint VAO;
+    GLuint VBO;
+    GLsizei count;
+};
+
+
 class FunctionDrawer
 {
 public:
@@ -26,20 +34,15 @@ public:
 
     void Draw() const;
 
-    float minH, maxH;
-
 private:
     TwoVariableFunction F;
     TwoVariableFunction Fx;
     TwoVariableFunction Fy;
 
-    //Mesh stuff
-    engine::IndexContainer indices;
-
-    //GL stuff
-    GLuint VAO;
-    GLuint VBO;
+    std::vector<Batch> batches;
     GLuint IBO;
+    GLuint leftoverIBO;
+    GLsizei ctIndices;
 };
 
 #endif

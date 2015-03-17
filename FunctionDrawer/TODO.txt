@@ -1,3 +1,2 @@
 -AA
--Chunk buffers
--GPU cache optimization
+-derivatives
