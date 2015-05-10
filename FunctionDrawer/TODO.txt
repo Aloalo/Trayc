@@ -1,2 +1,7 @@
--AA
--derivatives
+-ant tweak lib fix
+-easy rasterizer - tracer switching 
+-automatically compute derivatives
+
+-write the tracer
+
+-cppcheck and gl memory leak check

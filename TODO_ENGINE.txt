@@ -1,7 +1,7 @@
 Opcenito:
-    -Improve camera
-    -update optix and cuda
-    -stl extensions (arraysize)
+    -AntTweakLib update
+    -update optix and cuda (optix release)
+    -stl extensions (arraysize) (optix release)
     
 Grafika:
 -area lights (rectangle)

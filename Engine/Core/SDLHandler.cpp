@@ -74,9 +74,9 @@ namespace engine
         GLErrCheck(true);
 
         if(profile == SDL_GL_CONTEXT_PROFILE_CORE)
-            TwInit(TW_OPENGL_CORE, NULL);
+            TwInit(TW_OPENGL_CORE, nullptr);
         else
-            TwInit(TW_OPENGL, NULL);
+            TwInit(TW_OPENGL, nullptr);
 
         int w, h;
         SDL_GetWindowSize(window, &w, &h);

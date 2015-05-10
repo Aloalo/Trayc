@@ -9,7 +9,8 @@
 
 #include "UserSettings.h"
 #include "GUIHandler.h"
-#include "FunctionDrawer.h"
+#include "FunctionRasterizer.h"
+#include "FunctionTracer.h"
 
 #include <AntTweakBar.h>
 
@@ -17,49 +18,19 @@ using namespace engine;
 using namespace std;
 using namespace glm;
 
-void RenderingLoop()
+template<class T>
+void RenderingLoop(CameraHandler &camHandler, GLbitfield mask)
 {
-    glEnable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
-
-    DefaultCameraHandler cam(Camera(vec3(7.0f, 9.2f, -6.0f), (float)UserSettings::Get().screenWidth / UserSettings::Get().screenHeight, UserSettings::Get().FOV), 7.0f, 0.006f);
-    GUIHandler guiHandler;
-
-    EventHandler::AddEventListener(&cam);
+    GUIHandler<T> guiHandler;
     EventHandler::AddEventListener(&guiHandler);
-    EventHandler::AddUpdateable(&cam);
-
-    FunctionDrawer functionDrawer;
-    guiHandler.CreateTweakBars(&cam, &functionDrawer);
-
-    glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-
-
-    Program p("Shaders/Simple");
-    p.SetUniform("ambient", vec3(0.3f, 0.1f, 0.1f));
-    p.SetUniform("diffuse", vec3(0.8f, 0.1f, 0.1f));
-    p.SetUniform("specular", vec3(1.0f, 1.0f, 1.0f));
-    p.SetUniform("shininess", 64.0f);
-    p.SetUniform("lightDirection", normalize(vec3(1.0f, 1.0f, 1.0f)));
-    p.SetUniform("lightIntensity", vec3(0.9f));
-    p.SetUniform("M", I);
+    T functionDrawer;
+    guiHandler.CreateTweakBars(&camHandler, &functionDrawer);
 
     do
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(mask);
 
-        p.Use();
-
-        const mat4 V = cam.GetViewMatrix();
-        GLErrCheck(false);
-        p.SetUniform("MVP", cam.GetProjectionMatrix() * V);
-        GLErrCheck(false);
-        p.SetUniform("invV", inverse(V));
-        GLErrCheck(false);
-        p.SetUniform("normalMatrix", mat3(1.0f));
-        GLErrCheck(false);
-
-        functionDrawer.Draw();
+        functionDrawer.Draw(camHandler.cam);
 
         TwDraw();
 
@@ -71,7 +42,7 @@ void RenderingLoop()
     } while(!EventHandler::Quit());
 
     functionDrawer.CleanUp();
-    p.Delete();
+    EventHandler::RemoveEventListener(&guiHandler);
 }
 
 int main(int argc, char *argv[])
@@ -91,11 +62,20 @@ int main(int argc, char *argv[])
     SDLHandler::InitGL(3, 3, SDL_GL_CONTEXT_PROFILE_CORE);
     SDLHandler::PrintSoftwareVersions();
 
-    RenderingLoop();
+    
+    glDisable(GL_CULL_FACE);
+    DefaultCameraHandler camHandler(Camera(vec3(7.0f, 9.2f, -6.0f), (float)UserSettings::Get().screenWidth / UserSettings::Get().screenHeight, UserSettings::Get().FOV), 7.0f, 0.006f);
+    EventHandler::AddEventListener(&camHandler);
+    EventHandler::AddUpdateable(&camHandler);
+    glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+
+    //glEnable(GL_DEPTH_TEST);
+    //RenderingLoop<FunctionRasterizer>(camHandler, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glDisable(GL_DEPTH_TEST);
+    RenderingLoop<FunctionTracer>(camHandler, GL_COLOR_BUFFER_BIT);
 
     SDLHandler::CleanUp();
 
     return 0;
 }
-
-

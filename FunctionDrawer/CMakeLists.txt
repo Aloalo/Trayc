@@ -3,10 +3,10 @@ project(FunctionDrawer)
 # Define the source files.
 set(FunctionDrawer_SRCS
     Main.cpp
-    GUIHandler.cpp
     UserSettings.cpp
     TwoVariableFunction.cpp
-    FunctionDrawer.cpp
+    FunctionRasterizer.cpp
+    FunctionTracer.cpp
 )
 
 # Define the header files.
@@ -14,7 +14,8 @@ set(FunctionDrawer_HDRS
     GUIHandler.h
     UserSettings.h
     TwoVariableFunction.h
-    FunctionDrawer.h
+    FunctionRasterizer.h
+    FunctionTracer.h
 )
 
 add_executable(FunctionDrawer ${FunctionDrawer_SRCS} ${FunctionDrawer_HDRS})

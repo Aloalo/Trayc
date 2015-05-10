@@ -54,10 +54,8 @@ namespace trayc
         { 
             -1.0f, -1.0f,
             1.0f, -1.0f,
-            -1.0f, 1.0f,
-            -1.0f, 1.0f,
-            1.0f, -1.0f,
             1.0f, 1.0f,
+            -1.0f, 1.0f
         };
 
         glBindTexture(GL_TEXTURE_2D, textureID);
@@ -109,7 +107,7 @@ namespace trayc
         p.Use();
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
