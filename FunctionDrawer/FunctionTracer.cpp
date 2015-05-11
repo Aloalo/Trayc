@@ -4,10 +4,12 @@
 
 #include "FunctionTracer.h"
 #include "UserSettings.h"
-#include <Engine/Common/ErrorCheck.h>
+#include <Engine/Common/Utilities.h>
 #include <Engine/Common/MathFunctions.h>
+#include <iostream>
 
 using namespace std;
+using namespace glm;
 using namespace engine;
 
 FunctionTracer::FunctionTracer(void)
@@ -48,14 +50,46 @@ void FunctionTracer::SetFunction(const std::string &F, const std::string &Fx, co
 
 void FunctionTracer::ApplyFunction()
 {
-    p.Init(&vs, nullptr, &FragmentShader("Shaders/tracing"), "Shaders/tracing");
+    string newF(F);
+    StringReplace(newF, "x", "p.x");
+    StringReplace(newF, "y", "p.y");
+    string newFx(Fx);
+    StringReplace(newFx, "x", "p.x");
+    StringReplace(newFx, "y", "p.y");
+    string newFy(Fy);
+    StringReplace(newFy, "x", "p.x");
+    StringReplace(newFy, "y", "p.y");
+
+
+    string newSource(fragSource);
+    newSource.replace(newSource.find("#Fx"), 3, newFx);
+    newSource.replace(newSource.find("#Fy"), 3, newFy);
+    newSource.replace(newSource.find("#F"), 2, newF);
+
+    p.Init(&vs, nullptr, &FragmentShader(newSource, fileName.c_str()), fileName.c_str());
+
+    p.Use();
+    p.SetUniform("Xmin", UserSettings::Get().minX.x);
+    p.SetUniform("Xmax", UserSettings::Get().maxX.x);
+    p.SetUniform("Zmin", UserSettings::Get().minY.x);
+    p.SetUniform("Zmax", UserSettings::Get().maxY.x);
+    p.SetUniform("maxL", 1000000.0f);
+    p.SetUniform("Lstep", 0.2f);
+
+    p.SetUniform("ambient", vec3(0.3f, 0.1f, 0.1f));
+    p.SetUniform("diffuse", vec3(0.8f, 0.1f, 0.1f));
+    p.SetUniform("specular", vec3(1.0f, 1.0f, 1.0f));
+    p.SetUniform("shininess", 64.0f);
+    p.SetUniform("lightDirection", normalize(vec3(1.0f, 1.0f, 1.0f)));
+    p.SetUniform("lightIntensity", vec3(0.9f));
+    p.SetUniform("missColor", vec3(0.3f, 0.3f, 0.3f));
 }
 
 void FunctionTracer::Draw(const Camera &cam)
 {
     p.Use();
 
-    const float tanfov = tanf(cam.FoV * engine::PI / 360.0f) * 0.5f;
+    const float tanfov = tanf(cam.FoV * engine::PI / 360.0f);
 
     p.SetUniform("eye", cam.position);
     p.SetUniform("U", cam.GetRight() * tanfov * cam.aspectRatio);

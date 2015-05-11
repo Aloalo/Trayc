@@ -15,13 +15,15 @@ namespace engine
     SDL_GLContext SDLHandler::opengl_context;
     SDL_version SDLHandler::compiled;
     SDL_version SDLHandler::linked;
+    char const *SDLHandler::programName = nullptr;
 
-    void SDLHandler::Init(Uint32 flags)
+    void SDLHandler::Init(Uint32 flags, const char *programName)
     {
         SDLErrCheck(SDL_Init(flags));
         SDLErrCheck(SDL_SetRelativeMouseMode(SDL_TRUE));
         SDL_VERSION(&compiled);
         SDL_GetVersion(&linked);
+        SDLHandler::programName = programName;
     }
 
     void SDLHandler::CleanUp()
@@ -97,5 +99,4 @@ namespace engine
     {
         SDL_SetWindowSize(window, w, h);
     }
-
 }

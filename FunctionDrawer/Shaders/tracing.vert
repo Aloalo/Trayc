@@ -7,5 +7,5 @@ out vec2 pixel;
 void main()
 {
     gl_Position = vertex;
-    pixel = (vertex.xy + vec2(1, 1)) * 0.5;
+    pixel = vertex.xy;
 }

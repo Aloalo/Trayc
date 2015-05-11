@@ -29,21 +29,20 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
 
     TwDefine(" GLOBAL help='Two variable function drawer.\n"
         "Press [w/a/s/d/q/e] to move and use the mouse to rotate the camera.\n"
-        "Press [TAB] to release mouse.\n"
+        "Press [LSHIFT] to release mouse.\n"
         "Press [9/0] to speed up or speed down.\n"
         "Press [L] to switch between renderers.' ");
 
     TwBar *twfunction;
     twfunction = TwNewBar("Function");
     TwDefine(" Function size='240 240' ");
-    TwAddVarRW(twfunction, "X Offset", TW_TYPE_FLOAT, &UserSettings::Get().offsetX.x, "");
-    TwAddVarRW(twfunction, "Y Offset", TW_TYPE_FLOAT, &UserSettings::Get().offsetY.x, "");
-    TwAddVarRW(twfunction, "X Scale", TW_TYPE_FLOAT, &UserSettings::Get().scaleX.x, "min=1");
-    TwAddVarRW(twfunction, "Y Scale", TW_TYPE_FLOAT, &UserSettings::Get().scaleY.x, "min=1");
+    TwAddVarRW(twfunction, "minX", TW_TYPE_FLOAT, &UserSettings::Get().minX.x, "");
+    TwAddVarRW(twfunction, "minY", TW_TYPE_FLOAT, &UserSettings::Get().minY.x, "");
+    TwAddVarRW(twfunction, "maxX", TW_TYPE_FLOAT, &UserSettings::Get().maxX.x, "");
+    TwAddVarRW(twfunction, "maxY", TW_TYPE_FLOAT, &UserSettings::Get().maxY.x, "");
 
     TwAddSeparator(twfunction, nullptr, " group='Rasterizer' ");
-    TwAddVarRW(twfunction, "Mesh resolution", TW_TYPE_INT32, &UserSettings::Get().ctVertices.x, "min=10 max=7000 group=Rasterizer");
-    TwAddVarRW(twfunction, "Use small data", TW_TYPE_BOOL8, &UserSettings::Get().smallData.x, "group=Rasterizer");
+    TwAddVarRW(twfunction, "Mesh resolution", TW_TYPE_INT32, &UserSettings::Get().ctVertices.x, "min=10 max=8000 group=Rasterizer");
 
     TwAddSeparator(twfunction, nullptr, " group='Tracer' ");
 

@@ -4,6 +4,8 @@
 
 #include <Engine/Common/Utilities.h>
 
+using namespace std;
+
 namespace engine
 {
     GLsizeiptr SizeOfGLType(GLenum type)
@@ -36,4 +38,21 @@ namespace engine
             return -1;
         }
     }
+
+    void StringReplace(string &str, const string &a, const string &b)
+    {
+        size_t index = 0;
+        const size_t asize = a.length();
+        const size_t bsize = b.length();
+        while(true)
+        {
+            index = str.find(a, index);
+            if(index == string::npos)
+                break;
+
+            str.replace(index, asize, b);
+            index += bsize;
+        }
+    }
+
 }

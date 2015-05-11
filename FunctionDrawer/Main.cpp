@@ -54,7 +54,7 @@ void RenderingLoop()
 
 int main(int argc, char *argv[])
 {
-    SDLHandler::Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+    SDLHandler::Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS, argv[0]);
     SDLHandler::CreateGLWindow(
         "Function Drawer",
         SDL_WINDOWPOS_UNDEFINED,

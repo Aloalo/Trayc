@@ -14,11 +14,10 @@ struct UserSettings : public engine::Singleton<UserSettings>
     engine::Setting<int> screenHeight;
     engine::Setting<float> FOV;
     engine::Setting<int> ctVertices;
-    engine::Setting<float> scaleX;
-    engine::Setting<float> scaleY;
-    engine::Setting<float> offsetX;
-    engine::Setting<float> offsetY;
-    engine::Setting<bool> smallData;
+    engine::Setting<float> minX;
+    engine::Setting<float> maxX;
+    engine::Setting<float> minY;
+    engine::Setting<float> maxY;
 
 private:
     UserSettings(void);

@@ -17,7 +17,7 @@ namespace engine
 
         static void PrintSoftwareVersions();
 
-        static void Init(Uint32 flags);
+        static void Init(Uint32 flags, const char *programName);
         static void CreateGLWindow(const char* title, int x, int y, int w, int h, Uint32 flags);
         static void InitGL(int verionMajor, int versionMinor, int profile);
         static void SwapBuffers();
@@ -29,6 +29,8 @@ namespace engine
 
         static SDL_version compiled;
         static SDL_version linked;
+        static char const *programName;
+
     private:
         static SDL_Window *window;
         static SDL_GLContext opengl_context;

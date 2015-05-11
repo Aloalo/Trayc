@@ -5,6 +5,7 @@
 #include "FunctionRasterizer.h"
 #include "UserSettings.h"
 #include <Engine/Common/ErrorCheck.h>
+#include <Engine/Common/Utilities.h>
 
 #include <half/include/half.hpp>
 
@@ -46,7 +47,7 @@ FunctionRasterizer::~FunctionRasterizer(void)
     glDeleteBuffers(1, &IBO);
 }
 
-void FunctionRasterizer::SetFunction(const std::string &F, const std::string &Fx, const std::string &Fy)
+void FunctionRasterizer::SetFunction(const string &F, const string &Fx, const string &Fy)
 {
     FunctionDrawer::SetFunction(F, Fx, Fy);
     func.SetFunction(F);
@@ -56,8 +57,10 @@ void FunctionRasterizer::GenerateMesh(int ctVertices)
 {
     cout << "Building mesh ... "; 
 
-    const vec2 scale = vec2(UserSettings::Get().scaleX.x, UserSettings::Get().scaleY.x) / float(ctVertices - 1); //TODO: setting
-    const vec2 offset(UserSettings::Get().offsetX.x, UserSettings::Get().offsetY.x);
+    const vec2 minv(UserSettings::Get().minX.x, UserSettings::Get().minY.x);
+    const vec2 maxv(UserSettings::Get().maxX.x, UserSettings::Get().maxY.x);
+
+    const vec2 scale = (maxv - minv) / float(ctVertices - 1);
 
     vector<half> vertices;
     const GLsizei vertexSize = 3 * sizeof(half);
@@ -75,11 +78,10 @@ void FunctionRasterizer::GenerateMesh(int ctVertices)
     {
         for(GLuint j = 0; j < ctVertices; ++j)
         {
-            const vec2 xz = vec2(float(i) , float(j)) * scale + offset;
-            const float y = func(xz);
+            const vec2 xz = vec2(float(i) , float(j)) * scale + minv;
 
             vertices.push_back(half(xz.x));
-            vertices.push_back(half(y));
+            vertices.push_back(half(func(xz)));
             vertices.push_back(half(xz.y));
         }
     }
@@ -168,34 +170,17 @@ void FunctionRasterizer::GenerateIndices(int ctVertices)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-static inline void strReplace(string &str, const string &a, const string &b)
-{
-    size_t index = 0;
-    const size_t asize = a.length();
-    const size_t bsize = b.length();
-    while (true)
-    {
-        index = str.find(a, index);
-        if(index == string::npos)
-            break;
-
-        str.replace(index, asize, b);
-        index += bsize;
-    }
-}
-
 void FunctionRasterizer::ApplyFunction()
 {
     GenerateIndices(UserSettings::Get().ctVertices);
     GenerateMesh(UserSettings::Get().ctVertices);
 
     string newFx(Fx);
-    strReplace(newFx, "x", "p.x");
-    strReplace(newFx, "y", "p.y");
+    StringReplace(newFx, "x", "p.x");
+    StringReplace(newFx, "y", "p.y");
     string newFy(Fy);
-    strReplace(newFy, "x", "p.x");
-    strReplace(newFy, "y", "p.y");
-
+    StringReplace(newFy, "x", "p.x");
+    StringReplace(newFy, "y", "p.y");
 
     string newSource(fragSource);
     newSource.replace(newSource.find("#Fx"), 3, newFx);

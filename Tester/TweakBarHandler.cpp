@@ -56,7 +56,7 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
 
     TwDefine(" GLOBAL help='Trayc library tester.\n"
         "Press [w/a/s/d/q/e] to move and use the mouse to rotate the camera.\n"
-        "Press [TAB] to release mouse.\n"
+        "Press [LSHIFT] to release mouse.\n"
         "Press [9/0] to speed up or speed down.\n"
         "Press left mouse button to spawn a point light and right click to activate/deactivate it.\n"
         "Press [p] to start/stop the moving light in Sponza test\n"

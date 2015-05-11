@@ -2,16 +2,16 @@ sin(x * y)
 y * cos(x * y)
 x * cos(x * y)
 
+pow(sin(x), 2) + pow(cos(y), 2)
+2 * sin(x) * cos(x)
+-2 * sin(y) * cos(y)
+
+sin(x * y)
+y * cos(x * y)
+x * cos(x * y)
+
 Format:
     In the first three lines of the file put:
     1) function
     2) functions x derivative
     3) functions y derivative
-
-sin(x)^2 + cos(y)^2
-2 * sin(x) * cos(x)
--2 * sin(y) * cos(y)
-
-sin(x) + cos(y)
-cos(x)
--sin(y)

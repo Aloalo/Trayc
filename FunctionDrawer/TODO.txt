@@ -1,6 +1,15 @@
--automatically compute derivatives
+Tracer:
+    -fix bug
+    -put a cap on L
+    -stepL user setting
+    -finish bisection
+    
+Rasterizer:
+    -fix bug
+    -think about drawing
 
--write the tracer
+-automatically compute derivatives
 
 -code cleanup (using's includes...)
 -cppcheck and gl memory leak check
+-user friendliness

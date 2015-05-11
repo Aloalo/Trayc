@@ -5,11 +5,10 @@ UserSettings::UserSettings(void) :
     SETTING(screenHeight),
     SETTING(FOV),
     SETTING(ctVertices),
-    SETTING(scaleX),
-    SETTING(scaleY),
-    SETTING(offsetX),
-    SETTING(offsetY),
-    SETTING(smallData)
+    SETTING(minX),
+    SETTING(maxX),
+    SETTING(minY),
+    SETTING(maxY)
 {
 }
 
