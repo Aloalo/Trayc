@@ -45,6 +45,7 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
     TwAddVarRW(twfunction, "Mesh resolution", TW_TYPE_INT32, &UserSettings::Get().ctVertices.x, "min=10 max=8000 group=Rasterizer");
 
     TwAddSeparator(twfunction, nullptr, " group='Tracer' ");
+    TwAddVarRW(twfunction, "Sampling Distance", TW_TYPE_FLOAT, &UserSettings::Get().Lstep.x, "min=0.001 max=0.5 group=Tracer");
 
     TwAddButton(twfunction, "Apply", ApplyFunction, nullptr, " label='Apply' ");
     TwAddButton(twfunction, "Switch", SwitchDrawer, nullptr, " label='Switch Drawer [L]' ");
@@ -55,13 +56,20 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
     TwAddVarRW(twBar, "Screen Width", TW_TYPE_INT32, &UserSettings::Get().screenWidth.x, "min=100 max=1920");
     TwAddVarRW(twBar, "Screen Height", TW_TYPE_INT32, &UserSettings::Get().screenHeight.x, "min=100 max=1080");
     TwAddVarRW(twBar, "FOV", TW_TYPE_FLOAT, &UserSettings::Get().FOV.x, "min=30 max=120");
+    TwAddVarRW(twBar, "Draw Distance", TW_TYPE_FLOAT, &UserSettings::Get().drawDistance.x, "min=10 max=30000");
     TwAddButton(twBar, "Apply", ApplySettings, nullptr, " label='Apply' ");
+
+    ApplySettings(nullptr);
 }
 
 void TW_CALL GUIHandler::ApplySettings(void *userData)
 {
     camera->cam.FoV = UserSettings::Get().FOV;
+    camera->cam.far = UserSettings::Get().drawDistance;
+    camera->cam.aspectRatio = float(UserSettings::Get().screenWidth) / float(UserSettings::Get().screenHeight);
     SDLHandler::SetWindowSize(UserSettings::Get().screenWidth, UserSettings::Get().screenHeight);
+
+    tracer->ApplyFunction();
 }
 
 void TW_CALL GUIHandler::ApplyFunction(void *userData)

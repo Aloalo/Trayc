@@ -11,13 +11,13 @@ using namespace glm;
 
 namespace engine
 {
-    Camera::Camera(const vec3 &position, float aspectRatio, float FoV)
-        : position(position), aspectRatio(aspectRatio), FoV(FoV), phix(0.0f), phiy(0.0f)
+    Camera::Camera(const vec3 &position, float aspectRatio, float FoV, float near, float far)
+        : position(position), aspectRatio(aspectRatio), FoV(FoV), far(far), near(near), phix(0.0f), phiy(0.0f)
     {
     }
 
     Camera::Camera(void)
-        : position(vec3(0.0f, 0.0f, 0.0f)), aspectRatio(4.0f / 3.0f), FoV(60.0f), phix(0.0f), phiy(0.0f)
+        : position(vec3(0.0f, 0.0f, 0.0f)), aspectRatio(4.0f / 3.0f), FoV(60.0f), far(100.0f), near(0.1f), phix(0.0f), phiy(0.0f)
     {
     }
 
@@ -37,7 +37,7 @@ namespace engine
 
     mat4 Camera::GetProjectionMatrix() const
     {
-        return perspective(FoV, aspectRatio, 0.1f, 100.0f);
+        return perspective(FoV, aspectRatio, near, far);
     }
 
     mat4 Camera::GetViewMatrix() const

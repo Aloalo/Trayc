@@ -1,7 +1,5 @@
 Tracer:
     -fix bug
-    -put a cap on L
-    -stepL user setting
     -finish bisection
     
 Rasterizer:

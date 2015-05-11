@@ -14,6 +14,8 @@ uniform float Xmin;
 uniform float Xmax;
 uniform float Zmin;
 uniform float Zmax;
+
+uniform float drawDistance;
 uniform float Lstep;
 
 //Material
@@ -55,7 +57,7 @@ void getBounds(in vec3 d, out float Lmin, out float Lmax)
 
     L = (Xmin - eye.x) / d.x;
     z = eye.z + L * d.z;
-    if(L > 0.0 && z >= Zmin && z <= Zmax)
+    if(L > 0.0 && z > Zmin && z < Zmax)
     {
         Lmin = min(Lmin, L);
         Lmax = max(Lmax, L);
@@ -63,7 +65,7 @@ void getBounds(in vec3 d, out float Lmin, out float Lmax)
     
     L = (Xmax - eye.x) / d.x;
     z = eye.z + L * d.z;
-    if(L > 0.0 && z >= Zmin && z <= Zmax)
+    if(L > 0.0 && z > Zmin && z < Zmax)
     {
         Lmin = min(Lmin, L);
         Lmax = max(Lmax, L);
@@ -71,7 +73,7 @@ void getBounds(in vec3 d, out float Lmin, out float Lmax)
     
     L = (Zmin - eye.z) / d.z;
     x = eye.x + L * d.x;
-    if(L > 0.0 && x >= Xmin && x <= Xmax)
+    if(L > 0.0 && x > Xmin && x < Xmax)
     {
         Lmin = min(Lmin, L);
         Lmax = max(Lmax, L);
@@ -79,11 +81,13 @@ void getBounds(in vec3 d, out float Lmin, out float Lmax)
     
     L = (Zmax - eye.z) / d.z;
     x = eye.x + L * d.x;
-    if(L > 0.0 && x >= Xmin && x <= Xmax)
+    if(L > 0.0 && x > Xmin && x < Xmax)
     {
         Lmin = min(Lmin, L);
         Lmax = max(Lmax, L);
     }
+    
+    Lmax = min(Lmin + drawDistance, Lmax);
 }
 
 vec3 rayPoint(in vec3 d, in float L)
@@ -99,6 +103,9 @@ bool intersect(in vec3 d, in float Lmin, in float Lmax, out vec3 intersection_po
     {
         vec3 new_point = rayPoint(d, L);
         float new_F = F(new_point.xz);
+        
+        //if(new_point.x < Xmin || new_point.x > Xmax || new_point.z < Zmin || new_point.z > Zmax)
+        //    return false;
         
         if(sign(point_on_ray.y - point_on_F) != sign(new_point.y - new_F))
         {
@@ -121,7 +128,7 @@ void main()
     
     getBounds(ray_direction, Lmin, Lmax);
     vec3 position;
-    if(intersect(ray_direction, Lmin, Lmax, position))
+    if(Lmin < Lmax && intersect(ray_direction, Lmin, Lmax, position))
     {
         //outColor = vec4(1.0);
         vec3 normalDirection = getNormal(position.xz);

@@ -13,7 +13,7 @@ namespace engine
     {
     public:
         Camera(void);
-        Camera(const glm::vec3 &position, float aspectRatio, float FoV);
+        Camera(const glm::vec3 &position, float aspectRatio, float FoV, float near = 0.1f, float far = 100.0f);
         ~Camera(void);
 
         void Rotate(float yaw, float pitch);
@@ -31,6 +31,7 @@ namespace engine
         glm::vec3 position;
         float aspectRatio;
         float FoV;
+        float far, near;
         float phix, phiy;
     };
 

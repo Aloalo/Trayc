@@ -73,8 +73,8 @@ void FunctionTracer::ApplyFunction()
     p.SetUniform("Xmax", UserSettings::Get().maxX.x);
     p.SetUniform("Zmin", UserSettings::Get().minY.x);
     p.SetUniform("Zmax", UserSettings::Get().maxY.x);
-    p.SetUniform("maxL", 1000000.0f);
-    p.SetUniform("Lstep", 0.2f);
+    p.SetUniform("drawDistance", UserSettings::Get().drawDistance.x);
+    p.SetUniform("Lstep", UserSettings::Get().Lstep.x);
 
     p.SetUniform("ambient", vec3(0.3f, 0.1f, 0.1f));
     p.SetUniform("diffuse", vec3(0.8f, 0.1f, 0.1f));
