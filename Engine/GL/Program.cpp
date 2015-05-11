@@ -13,6 +13,7 @@ using namespace std;
 namespace engine
 {
     Program::Program(void)
+        : id(0)
     {
     }
 
@@ -28,16 +29,7 @@ namespace engine
 
     Program::Program(const char *name)
     {
-        string sn(name);
-        sn += ".geom";
-        ifstream f(sn.c_str());
-
-        if(f.good())
-            Init(&VertexShader(name), &GeometryShader(name), &FragmentShader(name), name);
-        else
-            Init(&VertexShader(name), 0, &FragmentShader(name), name);
-
-        f.close();
+        Init(name);
     }
 
     void Program::Delete()
@@ -48,6 +40,9 @@ namespace engine
 
     void Program::Init(const VertexShader *vs, const GeometryShader *gs, const FragmentShader *fs, const char *name)
     {
+        if(id)
+            glDeleteProgram(id);
+
         id = glCreateProgram();
         Attach(*vs);
         if(gs)
@@ -72,6 +67,21 @@ namespace engine
             Detach(*gs);
         Detach(*fs);
     }
+
+    void Program::Init(const char *name)
+    {
+        string sn(name);
+        sn += ".geom";
+        ifstream f(sn.c_str());
+
+        if(f.good())
+            Init(&VertexShader(name), &GeometryShader(name), &FragmentShader(name), name);
+        else
+            Init(&VertexShader(name), nullptr, &FragmentShader(name), name);
+
+        f.close();
+    }
+
 
     void Program::Use() const
     {

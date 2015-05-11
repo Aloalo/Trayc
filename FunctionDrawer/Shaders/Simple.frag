@@ -1,7 +1,6 @@
 #version 330 core
 
 in vec4 position;  // position of the vertex (and fragment) in world space
-in vec3 varyingNormalDirection;  // surface normal vector in world space
 
 // Output data
 out vec3 color;
@@ -18,9 +17,24 @@ uniform float shininess;
 uniform vec3 lightDirection;
 uniform vec3 lightIntensity;
 
+float Fx(in vec2 p)
+{
+    return #Fx;
+}
+
+float Fy(in vec2 p)
+{
+    return #Fy;
+}
+
+vec3 getNormal(in vec2 p)
+{
+    return normalize(vec3(-Fx(p), 1.0, -Fy(p)));
+}
+
 void main()
 {
-    vec3 normalDirection = normalize(varyingNormalDirection);
+    vec3 normalDirection = getNormal(position.xz);
     float dotNL = dot(normalDirection, lightDirection);
     
     color = ambient;

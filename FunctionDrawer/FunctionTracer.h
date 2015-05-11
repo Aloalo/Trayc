@@ -5,31 +5,20 @@
 #ifndef FD_FUNCTIONTRACER_H
 #define FD_FUNCTIONTRACER_H
 
-#include <string>
-#include <glm/glm.hpp>
-#include <Engine/GL/Program.h>
-#include <Engine/Core/Camera.h>
+#include "FunctionDrawer.h"
 
-class FunctionTracer
+class FunctionTracer : public FunctionDrawer
 {
 public:
     FunctionTracer(void);
-    void CleanUp();
+    ~FunctionTracer(void);
 
-    void SetFunction(const std::string &expressionString);
-    void SetXDerivative(const std::string &expressionString);
-    void SetYDerivative(const std::string &expressionString);
+    void SetFunction(const std::string &F, const std::string &Fx, const std::string &Fy);
     void ApplyFunction();
 
     void Draw(const engine::Camera &cam);
 
 private:
-    engine::Program p;
-
-    std::string F;
-    std::string Fx;
-    std::string Fy;
-
     GLuint VAO;
     GLuint VBO;
 };

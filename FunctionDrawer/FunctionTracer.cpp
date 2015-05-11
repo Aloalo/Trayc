@@ -4,21 +4,14 @@
 
 #include "FunctionTracer.h"
 #include "UserSettings.h"
-#include <iostream>
-#include <cmath>
-#include <glm/gtc/matrix_transform.hpp>
 #include <Engine/Common/ErrorCheck.h>
 #include <Engine/Common/MathFunctions.h>
 
 using namespace std;
-using namespace glm;
 using namespace engine;
 
-//indices per batch
-static const GLuint ctMaxBatchIndices = (1 << 16)  - 1;
-
 FunctionTracer::FunctionTracer(void)
-    : p("Shaders/tracing")
+    : FunctionDrawer("Shaders/tracing")
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -42,31 +35,20 @@ FunctionTracer::FunctionTracer(void)
 
 }
 
-void FunctionTracer::CleanUp()
+FunctionTracer::~FunctionTracer(void)
 {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    p.Delete();
 }
 
-void FunctionTracer::SetFunction(const string &expressionString)
+void FunctionTracer::SetFunction(const std::string &F, const std::string &Fx, const std::string &Fy)
 {
-    F = expressionString;
-}
-
-void FunctionTracer::SetXDerivative(const std::string &expressionString)
-{
-    Fx = expressionString;
-}
-
-void FunctionTracer::SetYDerivative(const std::string &expressionString)
-{
-    Fy = expressionString;
+    FunctionDrawer::SetFunction(F, Fx, Fy);
 }
 
 void FunctionTracer::ApplyFunction()
 {
-
+    p.Init(&vs, nullptr, &FragmentShader("Shaders/tracing"), "Shaders/tracing");
 }
 
 void FunctionTracer::Draw(const Camera &cam)

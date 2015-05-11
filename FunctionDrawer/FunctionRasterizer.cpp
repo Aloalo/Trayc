@@ -4,14 +4,9 @@
 
 #include "FunctionRasterizer.h"
 #include "UserSettings.h"
-#include <iostream>
-#include <cmath>
-#include <glm/gtc/matrix_transform.hpp>
-#include <Engine/Core/EventHandler.h>
 #include <Engine/Common/ErrorCheck.h>
 
 #include <half/include/half.hpp>
-
 
 using namespace std;
 using namespace glm;
@@ -35,20 +30,13 @@ struct PackedNormal
 static const GLuint ctMaxBatchIndices = (1 << 16)  - 1;
 
 FunctionRasterizer::FunctionRasterizer(void)
-    : p("Shaders/Simple")
+    : FunctionDrawer("Shaders/Simple")
 {
-    p.SetUniform("ambient", vec3(0.3f, 0.1f, 0.1f));
-    p.SetUniform("diffuse", vec3(0.8f, 0.1f, 0.1f));
-    p.SetUniform("specular", vec3(1.0f, 1.0f, 1.0f));
-    p.SetUniform("shininess", 64.0f);
-    p.SetUniform("lightDirection", normalize(vec3(1.0f, 1.0f, 1.0f)));
-    p.SetUniform("lightIntensity", vec3(0.9f));
-
     batches.resize(0);
     glGenBuffers(1, &IBO);
 }
 
-void FunctionRasterizer::CleanUp()
+FunctionRasterizer::~FunctionRasterizer(void)
 {
     for(auto &batch : batches)
     {
@@ -56,22 +44,12 @@ void FunctionRasterizer::CleanUp()
         glDeleteBuffers(1, &batch.VBO);
     }
     glDeleteBuffers(1, &IBO);
-    p.Delete();
 }
 
-void FunctionRasterizer::SetFunction(const string &expressionString)
+void FunctionRasterizer::SetFunction(const std::string &F, const std::string &Fx, const std::string &Fy)
 {
-    F.SetFunction(expressionString);
-}
-
-void FunctionRasterizer::SetXDerivative(const std::string &expressionString)
-{
-    Fx.SetFunction(expressionString);
-}
-
-void FunctionRasterizer::SetYDerivative(const std::string &expressionString)
-{
-    Fy.SetFunction(expressionString);
+    FunctionDrawer::SetFunction(F, Fx, Fy);
+    func.SetFunction(F);
 }
 
 void FunctionRasterizer::GenerateMesh(int ctVertices)
@@ -81,35 +59,12 @@ void FunctionRasterizer::GenerateMesh(int ctVertices)
     const vec2 scale = vec2(UserSettings::Get().scaleX.x, UserSettings::Get().scaleY.x) / float(ctVertices - 1); //TODO: setting
     const vec2 offset(UserSettings::Get().offsetX.x, UserSettings::Get().offsetY.x);
 
-    vector<unsigned char> vertices;
-
-    int normalSize, positionSize;
-    GLenum positionType, normalType;
-    GLboolean normalNormalize;
-    GLint normalNumElems;
-    if(UserSettings::Get().smallData)
-    {
-        positionSize = 3 * sizeof(half);
-        normalSize = sizeof(int);
-        positionType = GL_HALF_FLOAT;
-        normalType = GL_INT_2_10_10_10_REV;
-        normalNormalize = GL_TRUE;
-        normalNumElems = 4;
-    }
-    else
-    {
-        positionSize = sizeof(vec3);
-        normalSize = sizeof(vec3);
-        positionType = GL_FLOAT;
-        normalType = GL_FLOAT;
-        normalNormalize = GL_FALSE;
-        normalNumElems = 3;
-    }
-    const int vertexSize = normalSize + positionSize;
+    vector<half> vertices;
+    const GLsizei vertexSize = 3 * sizeof(half);
 
     try
     {
-        vertices.reserve(ctVertices * ctVertices * vertexSize);
+        vertices.reserve(ctVertices * ctVertices);
     }
     catch(exception &e)
     {
@@ -121,30 +76,11 @@ void FunctionRasterizer::GenerateMesh(int ctVertices)
         for(GLuint j = 0; j < ctVertices; ++j)
         {
             const vec2 xz = vec2(float(i) , float(j)) * scale + offset;
-            const float y = F(xz);
+            const float y = func(xz);
 
-            const vec3 normal(normalize(-vec3(Fx(xz), -1.0f, Fy(xz))));
-            if(UserSettings::Get().smallData)
-            {
-                const half position[3] = {half(xz.x), half(y), half(xz.y)};
-
-                vertices.insert(vertices.end(), vertexSize, 0);
-                const unsigned char *start = &vertices[vertices.size() - vertexSize];
-                memcpy((void*)start, (void*)position, positionSize);
-
-                const PackedNormal pNormal((int)(normal.x * 511.0f), (int)(normal.y * 511.0f), (int)(normal.z * 511.0f));
-
-                memcpy((void*)(start + positionSize), (void*)&pNormal, normalSize);
-            }
-            else
-            {
-                const float position[3] = {xz.x, y, xz.y};
-
-                vertices.insert(vertices.end(), vertexSize, 0);
-                const unsigned char *start = &vertices[vertices.size() - vertexSize];
-                memcpy((void*)start, (void*)position, positionSize);
-                memcpy((void*)(start + positionSize), (void*)&normal, normalSize);
-            }
+            vertices.push_back(half(xz.x));
+            vertices.push_back(half(y));
+            vertices.push_back(half(xz.y));
         }
     }
 
@@ -175,7 +111,7 @@ void FunctionRasterizer::GenerateMesh(int ctVertices)
         else
         {
             const int ctRemainingStripes = ctVertices - ctStripesPerBatch * ctBatches + ctBatches;
-            batches[i].count = ctIndices;//(ctRemainingStripes - 1) * (ctVertices - 1) * 6;
+            batches[i].count = (ctRemainingStripes - 1) * (ctVertices - 1) * 6;
             ctVert = (ctVertices * ctVertices) % ctVerticesPerBatch + stripeOffset / vertexSize;
         }
 
@@ -184,13 +120,10 @@ void FunctionRasterizer::GenerateMesh(int ctVertices)
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
             glBindBuffer(GL_ARRAY_BUFFER, batches[i].VBO);
-            glBufferData(GL_ARRAY_BUFFER, ctVert * vertexSize, (void*)(vertices.data()+(i*ctVerticesPerBatch*vertexSize - stripeOffset)), GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, ctVert * vertexSize, (void*)(vertices.data()+(i*ctVerticesPerBatch*vertexSize - stripeOffset) / 2), GL_STATIC_DRAW);
 
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 3, positionType, GL_FALSE, vertexSize, (void*)0);
-
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, normalNumElems, normalType, normalNormalize, vertexSize, (void*)positionSize);
+            glVertexAttribPointer(0, 3, GL_HALF_FLOAT, GL_FALSE, vertexSize, (void*)0);
         }
         glBindVertexArray(0);
     }
@@ -235,10 +168,47 @@ void FunctionRasterizer::GenerateIndices(int ctVertices)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+static inline void strReplace(string &str, const string &a, const string &b)
+{
+    size_t index = 0;
+    const size_t asize = a.length();
+    const size_t bsize = b.length();
+    while (true)
+    {
+        index = str.find(a, index);
+        if(index == string::npos)
+            break;
+
+        str.replace(index, asize, b);
+        index += bsize;
+    }
+}
+
 void FunctionRasterizer::ApplyFunction()
 {
     GenerateIndices(UserSettings::Get().ctVertices);
     GenerateMesh(UserSettings::Get().ctVertices);
+
+    string newFx(Fx);
+    strReplace(newFx, "x", "p.x");
+    strReplace(newFx, "y", "p.y");
+    string newFy(Fy);
+    strReplace(newFy, "x", "p.x");
+    strReplace(newFy, "y", "p.y");
+
+
+    string newSource(fragSource);
+    newSource.replace(newSource.find("#Fx"), 3, newFx);
+    newSource.replace(newSource.find("#Fy"), 3, newFy);
+
+    p.Init(&vs, nullptr, &FragmentShader(newSource, fileName.c_str()), fileName.c_str());
+
+    p.SetUniform("ambient", vec3(0.3f, 0.1f, 0.1f));
+    p.SetUniform("diffuse", vec3(0.8f, 0.1f, 0.1f));
+    p.SetUniform("specular", vec3(1.0f, 1.0f, 1.0f));
+    p.SetUniform("shininess", 64.0f);
+    p.SetUniform("lightDirection", normalize(vec3(1.0f, 1.0f, 1.0f)));
+    p.SetUniform("lightIntensity", vec3(0.9f));
 }
 
 void FunctionRasterizer::Draw(const Camera &cam)
@@ -254,7 +224,6 @@ void FunctionRasterizer::Draw(const Camera &cam)
     {
         glBindVertexArray(batch.VAO);
         glDrawElements(GL_TRIANGLES, batch.count, GL_UNSIGNED_SHORT, nullptr);
-        GLErrCheck(true);
         glBindVertexArray(0);
     }
 }

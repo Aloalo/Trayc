@@ -1,7 +1,6 @@
--ant tweak lib fix
--easy rasterizer - tracer switching 
 -automatically compute derivatives
 
 -write the tracer
 
+-code cleanup (using's includes...)
 -cppcheck and gl memory leak check

@@ -11,6 +11,12 @@ namespace engine
         Init(name);
     }
 
+    FragmentShader::FragmentShader(const std::string &source, const char *name)
+    {
+        Init2(source.c_str(), name);
+    }
+
+
     FragmentShader::~FragmentShader(void)
     {
     }

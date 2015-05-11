@@ -22,9 +22,8 @@ namespace engine
 
     protected:
         void Init(const char *name);
-
-    private:
         void Init2(const GLchar *src, const char *name, GLint len = 0);
+
     };
 }
 

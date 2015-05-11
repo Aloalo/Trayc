@@ -2,13 +2,10 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 
-#ifndef FD_FUNCTIONDRAWER_H
-#define FD_FUNCTIONDRAWER_H
+#ifndef FD_FUNCTIONRASTERIZER_H
+#define FD_FUNCTIONRASTERIZER_H
 
-#include <string>
-#include <glm/glm.hpp>
-#include <Engine/GL/Program.h>
-#include <Engine/Core/Camera.h>
+#include "FunctionDrawer.h"
 #include <Engine/Geometry/IndexContainer.h>
 #include "TwoVariableFunction.h"
 
@@ -20,15 +17,13 @@ struct Batch
 };
 
 
-class FunctionRasterizer
+class FunctionRasterizer : public FunctionDrawer
 {
 public:
     FunctionRasterizer(void);
-    void CleanUp();
+    ~FunctionRasterizer(void);
 
-    void SetFunction(const std::string &expressionString);
-    void SetXDerivative(const std::string &expressionString);
-    void SetYDerivative(const std::string &expressionString);
+    void SetFunction(const std::string &F, const std::string &Fx, const std::string &Fy);
     void ApplyFunction();
 
     void Draw(const engine::Camera &cam);
@@ -37,11 +32,7 @@ private:
     void GenerateMesh(int ctVertices);
     void GenerateIndices(int ctVertices);
 
-    engine::Program p;
-
-    TwoVariableFunction F;
-    TwoVariableFunction Fx;
-    TwoVariableFunction Fy;
+    TwoVariableFunction func;
 
     std::vector<Batch> batches;
     GLuint IBO;

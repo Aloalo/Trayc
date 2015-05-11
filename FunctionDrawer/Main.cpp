@@ -2,35 +2,40 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 
-#include <iostream>
 #include <Engine/Engine.h>
-#include <Engine/Utils/Setting.h>
-#include <Engine/GL/Program.h>
 
 #include "UserSettings.h"
 #include "GUIHandler.h"
 #include "FunctionRasterizer.h"
 #include "FunctionTracer.h"
 
-#include <AntTweakBar.h>
 
 using namespace engine;
 using namespace std;
 using namespace glm;
 
-template<class T>
-void RenderingLoop(CameraHandler &camHandler, GLbitfield mask)
+void RenderingLoop()
 {
-    GUIHandler<T> guiHandler;
+    glDisable(GL_CULL_FACE);
+    DefaultCameraHandler camHandler(Camera(vec3(7.0f, 9.2f, -6.0f), (float)UserSettings::Get().screenWidth / UserSettings::Get().screenHeight, UserSettings::Get().FOV), 7.0f, 0.006f);
+    EventHandler::AddEventListener(&camHandler);
+    EventHandler::AddUpdateable(&camHandler);
+    glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+
+    GUIHandler guiHandler;
+    
     EventHandler::AddEventListener(&guiHandler);
-    T functionDrawer;
-    guiHandler.CreateTweakBars(&camHandler, &functionDrawer);
 
-    do
+    FunctionDrawer *rasterizer = new FunctionRasterizer();
+    FunctionDrawer *tracer = new FunctionTracer();
+
+    guiHandler.CreateTweakBars(&camHandler, rasterizer, tracer);
+
+    while(true)
     {
-        glClear(mask);
+        glClear(GUIHandler::clearMask);
 
-        functionDrawer.Draw(camHandler.cam);
+        guiHandler.currentRenderer->Draw(camHandler.cam);
 
         TwDraw();
 
@@ -39,10 +44,12 @@ void RenderingLoop(CameraHandler &camHandler, GLbitfield mask)
         EventHandler::ProcessPolledEvents();
         EventHandler::Update();
 
-    } while(!EventHandler::Quit());
+        if(EventHandler::Quit())
+            break;
+    }
 
-    functionDrawer.CleanUp();
-    EventHandler::RemoveEventListener(&guiHandler);
+    delete tracer;
+    delete rasterizer;
 }
 
 int main(int argc, char *argv[])
@@ -62,18 +69,7 @@ int main(int argc, char *argv[])
     SDLHandler::InitGL(3, 3, SDL_GL_CONTEXT_PROFILE_CORE);
     SDLHandler::PrintSoftwareVersions();
 
-    
-    glDisable(GL_CULL_FACE);
-    DefaultCameraHandler camHandler(Camera(vec3(7.0f, 9.2f, -6.0f), (float)UserSettings::Get().screenWidth / UserSettings::Get().screenHeight, UserSettings::Get().FOV), 7.0f, 0.006f);
-    EventHandler::AddEventListener(&camHandler);
-    EventHandler::AddUpdateable(&camHandler);
-    glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-
-    //glEnable(GL_DEPTH_TEST);
-    //RenderingLoop<FunctionRasterizer>(camHandler, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glDisable(GL_DEPTH_TEST);
-    RenderingLoop<FunctionTracer>(camHandler, GL_COLOR_BUFFER_BIT);
+    RenderingLoop();
 
     SDLHandler::CleanUp();
 
