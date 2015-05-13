@@ -15,8 +15,12 @@ uniform float Xmax;
 uniform float Zmin;
 uniform float Zmax;
 
+//Tracing stuff
 uniform float drawDistance;
 uniform float Lstep;
+uniform float tolerance; //bisection tolerance
+uniform int NMAX; //maximum bisection iterations
+const float EPS = 0.0001; //zero
 
 //Material
 uniform vec3 ambient;
@@ -29,20 +33,20 @@ uniform vec3 lightDirection;
 uniform vec3 lightIntensity;
 uniform vec3 missColor;
 
-
+//x derivative
 float Fx(in vec2 p)
 {
     return #Fx;
 }
-
+// y derivative
 float Fy(in vec2 p)
 {
     return #Fy;
 }
-
-float F(in vec2 p)
+// G(L) = F(eye.x + L * d.x, eye.z + L * d.z) - eye.y - L * d.y
+float G(in float L, in vec3 d)
 {
-    return #F;
+    return #G;
 }
 
 vec3 getNormal(in vec2 p)
@@ -53,84 +57,84 @@ vec3 getNormal(in vec2 p)
 //get min and max lambda
 void getBounds(in vec3 d, out float Lmin, out float Lmax)
 {
-    float L, z, x;
-
-    L = (Xmin - eye.x) / d.x;
-    z = eye.z + L * d.z;
-    if(L > 0.0 && z > Zmin && z < Zmax)
-    {
-        Lmin = min(Lmin, L);
-        Lmax = max(Lmax, L);
-    }
+    float L1 = (Xmin - eye.x) / d.x;
+    float L2 = (Xmax - eye.x) / d.x;
+    float L3 = (Zmin - eye.z) / d.z;
+    float L4 = (Zmax - eye.z) / d.z;
     
-    L = (Xmax - eye.x) / d.x;
-    z = eye.z + L * d.z;
-    if(L > 0.0 && z > Zmin && z < Zmax)
-    {
-        Lmin = min(Lmin, L);
-        Lmax = max(Lmax, L);
-    }
+    float minmax = min(max(L1, L2), max(L3, L4));
+    float maxmin = max(min(L1, L2), min(L3, L4));
     
-    L = (Zmin - eye.z) / d.z;
-    x = eye.x + L * d.x;
-    if(L > 0.0 && x > Xmin && x < Xmax)
-    {
-        Lmin = min(Lmin, L);
-        Lmax = max(Lmax, L);
-    }
-    
-    L = (Zmax - eye.z) / d.z;
-    x = eye.x + L * d.x;
-    if(L > 0.0 && x > Xmin && x < Xmax)
-    {
-        Lmin = min(Lmin, L);
-        Lmax = max(Lmax, L);
-    }
-    
-    Lmax = min(Lmin + drawDistance, Lmax);
+    Lmin = max(min(minmax, maxmin), 0.0);
+    Lmax = min(Lmin + drawDistance, max(minmax, maxmin));
 }
 
-vec3 rayPoint(in vec3 d, in float L)
+float bisection(in float a, in float b, in vec3 d)
 {
-    return eye + L * d;
+    float c;
+    float signGa = sign(G(a, d));
+    int n = 0;
+    while(n < NMAX)
+    {
+        c = (a + b) * 0.5; // new midpoint
+        float Gc = G(c, d);
+        
+        if(abs(Gc) < EPS || (b - a) * 0.5 < tolerance)
+            return c;
+
+        n++;
+        float signGc = sign(Gc);
+        if(signGc == signGa)
+        {
+            a = c;
+            signGa = signGc;
+        }
+        else 
+            b = c;
+    }
+    return c;
 }
 
 bool intersect(in vec3 d, in float Lmin, in float Lmax, out vec3 intersection_point)
 {
-    vec3 point_on_ray = rayPoint(d, Lmin);
-    float point_on_F = F(point_on_ray.xz);
+    //check if in bounds
+    vec3 start = eye + Lmin * d;
+    if(start.x < Xmin || start.x > Xmax || start.z < Zmin || start.z > Zmax)
+        return false;
+    
+    float a = Lmin;
+    float Ga = G(a, d);
     for(float L = Lmin + Lstep; L < Lmax; L += Lstep)
     {
-        vec3 new_point = rayPoint(d, L);
-        float new_F = F(new_point.xz);
+        float b = L;
+        float Gb = G(b, d);
         
-        //if(new_point.x < Xmin || new_point.x > Xmax || new_point.z < Zmin || new_point.z > Zmax)
-        //    return false;
-        
-        if(sign(point_on_ray.y - point_on_F) != sign(new_point.y - new_F))
+        if(sign(Ga) != sign(Gb))
         {
-            intersection_point = (point_on_ray + new_point) * 0.5;
+            //float iL = (a + b) * 0.5;
+            float iL = bisection(a, b, d);
+            intersection_point = eye + iL * d;
             return true;
         }
             
-        point_on_ray = new_point;
-        point_on_F = new_F;
+        a = b;
+        Ga = Gb;
     }
     return false;
 }
 
 void main()
 {
-    vec3 ray_direction = normalize(pixel.x * U + pixel.y * V + W);
+    vec3 d = normalize(pixel.x * U + pixel.y * V + W);
     
-    float Lmin = 1000000.0;
-    float Lmax = -1.0;
+    float Lmin;
+    float Lmax;
+    getBounds(d, Lmin, Lmax);
     
-    getBounds(ray_direction, Lmin, Lmax);
     vec3 position;
-    if(Lmin < Lmax && intersect(ray_direction, Lmin, Lmax, position))
+    outColor = missColor;
+    if(intersect(d, Lmin, Lmax, position))
     {
-        //outColor = vec4(1.0);
         vec3 normalDirection = getNormal(position.xz);
         float dotNL = dot(normalDirection, lightDirection);
         
@@ -142,7 +146,5 @@ void main()
             vec3 specularReflection = specular * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)), shininess);
             outColor += lightIntensity * (diffuseReflection + specularReflection);
         }
-        return;
     }
-    outColor = missColor;
 }

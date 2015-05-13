@@ -50,9 +50,11 @@ void FunctionTracer::SetFunction(const std::string &F, const std::string &Fx, co
 
 void FunctionTracer::ApplyFunction()
 {
-    string newF(F);
-    StringReplace(newF, "x", "p.x");
-    StringReplace(newF, "y", "p.y");
+    string G(F);
+    StringReplace(G, "x", "(ee.x + L * d.x)");
+    StringReplace(G, "y", "(ee.z + L * d.z)");
+    StringReplace(G, "ee", "eye");
+    G += " - eye.y - L * d.y";
     string newFx(Fx);
     StringReplace(newFx, "x", "p.x");
     StringReplace(newFx, "y", "p.y");
@@ -64,7 +66,7 @@ void FunctionTracer::ApplyFunction()
     string newSource(fragSource);
     newSource.replace(newSource.find("#Fx"), 3, newFx);
     newSource.replace(newSource.find("#Fy"), 3, newFy);
-    newSource.replace(newSource.find("#F"), 2, newF);
+    newSource.replace(newSource.find("#G"), 2, G);
 
     p.Init(&vs, nullptr, &FragmentShader(newSource, fileName.c_str()), fileName.c_str());
 
@@ -75,6 +77,8 @@ void FunctionTracer::ApplyFunction()
     p.SetUniform("Zmax", UserSettings::Get().maxY.x);
     p.SetUniform("drawDistance", UserSettings::Get().drawDistance.x);
     p.SetUniform("Lstep", UserSettings::Get().Lstep.x);
+    p.SetUniform("NMAX", UserSettings::Get().NMAX.x);
+    p.SetUniform("tolerance", UserSettings::Get().tolerance.x);
 
     p.SetUniform("ambient", vec3(0.3f, 0.1f, 0.1f));
     p.SetUniform("diffuse", vec3(0.8f, 0.1f, 0.1f));

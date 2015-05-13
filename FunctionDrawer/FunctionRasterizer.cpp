@@ -67,7 +67,7 @@ void FunctionRasterizer::GenerateMesh(int ctVertices)
 
     try
     {
-        vertices.reserve(ctVertices * ctVertices);
+        vertices.reserve(ctVertices * ctVertices * 3);
     }
     catch(exception &e)
     {

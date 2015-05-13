@@ -1,12 +1,11 @@
-Tracer:
-    -fix bug
-    -finish bisection
-    
 Rasterizer:
     -fix bug
     -think about drawing
+    -memory counter
 
 -automatically compute derivatives
+-fps counter
+-ugly function support?
 
 -code cleanup (using's includes...)
 -cppcheck and gl memory leak check

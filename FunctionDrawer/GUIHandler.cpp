@@ -35,7 +35,7 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
 
     TwBar *twfunction;
     twfunction = TwNewBar("Function");
-    TwDefine(" Function size='240 240' ");
+    TwDefine(" Function size='250 250' ");
     TwAddVarRW(twfunction, "minX", TW_TYPE_FLOAT, &UserSettings::Get().minX.x, "");
     TwAddVarRW(twfunction, "minY", TW_TYPE_FLOAT, &UserSettings::Get().minY.x, "");
     TwAddVarRW(twfunction, "maxX", TW_TYPE_FLOAT, &UserSettings::Get().maxX.x, "");
@@ -46,6 +46,8 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
 
     TwAddSeparator(twfunction, nullptr, " group='Tracer' ");
     TwAddVarRW(twfunction, "Sampling Distance", TW_TYPE_FLOAT, &UserSettings::Get().Lstep.x, "min=0.001 max=0.5 group=Tracer");
+    TwAddVarRW(twfunction, "Intersection tolerance", TW_TYPE_FLOAT, &UserSettings::Get().tolerance.x, "min=0.0000001 max=0.5 group=Tracer");
+    TwAddVarRW(twfunction, "Max iterations", TW_TYPE_INT32, &UserSettings::Get().NMAX.x, "min=10 max=1000 group=Tracer");
 
     TwAddButton(twfunction, "Apply", ApplyFunction, nullptr, " label='Apply' ");
     TwAddButton(twfunction, "Switch", SwitchDrawer, nullptr, " label='Switch Drawer [L]' ");

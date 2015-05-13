@@ -15,6 +15,8 @@ struct UserSettings : public engine::Singleton<UserSettings>
     engine::Setting<float> FOV;
     engine::Setting<float> drawDistance;
     engine::Setting<int> ctVertices;
+    engine::Setting<int> NMAX;
+    engine::Setting<float> tolerance;
     engine::Setting<float> Lstep;
     engine::Setting<float> minX;
     engine::Setting<float> maxX;
