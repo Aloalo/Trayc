@@ -10,13 +10,10 @@ uniform vec3 W;
 uniform vec3 V;
 
 //Bounds
-uniform float Xmin;
-uniform float Xmax;
-uniform float Zmin;
-uniform float Zmax;
+uniform vec3 minv;
+uniform vec3 maxv;
 
 //Tracing stuff
-uniform float drawDistance;
 uniform float Lstep;
 uniform float tolerance; //bisection tolerance
 uniform int NMAX; //maximum bisection iterations
@@ -55,18 +52,25 @@ vec3 getNormal(in vec2 p)
 }
 
 //get min and max lambda
-void getBounds(in vec3 d, out float Lmin, out float Lmax)
+bool intersectAABB(in vec3 d, out float Lmin, out float Lmax)
 {
-    float L1 = (Xmin - eye.x) / d.x;
-    float L2 = (Xmax - eye.x) / d.x;
-    float L3 = (Zmin - eye.z) / d.z;
-    float L4 = (Zmax - eye.z) / d.z;
+    float Lx1 = (minv.x - eye.x) / d.x;
+    float Lx2 = (maxv.x - eye.x) / d.x;
+    float Ly1 = (minv.y - eye.y) / d.y;
+    float Ly2 = (maxv.y - eye.y) / d.y;
+    float Lz1 = (minv.z - eye.z) / d.z;
+    float Lz2 = (maxv.z - eye.z) / d.z;
     
-    float minmax = min(max(L1, L2), max(L3, L4));
-    float maxmin = max(min(L1, L2), min(L3, L4));
+    Lmin = min(Lx1, Lx2);
+    Lmax = max(Lx1, Lx2);
     
-    Lmin = max(min(minmax, maxmin), 0.0);
-    Lmax = min(Lmin + drawDistance, max(minmax, maxmin));
+    Lmin = max(Lmin, min(Ly1, Ly2));
+    Lmax = min(Lmax, max(Ly1, Ly2));
+    
+    Lmin = max(Lmin, min(Lz1, Lz2));
+    Lmax = min(Lmax, max(Lz1, Lz2));
+    
+    return Lmax >= max(0.0, Lmin);
 }
 
 float bisection(in float a, in float b, in vec3 d)
@@ -76,10 +80,13 @@ float bisection(in float a, in float b, in vec3 d)
     int n = 0;
     while(n < NMAX)
     {
+        if((b - a) * 0.5 < tolerance)
+            return c;
+    
         c = (a + b) * 0.5; // new midpoint
         float Gc = G(c, d);
         
-        if(abs(Gc) < EPS || (b - a) * 0.5 < tolerance)
+        if(abs(Gc) < EPS)
             return c;
 
         n++;
@@ -95,13 +102,8 @@ float bisection(in float a, in float b, in vec3 d)
     return c;
 }
 
-bool intersect(in vec3 d, in float Lmin, in float Lmax, out vec3 intersection_point)
+bool intersectFunction(in vec3 d, in float Lmin, in float Lmax, out vec3 intersection_point)
 {
-    //check if in bounds
-    vec3 start = eye + Lmin * d;
-    if(start.x < Xmin || start.x > Xmax || start.z < Zmin || start.z > Zmax)
-        return false;
-    
     float a = Lmin;
     float Ga = G(a, d);
     for(float L = Lmin + Lstep; L < Lmax; L += Lstep)
@@ -111,7 +113,6 @@ bool intersect(in vec3 d, in float Lmin, in float Lmax, out vec3 intersection_po
         
         if(sign(Ga) != sign(Gb))
         {
-            //float iL = (a + b) * 0.5;
             float iL = bisection(a, b, d);
             intersection_point = eye + iL * d;
             return true;
@@ -126,25 +127,26 @@ bool intersect(in vec3 d, in float Lmin, in float Lmax, out vec3 intersection_po
 void main()
 {
     vec3 d = normalize(pixel.x * U + pixel.y * V + W);
+    outColor = missColor;
     
     float Lmin;
     float Lmax;
-    getBounds(d, Lmin, Lmax);
-    
-    vec3 position;
-    outColor = missColor;
-    if(intersect(d, Lmin, Lmax, position))
+    if(intersectAABB(d, Lmin, Lmax))
     {
-        vec3 normalDirection = getNormal(position.xz);
-        float dotNL = dot(normalDirection, lightDirection);
-        
-        outColor = ambient;
-        if(dotNL > 0.0)
+        vec3 position;
+        if(intersectFunction(d, Lmin, Lmax, position))
         {
-            vec3 diffuseReflection = diffuse * dotNL;
-            vec3 viewDirection = normalize(eye - position);
-            vec3 specularReflection = specular * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)), shininess);
-            outColor += lightIntensity * (diffuseReflection + specularReflection);
+            vec3 normalDirection = getNormal(position.xz);
+            float dotNL = dot(normalDirection, lightDirection);
+            
+            outColor = ambient;
+            if(dotNL > 0.0)
+            {
+                vec3 diffuseReflection = diffuse * dotNL;
+                vec3 viewDirection = normalize(eye - position);
+                vec3 specularReflection = specular * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)), shininess);
+                outColor += lightIntensity * (diffuseReflection + specularReflection);
+            }
         }
     }
 }

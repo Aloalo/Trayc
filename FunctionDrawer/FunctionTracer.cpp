@@ -70,12 +70,15 @@ void FunctionTracer::ApplyFunction()
 
     p.Init(&vs, nullptr, &FragmentShader(newSource, fileName.c_str()), fileName.c_str());
 
+    AABB expanded(box);
+    const float expansion = 0.1f * (box.maxv.y - box.minv.y);
+    expanded.minv.y -= expansion;
+    expanded.maxv.y += expansion;
+
     p.Use();
-    p.SetUniform("Xmin", UserSettings::Get().minX.x);
-    p.SetUniform("Xmax", UserSettings::Get().maxX.x);
-    p.SetUniform("Zmin", UserSettings::Get().minY.x);
-    p.SetUniform("Zmax", UserSettings::Get().maxY.x);
-    p.SetUniform("drawDistance", UserSettings::Get().drawDistance.x);
+    p.SetUniform("minv", expanded.minv);
+    p.SetUniform("maxv", expanded.maxv);
+
     p.SetUniform("Lstep", UserSettings::Get().Lstep.x);
     p.SetUniform("NMAX", UserSettings::Get().NMAX.x);
     p.SetUniform("tolerance", UserSettings::Get().tolerance.x);

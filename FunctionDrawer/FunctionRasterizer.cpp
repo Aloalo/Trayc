@@ -57,6 +57,8 @@ int FunctionRasterizer::GenerateMesh(int ctVertices)
 {
     assert(ctVertices > 0);
 
+    box = AABB();
+
     cout << "Building mesh ... "; 
 
     const vec2 minv(UserSettings::Get().minX.x, UserSettings::Get().minY.x);
@@ -82,10 +84,13 @@ int FunctionRasterizer::GenerateMesh(int ctVertices)
         for(GLuint j = 0; j < ctVertices; ++j)
         {
             const vec2 xz = vec2(float(i) , float(j)) * scale + minv;
+            const vec3 p(xz.x, func(xz), xz.y);
 
-            vertices.push_back(half(xz.x));
-            vertices.push_back(half(func(xz)));
-            vertices.push_back(half(xz.y));
+            box |= p;
+
+            vertices.push_back(half(p.x));
+            vertices.push_back(half(p.y));
+            vertices.push_back(half(p.z));
         }
     }
 

@@ -45,6 +45,7 @@ set(Engine_Geometry_SRCS
     Geometry/IndexContainer.cpp
     Geometry/Scene.cpp
     Geometry/Material.cpp
+    Geometry/AABB.cpp
 )
 
 set(Engine_Geometry_HDRS
@@ -53,6 +54,7 @@ set(Engine_Geometry_HDRS
     Geometry/IndexContainer.h
     Geometry/Scene.h
     Geometry/Material.h
+    Geometry/AABB.h
 )
 
 set(Engine_GL_SRCS

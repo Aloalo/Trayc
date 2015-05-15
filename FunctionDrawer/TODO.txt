@@ -1,5 +1,4 @@
 -fix rasterizer bug
--AABB for tracer
 
 MAYBE:
 -automatically compute derivatives

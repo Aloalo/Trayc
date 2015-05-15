@@ -47,7 +47,7 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
     TwAddVarRW(twfunction, "Mesh resolution", TW_TYPE_INT32, &UserSettings::Get().ctVertices.x, "min=10 max=8000 group=Rasterizer");
 
     TwAddSeparator(twfunction, nullptr, " group='Tracer' ");
-    TwAddVarRW(twfunction, "Sampling Distance", TW_TYPE_FLOAT, &UserSettings::Get().Lstep.x, "min=0.001 max=0.5 group=Tracer");
+    TwAddVarRW(twfunction, "Sampling interval", TW_TYPE_FLOAT, &UserSettings::Get().Lstep.x, "min=0.005 max=0.5 group=Tracer");
     TwAddVarRW(twfunction, "Intersection tolerance", TW_TYPE_FLOAT, &UserSettings::Get().tolerance.x, "min=0.0000001 max=0.5 group=Tracer");
     TwAddVarRW(twfunction, "Max iterations", TW_TYPE_INT32, &UserSettings::Get().NMAX.x, "min=10 max=1000 group=Tracer");
 
@@ -90,6 +90,7 @@ void TW_CALL GUIHandler::ApplyFunction(void *userData)
     rasterizer->SetFunction(F, Fx, Fy);
     rasterizer->ApplyFunction();
 
+    tracer->SetAABB(rasterizer->GetAABB());
     tracer->SetFunction(F, Fx, Fy);
     tracer->ApplyFunction();
 }

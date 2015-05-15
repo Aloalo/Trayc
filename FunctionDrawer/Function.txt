@@ -1,3 +1,7 @@
+sin(x) * sin(x) + cos(y) * cos(y)
+2 * sin(x) * cos(x)
+-2 * sin(y) * cos(y)
+
 sin(x * y) / (2 + cos(x * y))
 y*cos(x*y)/(cos(x*y) + 2) + (y*sin(x*y)*sin(x*y))/((cos(x*y) + 2)*(cos(x*y) + 2))
 x*cos(x*y)/(cos(x*y) + 2) + (x*sin(x*y)*sin(x*y))/((cos(x*y) + 2)*(cos(x*y) + 2))
@@ -13,10 +17,6 @@ x*cos(x*y)/sin(x*y)
 sin(x * y)
 y * cos(x * y)
 x * cos(x * y)
-
-sin(x) * sin(x) + cos(y) * cos(y)
-2 * sin(x) * cos(x)
--2 * sin(y) * cos(y)
 
 Format:
     In the first three lines of the file put:

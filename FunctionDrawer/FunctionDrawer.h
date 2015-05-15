@@ -7,6 +7,7 @@
 
 #include <Engine/GL/Program.h>
 #include <Engine/Core/Camera.h>
+#include <Engine/Geometry/AABB.h>
 
 class FunctionDrawer
 {
@@ -19,7 +20,12 @@ public:
     
     virtual void Draw(const engine::Camera &cam) = 0;
 
+    const engine::AABB& GetAABB() const;
+    void SetAABB(const engine::AABB &box);
+
 protected:
+    engine::AABB box;
+
     std::string F;
     std::string Fx;
     std::string Fy;
