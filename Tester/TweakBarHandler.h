@@ -18,6 +18,7 @@ class TweakBarHandler : public engine::EventListener, public engine::Updateable
 {
 public:
     static void CreateTweakBars(trayc::GameEngine *gameEngine);
+    static float FPS;
 
 private:
     static const engine::Scene& LoadTest(const std::string &test, const std::string &path, const glm::mat4 &transform);

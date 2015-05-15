@@ -56,7 +56,7 @@ namespace engine
             glGetShaderiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
 
             GLchar *strInfoLog = new GLchar[infoLogLength+1];
-            glGetShaderInfoLog(id, infoLogLength, NULL, strInfoLog);
+            glGetShaderInfoLog(id, infoLogLength, nullptr, strInfoLog);
 
             cerr << "Compile failure in " << GetTypeString() << " shader " << name << endl << strInfoLog << endl;
             delete[] strInfoLog;

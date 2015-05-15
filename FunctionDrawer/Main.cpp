@@ -3,6 +3,7 @@
 */
 
 #include <Engine/Engine.h>
+#include <Engine/Utils/FPSCounter.h>
 
 #include "UserSettings.h"
 #include "GUIHandler.h"
@@ -35,6 +36,8 @@ void RenderingLoop()
 
     while(true)
     {
+        FPSCounter::StartClock();
+
         glClear(GUIHandler::clearMask);
 
         guiHandler.currentRenderer->Draw(camHandler.cam);
@@ -48,6 +51,10 @@ void RenderingLoop()
 
         if(EventHandler::Quit())
             break;
+
+        FPSCounter::StopClock();
+        guiHandler.FPS = FPSCounter::GetFPS();
+        guiHandler.ms = 1000.0f / FPSCounter::GetFPS();
     }
 
     delete tracer;

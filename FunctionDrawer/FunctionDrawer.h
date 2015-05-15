@@ -26,8 +26,8 @@ protected:
 
     // contains the fragment shader source
     std::string fragSource;
-    std::string fileName;
     engine::VertexShader vs;
+    std::string fileName;
     engine::Program p;
 };
 

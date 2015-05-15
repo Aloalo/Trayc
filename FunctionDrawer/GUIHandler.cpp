@@ -15,6 +15,8 @@ FunctionDrawer *GUIHandler::rasterizer = nullptr;
 FunctionDrawer *GUIHandler::tracer = nullptr;
 FunctionDrawer *GUIHandler::currentRenderer = nullptr;
 GLbitfield GUIHandler::clearMask = 0;
+float GUIHandler::FPS = 0.0f;
+float GUIHandler::ms = 0.0f;
 
 void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer, FunctionDrawer *tracer)
 {
@@ -35,7 +37,7 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
 
     TwBar *twfunction;
     twfunction = TwNewBar("Function");
-    TwDefine(" Function size='250 250' ");
+    TwDefine(" Function size='250 250' position='10 10' ");
     TwAddVarRW(twfunction, "minX", TW_TYPE_FLOAT, &UserSettings::Get().minX.x, "");
     TwAddVarRW(twfunction, "minY", TW_TYPE_FLOAT, &UserSettings::Get().minY.x, "");
     TwAddVarRW(twfunction, "maxX", TW_TYPE_FLOAT, &UserSettings::Get().maxX.x, "");
@@ -54,11 +56,13 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
 
     TwBar *twBar;
     twBar = TwNewBar("Settings");
-    TwDefine(" Settings iconified=true ");
+    TwDefine(" Settings iconified=false size='200 145' position='10 270' ");
     TwAddVarRW(twBar, "Screen Width", TW_TYPE_INT32, &UserSettings::Get().screenWidth.x, "min=100 max=1920");
     TwAddVarRW(twBar, "Screen Height", TW_TYPE_INT32, &UserSettings::Get().screenHeight.x, "min=100 max=1080");
     TwAddVarRW(twBar, "FOV", TW_TYPE_FLOAT, &UserSettings::Get().FOV.x, "min=30 max=120");
     TwAddVarRW(twBar, "Draw Distance", TW_TYPE_FLOAT, &UserSettings::Get().drawDistance.x, "min=10 max=30000");
+    TwAddVarRO(twBar, "FPS", TW_TYPE_FLOAT, &FPS, "");
+    TwAddVarRO(twBar, "ms", TW_TYPE_FLOAT, &ms, "");
     TwAddButton(twBar, "Apply", ApplySettings, nullptr, " label='Apply' ");
 
     ApplySettings(nullptr);
@@ -67,7 +71,7 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
 void TW_CALL GUIHandler::ApplySettings(void *userData)
 {
     camera->cam.FoV = UserSettings::Get().FOV;
-    camera->cam.far = UserSettings::Get().drawDistance;
+    camera->cam.farDistance = UserSettings::Get().drawDistance;
     camera->cam.aspectRatio = float(UserSettings::Get().screenWidth) / float(UserSettings::Get().screenHeight);
     SDLHandler::SetWindowSize(UserSettings::Get().screenWidth, UserSettings::Get().screenHeight);
 

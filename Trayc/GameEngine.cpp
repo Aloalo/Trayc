@@ -15,8 +15,7 @@ using namespace engine;
 namespace trayc
 {
     GameEngine::GameEngine(void)
-        : closeAfterSS(false), frame(0), framesPassed(0), FPS(0.0f),
-          SETTING(FOV), SETTING(frameRandomSeed),
+        : closeAfterSS(false), frame(0), SETTING(FOV), SETTING(frameRandomSeed),
           player(Camera(glm::vec3(7.0f, 9.2f, -6.0f), (float)Environment::Get().screenWidth.x / Environment::Get().screenHeight.x, FOV), 7.0f, 0.006f)
     {
     }
@@ -50,16 +49,6 @@ namespace trayc
 
     void GameEngine::Update(float deltaTime)
     {
-        static float timePassed = 0.0f;
-        timePassed += deltaTime;
-
-        if(timePassed > 1.0f)
-        {
-            FPS = (float) framesPassed / timePassed;
-            timePassed = 0.0f;
-            framesPassed = 0;
-        }
-
         player.Update(deltaTime);
         tracer.SetCamera(player.cam);
     }
@@ -83,8 +72,6 @@ namespace trayc
 
     void GameEngine::Draw()
     {
-        ++framesPassed;
-
         try
         {
             ++frame;

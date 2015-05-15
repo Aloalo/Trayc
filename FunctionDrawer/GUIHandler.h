@@ -16,6 +16,8 @@ public:
     static void CreateTweakBars(engine::CameraHandler *cam, FunctionDrawer *rasterizer, FunctionDrawer *tracer);
     static FunctionDrawer *currentRenderer;
     static GLbitfield clearMask;
+    static float FPS;
+    static float ms;
     static void TW_CALL SwitchDrawer(void *userData);
 
 private:

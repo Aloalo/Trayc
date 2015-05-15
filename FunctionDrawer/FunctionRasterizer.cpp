@@ -53,8 +53,10 @@ void FunctionRasterizer::SetFunction(const string &F, const string &Fx, const st
     func.SetFunction(F);
 }
 
-void FunctionRasterizer::GenerateMesh(int ctVertices)
+int FunctionRasterizer::GenerateMesh(int ctVertices)
 {
+    assert(ctVertices > 0);
+
     cout << "Building mesh ... "; 
 
     const vec2 minv(UserSettings::Get().minX.x, UserSettings::Get().minY.x);
@@ -64,6 +66,7 @@ void FunctionRasterizer::GenerateMesh(int ctVertices)
 
     vector<half> vertices;
     const GLsizei vertexSize = 3 * sizeof(half);
+    int memoryUsed = 0;
 
     try
     {
@@ -125,20 +128,21 @@ void FunctionRasterizer::GenerateMesh(int ctVertices)
             glBufferData(GL_ARRAY_BUFFER, ctVert * vertexSize, (void*)(vertices.data()+(i*ctVerticesPerBatch*vertexSize - stripeOffset) / 2), GL_STATIC_DRAW);
 
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 3, GL_HALF_FLOAT, GL_FALSE, vertexSize, (void*)0);
+            glVertexAttribPointer(0, 3, GL_HALF_FLOAT, GL_FALSE, 0, (void*)0);
         }
         glBindVertexArray(0);
+        memoryUsed += (ctVert * vertexSize);
     }
 
-    cout << "DONE" << endl; 
+    cout << "DONE" << endl;
+    return memoryUsed;
 }
 
-void FunctionRasterizer::GenerateIndices(int ctVertices)
+int FunctionRasterizer::GenerateIndices(int ctVertices)
 {
     assert(2 * ctVertices < ctMaxBatchIndices);
 
     const int ctStripes = ctMaxBatchIndices / ctVertices;
-    const int ctBatchIndices = ctStripes * ctVertices;
 
     vector<int> intIndices;
     intIndices.reserve((ctStripes - 1) * (ctVertices - 1) * 6);
@@ -168,12 +172,19 @@ void FunctionRasterizer::GenerateIndices(int ctVertices)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(indices[0]), indices.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    return indices.size() * sizeof(indices[0]);
 }
 
 void FunctionRasterizer::ApplyFunction()
 {
-    GenerateIndices(UserSettings::Get().ctVertices);
-    GenerateMesh(UserSettings::Get().ctVertices);
+    const int memIndices = GenerateIndices(UserSettings::Get().ctVertices);
+    const int memVertices = GenerateMesh(UserSettings::Get().ctVertices);
+    const int total = memIndices + memVertices;
+
+    cout << "  Memory used indices: " << memIndices << endl;
+    cout << "  Memory used vertices: " << memVertices << endl;
+    cout << "  Total: " << total << " (" << (total >> 20) <<  "MB)" << endl << endl;
 
     string newFx(Fx);
     StringReplace(newFx, "x", "p.x");

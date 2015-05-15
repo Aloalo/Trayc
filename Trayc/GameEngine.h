@@ -38,9 +38,6 @@ namespace trayc
 
         //random seed
         unsigned int frame;
-        //for fps calculation
-        int framesPassed;
-        float FPS;
 
         //general
         engine::Setting<float> FOV;

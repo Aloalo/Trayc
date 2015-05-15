@@ -29,8 +29,8 @@ public:
     void Draw(const engine::Camera &cam);
 
 private:
-    void GenerateMesh(int ctVertices);
-    void GenerateIndices(int ctVertices);
+    int GenerateMesh(int ctVertices);
+    int GenerateIndices(int ctVertices);
 
     TwoVariableFunction func;
 

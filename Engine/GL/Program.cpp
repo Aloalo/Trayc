@@ -24,7 +24,7 @@ namespace engine
 
     Program::Program(const VertexShader &vs, const FragmentShader &fs)
     {
-        Init(&vs, NULL, &fs);
+        Init(&vs, nullptr, &fs);
     }
 
     Program::Program(const char *name)
@@ -57,7 +57,7 @@ namespace engine
             glGetProgramiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
 
             GLchar *strInfoLog = new GLchar[infoLogLength+1];
-            glGetProgramInfoLog(id, infoLogLength, NULL, strInfoLog);
+            glGetProgramInfoLog(id, infoLogLength, nullptr, strInfoLog);
 
             cerr << "Linking failure in program " << name << ":" << endl << strInfoLog << endl;
             delete[] strInfoLog;

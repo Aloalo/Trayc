@@ -1,12 +1,7 @@
-Rasterizer:
-    -fix bug
-    -think about drawing
-    -memory counter
+-fix rasterizer bug
+-AABB for tracer
 
+MAYBE:
 -automatically compute derivatives
--fps counter
 -ugly function support?
-
--code cleanup (using's includes...)
--cppcheck and gl memory leak check
--user friendliness
+-input functions via AntTweakBar

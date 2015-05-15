@@ -77,11 +77,13 @@ set(Engine_Utils_HDRS
     Utils/InitialSettings.h
     Utils/StlExtensions.h
     Utils/NormalDrawer.h
+    Utils/FPSCounter.h
 )
 
 set(Engine_Utils_SRCS
     Utils/InitialSettings.cpp
     Utils/NormalDrawer.cpp
+    Utils/FPSCounter.cpp
 )
 
 set(Engine_GL_SHADERS

@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <Engine/Engine.h>
+#include <Engine/Utils/FPSCounter.h>
 
 #include <IL/il.h>
 #include <IL/ilu.h>
@@ -39,6 +40,8 @@ void RenderingLoop()
 
     do
     {
+        FPSCounter::StartClock();
+
         glClear(GL_COLOR_BUFFER_BIT);
         gameEngine.Draw();
         TwDraw();
@@ -47,6 +50,9 @@ void RenderingLoop()
         SDLHandler::SwapBuffers();
         EventHandler::ProcessPolledEvents();
         EventHandler::Update();
+
+        FPSCounter::StopClock();
+        twBarHandler.FPS = FPSCounter::GetFPS();
 
     } while(!EventHandler::Quit());
 

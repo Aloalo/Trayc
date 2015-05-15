@@ -14,35 +14,35 @@ namespace engine
     }
 
     IndexContainer::IndexContainer(const vector<GLuint> &indexData)
-        : data(NULL)
+        : data(nullptr)
     {
         SetData(indexData);
     }
 
     IndexContainer::IndexContainer(void)
-        : indexCount(0), sizeInBytes(0), data(NULL)
+        : indexCount(0), sizeInBytes(0), data(nullptr)
     {
     }
 
     IndexContainer::~IndexContainer(void)
     {
-        if(data != NULL)
+        if(data != nullptr)
             delete [] data;
     }
 
     IndexContainer& IndexContainer::operator=(const IndexContainer &other)
     {
-        if(data != NULL)
+        if(data != nullptr)
         {
             delete [] data;
-            data = NULL;
+            data = nullptr;
         }
 
         indexCount = other.Size();
         sizeInBytes = other.GetSizeInBytes();
 
         const GLvoid *otherData = other.GetData();
-        if(otherData != NULL)
+        if(otherData != nullptr)
         {
             data = new GLbyte[sizeInBytes];
             memcpy(data, otherData, sizeInBytes);
@@ -99,7 +99,7 @@ namespace engine
 
     void IndexContainer::SetData(const vector<GLuint> &indexData)
     {
-        if(data != NULL)
+        if(data != nullptr)
             delete data;
         indexCount = indexData.size();
         if(indexCount <= UCHAR_MAX)

@@ -27,6 +27,7 @@ using namespace std;
 using namespace glm;
 
 GameEngine *TweakBarHandler::gameEngine = nullptr;
+float TweakBarHandler::FPS = 0.0f;
 map<std::string, engine::Scene> TweakBarHandler::tests;
 int TweakBarHandler::labSize = 15;
 LabMaterials TweakBarHandler::mat;
@@ -64,11 +65,11 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
 
     TwBar *loadbar;
     loadbar = TwNewBar("Tests");
-    TwAddButton(loadbar, "Load Nissan", LoadNissan, NULL, " label='Load Nissan' ");
-    TwAddButton(loadbar, "Load Mustang", LoadMustang, NULL, " label='Load Mustang' ");
-    TwAddButton(loadbar, "Load Cornell Box", LoadCornellBox, NULL, " label='Load Cornell Box' ");
-    TwAddButton(loadbar, "Load Sponza", LoadSponza, NULL, " label='Load Sponza' ");
-    TwAddButton(loadbar, "Load Labyrinth", LoadLabyrinth, NULL, " label='Load Labyrinth' ");
+    TwAddButton(loadbar, "Load Nissan", LoadNissan, nullptr, " label='Load Nissan' ");
+    TwAddButton(loadbar, "Load Mustang", LoadMustang, nullptr, " label='Load Mustang' ");
+    TwAddButton(loadbar, "Load Cornell Box", LoadCornellBox, nullptr, " label='Load Cornell Box' ");
+    TwAddButton(loadbar, "Load Sponza", LoadSponza, nullptr, " label='Load Sponza' ");
+    TwAddButton(loadbar, "Load Labyrinth", LoadLabyrinth, nullptr, " label='Load Labyrinth' ");
     TwAddVarRW(loadbar, "Labyrinth Size", TW_TYPE_INT32, &labSize, " label='Labyrinth Size' min=2 max=199 ");
 
     TwBar *rtsettings;
@@ -86,7 +87,7 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TwAddVarRW(rtsettings, "dofSamples", TW_TYPE_INT32, &gameEngine->tracer.dofSamples.x, "min=0 max=1024");
     TwAddVarRW(rtsettings, "ambientOcclusionSamples", TW_TYPE_INT32, &gameEngine->tracer.ambientOcclusionSamples.x, "min=0 max=1024");
     TwAddVarRW(rtsettings, "MSAA", TW_TYPE_INT32, &gameEngine->tracer.MSAA.x, "min=1 max=16");
-    TwAddButton(rtsettings, "Apply", ApplySettings, NULL, " label='Apply' ");
+    TwAddButton(rtsettings, "Apply", ApplySettings, nullptr, " label='Apply' ");
 
     TwBar *sssettings;
     sssettings = TwNewBar("sssettings");
@@ -101,7 +102,7 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TwAddVarRW(sssettings, "ambientOcclusionSamples", TW_TYPE_INT32, &gameEngine->tracer.SSambientOcclusionSamples.x, "min=0 max=1024");
     TwAddVarRW(sssettings, "MSAA", TW_TYPE_INT32, &gameEngine->tracer.SSMSAA.x, "min=1 max=16");
     TwAddVarRW(sssettings, "Close When Done", TW_TYPE_BOOL8, &gameEngine->closeAfterSS, "");
-    TwAddButton(sssettings, "High Quality Screenshot", ScreenShot, NULL, " label='High Quality Screenshot' ");
+    TwAddButton(sssettings, "High Quality Screenshot", ScreenShot, nullptr, " label='High Quality Screenshot' ");
 
     TwBar *generalsettings;
     generalsettings = TwNewBar("generalsettings");
@@ -114,8 +115,8 @@ void TweakBarHandler::CreateTweakBars(GameEngine *gameEngine)
     TwAddVarRW(generalsettings, "AO Sampling Radius", TW_TYPE_FLOAT, &gameEngine->tracer.AOsamplingRadius.x, "min=0.1");
     TwAddVarRW(generalsettings, "Light Bloom Exponent", TW_TYPE_FLOAT, &gameEngine->tracer.bloomExp.x, "min=1 max=512");
     TwAddVarRW(generalsettings, "Time based random seed", TW_TYPE_BOOL8, &gameEngine->frameRandomSeed.x, "");
-    TwAddVarRO(generalsettings, "FPS", TW_TYPE_FLOAT, &gameEngine->FPS, "");
-    TwAddButton(generalsettings, "Apply", ApplySettings, NULL, " label='Apply' ");
+    TwAddVarRO(generalsettings, "FPS", TW_TYPE_FLOAT, &FPS, "");
+    TwAddButton(generalsettings, "Apply", ApplySettings, nullptr, " label='Apply' ");
 }
 
 void TW_CALL TweakBarHandler::LoadCornellBox(void *userData)
@@ -371,22 +372,22 @@ const engine::Scene& TweakBarHandler::LoadTest(const string &test, const string 
         aiString name;
         if(aimaterial->GetTextureCount(aiTextureType_DIFFUSE) != 0)
         {
-            aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &name, NULL, NULL, NULL, NULL, NULL);
+            aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &name, nullptr, nullptr, nullptr, nullptr, nullptr);
             material.diffuse_map = path + string(name.C_Str());
         }
         if(aimaterial->GetTextureCount(aiTextureType_SPECULAR) != 0)
         {
-            aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &name, NULL, NULL, NULL, NULL, NULL);
+            aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &name, nullptr, nullptr, nullptr, nullptr, nullptr);
             material.specular_map = path + string(name.C_Str());
         }
         if(aimaterial->GetTextureCount(aiTextureType_NORMALS) != 0)
         {
-            aimaterial->GetTexture(aiTextureType_NORMALS, 0, &name, NULL, NULL, NULL, NULL, NULL);
+            aimaterial->GetTexture(aiTextureType_NORMALS, 0, &name, nullptr, nullptr, nullptr, nullptr, nullptr);
             material.normal_map = path + string(name.C_Str());
         }
         else if(aimaterial->GetTextureCount(aiTextureType_HEIGHT) != 0)
         {
-            aimaterial->GetTexture(aiTextureType_HEIGHT, 0, &name, NULL, NULL, NULL, NULL, NULL);
+            aimaterial->GetTexture(aiTextureType_HEIGHT, 0, &name, nullptr, nullptr, nullptr, nullptr, nullptr);
             material.normal_map = path + string(name.C_Str());
         }
     }
@@ -437,9 +438,9 @@ void TweakBarHandler::HandleEvent(const SDL_Event &e)
 
 void TweakBarHandler::Update(float dt)
 {
-    static float time_passed = 0.0f;
     if(inSponza && movingLight && gameEngine->tracer.GetNumLights() > 1)
     {
+        static float time_passed = 0.0f;
         time_passed += dt;
         BasicLight &light = gameEngine->tracer.GetLight(1);
         light.pos.x = 22.0f * cosf(time_passed * 0.5f);
