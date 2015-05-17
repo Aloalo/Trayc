@@ -6,6 +6,7 @@ UserSettings::UserSettings(void) :
     SETTING(FOV),
     SETTING(drawDistance),
     SETTING(NMAX),
+    SETTING(AAlevel),
     SETTING(tolerance),
     SETTING(ctVertices),
     SETTING(Lstep),

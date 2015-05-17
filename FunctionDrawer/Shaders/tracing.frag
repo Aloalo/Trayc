@@ -17,6 +17,8 @@ uniform vec3 maxv;
 uniform float Lstep;
 uniform float tolerance; //bisection tolerance
 uniform int NMAX; //maximum bisection iterations
+uniform int AAlevel;
+uniform vec2 invScreenSize;
 const float EPS = 0.0001; //zero
 
 //Material
@@ -126,27 +128,36 @@ bool intersectFunction(in vec3 d, in float Lmin, in float Lmax, out vec3 interse
 
 void main()
 {
-    vec3 d = normalize(pixel.x * U + pixel.y * V + W);
-    outColor = missColor;
-    
-    float Lmin;
-    float Lmax;
-    if(intersectAABB(d, Lmin, Lmax))
-    {
-        vec3 position;
-        if(intersectFunction(d, Lmin, Lmax, position))
+    float invAA = 1.0 / float(AAlevel);
+    for(int i = 0; i < AAlevel; ++i)
+        for(int j = 0; j < AAlevel; ++j)
         {
-            vec3 normalDirection = getNormal(position.xz);
-            float dotNL = dot(normalDirection, lightDirection);
+            vec2 d = pixel + 2.0 * invScreenSize * invAA * vec2(i, j);
+            vec3 rayDir = normalize(d.x * U + d.y * V + W);
+            vec3 color = missColor;
             
-            outColor = ambient;
-            if(dotNL > 0.0)
+            float Lmin;
+            float Lmax;
+            if(intersectAABB(rayDir, Lmin, Lmax))
             {
-                vec3 diffuseReflection = diffuse * dotNL;
-                vec3 viewDirection = normalize(eye - position);
-                vec3 specularReflection = specular * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)), shininess);
-                outColor += lightIntensity * (diffuseReflection + specularReflection);
+                vec3 position;
+                if(intersectFunction(rayDir, Lmin, Lmax, position))
+                {
+                    vec3 normalDirection = getNormal(position.xz);
+                    float dotNL = dot(normalDirection, lightDirection);
+                    
+                    color = ambient;
+                    if(dotNL > 0.0)
+                    {
+                        vec3 diffuseReflection = diffuse * dotNL;
+                        vec3 viewDirection = normalize(eye - position);
+                        vec3 specularReflection = specular * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)), shininess);
+                        color += lightIntensity * (diffuseReflection + specularReflection);
+                    }
+                }
             }
+            outColor += color;
         }
-    }
+        
+    outColor *= invAA * invAA;
 }

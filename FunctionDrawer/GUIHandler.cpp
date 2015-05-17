@@ -50,6 +50,7 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
     TwAddVarRW(twfunction, "Sampling interval", TW_TYPE_FLOAT, &UserSettings::Get().Lstep.x, "min=0.005 max=0.5 group=Tracer");
     TwAddVarRW(twfunction, "Intersection tolerance", TW_TYPE_FLOAT, &UserSettings::Get().tolerance.x, "min=0.0000001 max=0.5 group=Tracer");
     TwAddVarRW(twfunction, "Max iterations", TW_TYPE_INT32, &UserSettings::Get().NMAX.x, "min=10 max=1000 group=Tracer");
+    TwAddVarRW(twfunction, "AA", TW_TYPE_INT32, &UserSettings::Get().AAlevel.x, "min=1 max=8 group=Tracer");
 
     TwAddButton(twfunction, "Apply", ApplyFunction, nullptr, " label='Apply' ");
     TwAddButton(twfunction, "Switch", SwitchDrawer, nullptr, " label='Switch Drawer [L]' ");

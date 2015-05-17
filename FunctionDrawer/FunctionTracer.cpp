@@ -4,6 +4,7 @@
 
 #include "FunctionTracer.h"
 #include "UserSettings.h"
+#include <Engine/Core/SDLHandler.h>
 #include <Engine/Common/Utilities.h>
 #include <Engine/Common/MathFunctions.h>
 #include <iostream>
@@ -82,6 +83,12 @@ void FunctionTracer::ApplyFunction()
     p.SetUniform("Lstep", UserSettings::Get().Lstep.x);
     p.SetUniform("NMAX", UserSettings::Get().NMAX.x);
     p.SetUniform("tolerance", UserSettings::Get().tolerance.x);
+    p.SetUniform("AAlevel", UserSettings::Get().AAlevel.x);
+    int w, h;
+    SDLHandler::GetWindowSize(w, h);
+    const vec2 invScreenSize = 1.0f / vec2(float(w), float(h));
+
+    p.SetUniform("invScreenSize", invScreenSize);
 
     p.SetUniform("ambient", vec3(0.3f, 0.1f, 0.1f));
     p.SetUniform("diffuse", vec3(0.8f, 0.1f, 0.1f));

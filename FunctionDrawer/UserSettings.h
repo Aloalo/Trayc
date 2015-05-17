@@ -16,6 +16,7 @@ struct UserSettings : public engine::Singleton<UserSettings>
     engine::Setting<float> drawDistance;
     engine::Setting<int> ctVertices;
     engine::Setting<int> NMAX;
+    engine::Setting<int> AAlevel;
     engine::Setting<float> tolerance;
     engine::Setting<float> Lstep;
     engine::Setting<float> minX;
