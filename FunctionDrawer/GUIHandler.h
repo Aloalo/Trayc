@@ -27,6 +27,8 @@ private:
 
     static void TW_CALL ApplySettings(void *userData);
     static void TW_CALL ApplyFunction(void *userData);
+    static void TW_CALL ApplyTracer(void *userData);
+    static void TW_CALL ApplyRasterizer(void *userData);
 
     void HandleEvent(const SDL_Event &e);
 };

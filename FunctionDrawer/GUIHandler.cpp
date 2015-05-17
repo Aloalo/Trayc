@@ -37,7 +37,7 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
 
     TwBar *twfunction;
     twfunction = TwNewBar("Function");
-    TwDefine(" Function size='250 250' position='10 10' ");
+    TwDefine(" Function size='250 310' position='10 10' ");
     TwAddVarRW(twfunction, "minX", TW_TYPE_FLOAT, &UserSettings::Get().minX.x, "");
     TwAddVarRW(twfunction, "minY", TW_TYPE_FLOAT, &UserSettings::Get().minY.x, "");
     TwAddVarRW(twfunction, "maxX", TW_TYPE_FLOAT, &UserSettings::Get().maxX.x, "");
@@ -45,28 +45,43 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
 
     TwAddSeparator(twfunction, nullptr, " group='Rasterizer' ");
     TwAddVarRW(twfunction, "Mesh resolution", TW_TYPE_INT32, &UserSettings::Get().ctVertices.x, "min=10 max=8000 group=Rasterizer");
+    TwAddVarRW(twfunction, "Draw Distance", TW_TYPE_FLOAT, &UserSettings::Get().drawDistance.x, "min=10 max=30000 group=Rasterizer");
+    TwAddButton(twfunction, "ApplyRasterizer", ApplyRasterizer, nullptr, " label='Apply' group=Rasterizer");
 
     TwAddSeparator(twfunction, nullptr, " group='Tracer' ");
     TwAddVarRW(twfunction, "Sampling interval", TW_TYPE_FLOAT, &UserSettings::Get().Lstep.x, "min=0.005 max=0.5 group=Tracer");
     TwAddVarRW(twfunction, "Intersection tolerance", TW_TYPE_FLOAT, &UserSettings::Get().tolerance.x, "min=0.0000001 max=0.5 group=Tracer");
     TwAddVarRW(twfunction, "Max iterations", TW_TYPE_INT32, &UserSettings::Get().NMAX.x, "min=10 max=1000 group=Tracer");
     TwAddVarRW(twfunction, "AA", TW_TYPE_INT32, &UserSettings::Get().AAlevel.x, "min=1 max=8 group=Tracer");
+    TwAddButton(twfunction, "ApplyTracer", ApplyTracer, nullptr, " label='Apply' group=Tracer");
 
-    TwAddButton(twfunction, "Apply", ApplyFunction, nullptr, " label='Apply' ");
+
+    TwAddButton(twfunction, "ApplyFunction", ApplyFunction, nullptr, " label='Apply Function' ");
     TwAddButton(twfunction, "Switch", SwitchDrawer, nullptr, " label='Switch Drawer [L]' ");
 
     TwBar *twBar;
     twBar = TwNewBar("Settings");
-    TwDefine(" Settings iconified=false size='200 145' position='10 270' ");
+    TwDefine(" Settings iconified=false size='200 130' position='10 325' ");
     TwAddVarRW(twBar, "Screen Width", TW_TYPE_INT32, &UserSettings::Get().screenWidth.x, "min=100 max=1920");
     TwAddVarRW(twBar, "Screen Height", TW_TYPE_INT32, &UserSettings::Get().screenHeight.x, "min=100 max=1080");
     TwAddVarRW(twBar, "FOV", TW_TYPE_FLOAT, &UserSettings::Get().FOV.x, "min=30 max=120");
-    TwAddVarRW(twBar, "Draw Distance", TW_TYPE_FLOAT, &UserSettings::Get().drawDistance.x, "min=10 max=30000");
     TwAddVarRO(twBar, "FPS", TW_TYPE_FLOAT, &FPS, "");
     TwAddVarRO(twBar, "ms", TW_TYPE_FLOAT, &ms, "");
     TwAddButton(twBar, "Apply", ApplySettings, nullptr, " label='Apply' ");
 
     ApplySettings(nullptr);
+}
+
+void TW_CALL GUIHandler::ApplyTracer(void *userData)
+{
+    tracer->SetAABB(rasterizer->GetAABB());
+    tracer->ApplyFunction();
+}
+
+void TW_CALL GUIHandler::ApplyRasterizer(void *userData)
+{
+    camera->cam.farDistance = UserSettings::Get().drawDistance;
+    rasterizer->ApplyFunction();
 }
 
 void TW_CALL GUIHandler::ApplySettings(void *userData)
@@ -123,5 +138,3 @@ void TW_CALL GUIHandler::SwitchDrawer(void *userData)
         clearMask = GL_COLOR_BUFFER_BIT;
     }
 }
-
-
