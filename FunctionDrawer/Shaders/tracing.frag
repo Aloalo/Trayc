@@ -78,28 +78,25 @@ bool intersectAABB(in vec3 d, out float Lmin, out float Lmax)
 float bisection(in float a, in float b, in vec3 d)
 {
     float c;
-    float signGa = sign(G(a, d));
+    float Ga = G(a, d);
     int n = 0;
-    while(n < NMAX)
+    while((b - a) * 0.5 > tolerance && n < NMAX)
     {
-        if((b - a) * 0.5 < tolerance)
-            return c;
-    
         c = (a + b) * 0.5; // new midpoint
         float Gc = G(c, d);
         
         if(abs(Gc) < EPS)
             return c;
 
-        n++;
-        float signGc = sign(Gc);
-        if(signGc == signGa)
+        if(Gc * Ga > 0.0)
         {
             a = c;
-            signGa = signGc;
+            Ga = Gc;
         }
         else 
             b = c;
+            
+        n++;
     }
     return c;
 }
@@ -113,7 +110,7 @@ bool intersectFunction(in vec3 d, in float Lmin, in float Lmax, out vec3 interse
         float b = L;
         float Gb = G(b, d);
         
-        if(sign(Ga) != sign(Gb))
+        if(Ga * Gb < 0.0)
         {
             float iL = bisection(a, b, d);
             intersection_point = eye + iL * d;

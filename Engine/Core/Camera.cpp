@@ -59,11 +59,7 @@ namespace engine
 
     vec3 Camera::GetRight() const
     {
-        return vec3(
-            -cosf(phix), 
-            0,
-            sinf(phix)
-            );
+        return vec3(-cosf(phix), 0, sinf(phix));
     }
 
     vec3 Camera::GetUp() const
