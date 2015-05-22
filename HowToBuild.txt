@@ -10,5 +10,5 @@ Needed libraries:
         ENV_VAR: SDL2DIR
     -glew GLEW_HOME
         ENV_VAR: GLEW_HOME
-    -OpenGL 3.3+
+    -OpenGL 4.1+
     

@@ -55,21 +55,13 @@ vec3 getNormal(in vec2 p)
 //get min and max lambda
 bool intersectAABB(in vec3 d, out float Lmin, out float Lmax)
 {
-    float Lx1 = (minv.x - eye.x) / d.x;
-    float Lx2 = (maxv.x - eye.x) / d.x;
-    float Ly1 = (minv.y - eye.y) / d.y;
-    float Ly2 = (maxv.y - eye.y) / d.y;
-    float Lz1 = (minv.z - eye.z) / d.z;
-    float Lz2 = (maxv.z - eye.z) / d.z;
+    vec3 tmin = (minv - eye) / d;
+    vec3 tmax = (maxv - eye) / d;
     
-    Lmin = min(Lx1, Lx2);
-    Lmax = max(Lx1, Lx2);
-    
-    Lmin = max(Lmin, min(Ly1, Ly2));
-    Lmax = min(Lmax, max(Ly1, Ly2));
-    
-    Lmin = max(Lmin, min(Lz1, Lz2));
-    Lmax = min(Lmax, max(Lz1, Lz2));
+    vec3 near = min(tmin, tmax);
+    vec3 far = max(tmin, tmax);
+    Lmin = max(max(near.x, near.y), near.z);
+    Lmax = min(min(far.x, far.y), far.z);
     
     return Lmax >= max(0.0, Lmin);
 }
@@ -77,7 +69,7 @@ bool intersectAABB(in vec3 d, out float Lmin, out float Lmax)
 float bisection(in float a, in float Ga, in float b, in vec3 d)
 {
     float c;
-    while((b - a) * 0.5 > tolerance)
+    while(b - a > tolerance)
     {
         c = (a + b) * 0.5; // new midpoint
         float Gc = G(c, d);
