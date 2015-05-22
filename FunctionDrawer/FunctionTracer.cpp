@@ -81,7 +81,6 @@ void FunctionTracer::ApplyFunction()
     p.SetUniform("maxv", expanded.maxv);
 
     p.SetUniform("Lstep", UserSettings::Get().Lstep.x);
-    p.SetUniform("NMAX", UserSettings::Get().NMAX.x);
     p.SetUniform("tolerance", UserSettings::Get().tolerance.x);
     p.SetUniform("AAlevel", UserSettings::Get().AAlevel.x);
     int w, h;

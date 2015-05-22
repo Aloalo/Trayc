@@ -9,5 +9,5 @@ Controls:
    -W/A/S/D/Q/E + mouse: move camera
    -9/0: speed up/down the camera
    -L: switch renderer
-   -LSHIFT: release/bind mose to the window (for using the gui, exiting ...)
+   -LSHIFT: release/bind mouse to the window (for using the gui, exiting ...)
    

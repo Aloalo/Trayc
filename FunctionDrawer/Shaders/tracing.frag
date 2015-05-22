@@ -16,7 +16,6 @@ uniform vec3 maxv;
 //Tracing stuff
 uniform float Lstep;
 uniform float tolerance; //bisection tolerance
-uniform int NMAX; //maximum bisection iterations
 uniform int AAlevel;
 uniform vec2 invScreenSize;
 const float EPS = 0.0001; //zero
@@ -75,12 +74,10 @@ bool intersectAABB(in vec3 d, out float Lmin, out float Lmax)
     return Lmax >= max(0.0, Lmin);
 }
 
-float bisection(in float a, in float b, in vec3 d)
+float bisection(in float a, in float Ga, in float b, in vec3 d)
 {
     float c;
-    float Ga = G(a, d);
-    int n = 0;
-    while((b - a) * 0.5 > tolerance && n < NMAX)
+    while((b - a) * 0.5 > tolerance)
     {
         c = (a + b) * 0.5; // new midpoint
         float Gc = G(c, d);
@@ -95,8 +92,6 @@ float bisection(in float a, in float b, in vec3 d)
         }
         else 
             b = c;
-            
-        n++;
     }
     return c;
 }
@@ -112,7 +107,7 @@ bool intersectFunction(in vec3 d, in float Lmin, in float Lmax, out vec3 interse
         
         if(Ga * Gb < 0.0)
         {
-            float iL = bisection(a, b, d);
+            float iL = bisection(a, Ga, b, d);
             intersection_point = eye + iL * d;
             return true;
         }
