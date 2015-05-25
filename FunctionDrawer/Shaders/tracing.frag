@@ -112,6 +112,7 @@ bool intersectFunction(in vec3 d, in float Lmin, in float Lmax, out vec3 interse
 
 void main()
 {
+    outColor = vec3(0.0);
     float invAA = 1.0 / float(AAlevel);
     for(int i = 0; i < AAlevel; ++i)
         for(int j = 0; j < AAlevel; ++j)
