@@ -204,6 +204,7 @@ void FunctionRasterizer::ApplyFunction()
 
     p.Init(&vs, nullptr, &FragmentShader(newSource, fileName.c_str()), fileName.c_str());
 
+    p.Use();
     p.SetUniform("ambient", vec3(0.3f, 0.1f, 0.1f));
     p.SetUniform("diffuse", vec3(0.8f, 0.1f, 0.1f));
     p.SetUniform("specular", vec3(1.0f, 1.0f, 1.0f));

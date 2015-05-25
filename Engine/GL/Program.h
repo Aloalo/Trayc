@@ -28,6 +28,7 @@ namespace engine
         void Delete();
 
         void Use() const;
+        static void Unbind();
 
         GLint GetUniformLocation(const GLchar *name);
         GLuint GetUniformBlockLocation(const GLchar *name);
@@ -35,6 +36,7 @@ namespace engine
 
         void SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint);
 
+        //bind the program before using these
         void SetUniform(const GLchar *name, GLint x);
         void SetUniform(const GLchar *name, GLfloat x);
         void SetUniform(const GLchar *name, const glm::vec2 &x);

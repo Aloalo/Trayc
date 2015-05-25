@@ -41,7 +41,7 @@ namespace engine
     void Program::Init(const VertexShader *vs, const GeometryShader *gs, const FragmentShader *fs, const char *name)
     {
         if(id)
-            glDeleteProgram(id);
+            Delete();
 
         id = glCreateProgram();
         Attach(*vs);
@@ -88,6 +88,11 @@ namespace engine
         glUseProgram(id);
     }
 
+    void Program::Unbind()
+    {
+        glUseProgram(0);
+    }
+
     GLint Program::GetUniformLocation(const GLchar *name)
     {
         const auto it = uniformLocations.find(name);
@@ -124,57 +129,57 @@ namespace engine
 
     void Program::SetUniform(const GLchar *name, GLint x)
     {
-        glProgramUniform1i(id, GetUniformLocation(name), x);
+        glUniform1i(GetUniformLocation(name), x);
     }
 
     void Program::SetUniform(const GLchar *name, GLfloat x)
     {
-        glProgramUniform1f(id, GetUniformLocation(name), x);
+        glUniform1f(GetUniformLocation(name), x);
     }
 
     void Program::SetUniform(const GLchar *name, const vec2 &x)
     {
-        glProgramUniform2f(id, GetUniformLocation(name), x.x, x.y);
+        glUniform2f(GetUniformLocation(name), x.x, x.y);
     }
 
     void Program::SetUniform(const GLchar *name, const vec3 &x)
     {
-        glProgramUniform3f(id, GetUniformLocation(name), x.x, x.y, x.z);
+        glUniform3f(GetUniformLocation(name), x.x, x.y, x.z);
     }
 
     void Program::SetUniform(const GLchar *name, const vec4 &x)
     {
-        glProgramUniform4f(id, GetUniformLocation(name), x.x, x.y, x.z, x.w);
+        glUniform4f(GetUniformLocation(name), x.x, x.y, x.z, x.w);
     }
 
     void Program::SetUniform(const GLchar *name, const mat3 &x)
     {
-        glProgramUniformMatrix3fv(id, GetUniformLocation(name), 1, GL_FALSE, (float*)&x);
+        glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, (float*)&x);
     }
 
     void Program::SetUniform(const GLchar *name, const mat4 &x)
     {
-        glProgramUniformMatrix4fv(id, GetUniformLocation(name), 1, GL_FALSE, (float*)&x);
+        glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, (float*)&x);
     }
 
     void Program::SetUniform(const GLchar *name, GLsizei cnt, const GLfloat *x)
     {
-        glProgramUniform1fv(id, GetUniformLocation(name), cnt, x);
+        glUniform1fv(GetUniformLocation(name), cnt, x);
     }
 
     void Program::SetUniform(const GLchar *name, GLsizei cnt, const vec2 *x)
     {
-        glProgramUniform2fv(id, GetUniformLocation(name), cnt, (float*)x);
+        glUniform2fv(GetUniformLocation(name), cnt, (float*)x);
     }
 
     void Program::SetUniform(const GLchar *name, GLsizei cnt, const vec3 *x)
     {
-        glProgramUniform3fv(id, GetUniformLocation(name), cnt, (float*)x);
+        glUniform3fv(GetUniformLocation(name), cnt, (float*)x);
     }
 
     void Program::SetUniform(const GLchar *name, GLsizei cnt, const vec4 *x)
     {
-        glProgramUniform4fv(id, GetUniformLocation(name), cnt, (float*)x);
+        glUniform4fv(GetUniformLocation(name), cnt, (float*)x);
     }
 
    /* void Program::bindSamplerObjectToSampler(const char *name, const TextureSampler &tex)
