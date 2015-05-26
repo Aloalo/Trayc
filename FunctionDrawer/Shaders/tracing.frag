@@ -61,9 +61,10 @@ bool intersectAABB(in vec3 d, out float Lmin, out float Lmax)
     vec3 near = min(tmin, tmax);
     vec3 far = max(tmin, tmax);
     Lmin = max(max(near.x, near.y), near.z);
+    Lmin = max(0.0, Lmin);
     Lmax = min(min(far.x, far.y), far.z);
     
-    return Lmax >= max(0.0, Lmin);
+    return Lmax >= Lmin;
 }
 
 float bisection(in float a, in float Ga, in float b, in vec3 d)
