@@ -192,11 +192,18 @@ void FunctionRasterizer::ApplyFunction()
     cout << "  Total: " << total << " (" << (total >> 20) <<  "MB)" << endl << endl;
 
     string newFx(Fx);
+    //handle exp
+    StringReplace(newFx, "exp", "eee");
     StringReplace(newFx, "x", "p.x");
     StringReplace(newFx, "y", "p.y");
+    StringReplace(newFx, "eee", "exp");
+
     string newFy(Fy);
+    StringReplace(newFy, "exp", "eee");
     StringReplace(newFy, "x", "p.x");
     StringReplace(newFy, "y", "p.y");
+    StringReplace(newFy, "eee", "exp");
+
 
     string newSource(fragSource);
     newSource.replace(newSource.find("#Fx"), 3, newFx);

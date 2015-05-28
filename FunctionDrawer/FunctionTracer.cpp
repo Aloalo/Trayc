@@ -52,16 +52,25 @@ void FunctionTracer::SetFunction(const std::string &F, const std::string &Fx, co
 void FunctionTracer::ApplyFunction()
 {
     string G(F);
-    StringReplace(G, "x", "(ee.x + L * d.x)");
-    StringReplace(G, "y", "(ee.z + L * d.z)");
-    StringReplace(G, "ee", "eye");
+    StringReplace(G, "exp", "eee");
+    StringReplace(G, "x", "(E.x + L * d.x)");
+    StringReplace(G, "y", "(E.z + L * d.z)");
+    StringReplace(G, "E", "eye");
     G += " - eye.y - L * d.y";
+    StringReplace(G, "eee", "exp");
+
     string newFx(Fx);
+    StringReplace(newFx, "exp", "eee");
     StringReplace(newFx, "x", "p.x");
     StringReplace(newFx, "y", "p.y");
+    StringReplace(newFx, "eee", "exp");
+
     string newFy(Fy);
+    StringReplace(newFy, "exp", "eee");
     StringReplace(newFy, "x", "p.x");
     StringReplace(newFy, "y", "p.y");
+    StringReplace(newFy, "eee", "exp");
+
 
 
     string newSource(fragSource);
