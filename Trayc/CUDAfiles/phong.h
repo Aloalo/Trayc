@@ -94,7 +94,7 @@ static __device__ __inline__ void phongShade(const float3 &hit_point,
             if(light.spot_cutoff <= 90.0f) // spotlight?
             {
                 const float clampedCosine = max(0.0f, dot(-L, light.spot_direction));
-                const float cutoffRadians = light.spot_cutoff * pi / 180.0f;
+                const float cutoffRadians = light.spot_cutoff * M_PIf / 180.0f;
                 
                 if(clampedCosine < cosf(cutoffRadians)) // outside of spotlight cone?
                     attenuation = 0.0f;

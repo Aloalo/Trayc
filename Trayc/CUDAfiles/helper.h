@@ -10,8 +10,7 @@
 
 using namespace optix;
 
-__constant__ float pi = 3.1415926f;
-__constant__ float pi2 = 2.0f * 3.1415926f;
+__constant__ float pi2 = 2.0f * M_PIf;
 __constant__ float EPS = 1e-4f;
 
 static __device__ __inline__ bool equals(float x, float y)

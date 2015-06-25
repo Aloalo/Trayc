@@ -14,7 +14,6 @@ rtDeclareVariable(float, importance_cutoff, , );
 
 RT_PROGRAM void intersect(int)
 {
-
     const float3 center = lights[light_idx].pos;
     const float radius = lights[light_idx].radius;
     const float bloomFactor = 2.0f;

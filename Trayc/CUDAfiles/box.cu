@@ -15,12 +15,10 @@ rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 rtDeclareVariable(float3, geometric_normal, attribute geometric_normal, ); 
 rtDeclareVariable(float3, shading_normal, attribute shading_normal, ); 
 
-static __device__ float3 boxnormal(float t)
+static __device__ __inline__ float3 boxnormal(const float3 &t0, const float3 &t1, float t)
 {
-    const float3 t0 = (boxmin - ray.origin) / ray.direction;
-    const float3 t1 = (boxmax - ray.origin) / ray.direction;
-    const float3 neg = make_float3(t == t0.x ? 1:0, t == t0.y ? 1:0, t == t0.z ? 1:0);
-    const float3 pos = make_float3(t == t1.x ? 1:0, t == t1.y ? 1:0, t == t1.z ? 1:0);
+    const float3 neg = make_float3(t == t0.x ? 1.0f : 0.0f, t == t0.y ? 1.0f : 0.0f, t == t0.z ? 1.0f : 0.0f);
+    const float3 pos = make_float3(t == t1.x ? 1.0f : 0.0f, t == t1.y ? 1.0f : 0.0f, t == t1.z ? 1.0f : 0.0f);
     return pos - neg;
 }
 
@@ -37,13 +35,13 @@ RT_PROGRAM void intersect(int)
     {
         if(rtPotentialIntersection(tmin))
         {
-            shading_normal = geometric_normal = boxnormal(tmin);
+            shading_normal = geometric_normal = boxnormal(t0, t1, tmin);
             if(rtReportIntersection(0))
                 return;
         }
         if(rtPotentialIntersection(tmax))
         {
-            shading_normal = geometric_normal = boxnormal(tmax);
+            shading_normal = geometric_normal = boxnormal(t0, t1, tmax);
             rtReportIntersection(0);
         }
     }

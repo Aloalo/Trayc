@@ -1,2 +1,2 @@
 Project solution containing Engine and Trayc libraries and some demos.
-See Tester.
+See Tester and FunctionDrawer.

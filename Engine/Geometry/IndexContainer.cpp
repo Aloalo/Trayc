@@ -66,7 +66,7 @@ namespace engine
         return indexCount;
     }
 
-    int IndexContainer::GetSizeInBytes() const
+    GLsizeiptr IndexContainer::GetSizeInBytes() const
     {
         return sizeInBytes;
     }
@@ -100,7 +100,7 @@ namespace engine
     void IndexContainer::SetData(const vector<GLuint> &indexData)
     {
         if(data != nullptr)
-            delete data;
+            delete [] data;
         indexCount = indexData.size();
         if(indexCount <= UCHAR_MAX)
             Cast<GLubyte>(indexData);

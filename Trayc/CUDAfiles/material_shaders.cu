@@ -64,7 +64,7 @@ RT_PROGRAM void closest_hit_glass()
             const float importance = prd_radiance.importance * (1.0f - reflection) * optix::luminance(refraction_color * beer_attenuation);
             if(importance > importance_cutoff)
             {
-                optix::Ray ray(h, t, radiance_ray_type, scene_epsilon);
+                const optix::Ray ray(h, t, radiance_ray_type, scene_epsilon);
                 PerRayData_radiance refr_prd;
                 refr_prd.depth = prd_radiance.depth+1;
                 refr_prd.importance = importance;
