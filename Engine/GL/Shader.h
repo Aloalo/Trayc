@@ -18,9 +18,10 @@ namespace engine
         virtual const char* GetTypeString() const = 0;
         virtual GLenum GetGlType() const = 0;
 
-        GLuint id;
-
     protected:
+        friend class Program;
+
+        GLuint mID;
         void Init(const char *name);
         void Init2(const GLchar *src, const char *name, GLint len = 0);
 

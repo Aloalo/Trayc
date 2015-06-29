@@ -9,26 +9,26 @@ using namespace std;
 
 namespace engine
 {
-    int FPSCounter::clockStart = clock();
-    deque<int> FPSCounter::frameLengths = deque<int>(30, 0);
+    int FPSCounter::mClockStart = clock();
+    deque<int> FPSCounter::mFrameLengths = deque<int>(30, 0);
 
     void FPSCounter::StartClock()
     {
-        clockStart = clock();
+        mClockStart = clock();
     }
 
     void FPSCounter::StopClock()
     {
-        frameLengths.push_back(clock() - clockStart);
-        frameLengths.pop_front();
+        mFrameLengths.push_back(clock() - mClockStart);
+        mFrameLengths.pop_front();
     }
 
     float FPSCounter::GetFPS()
     {
         float FPS = 0.0f;
-        for(int frameLength : frameLengths)
+        for(int frameLength : mFrameLengths)
             FPS += float(frameLength);
-        FPS /= float(frameLengths.size());
+        FPS /= float(mFrameLengths.size());
         return float(CLOCKS_PER_SEC) / FPS;
     }
 };

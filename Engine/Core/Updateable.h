@@ -15,7 +15,8 @@ namespace engine
 
         virtual void Update(float dt) = 0;
 
-        bool active;
+        //Is it active
+        bool mActive;
     };
 }
 

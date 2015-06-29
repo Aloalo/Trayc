@@ -14,7 +14,6 @@ namespace engine
     class SDLHandler
     {
     public:
-
         static void PrintSoftwareVersions();
 
         static void Init(Uint32 flags, const char *programName);
@@ -27,13 +26,13 @@ namespace engine
 
         static void CleanUp();
 
-        static SDL_version compiled;
-        static SDL_version linked;
-        static char const *programName;
+        static SDL_version mCompiled;
+        static SDL_version mLinked;
+        static char const *mProgramName;
 
     private:
-        static SDL_Window *window;
-        static SDL_GLContext opengl_context;
+        static SDL_Window *mWindow;
+        static SDL_GLContext mOpenglContext;
     };
 }
 

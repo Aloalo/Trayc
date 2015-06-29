@@ -1,9 +1,5 @@
-Opcenito:
-    -fix AntTweakBar (or wait for update)
-    -update optix and cuda (optix release)
-    -stl extensions (arraysize) (optix release)
-    
-Grafika:
+-FIX CMAKE!
+
 -area lights (rectangle)
 -mipmaping (optix release)
 -glass/reflective mesh textures

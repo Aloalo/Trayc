@@ -17,8 +17,8 @@ namespace engine
         static float GetFPS();
 
 	private:
-		static std::deque<int> frameLengths;
-        static int clockStart;
+		static std::deque<int> mFrameLengths;
+        static int mClockStart;
 	};
 }
 

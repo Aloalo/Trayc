@@ -7,6 +7,7 @@
 
 #include <AntTweakBar.h>
 #include <Trayc/GameEngine.h>
+#include <optix_world.h>
 #include <Engine/Geometry/Scene.h>
 #include <Engine/Core/EventListener.h>
 #include <Engine/Core/Updateable.h>

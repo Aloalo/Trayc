@@ -2,7 +2,7 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 
-#include <Engine/Common/MathFunctions.h>
+#include <Engine/Utils/MathFunctions.h>
 
 using namespace glm;
 

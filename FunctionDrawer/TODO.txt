@@ -2,5 +2,3 @@
 
 MAYBE:
 -automatically compute derivatives
--ugly function support?
--input functions via AntTweakBar

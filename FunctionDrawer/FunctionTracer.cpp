@@ -5,8 +5,8 @@
 #include "FunctionTracer.h"
 #include "UserSettings.h"
 #include <Engine/Core/SDLHandler.h>
-#include <Engine/Common/Utilities.h>
-#include <Engine/Common/MathFunctions.h>
+#include <Engine/Utils/Utilities.h>
+#include <Engine/Utils/MathFunctions.h>
 #include <iostream>
 
 using namespace std;
@@ -81,13 +81,13 @@ void FunctionTracer::ApplyFunction()
     p.Init(&vs, nullptr, &FragmentShader(newSource, fileName.c_str()), fileName.c_str());
 
     AABB expanded(box);
-    const float expansion = 0.1f * (box.maxv.y - box.minv.y);
-    expanded.minv.y -= expansion;
-    expanded.maxv.y += expansion;
+    const float expansion = 0.1f * (box.mMaxv.y - box.mMinv.y);
+    expanded.mMinv.y -= expansion;
+    expanded.mMaxv.y += expansion;
 
     p.Use();
-    p.SetUniform("minv", expanded.minv);
-    p.SetUniform("maxv", expanded.maxv);
+    p.SetUniform("minv", expanded.mMinv);
+    p.SetUniform("maxv", expanded.mMaxv);
 
     p.SetUniform("Lstep", UserSettings::Get().Lstep.x);
     p.SetUniform("tolerance", UserSettings::Get().tolerance.x);
@@ -111,10 +111,10 @@ void FunctionTracer::Draw(const Camera &cam)
 {
     p.Use();
 
-    const float tanfov = tanf(cam.FoV * engine::PI / 360.0f);
+    const float tanfov = tanf(cam.mFoV * engine::PI / 360.0f);
 
-    p.SetUniform("eye", cam.position);
-    p.SetUniform("U", cam.GetRight() * tanfov * cam.aspectRatio);
+    p.SetUniform("eye", cam.mPosition);
+    p.SetUniform("U", cam.GetRight() * tanfov * cam.mAspectRatio);
     p.SetUniform("W", cam.GetDirection());
     p.SetUniform("V", cam.GetUp() * tanfov);
 

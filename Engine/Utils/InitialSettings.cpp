@@ -9,19 +9,12 @@ using namespace std;
 
 namespace engine
 {
-    InitialSettings *InitialSettings::instance = 0;
-
-    InitialSettings& InitialSettings::Get()
-    {
-        if(instance)
-            return *instance;
-        return *(instance = new InitialSettings("Settings.ini"));
-    }
-
-    InitialSettings::InitialSettings(const string &path)
+    InitialSettings::InitialSettings()
     {    
-        format["GL_NEAREST"] = GL_NEAREST;
-        format["GL_LINEAR"] = GL_LINEAR;
+        const string path("Settings.ini");
+
+        mFormat["GL_NEAREST"] = GL_NEAREST;
+        mFormat["GL_LINEAR"] = GL_LINEAR;
 
         ifstream f(path);
         if(f.is_open())
@@ -37,12 +30,12 @@ namespace engine
                     if(value[0] == 'f')
                     {
                         float fl = stof(value.substr(1));
-                        values[name] = (void*)*(unsigned int*)&fl;
+                        mValues[name] = (void*)*(unsigned int*)&fl;
                     }
                     else if(value.substr(0, 2) == "GL")
-                        values[name] = (void*)format[value];
+                        mValues[name] = (void*)mFormat[value];
                     else
-                        values[name] = (void*)stoi(value);
+                        mValues[name] = (void*)stoi(value);
                  
                 }
             }
@@ -58,6 +51,6 @@ namespace engine
 
     void* InitialSettings::operator[](const string &variableName)
     {
-        return values[variableName];
+        return mValues[variableName];
     }
 }

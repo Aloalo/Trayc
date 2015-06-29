@@ -15,9 +15,9 @@ namespace engine
     struct Setting
     {
         Setting(const std::string &name) :
-            name(name)
+            mName(name)
         {
-            void *value = InitialSettings::Get()[name];
+            const void *value = InitialSettings::Get()[mName];
             x = *(T*)&value;
         }
 
@@ -32,7 +32,7 @@ namespace engine
         }
 
         T x;
-        std::string name;
+        std::string mName;
     };
 }
 

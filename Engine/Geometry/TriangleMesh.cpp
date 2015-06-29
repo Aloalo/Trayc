@@ -6,9 +6,4 @@
 
 namespace engine
 {
-    TriangleMesh::TriangleMesh(void)
-        : orientation(GL_CCW), materialIndex(-1)//, isStatic(true)
-    {
-    }
-
 }

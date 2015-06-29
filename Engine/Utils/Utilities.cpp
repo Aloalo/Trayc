@@ -2,7 +2,7 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 
-#include <Engine/Common/Utilities.h>
+#include <Engine/Utils/Utilities.h>
 
 using namespace std;
 

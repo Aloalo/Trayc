@@ -12,20 +12,14 @@ namespace engine
 {
     struct Material
     {
-    public:
-        glm::vec3 Ka;
-        glm::vec3 Kd;
-        glm::vec3 Ks;
-        glm::vec3 reflectivity;
-        float IoR;
-        float phongExponent;
+        glm::vec3 mKa;
+        glm::vec3 mKd;
+        glm::vec3 mKs;
+        float mPhongExponent;
 
-        std::string diffuse_map;
-        std::string specular_map;
-        std::string normal_map;
-
-        //Index in scene's material list
-        int index;
+        std::string mDiffuseMap;
+        std::string mSpecularMap;
+        std::string mNormalMap;
     };
 }
 

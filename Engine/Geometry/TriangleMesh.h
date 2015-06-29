@@ -16,19 +16,12 @@ namespace engine
     public:
         TriangleMesh(void);
 
-        std::vector<glm::vec3> positions;
-        std::vector<glm::vec3> normals;
-        std::vector<glm::vec3> tangents;
-        std::vector<glm::vec3> bitangents;
-        std::vector<glm::vec2> uvs;
-        std::vector<glm::ivec3> indices;
-
-        //index to the scene's material array
-        int materialIndex;
-        GLenum orientation;
-
-        //glm::mat4 transform;
-        //bool isStatic;
+        std::vector<glm::vec3> mPositions;
+        std::vector<glm::vec3> mNormals;
+        std::vector<glm::vec3> mTangents;
+        std::vector<glm::vec3> mBiTangents;
+        std::vector<glm::vec2> mUVs;
+        std::vector<glm::ivec3> mIndices;
     };
 }
 

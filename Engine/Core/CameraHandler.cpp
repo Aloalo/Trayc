@@ -9,7 +9,7 @@ namespace engine
     using namespace glm;
 
     CameraHandler::CameraHandler(const Camera &cam)
-        : cam(cam)
+        : mCamera(cam)
     {
     }
 
@@ -19,6 +19,6 @@ namespace engine
 
     const vec3& CameraHandler::GetPosition() const
     {
-        return cam.position;
+        return mCamera.mPosition;
     }
 }

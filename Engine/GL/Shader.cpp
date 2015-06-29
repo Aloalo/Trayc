@@ -14,7 +14,7 @@ namespace engine
 {
     Shader::~Shader(void)
     {
-        glDeleteShader(id);
+        glDeleteShader(mID);
     }
 
     void Shader::Init(const char *name)
@@ -41,22 +41,22 @@ namespace engine
 
     void Shader::Init2(const GLchar *src, const char *name, GLint len)
     {
-        id = glCreateShader(GetGlType());
+        mID = glCreateShader(GetGlType());
         if(len == 0)
-            glShaderSource(id, 1, &src, 0);
+            glShaderSource(mID, 1, &src, 0);
         else
-            glShaderSource(id, 1, &src, &len);
-        glCompileShader(id);
+            glShaderSource(mID, 1, &src, &len);
+        glCompileShader(mID);
 
         GLint status;
-        glGetShaderiv(id, GL_COMPILE_STATUS, &status);
+        glGetShaderiv(mID, GL_COMPILE_STATUS, &status);
         if(status == GL_FALSE)
         {
             GLint infoLogLength;
-            glGetShaderiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
+            glGetShaderiv(mID, GL_INFO_LOG_LENGTH, &infoLogLength);
 
             GLchar *strInfoLog = new GLchar[infoLogLength+1];
-            glGetShaderInfoLog(id, infoLogLength, nullptr, strInfoLog);
+            glGetShaderInfoLog(mID, infoLogLength, nullptr, strInfoLog);
 
             cerr << "Compile failure in " << GetTypeString() << " shader " << name << endl << strInfoLog << endl;
             delete[] strInfoLog;

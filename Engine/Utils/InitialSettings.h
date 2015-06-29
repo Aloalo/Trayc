@@ -8,22 +8,24 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <Engine/Utils/Singleton.h>
 
 namespace engine
 {
-    struct InitialSettings
+    //Only used when starting the game
+    struct InitialSettings : public Singleton<InitialSettings>
     {
+        using engine::Singleton<InitialSettings>::Get;
+
         void* operator[](const std::string &variableName);
 
-        static InitialSettings& Get();
-
     private:
-        InitialSettings(const std::string &path);
+        friend engine::Singleton<InitialSettings>;
 
-        static InitialSettings *instance;
+        InitialSettings(void);
 
-        std::map<std::string, void*> values;
-        std::map<std::string, unsigned int> format;
+        std::map<std::string, void*> mValues;
+        std::map<std::string, unsigned int> mFormat;
     };
 }
 

@@ -3,7 +3,7 @@
 */
 
 #include <Engine/GL/Program.h>
-#include <Engine/Common/ErrorCheck.h>
+#include <Engine/Utils/ErrorCheck.h>
 #include <iostream>
 #include <fstream>
 
@@ -13,7 +13,7 @@ using namespace std;
 namespace engine
 {
     Program::Program(void)
-        : id(0)
+        : mID(0)
     {
     }
 
@@ -34,30 +34,30 @@ namespace engine
 
     void Program::Delete()
     {
-        glDeleteProgram(id);
-        id = 0;
+        glDeleteProgram(mID);
+        mID = 0;
     }
 
     void Program::Init(const VertexShader *vs, const GeometryShader *gs, const FragmentShader *fs, const char *name)
     {
-        if(id)
+        if(mID)
             Delete();
 
-        id = glCreateProgram();
+        mID = glCreateProgram();
         Attach(*vs);
         if(gs)
             Attach(*gs);
         Attach(*fs);
-        glLinkProgram(id);
+        glLinkProgram(mID);
         GLint status;
-        glGetProgramiv(id, GL_LINK_STATUS, &status);
+        glGetProgramiv(mID, GL_LINK_STATUS, &status);
         if(status == GL_FALSE)
         {
             GLint infoLogLength;
-            glGetProgramiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
+            glGetProgramiv(mID, GL_INFO_LOG_LENGTH, &infoLogLength);
 
             GLchar *strInfoLog = new GLchar[infoLogLength+1];
-            glGetProgramInfoLog(id, infoLogLength, nullptr, strInfoLog);
+            glGetProgramInfoLog(mID, infoLogLength, nullptr, strInfoLog);
 
             cerr << "Linking failure in program " << name << ":" << endl << strInfoLog << endl;
             delete[] strInfoLog;
@@ -85,7 +85,7 @@ namespace engine
 
     void Program::Use() const
     {
-        glUseProgram(id);
+        glUseProgram(mID);
     }
 
     void Program::Unbind()
@@ -95,36 +95,36 @@ namespace engine
 
     GLint Program::GetUniformLocation(const GLchar *name)
     {
-        const auto it = uniformLocations.find(name);
-        if(it != uniformLocations.end())
+        const auto it = mUniformLocations.find(name);
+        if(it != mUniformLocations.end())
             return it->second;
         else
         {
-            const GLint location = glGetUniformLocation(id, name);
+            const GLint location = glGetUniformLocation(mID, name);
             if(location == -1)
             {
-                cerr << "Uniform '" << name << "' not in shader '" << id << "'" << endl;
+                cerr << "Uniform '" << name << "' not in shader '" << mID << "'" << endl;
             }
-            uniformLocations[name] = location;
+            mUniformLocations[name] = location;
             return location;
         }
     }
 
     GLuint Program::GetUniformBlockLocation(const GLchar *name)
     {
-        return glGetUniformBlockIndex(id, name);
+        return glGetUniformBlockIndex(mID, name);
     }
 
     GLint Program::GetUniformi(const GLchar *name)
     {
         GLint ret;
-        glGetUniformiv(id, GetUniformLocation(name), &ret);
+        glGetUniformiv(mID, GetUniformLocation(name), &ret);
         return ret;
     }
 
     void Program::SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint)
     {
-        glUniformBlockBinding(id, GetUniformBlockLocation(name), bindingPoint);
+        glUniformBlockBinding(mID, GetUniformBlockLocation(name), bindingPoint);
     }
 
     void Program::SetUniform(const GLchar *name, GLint x)
@@ -191,11 +191,11 @@ namespace engine
 
     void Program::Attach(const Shader &sh) const
     {
-        glAttachShader(id, sh.id);
+        glAttachShader(mID, sh.mID);
     }
 
     void Program::Detach(const Shader &sh) const
     {
-        glDetachShader(id, sh.id);
+        glDetachShader(mID, sh.mID);
     }
 }

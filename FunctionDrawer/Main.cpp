@@ -10,10 +10,18 @@
 #include "FunctionRasterizer.h"
 #include "FunctionTracer.h"
 
-
 using namespace engine;
 using namespace std;
 using namespace glm;
+
+struct TweakBarInputListener : public EventListener
+{
+    void HandleEvent(const SDL_Event &e)
+    {
+        if(EventHandler::IsCursorFree() == false)
+            TwEventSDL(&e, SDLHandler::mLinked.major, SDLHandler::mLinked.minor);
+    }
+};
 
 void RenderingLoop()
 {
@@ -40,7 +48,7 @@ void RenderingLoop()
 
         glClear(GUIHandler::clearMask);
 
-        guiHandler.currentRenderer->Draw(camHandler.cam);
+        guiHandler.currentRenderer->Draw(camHandler.mCamera);
 
         TwDraw();
 
@@ -63,7 +71,10 @@ void RenderingLoop()
 
 int main(int argc, char *argv[])
 {
+    //Init SDL
     SDLHandler::Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS, argv[0]);
+
+    //Create window
     SDLHandler::CreateGLWindow(
         "Function Drawer",
         SDL_WINDOWPOS_UNDEFINED,
@@ -75,11 +86,28 @@ int main(int argc, char *argv[])
         SDL_WINDOW_SHOWN           
         );
 
-    SDLHandler::InitGL(3, 3, SDL_GL_CONTEXT_PROFILE_CORE);
+    //Init OpenGL
+    const int profile = SDL_GL_CONTEXT_PROFILE_CORE;
+    SDLHandler::InitGL(3, 3, profile);
+
+    //Init AntTweakBar
+    if(profile == SDL_GL_CONTEXT_PROFILE_CORE)
+        TwInit(TW_OPENGL_CORE, nullptr);
+    else
+        TwInit(TW_OPENGL, nullptr);
+
+    int w, h;
+    SDLHandler::GetWindowSize(w, h);
+    TwWindowSize(w, h);
     SDLHandler::PrintSoftwareVersions();
 
+    //Start Rendering
+    TweakBarInputListener twInputListener;
+    EventHandler::AddEventListener(&twInputListener);
     RenderingLoop();
+    EventHandler::RemoveEventListener(&twInputListener);
 
+    TwTerminate();
     SDLHandler::CleanUp();
 
     return 0;

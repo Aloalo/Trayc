@@ -15,9 +15,10 @@ namespace engine
         EventListener(void);
         virtual ~EventListener(void);
 
-        virtual void HandleEvent(const SDL_Event &e);
+        virtual void HandleEvent(const SDL_Event &e) = 0;
 
-        bool active;
+        //Is it active
+        bool mActive;
     };
 }
 

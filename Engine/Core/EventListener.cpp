@@ -7,15 +7,11 @@
 namespace engine
 {
     EventListener::EventListener(void) :
-        active(true)
+        mActive(true)
     {
     }
 
     EventListener::~EventListener(void)
-    {
-    }
-
-    void EventListener::HandleEvent(const SDL_Event &e)
     {
     }
 }

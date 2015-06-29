@@ -6,6 +6,7 @@
 #define EN_GEOMETRY_H
 
 #include <Engine/Geometry/TriangleMesh.h>
+#include <Engine/Utils/StlExtensions.hpp>
 #include <map>
 
 namespace engine
@@ -55,7 +56,7 @@ namespace engine
         for(int i = 0; i < ctVertices; i++)
             out[i] = pvi(positions[i], i);
 
-        sort(out.begin(), out.end(), [] (const pvi &a, const pvi &b)
+        stdext::sort(out, [](const pvi &a, const pvi &b)
         {
             return memcmp((const void*)&a, (const void*)&b, sizeof(pvi)) < 0;
         });

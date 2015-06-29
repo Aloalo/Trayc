@@ -7,7 +7,7 @@
 namespace engine
 {
     Updateable::Updateable(void)
-        : active(true)
+        : mActive(true)
     {
     }
 

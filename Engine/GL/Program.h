@@ -56,8 +56,8 @@ namespace engine
         void Attach(const Shader &sh) const;
         void Detach(const Shader &sh) const;
 
-        GLuint id;
-        std::map<const GLchar*, GLint> uniformLocations;
+        GLuint mID;
+        std::map<const GLchar*, GLint> mUniformLocations;
     };
 }
 

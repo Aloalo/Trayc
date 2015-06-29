@@ -56,6 +56,50 @@ source_group(Handlers FILES ${Trayc_Handlers_HDRS} ${Trayc_Handlers_SRCS})
 source_group(Shaders FILES ${Trayc_GL_SHADERS})
 source_group(CUDAfiles FILES ${Trayc_CUDA_FILES})
 
+find_package(CUDA 2.3 REQUIRED)
+find_package(OptiX REQUIRED)
+find_package(DevIL REQUIRED)
+
+include_directories(
+    ${CUDA_INCLUDE_DIRS}
+    "${OptiX_INCLUDE}"
+    "${IL_INCLUDE_DIR}/.."
+)
+
+include(Macros)
+include(CompilerInfo)
+include(ConfigCompilerFlags)
+
+set(USE_FAST_MATH TRUE)
+if(NOT PASSED_FIRST_CONFIGURE)
+  set(flag "--use_fast_math")
+  list(FIND CUDA_NVCC_FLAGS ${flag} index)
+  if(index EQUAL -1)
+    list(APPEND CUDA_NVCC_FLAGS ${flag})
+    set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} CACHE LIST "Semi-colon delimit multiple arguments." FORCE)
+  endif()
+
+  if (CUDA_VERSION VERSION_LESS "3.0")
+    set(flag "--keep")
+    list(FIND CUDA_NVCC_FLAGS ${flag} index)
+    if(index EQUAL -1)
+      list(APPEND CUDA_NVCC_FLAGS ${flag})
+      set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} CACHE LIST "Semi-colon delimit multiple arguments." FORCE)
+    endif()
+  endif()
+
+  if( APPLE )
+    # Undef'ing __BLOCKS__ for OSX builds.  This is due to a name clash between OSX 10.6
+    # C headers and CUDA headers
+    set(flag "-U__BLOCKS__")
+    list(FIND CUDA_NVCC_FLAGS ${flag} index)
+    if(index EQUAL -1)
+      list(APPEND CUDA_NVCC_FLAGS ${flag})
+      set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} CACHE LIST "Semi-colon delimit multiple arguments." FORCE)
+    endif()
+  endif()
+endif(NOT PASSED_FIRST_CONFIGURE)
+
 CUDA_COMPILE_PTX(ptx_files ${Trayc_CUDA_FILES})
 
 add_library(Trayc STATIC

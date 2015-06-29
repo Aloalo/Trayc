@@ -79,15 +79,15 @@ void TW_CALL GUIHandler::ApplyTracer(void *userData)
 
 void TW_CALL GUIHandler::ApplyRasterizer(void *userData)
 {
-    camera->cam.farDistance = UserSettings::Get().drawDistance;
+    camera->mCamera.mFarDistance = UserSettings::Get().drawDistance;
     rasterizer->ApplyFunction();
 }
 
 void TW_CALL GUIHandler::ApplySettings(void *userData)
 {
-    camera->cam.FoV = UserSettings::Get().FOV;
-    camera->cam.farDistance = UserSettings::Get().drawDistance;
-    camera->cam.aspectRatio = float(UserSettings::Get().screenWidth) / float(UserSettings::Get().screenHeight);
+    camera->mCamera.mFoV = UserSettings::Get().FOV;
+    camera->mCamera.mFarDistance = UserSettings::Get().drawDistance;
+    camera->mCamera.mAspectRatio = float(UserSettings::Get().screenWidth) / float(UserSettings::Get().screenHeight);
     SDLHandler::SetWindowSize(UserSettings::Get().screenWidth, UserSettings::Get().screenHeight);
 
     tracer->ApplyFunction();

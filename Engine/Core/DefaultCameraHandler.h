@@ -28,13 +28,13 @@ namespace engine
         glm::mat4 GetProjectionMatrix() const;
         glm::mat4 GetViewMatrix() const;
 
-        float speed;
-        float rotationSpeed;
-
     private:
-        glm::vec3 dir;
-        float springiness;
-        float dx, dy;
+        float mSpeed;
+        float mRotationSpeed;
+        //Move direction in local camera space
+        glm::vec3 mLocalMoveDir;
+        float mSpringiness;
+        float mDx, mDy;
     };
 }
 

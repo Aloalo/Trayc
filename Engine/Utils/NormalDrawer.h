@@ -6,7 +6,7 @@
 #define EN_NORMALDRAWER_H
 
 #include <Engine/GL/Program.h>
-#include <Engine/Common/MathFunctions.h>
+#include <Engine/Utils/MathFunctions.h>
 #include <vector>
 
 namespace engine

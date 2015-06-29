@@ -11,7 +11,7 @@ using namespace glm;
 namespace engine
 {
     DefaultCameraHandler::DefaultCameraHandler(const Camera &cam, float speed, float rotationSpeed) :
-        CameraHandler(cam), speed(speed), rotationSpeed(rotationSpeed), springiness(100), dx(0), dy(0)
+        CameraHandler(cam), mSpeed(speed), mRotationSpeed(rotationSpeed), mSpringiness(100), mDx(0), mDy(0)
     {
     }
 
@@ -43,12 +43,12 @@ namespace engine
 
         if(e.type == SDL_KEYDOWN && e.keysym.sym == SDLK_9)
         {
-            speed *= 2.0f;
+            mSpeed *= 2.0f;
             return;
         }
         else if(e.type == SDL_KEYDOWN && e.keysym.sym == SDLK_0)
         {
-            speed *= 0.5f;
+            mSpeed *= 0.5f;
             return;
         }
 
@@ -56,22 +56,22 @@ namespace engine
         switch(e.keysym.sym)
         {
         case SDLK_w:
-            dir += vec3(0, 0, -mod);
+            mLocalMoveDir += vec3(0, 0, -mod);
             break;
         case SDLK_s:
-            dir += vec3(0, 0, mod);
+            mLocalMoveDir += vec3(0, 0, mod);
             break;
         case SDLK_a:
-            dir += vec3(-mod, 0, 0);
+            mLocalMoveDir += vec3(-mod, 0, 0);
             break;
         case SDLK_d:
-            dir += vec3(mod, 0, 0);
+            mLocalMoveDir += vec3(mod, 0, 0);
             break;
         case SDLK_q:
-            dir += vec3(0, -mod, 0);
+            mLocalMoveDir += vec3(0, -mod, 0);
             break;
         case SDLK_e:
-            dir += vec3(0, mod, 0);
+            mLocalMoveDir += vec3(0, mod, 0);
             break;
         default:
             break;
@@ -80,57 +80,60 @@ namespace engine
 
     void DefaultCameraHandler::MouseMotion(const SDL_MouseMotionEvent &e)
     {
-        int w, h;
-        SDLHandler::GetWindowSize(w, h);
+        if(EventHandler::IsCursorFree() == true)
+        {
+            int w, h;
+            SDLHandler::GetWindowSize(w, h);
 
-        Rotate(static_cast<float>(-e.xrel) * rotationSpeed, static_cast<float>(-e.yrel) * rotationSpeed);
+            Rotate(static_cast<float>(-e.xrel) * mRotationSpeed, static_cast<float>(-e.yrel) * mRotationSpeed);
+        }
     }
 
     void DefaultCameraHandler::Rotate(float yaw, float pitch)
     {
-        dx += yaw;
-        dy += pitch;
+        mDx += yaw;
+        mDy += pitch;
     }
 
     void DefaultCameraHandler::WindowResize(const SDL_WindowEvent &e)
     {
         if(e.event == SDL_WINDOWEVENT_RESIZED)
-            cam.aspectRatio = static_cast<float>(e.data1) / static_cast<float>(e.data2);
+            mCamera.mAspectRatio = static_cast<float>(e.data1) / static_cast<float>(e.data2);
     }
 
     void DefaultCameraHandler::Update(float deltaTime)
     {
-        const float cf = 1 - expf(-springiness * deltaTime);
-        const float dxr = cf * dx;
-        const float dyr = cf * dy;
-        cam.Rotate(dxr, dyr);
-        dx -= dxr;
-        dy -= dyr;
+        const float cf = 1 - expf(-mSpringiness * deltaTime);
+        const float dxr = cf * mDx;
+        const float dyr = cf * mDy;
+        mCamera.Rotate(dxr, dyr);
+        mDx -= dxr;
+        mDy -= dyr;
 
-        if(!(dir.x || dir.y || dir.z))
+        if(!(mLocalMoveDir.x || mLocalMoveDir.y || mLocalMoveDir.z))
             return;
 
         vec3 v(
-            dir.x,
-            dir.z * sinf(cam.phiy),
-            dir.z * cosf(cam.phiy)
+            mLocalMoveDir.x,
+            mLocalMoveDir.z * sinf(mCamera.mPitch),
+            mLocalMoveDir.z * cosf(mCamera.mPitch)
             );
         v = vec3(
-            v.x * cosf(cam.phix) + v.z * sinf(cam.phix),
+            v.x * cosf(mCamera.mYaw) + v.z * sinf(mCamera.mYaw),
             v.y,
-            -v.x * sinf(cam.phix) + v.z * cosf(cam.phix)
+            -v.x * sinf(mCamera.mYaw) + v.z * cosf(mCamera.mYaw)
             );
-        cam.position += deltaTime * speed * normalize(vec3(0.0f, dir.y, 0.0f) - v);
+        mCamera.mPosition += deltaTime * mSpeed * normalize(vec3(0.0f, mLocalMoveDir.y, 0.0f) - v);
     }
 
 
     mat4 DefaultCameraHandler::GetProjectionMatrix() const
     {
-        return cam.GetProjectionMatrix();
+        return mCamera.GetProjectionMatrix();
     }
 
     mat4 DefaultCameraHandler::GetViewMatrix() const
     {
-        return cam.GetViewMatrix();
+        return mCamera.GetViewMatrix();
     }
 }

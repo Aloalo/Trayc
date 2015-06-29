@@ -11,36 +11,32 @@ using namespace glm;
 namespace engine
 {
     AABB::AABB(void)
-        : minv(numeric_limits<float>::max()), maxv(numeric_limits<float>::lowest())
+        : mMinv(numeric_limits<float>::max()), mMaxv(numeric_limits<float>::lowest())
     {
     }
 
     AABB& AABB::operator|=(const glm::vec3 &p)
     {
-        minv = glm::min(minv, p);
-        maxv = glm::max(maxv, p);
+        mMinv = glm::min(mMinv, p);
+        mMaxv = glm::max(mMaxv, p);
         return *this;
     }
 
     AABB& AABB::operator|=(const AABB &box)
     {
-        minv = glm::min(minv, box.minv);
-        maxv = glm::max(maxv, box.maxv);
+        mMinv = glm::min(mMinv, box.mMinv);
+        mMaxv = glm::max(mMaxv, box.mMaxv);
         return *this;
     }
 
-    engine::AABB operator|(const AABB &box, const glm::vec3 &p)
+    AABB operator|(const AABB &box, const glm::vec3 &p)
     {
-        AABB ret(box);
-        ret |= p;
-        return ret;
+        return AABB(box) |= p;
     }
 
-    engine::AABB operator|(const AABB &box1, const AABB &box2)
+    AABB operator|(const AABB &box1, const AABB &box2)
     {
-        AABB ret(box1);
-        ret |= box2;
-        return ret;
+        return AABB(box1) |= box2;
     }
 }
 

@@ -1,0 +1,15 @@
+Opcenito:
+    -Refactor
+        -Split EventHandler into InputHandler and UpdatebleHandler
+        -Get rid of singletons and static classes
+            -Make Scene/World
+            -InputHandler
+            -UpdatebleHandler
+            -SDLHandler
+            -InitialSettings
+            -FPSCounter
+        -IndexContainer
+        -Rendering
+    -Physics engine (ODE)
+    -Game
+

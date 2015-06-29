@@ -16,7 +16,7 @@ namespace engine
     class EventHandler
     {
     public:
-        //event handling
+        //Event handling
         static void ProcessPolledEvents();
         static void AddEventListener(EventListener *listener);
         static void RemoveEventListener(const EventListener *listener);
@@ -25,20 +25,22 @@ namespace engine
         static bool Quit();
         //Set quit event
         static void SetQuit();
+        //Is cursor free?
+        static bool IsCursorFree();
 
-        //update handling
+        //Update handling
         static void Update();
         static void AddUpdateable(Updateable *updateable);
         static void RemoveUpdateable(const Updateable *updateable);
 
     private:
-        static bool quit;
-        static bool isCursorFree;
-        static float timeStep;
-        static float accumulator;
-        static std::vector<EventListener*> listenerList;
+        static bool mQuit;
+        static bool mIsCursorFree;
+        static float mTimeStep;
+        static float mAccumulator;
 
-        static std::vector<Updateable*> updateableList;
+        static std::vector<EventListener*> mListenerList;
+        static std::vector<Updateable*> mUpdateableList;
     };
 }
 

@@ -23,6 +23,9 @@ set(FunctionDrawer_HDRS
 
 add_executable(FunctionDrawer ${FunctionDrawer_SRCS} ${FunctionDrawer_HDRS})
 
+find_package(AntTweakBar REQUIRED)
+include_directories(${ANTTWEAKBAR_INCLUDE_DIR})
+
 target_link_libraries(FunctionDrawer
     Engine
     ${SDL2_LIBRARY}
@@ -30,6 +33,10 @@ target_link_libraries(FunctionDrawer
     ${OPENGL_LIBRARIES}
     ${ANTTWEAKBAR_LIBRARY}
 )
+
+if(MSVC)
+	set_target_properties(FunctionDrawer PROPERTIES COMPILE_FLAGS "/bigobj")
+endif()
 
 file(COPY Shaders DESTINATION .)
 file(COPY Settings.ini DESTINATION .)

@@ -4,8 +4,8 @@
 
 #include "FunctionRasterizer.h"
 #include "UserSettings.h"
-#include <Engine/Common/ErrorCheck.h>
-#include <Engine/Common/Utilities.h>
+#include <Engine/Utils/ErrorCheck.h>
+#include <Engine/Utils/Utilities.h>
 
 #include <half/include/half.hpp>
 

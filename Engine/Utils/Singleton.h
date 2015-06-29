@@ -12,16 +12,17 @@ namespace engine
     {
         static D& Get()
         {
-            if(!instance)
-                instance = new D;
-            return *instance;
+            if(!mInstance)
+                mInstance = new D;
+            return *mInstance;
         }
 
     private:
-        static D *instance;
+        static D *mInstance;
     };
 
     template<class D>
-    D *Singleton<D>::instance = 0;
+    D *Singleton<D>::mInstance = nullptr;
 }
+
 #endif

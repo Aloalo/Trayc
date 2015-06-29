@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <assert.h>
 
-namespace engine
+namespace stdext
 {
 	template<typename T>
 	using Iterator = typename T::iterator;
@@ -62,9 +62,15 @@ namespace engine
 		std::sort(begin(c), end(c));
 		return c;
 	}
+    
+    template<typename Container>
+	inline void fill(Container &c, const ValueType<Container> &v)
+	{
+		std::fill(begin(c), end(c), v);
+	}
 
 	template<typename Container>
-	ValueType<Container> take_top(Container &c)
+	inline ValueType<Container> take_top(Container &c)
 	{
 		const ValueType<Container> t = c.top();
 		c.pop();

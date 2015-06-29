@@ -16,8 +16,8 @@ namespace engine
         AABB& operator|=(const glm::vec3 &p);
         AABB& operator|=(const AABB &box);
 
-        glm::vec3 minv;
-        glm::vec3 maxv;
+        glm::vec3 mMinv;
+        glm::vec3 mMaxv;
     };
 
     AABB operator|(const AABB &box, const glm::vec3 &p);

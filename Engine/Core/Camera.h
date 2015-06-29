@@ -17,7 +17,6 @@ namespace engine
         ~Camera(void);
 
         void Rotate(float yaw, float pitch);
-        void Rranslate(const glm::vec3 &dir);
 
         glm::mat4 GetProjectionMatrix() const;
         glm::mat4 GetViewMatrix() const;
@@ -28,12 +27,12 @@ namespace engine
         glm::vec3 GetRight() const;
         glm::vec3 GetUp() const;
 
-        glm::vec3 position;
-        float aspectRatio;
-        float FoV;
-        float nearDistance;
-        float farDistance;
-        float phix, phiy;
+        glm::vec3 mPosition;
+        float mAspectRatio;
+        float mFoV;
+        float mNearDistance;
+        float mFarDistance;
+        float mYaw, mPitch;
     };
 
 }

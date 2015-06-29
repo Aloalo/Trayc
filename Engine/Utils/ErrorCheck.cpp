@@ -2,7 +2,7 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 
-#include <Engine/Common/ErrorCheck.h>
+#include <Engine/Utils/ErrorCheck.h>
 #include <GL/glew.h>
 #include <iostream>
 #include <string>

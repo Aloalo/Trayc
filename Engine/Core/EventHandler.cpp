@@ -4,19 +4,18 @@
 
 #include <Engine/Core/EventHandler.h>
 #include <Engine/Core/SDLHandler.h>
-#include <AntTweakBar.h>
 #include "SDL.h"
 
 using namespace std;
 
 namespace engine
 {
-    vector<EventListener*> EventHandler::listenerList;
-    vector<Updateable*> EventHandler::updateableList;
-    bool EventHandler::quit = false;
-    bool EventHandler::isCursorFree = true;
-    float EventHandler::timeStep = 1.0f / 60.0f;
-    float EventHandler::accumulator = 0.0f;
+    vector<EventListener*> EventHandler::mListenerList;
+    vector<Updateable*> EventHandler::mUpdateableList;
+    bool EventHandler::mQuit = false;
+    bool EventHandler::mIsCursorFree = true;
+    float EventHandler::mTimeStep = 1.0f / 60.0f;
+    float EventHandler::mAccumulator = 0.0f;
 
     void EventHandler::ProcessPolledEvents()
     {
@@ -24,10 +23,11 @@ namespace engine
         while(SDL_PollEvent(&test_event))
         {
             if(test_event.type == SDL_QUIT)
-                quit = true;
+                mQuit = true;
+
             else if(test_event.type == SDL_KEYDOWN && test_event.key.keysym.sym == SDLK_LSHIFT)
             {
-                if(isCursorFree)
+                if(mIsCursorFree)
                 {
                     SDL_SetRelativeMouseMode(SDL_FALSE);
                     SDL_ShowCursor(1);
@@ -37,68 +37,64 @@ namespace engine
                     SDL_SetRelativeMouseMode(SDL_TRUE);
                     SDL_ShowCursor(0);
                 }
-                isCursorFree = !isCursorFree;
-            }
-            if(isCursorFree == false)
-            {
-                TwEventSDL(&test_event, SDLHandler::linked.major, SDLHandler::linked.minor);
-                if(test_event.type == SDL_MOUSEMOTION || test_event.type == SDL_MOUSEBUTTONDOWN)
-                    continue;
+                mIsCursorFree = !mIsCursorFree;
             }
 
-            if(quit == true)
-                test_event.type = SDL_QUIT;
-
-            for(EventListener *listener : listenerList)
-                if(listener->active)
+            for(EventListener *listener : mListenerList)
+                if(listener->mActive)
                     listener->HandleEvent(test_event);
 
-            if(quit == true)
+            if(mQuit == true)
                 break;
         }
     }
 
     void EventHandler::AddEventListener(EventListener *listener)
     {
-        listenerList.push_back(listener);
+        mListenerList.push_back(listener);
     }
 
     void EventHandler::RemoveEventListener(const EventListener *listener)
     {
-        listenerList.erase(find(listenerList.begin(), listenerList.end(), listener));
+        mListenerList.erase(find(mListenerList.begin(), mListenerList.end(), listener));
     }
 
     bool EventHandler::Quit()
     {
-        return quit;
+        return mQuit;
     }
 
     void EventHandler::Update()
     {
         static float lastTime = static_cast<float>(SDL_GetTicks()) / 1000.0f;
         const float currentTime = static_cast<float>(SDL_GetTicks()) / 1000.0f;
-        accumulator += currentTime - lastTime;
+        mAccumulator += currentTime - lastTime;
         lastTime = currentTime;
 
-        for(; accumulator > timeStep; accumulator -= timeStep)
-            for(Updateable *updateable : updateableList)
-                if(updateable->active)
-                    updateable->Update(timeStep);
+        for(; mAccumulator > mTimeStep; mAccumulator -= mTimeStep)
+            for(Updateable *updateable : mUpdateableList)
+                if(updateable->mActive)
+                    updateable->Update(mTimeStep);
     }
 
     void EventHandler::AddUpdateable(Updateable *updateable)
     {
-        updateableList.push_back(updateable);
+        mUpdateableList.push_back(updateable);
     }
 
     void EventHandler::RemoveUpdateable(const Updateable *updateable)
     {
-        updateableList.erase(find(updateableList.begin(), updateableList.end(), updateable));
+        mUpdateableList.erase(find(mUpdateableList.begin(), mUpdateableList.end(), updateable));
     }
 
     void EventHandler::SetQuit()
     {
-        quit = true;
+        mQuit = true;
+    }
+
+    bool EventHandler::IsCursorFree()
+    {
+        return mIsCursorFree;
     }
 
 }
