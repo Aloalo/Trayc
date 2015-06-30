@@ -8,5 +8,7 @@
 #include <Engine/Engine.h>
 
 static engine::SDLHandler sdlHandler;
+static engine::InputHandler inputHandler;
+static engine::UpdateableHandler updateableHandler(1.0f / 60.0f);
 
 #endif

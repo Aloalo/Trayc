@@ -14,11 +14,11 @@ using namespace engine;
 using namespace std;
 using namespace glm;
 
-struct TweakBarInputListener : public EventListener
+struct TweakBarInputListener : public InputObserver
 {
     void HandleEvent(const SDL_Event &e)
     {
-        if(EventHandler::IsCursorFree() == false)
+        if(inputHandler.IsCursorFree() == false)
             TwEventSDL(&e, sdlHandler.GetLinkedVersion().major, sdlHandler.GetLinkedVersion().minor);
     }
 };
@@ -29,13 +29,13 @@ void RenderingLoop()
     DefaultCameraHandler camHandler(Camera(vec3(7.0f, 9.2f, -6.0f), (float)UserSettings::Get().screenWidth / UserSettings::Get().screenHeight, 
         UserSettings::Get().FOV, 0.1f, UserSettings::Get().drawDistance), 7.0f, 0.006f);
 
-    EventHandler::AddEventListener(&camHandler);
-    EventHandler::AddUpdateable(&camHandler);
+    inputHandler.AddEventListener(&camHandler);
+    updateableHandler.AddUpdateable(&camHandler);
     glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
     GUIHandler guiHandler;
     
-    EventHandler::AddEventListener(&guiHandler);
+    inputHandler.AddEventListener(&guiHandler);
 
     FunctionDrawer *rasterizer = new FunctionRasterizer();
     FunctionDrawer *tracer = new FunctionTracer();
@@ -56,10 +56,10 @@ void RenderingLoop()
 
         // Swap buffers
         sdlHandler.SwapBuffers();
-        EventHandler::ProcessPolledEvents();
-        EventHandler::Update();
+        inputHandler.ProcessPolledEvents();
+        updateableHandler.Update();
 
-        if(EventHandler::Quit())
+        if(inputHandler.Quit())
             break;
 
         fpsCounter.StopClock();
@@ -105,9 +105,9 @@ int main(int argc, char *argv[])
 
     //Start Rendering
     TweakBarInputListener twInputListener;
-    EventHandler::AddEventListener(&twInputListener);
+    inputHandler.AddEventListener(&twInputListener);
     RenderingLoop();
-    EventHandler::RemoveEventListener(&twInputListener);
+    inputHandler.RemoveEventListener(&twInputListener);
 
     TwTerminate();
     sdlHandler.CleanUp();

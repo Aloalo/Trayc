@@ -5,14 +5,14 @@
 #ifndef EN_CAMERAHANDLER_H
 #define EN_CAMERAHANDLER_H
 
-#include <Engine/Core/EventListener.h>
+#include <Engine/Core/InputObserver.h>
 #include <Engine/Core/Camera.h>
 #include <Engine/Core/Updateable.h>
 
 namespace engine
 {
     class CameraHandler :
-        public EventListener, public Updateable
+        public InputObserver, public Updateable
     {
     public:
         CameraHandler(const Camera &cam);

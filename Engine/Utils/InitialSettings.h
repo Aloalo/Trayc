@@ -15,8 +15,6 @@ namespace engine
     //Only used when starting the game
     struct InitialSettings : public Singleton<InitialSettings>
     {
-        using engine::Singleton<InitialSettings>::Get;
-
         template<class T>
         T GetSettingValue(const std::string &variableName)
         {

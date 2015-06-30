@@ -10,16 +10,18 @@ set(Engine_Core
     Core/Camera.h
     Core/CameraHandler.h
     Core/DefaultCameraHandler.h
-    Core/EventHandler.h
-    Core/EventListener.h
+    Core/InputHandler.h
+    Core/InputObserver.h
     Core/Updateable.h
     Core/SDLHandler.cpp
     Core/Camera.cpp
     Core/CameraHandler.cpp
     Core/DefaultCameraHandler.cpp
-    Core/EventHandler.cpp
-    Core/EventListener.cpp
+    Core/InputHandler.cpp
+    Core/InputObserver.cpp
     Core/Updateable.cpp
+    Core/UpdateableHandler.h
+    Core/UpdateableHandler.cpp
 )
 
 set(Engine_Geometry

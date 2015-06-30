@@ -9,26 +9,25 @@
 
 namespace engine
 {
-    class DefaultCameraHandler :
-        public CameraHandler
+    class DefaultCameraHandler : public CameraHandler
     {
     public:
         DefaultCameraHandler(const Camera &cam, float speed, float rotationSpeed);
         ~DefaultCameraHandler(void);
-        
-        void HandleEvent(const SDL_Event &e);
 
-        void KeyPress(const SDL_KeyboardEvent &e);
-        void MouseMotion(const SDL_MouseMotionEvent &e);
-        void WindowResize(const SDL_WindowEvent &e);
+        void KeyPress(const SDL_KeyboardEvent &e) override;
+        void MouseMotion(const SDL_MouseMotionEvent &e) override;
+        void WindowEvent(const SDL_WindowEvent &e) override;
+        void MouseWheel(const SDL_MouseWheelEvent &e) override;
 
-        void Rotate(float yaw, float pitch);
-        void Update(float dt);
+        void Update(float dt) override;
 
-        glm::mat4 GetProjectionMatrix() const;
-        glm::mat4 GetViewMatrix() const;
+        glm::mat4 GetProjectionMatrix() const override;
+        glm::mat4 GetViewMatrix() const override;
 
     private:
+        bool mObserveMouse;
+
         float mSpeed;
         float mRotationSpeed;
         //Move direction in local camera space

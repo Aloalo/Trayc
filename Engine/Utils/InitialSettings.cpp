@@ -1,5 +1,4 @@
 #include <Engine/Utils/InitialSettings.h>
-#include <Engine/Core/EventHandler.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -43,7 +42,7 @@ namespace engine
         else
         {
             cerr << "Cannot open graphics settings" << endl;
-            EventHandler::SetQuit();
+            exit(-1);
         }
         f.close();
     }

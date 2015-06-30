@@ -1,10 +1,6 @@
 Opcenito:
     -Refactor
-        -Split EventHandler into InputHandler and UpdatebleHandler
-        -Get rid of singletons and static classes
-            -Make Scene/World
-            -InputHandler
-            -UpdatebleHandler
+        -Make Scene/World
         -IndexContainer
         -Rendering
     -Physics engine (ODE)

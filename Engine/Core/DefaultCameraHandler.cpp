@@ -4,36 +4,19 @@
 
 #include <Engine/Core/DefaultCameraHandler.h>
 #include <Engine/Core/SDLHandler.h>
-#include <Engine/Core/EventHandler.h>
+#include <Engine/Core/InputHandler.h>
 
 using namespace glm;
 
 namespace engine
 {
     DefaultCameraHandler::DefaultCameraHandler(const Camera &cam, float speed, float rotationSpeed) :
-        CameraHandler(cam), mSpeed(speed), mRotationSpeed(rotationSpeed), mSpringiness(100), mDx(0), mDy(0)
+        CameraHandler(cam), mObserveMouse(true), mSpeed(speed), mRotationSpeed(rotationSpeed), mSpringiness(100), mDx(0), mDy(0)
     {
     }
 
     DefaultCameraHandler::~DefaultCameraHandler(void)
     {
-    }
-    
-    void DefaultCameraHandler::HandleEvent(const SDL_Event &e)
-    {
-        switch(e.type)
-        {
-        case SDL_KEYUP:
-        case SDL_KEYDOWN:
-            KeyPress(e.key);
-            break;
-        case SDL_MOUSEMOTION:
-            MouseMotion(e.motion);
-            break;
-        case SDL_WINDOWEVENT:
-            WindowResize(e.window);
-            break;
-        }
     }
 
     void DefaultCameraHandler::KeyPress(const SDL_KeyboardEvent &e)
@@ -41,16 +24,8 @@ namespace engine
         if(e.repeat)
             return;
 
-        if(e.type == SDL_KEYDOWN && e.keysym.sym == SDLK_9)
-        {
-            mSpeed *= 2.0f;
-            return;
-        }
-        else if(e.type == SDL_KEYDOWN && e.keysym.sym == SDLK_0)
-        {
-            mSpeed *= 0.5f;
-            return;
-        }
+        if(e.keysym.sym == SDLK_LSHIFT && e.type == SDL_KEYDOWN)
+            mObserveMouse = !mObserveMouse;
 
         const int mod = e.type == SDL_KEYDOWN ? 1 : -1;
         switch(e.keysym.sym)
@@ -80,17 +55,21 @@ namespace engine
 
     void DefaultCameraHandler::MouseMotion(const SDL_MouseMotionEvent &e)
     {
-        if(EventHandler::IsCursorFree() == true)
-            Rotate(static_cast<float>(-e.xrel) * mRotationSpeed, static_cast<float>(-e.yrel) * mRotationSpeed);
+        if(mObserveMouse)
+        {
+            const float yaw = float(-e.xrel) * mRotationSpeed;
+            const float pitch = float(-e.yrel) * mRotationSpeed;
+            mDx += yaw;
+            mDy += pitch;
+        }
     }
 
-    void DefaultCameraHandler::Rotate(float yaw, float pitch)
+    void DefaultCameraHandler::MouseWheel(const SDL_MouseWheelEvent &e)
     {
-        mDx += yaw;
-        mDy += pitch;
+        mSpeed *= (e.y > 0 ? 2.0f : 0.5f);
     }
 
-    void DefaultCameraHandler::WindowResize(const SDL_WindowEvent &e)
+    void DefaultCameraHandler::WindowEvent(const SDL_WindowEvent &e)
     {
         if(e.event == SDL_WINDOWEVENT_RESIZED)
             mCamera.mAspectRatio = static_cast<float>(e.data1) / static_cast<float>(e.data2);

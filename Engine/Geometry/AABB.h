@@ -20,8 +20,8 @@ namespace engine
         glm::vec3 mMaxv;
     };
 
-    AABB operator|(const AABB &box, const glm::vec3 &p);
-    AABB operator|(const AABB &box1, const AABB &box2);
+    inline AABB operator|(const AABB &box, const glm::vec3 &p);
+    inline AABB operator|(const AABB &box1, const AABB &box2);
 }
 
 #endif

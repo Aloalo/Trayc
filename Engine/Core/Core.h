@@ -5,8 +5,9 @@
 #ifndef EN_CORE_H
 #define EN_CORE_H
 
-#include <Engine/Core/EventHandler.h>
+#include <Engine/Core/InputHandler.h>
 #include <Engine/Core/SDLHandler.h>
+#include <Engine/Core/UpdateableHandler.h>
 #include <Engine/Core/DefaultCameraHandler.h>
 
 #endif

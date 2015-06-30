@@ -4,7 +4,7 @@
 
 #include "TwoVariableFunction.h"
 #include <iostream>
-#include <Engine/Core/EventHandler.h>
+#include "TmpHandlers.h"
 
 using namespace std;
 using namespace glm;
@@ -23,7 +23,7 @@ void TwoVariableFunction::SetFunction(const string &expressionString)
     if(!parser.compile(expressionString, expression))
     {
         cerr << "Invalid function: " << expressionString << endl;
-        EventHandler::SetQuit();
+        inputHandler.SetQuit();
     }
 }
 

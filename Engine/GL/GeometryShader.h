@@ -16,9 +16,9 @@ namespace engine
         GeometryShader(const char *name);
         ~GeometryShader(void);
 
-        const char* GetExtension() const;
-        const char* GetTypeString() const;
-        GLenum GetGlType() const;
+        const char* GetExtension() const override;
+        const char* GetTypeString() const override;
+        GLenum GetGlType() const override;
     };
 }
 
