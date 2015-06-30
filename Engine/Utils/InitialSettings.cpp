@@ -47,10 +47,4 @@ namespace engine
         }
         f.close();
     }
-
-
-    void* InitialSettings::operator[](const string &variableName)
-    {
-        return mValues[variableName];
-    }
 }

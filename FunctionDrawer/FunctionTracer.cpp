@@ -4,10 +4,10 @@
 
 #include "FunctionTracer.h"
 #include "UserSettings.h"
-#include <Engine/Core/SDLHandler.h>
 #include <Engine/Utils/Utilities.h>
 #include <Engine/Utils/MathFunctions.h>
 #include <iostream>
+#include "TmpHandlers.h"
 
 using namespace std;
 using namespace glm;
@@ -89,11 +89,11 @@ void FunctionTracer::ApplyFunction()
     p.SetUniform("minv", expanded.mMinv);
     p.SetUniform("maxv", expanded.mMaxv);
 
-    p.SetUniform("Lstep", UserSettings::Get().Lstep.x);
-    p.SetUniform("tolerance", UserSettings::Get().tolerance.x);
-    p.SetUniform("AAlevel", UserSettings::Get().AAlevel.x);
+    p.SetUniform("Lstep", UserSettings::Get().Lstep.mValue);
+    p.SetUniform("tolerance", UserSettings::Get().tolerance.mValue);
+    p.SetUniform("AAlevel", UserSettings::Get().AAlevel.mValue);
     int w, h;
-    SDLHandler::GetWindowSize(w, h);
+    sdlHandler.GetWindowSize(w, h);
     const vec2 invScreenSize = 1.0f / vec2(float(w), float(h));
 
     p.SetUniform("invScreenSize", invScreenSize);

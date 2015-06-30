@@ -5,9 +5,6 @@ Opcenito:
             -Make Scene/World
             -InputHandler
             -UpdatebleHandler
-            -SDLHandler
-            -InitialSettings
-            -FPSCounter
         -IndexContainer
         -Rendering
     -Physics engine (ODE)

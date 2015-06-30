@@ -6,9 +6,11 @@
 #define FD_GUIHANDLER_H
 
 #include <AntTweakBar.h>
+#include <Engine/Core/SDLHandler.h>
 #include <Engine/Core/EventListener.h>
 #include <Engine/Core/CameraHandler.h>
 #include "FunctionDrawer.h"
+#include "TmpHandlers.h"
 
 class GUIHandler : public engine::EventListener
 {

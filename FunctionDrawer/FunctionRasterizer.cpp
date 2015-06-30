@@ -61,8 +61,8 @@ int FunctionRasterizer::GenerateMesh(int ctVertices)
 
     cout << "Building mesh ... "; 
 
-    const vec2 minv(UserSettings::Get().minX.x, UserSettings::Get().minY.x);
-    const vec2 maxv(UserSettings::Get().maxX.x, UserSettings::Get().maxY.x);
+    const vec2 minv(UserSettings::Get().minX.mValue, UserSettings::Get().minY.mValue);
+    const vec2 maxv(UserSettings::Get().maxX.mValue, UserSettings::Get().maxY.mValue);
 
     const vec2 scale = (maxv - minv) / float(ctVertices - 1);
 

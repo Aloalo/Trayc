@@ -14,25 +14,31 @@ namespace engine
     class SDLHandler
     {
     public:
-        static void PrintSoftwareVersions();
+        SDLHandler(void);
 
-        static void Init(Uint32 flags, const char *programName);
-        static void CreateGLWindow(const char* title, int x, int y, int w, int h, Uint32 flags);
-        static void InitGL(int verionMajor, int versionMinor, int profile);
-        static void SwapBuffers();
+        void PrintSoftwareVersions() const;
 
-        static void GetWindowSize(int &w, int &h);
-        static void SetWindowSize(int w, int h);
+        void Init(Uint32 flags, const char *programName);
+        void CreateGLWindow(const char* title, int x, int y, int w, int h, Uint32 flags);
+        void InitGL(int verionMajor, int versionMinor, int profile);
+        void SwapBuffers();
 
-        static void CleanUp();
+        void GetWindowSize(int &w, int &h);
+        void SetWindowSize(int w, int h);
 
-        static SDL_version mCompiled;
-        static SDL_version mLinked;
-        static char const *mProgramName;
+        const SDL_version& GetLinkedVersion() const;
+        const SDL_version& GetCompiledVersion() const;
+        char const* GetProgramName() const;
+
+        void CleanUp();
 
     private:
-        static SDL_Window *mWindow;
-        static SDL_GLContext mOpenglContext;
+        SDL_version mCompiled;
+        SDL_version mLinked;
+        char const *mProgramName;
+
+        SDL_Window *mWindow;
+        SDL_GLContext mOpenglContext;
     };
 }
 

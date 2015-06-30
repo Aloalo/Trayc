@@ -81,12 +81,7 @@ namespace engine
     void DefaultCameraHandler::MouseMotion(const SDL_MouseMotionEvent &e)
     {
         if(EventHandler::IsCursorFree() == true)
-        {
-            int w, h;
-            SDLHandler::GetWindowSize(w, h);
-
             Rotate(static_cast<float>(-e.xrel) * mRotationSpeed, static_cast<float>(-e.yrel) * mRotationSpeed);
-        }
     }
 
     void DefaultCameraHandler::Rotate(float yaw, float pitch)

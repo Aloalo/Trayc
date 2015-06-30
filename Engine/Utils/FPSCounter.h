@@ -12,13 +12,16 @@ namespace engine
 	class FPSCounter
 	{
 	public:
-        static void StartClock();
-        static void StopClock();
-        static float GetFPS();
+        //Number of frames to average
+        FPSCounter(int ctFrames);
+
+        void StartClock();
+        void StopClock();
+        float GetFPS() const;
 
 	private:
-		static std::deque<int> mFrameLengths;
-        static int mClockStart;
+		std::deque<int> mFrameLengths;
+        int mClockStart;
 	};
 }
 

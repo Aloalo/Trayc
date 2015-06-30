@@ -9,8 +9,10 @@ using namespace std;
 
 namespace engine
 {
-    int FPSCounter::mClockStart = clock();
-    deque<int> FPSCounter::mFrameLengths = deque<int>(30, 0);
+    FPSCounter::FPSCounter(int ctFrames)
+        : mClockStart(clock()), mFrameLengths(ctFrames, 0)
+    {
+    }
 
     void FPSCounter::StartClock()
     {
@@ -23,7 +25,7 @@ namespace engine
         mFrameLengths.pop_front();
     }
 
-    float FPSCounter::GetFPS()
+    float FPSCounter::GetFPS() const
     {
         float FPS = 0.0f;
         for(int frameLength : mFrameLengths)

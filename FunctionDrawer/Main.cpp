@@ -19,7 +19,7 @@ struct TweakBarInputListener : public EventListener
     void HandleEvent(const SDL_Event &e)
     {
         if(EventHandler::IsCursorFree() == false)
-            TwEventSDL(&e, SDLHandler::mLinked.major, SDLHandler::mLinked.minor);
+            TwEventSDL(&e, sdlHandler.GetLinkedVersion().major, sdlHandler.GetLinkedVersion().minor);
     }
 };
 
@@ -42,9 +42,11 @@ void RenderingLoop()
 
     guiHandler.CreateTweakBars(&camHandler, rasterizer, tracer);
 
+    FPSCounter fpsCounter(30);
+
     while(true)
     {
-        FPSCounter::StartClock();
+        fpsCounter.StartClock();
 
         glClear(GUIHandler::clearMask);
 
@@ -53,16 +55,16 @@ void RenderingLoop()
         TwDraw();
 
         // Swap buffers
-        SDLHandler::SwapBuffers();
+        sdlHandler.SwapBuffers();
         EventHandler::ProcessPolledEvents();
         EventHandler::Update();
 
         if(EventHandler::Quit())
             break;
 
-        FPSCounter::StopClock();
-        guiHandler.FPS = FPSCounter::GetFPS();
-        guiHandler.ms = 1000.0f / FPSCounter::GetFPS();
+        fpsCounter.StopClock();
+        guiHandler.FPS = fpsCounter.GetFPS();
+        guiHandler.ms = 1000.0f / fpsCounter.GetFPS();
     }
 
     delete tracer;
@@ -72,10 +74,10 @@ void RenderingLoop()
 int main(int argc, char *argv[])
 {
     //Init SDL
-    SDLHandler::Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS, argv[0]);
+    sdlHandler.Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS, argv[0]);
 
     //Create window
-    SDLHandler::CreateGLWindow(
+    sdlHandler.CreateGLWindow(
         "Function Drawer",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
@@ -88,7 +90,7 @@ int main(int argc, char *argv[])
 
     //Init OpenGL
     const int profile = SDL_GL_CONTEXT_PROFILE_CORE;
-    SDLHandler::InitGL(3, 3, profile);
+    sdlHandler.InitGL(3, 3, profile);
 
     //Init AntTweakBar
     if(profile == SDL_GL_CONTEXT_PROFILE_CORE)
@@ -97,9 +99,9 @@ int main(int argc, char *argv[])
         TwInit(TW_OPENGL, nullptr);
 
     int w, h;
-    SDLHandler::GetWindowSize(w, h);
+    sdlHandler.GetWindowSize(w, h);
     TwWindowSize(w, h);
-    SDLHandler::PrintSoftwareVersions();
+    sdlHandler.PrintSoftwareVersions();
 
     //Start Rendering
     TweakBarInputListener twInputListener;
@@ -108,7 +110,7 @@ int main(int argc, char *argv[])
     EventHandler::RemoveEventListener(&twInputListener);
 
     TwTerminate();
-    SDLHandler::CleanUp();
+    sdlHandler.CleanUp();
 
     return 0;
 }

@@ -17,7 +17,11 @@ namespace engine
     {
         using engine::Singleton<InitialSettings>::Get;
 
-        void* operator[](const std::string &variableName);
+        template<class T>
+        T GetSettingValue(const std::string &variableName)
+        {
+            return *(T*)&mValues[variableName];
+        }
 
     private:
         friend engine::Singleton<InitialSettings>;

@@ -10,11 +10,10 @@ using namespace std;
 
 namespace engine
 {
-    SDL_Window *SDLHandler::mWindow;
-    SDL_GLContext SDLHandler::mOpenglContext;
-    SDL_version SDLHandler::mCompiled;
-    SDL_version SDLHandler::mLinked;
-    char const *SDLHandler::mProgramName = nullptr;
+    SDLHandler::SDLHandler(void)
+        : mProgramName(nullptr), mWindow(nullptr)
+    {
+    }
 
     void SDLHandler::Init(Uint32 flags, const char *programName)
     {
@@ -22,7 +21,7 @@ namespace engine
         SDLErrCheck(SDL_SetRelativeMouseMode(SDL_TRUE));
         SDL_VERSION(&mCompiled);
         SDL_GetVersion(&mLinked);
-        SDLHandler::mProgramName = programName;
+        mProgramName = programName;
     }
 
     void SDLHandler::CleanUp()
@@ -32,7 +31,7 @@ namespace engine
         SDL_Quit();
     }
 
-    void SDLHandler::PrintSoftwareVersions()
+    void SDLHandler::PrintSoftwareVersions() const
     {
         cout << "GLEW version: " << glewGetString(GLEW_VERSION) << endl << endl;
 
@@ -87,5 +86,20 @@ namespace engine
     void SDLHandler::SetWindowSize(int w, int h)
     {
         SDL_SetWindowSize(mWindow, w, h);
+    }
+
+    const SDL_version& SDLHandler::GetLinkedVersion() const
+    {
+        return mLinked;
+    }
+
+    const SDL_version& SDLHandler::GetCompiledVersion() const
+    {
+        return mCompiled;
+    }
+
+    char const* SDLHandler::GetProgramName() const
+    {
+        return mProgramName;
     }
 }

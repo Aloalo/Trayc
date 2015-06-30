@@ -38,20 +38,20 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
     TwBar *twfunction;
     twfunction = TwNewBar("Function");
     TwDefine(" Function size='250 310' position='10 10' ");
-    TwAddVarRW(twfunction, "minX", TW_TYPE_FLOAT, &UserSettings::Get().minX.x, "");
-    TwAddVarRW(twfunction, "minY", TW_TYPE_FLOAT, &UserSettings::Get().minY.x, "");
-    TwAddVarRW(twfunction, "maxX", TW_TYPE_FLOAT, &UserSettings::Get().maxX.x, "");
-    TwAddVarRW(twfunction, "maxY", TW_TYPE_FLOAT, &UserSettings::Get().maxY.x, "");
+    TwAddVarRW(twfunction, "minX", TW_TYPE_FLOAT, &UserSettings::Get().minX.mValue, "");
+    TwAddVarRW(twfunction, "minY", TW_TYPE_FLOAT, &UserSettings::Get().minY.mValue, "");
+    TwAddVarRW(twfunction, "maxX", TW_TYPE_FLOAT, &UserSettings::Get().maxX.mValue, "");
+    TwAddVarRW(twfunction, "maxY", TW_TYPE_FLOAT, &UserSettings::Get().maxY.mValue, "");
 
     TwAddSeparator(twfunction, nullptr, " group='Rasterizer' ");
-    TwAddVarRW(twfunction, "Mesh resolution", TW_TYPE_INT32, &UserSettings::Get().ctVertices.x, "min=10 max=8000 group=Rasterizer");
-    TwAddVarRW(twfunction, "Draw Distance", TW_TYPE_FLOAT, &UserSettings::Get().drawDistance.x, "min=10 max=30000 group=Rasterizer");
+    TwAddVarRW(twfunction, "Mesh resolution", TW_TYPE_INT32, &UserSettings::Get().ctVertices.mValue, "min=10 max=8000 group=Rasterizer");
+    TwAddVarRW(twfunction, "Draw Distance", TW_TYPE_FLOAT, &UserSettings::Get().drawDistance.mValue, "min=10 max=30000 group=Rasterizer");
     TwAddButton(twfunction, "ApplyRasterizer", ApplyRasterizer, nullptr, " label='Apply' group=Rasterizer");
 
     TwAddSeparator(twfunction, nullptr, " group='Tracer' ");
-    TwAddVarRW(twfunction, "Sampling interval", TW_TYPE_FLOAT, &UserSettings::Get().Lstep.x, "min=0.005 max=0.5 group=Tracer");
-    TwAddVarRW(twfunction, "Intersection tolerance", TW_TYPE_FLOAT, &UserSettings::Get().tolerance.x, "min=0.0000001 max=0.5 group=Tracer");
-    TwAddVarRW(twfunction, "AA", TW_TYPE_INT32, &UserSettings::Get().AAlevel.x, "min=1 max=8 group=Tracer");
+    TwAddVarRW(twfunction, "Sampling interval", TW_TYPE_FLOAT, &UserSettings::Get().Lstep.mValue, "min=0.005 max=0.5 group=Tracer");
+    TwAddVarRW(twfunction, "Intersection tolerance", TW_TYPE_FLOAT, &UserSettings::Get().tolerance.mValue, "min=0.0000001 max=0.5 group=Tracer");
+    TwAddVarRW(twfunction, "AA", TW_TYPE_INT32, &UserSettings::Get().AAlevel.mValue, "min=1 max=8 group=Tracer");
     TwAddButton(twfunction, "ApplyTracer", ApplyTracer, nullptr, " label='Apply' group=Tracer");
 
 
@@ -61,9 +61,9 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
     TwBar *twBar;
     twBar = TwNewBar("Settings");
     TwDefine(" Settings iconified=false size='200 130' position='10 325' ");
-    TwAddVarRW(twBar, "Screen Width", TW_TYPE_INT32, &UserSettings::Get().screenWidth.x, "min=100 max=1920");
-    TwAddVarRW(twBar, "Screen Height", TW_TYPE_INT32, &UserSettings::Get().screenHeight.x, "min=100 max=1080");
-    TwAddVarRW(twBar, "FOV", TW_TYPE_FLOAT, &UserSettings::Get().FOV.x, "min=30 max=120");
+    TwAddVarRW(twBar, "Screen Width", TW_TYPE_INT32, &UserSettings::Get().screenWidth.mValue, "min=100 max=1920");
+    TwAddVarRW(twBar, "Screen Height", TW_TYPE_INT32, &UserSettings::Get().screenHeight.mValue, "min=100 max=1080");
+    TwAddVarRW(twBar, "FOV", TW_TYPE_FLOAT, &UserSettings::Get().FOV.mValue, "min=30 max=120");
     TwAddVarRO(twBar, "FPS", TW_TYPE_FLOAT, &FPS, "");
     TwAddVarRO(twBar, "ms", TW_TYPE_FLOAT, &ms, "");
     TwAddButton(twBar, "Apply", ApplySettings, nullptr, " label='Apply' ");
@@ -88,7 +88,7 @@ void TW_CALL GUIHandler::ApplySettings(void *userData)
     camera->mCamera.mFoV = UserSettings::Get().FOV;
     camera->mCamera.mFarDistance = UserSettings::Get().drawDistance;
     camera->mCamera.mAspectRatio = float(UserSettings::Get().screenWidth) / float(UserSettings::Get().screenHeight);
-    SDLHandler::SetWindowSize(UserSettings::Get().screenWidth, UserSettings::Get().screenHeight);
+    sdlHandler.SetWindowSize(UserSettings::Get().screenWidth, UserSettings::Get().screenHeight);
 
     tracer->ApplyFunction();
 }

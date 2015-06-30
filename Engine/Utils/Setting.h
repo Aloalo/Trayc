@@ -17,21 +17,20 @@ namespace engine
         Setting(const std::string &name) :
             mName(name)
         {
-            const void *value = InitialSettings::Get()[mName];
-            x = *(T*)&value;
+            mValue = InitialSettings::Get().GetSettingValue<T>(mName);
         }
 
         operator T&()
         {
-            return x;
+            return mValue;
         }
 
         T& operator=(const T &v)
         {
-            return x = v;
+            return mValue = v;
         }
 
-        T x;
+        T mValue;
         std::string mName;
     };
 }
