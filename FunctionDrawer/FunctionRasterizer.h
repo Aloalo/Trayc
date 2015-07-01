@@ -32,11 +32,11 @@ private:
     int GenerateMesh(int ctVertices);
     int GenerateIndices(int ctVertices);
 
-    TwoVariableFunction func;
+    TwoVariableFunction mFunction;
 
-    std::vector<Batch> batches;
-    GLuint IBO;
-    GLsizei ctIndices;
+    std::vector<Batch> mBatches;
+    GLuint mIBO;
+    GLsizei mCtIndices;
 };
 
 #endif

@@ -48,9 +48,9 @@ void RenderingLoop()
     {
         fpsCounter.StartClock();
 
-        glClear(GUIHandler::clearMask);
+        glClear(GUIHandler::mClearMask);
 
-        guiHandler.currentRenderer->Draw(camHandler.mCamera);
+        guiHandler.mCurrentRenderer->Draw(camHandler.mCamera);
 
         TwDraw();
 
@@ -63,8 +63,8 @@ void RenderingLoop()
             break;
 
         fpsCounter.StopClock();
-        guiHandler.FPS = fpsCounter.GetFPS();
-        guiHandler.ms = 1000.0f / fpsCounter.GetFPS();
+        guiHandler.mFPS = fpsCounter.GetFPS();
+        guiHandler.mMiliseconds = 1000.0f / fpsCounter.GetFPS();
     }
 
     delete tracer;
@@ -98,9 +98,7 @@ int main(int argc, char *argv[])
     else
         TwInit(TW_OPENGL, nullptr);
 
-    int w, h;
-    sdlHandler.GetWindowSize(w, h);
-    TwWindowSize(w, h);
+    TwWindowSize(UserSettings::Get().screenWidth, UserSettings::Get().screenHeight);
     sdlHandler.PrintSoftwareVersions();
 
     //Start Rendering

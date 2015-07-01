@@ -10,24 +10,24 @@
 using namespace std;
 using namespace engine;
 
-CameraHandler *GUIHandler::camera = nullptr;
-FunctionDrawer *GUIHandler::rasterizer = nullptr;
-FunctionDrawer *GUIHandler::tracer = nullptr;
-FunctionDrawer *GUIHandler::currentRenderer = nullptr;
-GLbitfield GUIHandler::clearMask = 0;
-float GUIHandler::FPS = 0.0f;
-float GUIHandler::ms = 0.0f;
+CameraHandler *GUIHandler::mCamera = nullptr;
+FunctionDrawer *GUIHandler::mRasterizer = nullptr;
+FunctionDrawer *GUIHandler::mTracer = nullptr;
+FunctionDrawer *GUIHandler::mCurrentRenderer = nullptr;
+GLbitfield GUIHandler::mClearMask = 0;
+float GUIHandler::mFPS = 0.0f;
+float GUIHandler::mMiliseconds = 0.0f;
 
 void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer, FunctionDrawer *tracer)
 {
-    camera = cam;
-    GUIHandler::tracer = tracer;
-    GUIHandler::rasterizer = rasterizer;
+    mCamera = cam;
+    mTracer = tracer;
+    mRasterizer = rasterizer;
     ApplyFunction(nullptr);
 
-    currentRenderer = rasterizer;
+    mCurrentRenderer = mRasterizer;
     glEnable(GL_DEPTH_TEST);
-    clearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
+    mClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 
     TwDefine(" GLOBAL help='Two variable function drawer.\n"
         "Press [w/a/s/d/q/e] to move and use the mouse to rotate the camera.\n"
@@ -64,8 +64,8 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
     TwAddVarRW(twBar, "Screen Width", TW_TYPE_INT32, &UserSettings::Get().screenWidth.mValue, "min=100 max=1920");
     TwAddVarRW(twBar, "Screen Height", TW_TYPE_INT32, &UserSettings::Get().screenHeight.mValue, "min=100 max=1080");
     TwAddVarRW(twBar, "FOV", TW_TYPE_FLOAT, &UserSettings::Get().FOV.mValue, "min=30 max=120");
-    TwAddVarRO(twBar, "FPS", TW_TYPE_FLOAT, &FPS, "");
-    TwAddVarRO(twBar, "ms", TW_TYPE_FLOAT, &ms, "");
+    TwAddVarRO(twBar, "FPS", TW_TYPE_FLOAT, &mFPS, "");
+    TwAddVarRO(twBar, "ms", TW_TYPE_FLOAT, &mMiliseconds, "");
     TwAddButton(twBar, "Apply", ApplySettings, nullptr, " label='Apply' ");
 
     ApplySettings(nullptr);
@@ -73,24 +73,24 @@ void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer,
 
 void TW_CALL GUIHandler::ApplyTracer(void *userData)
 {
-    tracer->SetAABB(rasterizer->GetAABB());
-    tracer->ApplyFunction();
+    mTracer->SetAABB(mRasterizer->GetAABB());
+    mTracer->ApplyFunction();
 }
 
 void TW_CALL GUIHandler::ApplyRasterizer(void *userData)
 {
-    camera->mCamera.mFarDistance = UserSettings::Get().drawDistance;
-    rasterizer->ApplyFunction();
+    mCamera->mCamera.mFarDistance = UserSettings::Get().drawDistance;
+    mRasterizer->ApplyFunction();
 }
 
 void TW_CALL GUIHandler::ApplySettings(void *userData)
 {
-    camera->mCamera.mFoV = UserSettings::Get().FOV;
-    camera->mCamera.mFarDistance = UserSettings::Get().drawDistance;
-    camera->mCamera.mAspectRatio = float(UserSettings::Get().screenWidth) / float(UserSettings::Get().screenHeight);
+    mCamera->mCamera.mFoV = UserSettings::Get().FOV;
+    mCamera->mCamera.mFarDistance = UserSettings::Get().drawDistance;
+    mCamera->mCamera.mAspectRatio = float(UserSettings::Get().screenWidth) / float(UserSettings::Get().screenHeight);
     sdlHandler.SetWindowSize(UserSettings::Get().screenWidth, UserSettings::Get().screenHeight);
 
-    tracer->ApplyFunction();
+    mTracer->ApplyFunction();
 }
 
 void TW_CALL GUIHandler::ApplyFunction(void *userData)
@@ -102,12 +102,12 @@ void TW_CALL GUIHandler::ApplyFunction(void *userData)
     getline(in, Fy);
     in.close();
 
-    rasterizer->SetFunction(F, Fx, Fy);
-    rasterizer->ApplyFunction();
+    mRasterizer->SetFunction(F, Fx, Fy);
+    mRasterizer->ApplyFunction();
 
-    tracer->SetAABB(rasterizer->GetAABB());
-    tracer->SetFunction(F, Fx, Fy);
-    tracer->ApplyFunction();
+    mTracer->SetAABB(mRasterizer->GetAABB());
+    mTracer->SetFunction(F, Fx, Fy);
+    mTracer->ApplyFunction();
 }
 
 void GUIHandler::HandleEvent(const SDL_Event &e)
@@ -124,16 +124,16 @@ void GUIHandler::HandleEvent(const SDL_Event &e)
 
 void TW_CALL GUIHandler::SwitchDrawer(void *userData)
 {
-    if(currentRenderer == tracer)
+    if(mCurrentRenderer == mTracer)
     {
-        currentRenderer = rasterizer;
+        mCurrentRenderer = mRasterizer;
         glEnable(GL_DEPTH_TEST);
-        clearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
+        mClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
     }
     else
     {
-        currentRenderer = tracer;
+        mCurrentRenderer = mTracer;
         glDisable(GL_DEPTH_TEST);
-        clearMask = GL_COLOR_BUFFER_BIT;
+        mClearMask = GL_COLOR_BUFFER_BIT;
     }
 }

@@ -19,8 +19,8 @@ public:
     void Draw(const engine::Camera &cam);
 
 private:
-    GLuint VAO;
-    GLuint VBO;
+    GLuint mVAO;
+    GLuint mVBO;
 };
 
 #endif

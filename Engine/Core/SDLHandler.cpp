@@ -48,7 +48,7 @@ namespace engine
         cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl << endl;
     }
 
-    void SDLHandler::CreateGLWindow(const char* title, int x, int y, int w, int h, Uint32 flags)
+    void SDLHandler::CreateGLWindow(const char *title, int x, int y, int w, int h, Uint32 flags)
     {
         mWindow = SDL_CreateWindow(title, x, y, w, h, flags);
         SDLErrCheck(!mWindow);
@@ -66,7 +66,7 @@ namespace engine
         mOpenglContext = SDL_GL_CreateContext(mWindow);
         SDLErrCheck(!mOpenglContext);
     
-        SDLErrCheck(SDL_GL_SetSwapInterval(1));
+        //SDLErrCheck(SDL_GL_SetSwapInterval(1));
 
         glewExperimental = GL_TRUE;
         GLEWErrCheck(glewInit());
@@ -78,9 +78,9 @@ namespace engine
         SDL_GL_SwapWindow(mWindow);
     }
 
-    void SDLHandler::GetWindowSize(int &w, int &h)
+    void SDLHandler::GetWindowSize(int *w, int *h)
     {
-        SDL_GetWindowSize(mWindow, &w, &h);
+        SDL_GetWindowSize(mWindow, w, h);
     }
 
     void SDLHandler::SetWindowSize(int w, int h)

@@ -12,15 +12,15 @@ using namespace engine;
 
 TwoVariableFunction::TwoVariableFunction(void)
 {
-    symbol_table.add_variable("x", a);
-    symbol_table.add_variable("y", b);
-    symbol_table.add_constants();
-    expression.register_symbol_table(symbol_table);
+    mSymbolTable.add_variable("x", mVarA);
+    mSymbolTable.add_variable("y", mVarB);
+    mSymbolTable.add_constants();
+    mExpression.register_symbol_table(mSymbolTable);
 }
 
 void TwoVariableFunction::SetFunction(const string &expressionString)
 {
-    if(!parser.compile(expressionString, expression))
+    if(!mParser.compile(expressionString, mExpression))
     {
         cerr << "Invalid function: " << expressionString << endl;
         inputHandler.SetQuit();
@@ -29,7 +29,7 @@ void TwoVariableFunction::SetFunction(const string &expressionString)
 
 float TwoVariableFunction::operator()(const vec2 &x)
 {
-    a = x.x;
-    b = x.y;
-    return expression.value();
+    mVarA = x.x;
+    mVarB = x.y;
+    return mExpression.value();
 }

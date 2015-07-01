@@ -37,8 +37,9 @@ namespace stdext
 	template<typename Container, typename Value>
 	inline Container& erase(Container &c, const Value &v)
 	{
-		assert(find(c, v) != end(c));
-		c.erase(find(c, v));
+        const Iterator<Container> eraseLocation = find(c, v);
+        assert(eraseLocation != end(c));
+        c.erase(eraseLocation);
 		return c;
 	}
 

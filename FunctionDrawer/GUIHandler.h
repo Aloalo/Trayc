@@ -16,16 +16,16 @@ class GUIHandler : public engine::InputObserver
 {
 public:
     static void CreateTweakBars(engine::CameraHandler *cam, FunctionDrawer *rasterizer, FunctionDrawer *tracer);
-    static FunctionDrawer *currentRenderer;
-    static GLbitfield clearMask;
-    static float FPS;
-    static float ms;
+    static FunctionDrawer *mCurrentRenderer;
+    static GLbitfield mClearMask;
+    static float mFPS;
+    static float mMiliseconds;
     static void TW_CALL SwitchDrawer(void *userData);
 
 private:
-    static engine::CameraHandler *camera;
-    static FunctionDrawer *tracer;
-    static FunctionDrawer *rasterizer;
+    static engine::CameraHandler *mCamera;
+    static FunctionDrawer *mTracer;
+    static FunctionDrawer *mRasterizer;
 
     static void TW_CALL ApplySettings(void *userData);
     static void TW_CALL ApplyFunction(void *userData);

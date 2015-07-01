@@ -7,7 +7,7 @@ using namespace std;
 using namespace engine;
 
 FunctionDrawer::FunctionDrawer(const char *progFile)
-    : vs(progFile), fileName(progFile)
+    : mVertexShader(progFile), mFileName(progFile)
 {
     // load the fragment shader source
     string sn(progFile);
@@ -18,8 +18,8 @@ FunctionDrawer::FunctionDrawer(const char *progFile)
     {
         stringstream strStream;
         strStream << in.rdbuf();
-        fragSource = strStream.str();
-        fragSource.erase(fragSource.find_last_of('}')+1, fragSource.length());
+        mFragSource = strStream.str();
+        mFragSource.erase(mFragSource.find_last_of('}')+1, mFragSource.length());
     }
     else
     {
@@ -30,22 +30,22 @@ FunctionDrawer::FunctionDrawer(const char *progFile)
 
 FunctionDrawer::~FunctionDrawer(void)
 {
-    p.Delete();
+    mProgram.Delete();
 }
 
 void FunctionDrawer::SetFunction(const string &F, const string &Fx, const string &Fy)
 {
-    this->F = F;
-    this->Fx = Fx;
-    this->Fy = Fy;
+    this->mF = F;
+    this->mFx = Fx;
+    this->mFy = Fy;
 }
 
 const AABB& FunctionDrawer::GetAABB() const
 {
-    return box;
+    return mBox;
 }
 
 void FunctionDrawer::SetAABB(const AABB &box)
 {
-    this->box = box;
+    this->mBox = box;
 }

@@ -24,17 +24,17 @@ public:
     void SetAABB(const engine::AABB &box);
 
 protected:
-    engine::AABB box;
+    engine::AABB mBox;
 
-    std::string F;
-    std::string Fx;
-    std::string Fy;
+    std::string mF;
+    std::string mFx;
+    std::string mFy;
 
     // contains the fragment shader source
-    std::string fragSource;
-    engine::VertexShader vs;
-    std::string fileName;
-    engine::Program p;
+    std::string mFragSource;
+    engine::VertexShader mVertexShader;
+    std::string mFileName;
+    engine::Program mProgram;
 };
 
 #endif

@@ -33,31 +33,31 @@ static const GLuint ctMaxBatchIndices = (1 << 16)  - 1;
 FunctionRasterizer::FunctionRasterizer(void)
     : FunctionDrawer("Shaders/Simple")
 {
-    batches.resize(0);
-    glGenBuffers(1, &IBO);
+    mBatches.resize(0);
+    glGenBuffers(1, &mIBO);
 }
 
 FunctionRasterizer::~FunctionRasterizer(void)
 {
-    for(auto &batch : batches)
+    for(auto &batch : mBatches)
     {
         glDeleteVertexArrays(1, &batch.VAO);
         glDeleteBuffers(1, &batch.VBO);
     }
-    glDeleteBuffers(1, &IBO);
+    glDeleteBuffers(1, &mIBO);
 }
 
 void FunctionRasterizer::SetFunction(const string &F, const string &Fx, const string &Fy)
 {
     FunctionDrawer::SetFunction(F, Fx, Fy);
-    func.SetFunction(F);
+    mFunction.SetFunction(F);
 }
 
 int FunctionRasterizer::GenerateMesh(int ctVertices)
 {
     assert(ctVertices > 0);
 
-    box = AABB();
+    mBox = AABB();
 
     cout << "Building mesh ... "; 
 
@@ -84,9 +84,9 @@ int FunctionRasterizer::GenerateMesh(int ctVertices)
         for(GLuint j = 0; j < ctVertices; ++j)
         {
             const vec2 xz = vec2(float(i) , float(j)) * scale + minv;
-            const vec3 p(xz.x, func(xz), xz.y);
+            const vec3 p(xz.x, mFunction(xz), xz.y);
 
-            box |= p;
+            mBox |= p;
 
             vertices.push_back(half(p.x));
             vertices.push_back(half(p.y));
@@ -94,7 +94,7 @@ int FunctionRasterizer::GenerateMesh(int ctVertices)
         }
     }
 
-    for(Batch &batch : batches)
+    for(Batch &batch : mBatches)
     {
         glDeleteVertexArrays(1, &batch.VAO);
         glDeleteBuffers(1, &batch.VBO);
@@ -103,33 +103,33 @@ int FunctionRasterizer::GenerateMesh(int ctVertices)
     const int ctStripesPerBatch = ctMaxBatchIndices / ctVertices;
     const int ctVerticesPerBatch = ctStripesPerBatch * ctVertices;
     const int ctBatches = (ctVertices * ctVertices) / ctVerticesPerBatch;
-    batches.resize(ctBatches + 1);
+    mBatches.resize(ctBatches + 1);
 
     for(int i = 0; i <= ctBatches; ++i)
     {
         const int stripeOffset = i * ctVertices * vertexSize;
 
-        glGenVertexArrays(1, &batches[i].VAO);
-        glGenBuffers(1, &batches[i].VBO);
+        glGenVertexArrays(1, &mBatches[i].VAO);
+        glGenBuffers(1, &mBatches[i].VBO);
 
         int ctVert;
         if(i != ctBatches)
         {
-            batches[i].count = ctIndices;
+            mBatches[i].count = mCtIndices;
             ctVert = ctVerticesPerBatch;
         }
         else
         {
             const int ctRemainingStripes = ctVertices - ctStripesPerBatch * ctBatches + ctBatches;
-            batches[i].count = (ctRemainingStripes - 1) * (ctVertices - 1) * 6;
+            mBatches[i].count = (ctRemainingStripes - 1) * (ctVertices - 1) * 6;
             ctVert = (ctVertices * ctVertices) % ctVerticesPerBatch + stripeOffset / vertexSize;
         }
 
-        glBindVertexArray(batches[i].VAO);
+        glBindVertexArray(mBatches[i].VAO);
         {
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
 
-            glBindBuffer(GL_ARRAY_BUFFER, batches[i].VBO);
+            glBindBuffer(GL_ARRAY_BUFFER, mBatches[i].VBO);
             glBufferData(GL_ARRAY_BUFFER, ctVert * vertexSize, (void*)(vertices.data()+(i*ctVerticesPerBatch*vertexSize - stripeOffset) / 2), GL_STATIC_DRAW);
 
             glEnableVertexAttribArray(0);
@@ -172,9 +172,9 @@ int FunctionRasterizer::GenerateIndices(int ctVertices)
     }
 
     const vector<GLushort> indices(intIndices.begin(), intIndices.end());
-    ctIndices = indices.size();
+    mCtIndices = indices.size();
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(indices[0]), indices.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -191,45 +191,45 @@ void FunctionRasterizer::ApplyFunction()
     cout << "  Memory used vertices: " << memVertices << endl;
     cout << "  Total: " << total << " (" << (total >> 20) <<  "MB)" << endl << endl;
 
-    string newFx(Fx);
+    string newFx(mFx);
     //handle exp
     StringReplace(newFx, "exp", "eee");
     StringReplace(newFx, "x", "p.x");
     StringReplace(newFx, "y", "p.y");
     StringReplace(newFx, "eee", "exp");
 
-    string newFy(Fy);
+    string newFy(mFy);
     StringReplace(newFy, "exp", "eee");
     StringReplace(newFy, "x", "p.x");
     StringReplace(newFy, "y", "p.y");
     StringReplace(newFy, "eee", "exp");
 
 
-    string newSource(fragSource);
+    string newSource(mFragSource);
     newSource.replace(newSource.find("#Fx"), 3, newFx);
     newSource.replace(newSource.find("#Fy"), 3, newFy);
 
-    p.Init(&vs, nullptr, &FragmentShader(newSource, fileName.c_str()), fileName.c_str());
+    mProgram.Init(&mVertexShader, nullptr, &FragmentShader(newSource, mFileName.c_str()), mFileName.c_str());
 
-    p.Use();
-    p.SetUniform("ambient", vec3(0.3f, 0.1f, 0.1f));
-    p.SetUniform("diffuse", vec3(0.8f, 0.1f, 0.1f));
-    p.SetUniform("specular", vec3(1.0f, 1.0f, 1.0f));
-    p.SetUniform("shininess", 64.0f);
-    p.SetUniform("lightDirection", normalize(vec3(1.0f, 1.0f, 1.0f)));
-    p.SetUniform("lightIntensity", vec3(0.9f));
+    mProgram.Use();
+    mProgram.SetUniform("ambient", vec3(0.3f, 0.1f, 0.1f));
+    mProgram.SetUniform("diffuse", vec3(0.8f, 0.1f, 0.1f));
+    mProgram.SetUniform("specular", vec3(1.0f, 1.0f, 1.0f));
+    mProgram.SetUniform("shininess", 64.0f);
+    mProgram.SetUniform("lightDirection", normalize(vec3(1.0f, 1.0f, 1.0f)));
+    mProgram.SetUniform("lightIntensity", vec3(0.9f));
 }
 
 void FunctionRasterizer::Draw(const Camera &cam)
 {
-    p.Use();
+    mProgram.Use();
 
     const mat4 V = cam.GetViewMatrix();
-    p.SetUniform("MVP", cam.GetProjectionMatrix() * V);
-    p.SetUniform("invVxeye", inverse(V) * vec4(0.0f, 0.0f, 0.0f, 1.0f));
+    mProgram.SetUniform("MVP", cam.GetProjectionMatrix() * V);
+    mProgram.SetUniform("invVxeye", inverse(V) * vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
 
-    for(const Batch &batch : batches)
+    for(const Batch &batch : mBatches)
     {
         glBindVertexArray(batch.VAO);
         glDrawElements(GL_TRIANGLES, batch.count, GL_UNSIGNED_SHORT, nullptr);

@@ -23,7 +23,7 @@ namespace engine
         void InitGL(int verionMajor, int versionMinor, int profile);
         void SwapBuffers();
 
-        void GetWindowSize(int &w, int &h);
+        void GetWindowSize(int *w, int *h);
         void SetWindowSize(int w, int h);
 
         const SDL_version& GetLinkedVersion() const;
