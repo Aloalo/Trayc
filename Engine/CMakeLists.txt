@@ -34,6 +34,8 @@ set(Engine_Geometry
     Geometry/IndexContainer.cpp
     Geometry/Material.cpp
     Geometry/AABB.cpp
+    Geometry/Transform.h
+    Geometry/Transform.cpp
 )
 
 set(Engine_GL

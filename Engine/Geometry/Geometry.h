@@ -48,7 +48,7 @@ namespace engine
     template<class T>
     void InterpolateNormals(const std::vector<T> &positions, std::vector<glm::vec3> &normals)
     {
-        typedef std::pair<T, int> pvi;
+        using pvi = std::pair<T, int>;
 
         const int ctVertices = positions.size();
         std::vector<pvi> out(ctVertices);
@@ -81,7 +81,7 @@ namespace engine
     }
     
     template<class T>
-    static inline bool GetSimilarVertexIndex(const T &packed, std::map<T, GLuint> &vertexToOutIndex, unsigned int &result)
+    static inline bool GetSimilarVertexIndex(const T &packed, const std::map<T, GLuint> &vertexToOutIndex, unsigned int &result)
     {
         const auto it = vertexToOutIndex.find(packed);
         if (it == vertexToOutIndex.end())
@@ -94,12 +94,13 @@ namespace engine
     }
 
     template<class T>
-    void IndexMesh(std::vector<T> &vertices, std::vector<GLuint> &outIndexData)
+    std::vector<GLuint> IndexMesh(std::vector<T> &vertices)
     {
         const GLuint ctVertices = vertices.size();
 
         std::vector<T> copyVertices(vertices);
         vertices.clear();
+        std::vector<GLuint> outIndexData;
         outIndexData.reserve(ctVertices);
 
         std::map<T, GLuint> vertexToOutIndex;
@@ -119,6 +120,7 @@ namespace engine
                 vertexToOutIndex[copyVertices[i]] = ctOutVertices - 1;
             }
         }
+        return outIndexData;
      }
 
 

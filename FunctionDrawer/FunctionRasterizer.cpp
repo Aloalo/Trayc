@@ -7,6 +7,7 @@
 #include <Engine/Utils/ErrorCheck.h>
 #include <Engine/Utils/Utilities.h>
 
+#include "TwoVariableFunction.h"
 #include <half/include/half.hpp>
 
 using namespace std;
@@ -50,25 +51,20 @@ FunctionRasterizer::~FunctionRasterizer(void)
 void FunctionRasterizer::SetFunction(const string &F, const string &Fx, const string &Fy)
 {
     FunctionDrawer::SetFunction(F, Fx, Fy);
-    mFunction.SetFunction(F);
 }
 
 int FunctionRasterizer::GenerateMesh(int ctVertices)
 {
     assert(ctVertices > 0);
 
-    mBox = AABB();
-
     cout << "Building mesh ... "; 
 
     const vec2 minv(UserSettings::Get().minX.mValue, UserSettings::Get().minY.mValue);
     const vec2 maxv(UserSettings::Get().maxX.mValue, UserSettings::Get().maxY.mValue);
-
-    const vec2 scale = (maxv - minv) / float(ctVertices - 1);
+    const vec2 domainSize(maxv - minv);
+    const vec2 scale(domainSize / float(ctVertices - 1));
 
     vector<half> vertices;
-    const GLsizei vertexSize = 3 * sizeof(half);
-    int memoryUsed = 0;
 
     try
     {
@@ -79,20 +75,27 @@ int FunctionRasterizer::GenerateMesh(int ctVertices)
         cerr << "Caught exception: " << e.what() << endl;
     }
     
-    for(GLuint i = 0; i < ctVertices; ++i)
+    TwoVariableFunction f(mF);
+    AABB box;
+    const GLuint uiCtVertices = static_cast<GLuint>(ctVertices);
+    for(GLuint i = 0; i < uiCtVertices; ++i)
     {
-        for(GLuint j = 0; j < ctVertices; ++j)
+        const float x = float(i) * scale.x + minv.x;
+        const half xhf(x);
+        for(GLuint j = 0; j < uiCtVertices; ++j)
         {
-            const vec2 xz = vec2(float(i) , float(j)) * scale + minv;
-            const vec3 p(xz.x, mFunction(xz), xz.y);
+            const float z = float(j) * scale.y + minv.y;
 
-            mBox |= p;
+            const vec3 p(x, f(x, z), z);
 
-            vertices.push_back(half(p.x));
+            box |= p;
+
+            vertices.push_back(xhf);
             vertices.push_back(half(p.y));
             vertices.push_back(half(p.z));
         }
     }
+    mBox = box;
 
     for(Batch &batch : mBatches)
     {
@@ -103,8 +106,10 @@ int FunctionRasterizer::GenerateMesh(int ctVertices)
     const int ctStripesPerBatch = ctMaxBatchIndices / ctVertices;
     const int ctVerticesPerBatch = ctStripesPerBatch * ctVertices;
     const int ctBatches = (ctVertices * ctVertices) / ctVerticesPerBatch;
+    const GLsizei vertexSize = 3 * sizeof(half);
     mBatches.resize(ctBatches + 1);
 
+    int memoryUsed = 0;
     for(int i = 0; i <= ctBatches; ++i)
     {
         const int stripeOffset = i * ctVertices * vertexSize;

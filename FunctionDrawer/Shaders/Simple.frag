@@ -45,4 +45,5 @@ void main()
         vec3 specularReflection = specular * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)), shininess);
         color += lightIntensity * (diffuseReflection + specularReflection);
     }
+    //color = vec3((position.y + 1) / 2 + 0.1, 0.2, 0.2) + 0.00001 * color;
 }

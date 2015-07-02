@@ -69,10 +69,9 @@ bool intersectAABB(in vec3 d, out float Lmin, out float Lmax)
 
 float bisection(in float a, in float Ga, in float b, in vec3 d)
 {
-    float c;
     while(b - a > tolerance)
     {
-        c = (a + b) * 0.5; // new midpoint
+        float c = (a + b) * 0.5; // new midpoint
         float Gc = G(c, d);
         
         if(abs(Gc) < EPS)
@@ -86,7 +85,7 @@ float bisection(in float a, in float Ga, in float b, in vec3 d)
         else 
             b = c;
     }
-    return c;
+    return (a + b) * 0.5;
 }
 
 bool intersectFunction(in vec3 d, in float Lmin, in float Lmax, out vec3 intersection_point)

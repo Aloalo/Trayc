@@ -7,7 +7,6 @@
 
 #include "FunctionDrawer.h"
 #include <Engine/Geometry/IndexContainer.h>
-#include "TwoVariableFunction.h"
 
 struct Batch
 {
@@ -31,8 +30,6 @@ public:
 private:
     int GenerateMesh(int ctVertices);
     int GenerateIndices(int ctVertices);
-
-    TwoVariableFunction mFunction;
 
     std::vector<Batch> mBatches;
     GLuint mIBO;

@@ -25,7 +25,7 @@ struct TweakBarInputListener : public InputObserver
 
 void RenderingLoop()
 {
-    glDisable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     DefaultCameraHandler camHandler(Camera(vec3(7.0f, 9.2f, -6.0f), (float)UserSettings::Get().screenWidth / UserSettings::Get().screenHeight, 
         UserSettings::Get().FOV, 0.1f, UserSettings::Get().drawDistance), 7.0f, 0.006f);
 

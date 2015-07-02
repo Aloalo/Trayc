@@ -12,10 +12,10 @@
 class TwoVariableFunction
 {
 public:
-    TwoVariableFunction(void);
+    TwoVariableFunction(const std::string &expressionString);
 
-    void SetFunction(const std::string &expressionString);
     float operator()(const glm::vec2 &x);
+    float operator()(float x, float z);
 
 private:
     //Math stuff
