@@ -4,11 +4,9 @@
 
 #include "TwoVariableFunction.h"
 #include <iostream>
-#include "TmpHandlers.h"
 
 using namespace std;
 using namespace glm;
-using namespace engine;
 
 TwoVariableFunction::TwoVariableFunction(const string &expressionString)
 {
@@ -20,7 +18,6 @@ TwoVariableFunction::TwoVariableFunction(const string &expressionString)
     if(!mParser.compile(expressionString, mExpression))
     {
         cerr << "Invalid function: " << expressionString << endl;
-        inputHandler.SetQuit();
     }
 }
 

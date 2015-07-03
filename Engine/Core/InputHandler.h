@@ -18,7 +18,6 @@ namespace engine
         InputHandler(void);
 
         //Input event handling
-        void ProcessPolledEvents();
         void AddEventListener(InputObserver *listener);
         void RemoveEventListener(const InputObserver *listener);
 
@@ -30,6 +29,10 @@ namespace engine
         bool IsCursorFree() const;
 
     private:
+        friend class Scene;
+
+        void ProcessPolledEvents();
+
         bool mQuit;
         bool mIsCursorFree;
 

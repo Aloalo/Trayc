@@ -6,23 +6,39 @@
 #define EN_SCENE_H
 
 #include <vector>
-#include <Engine/Engine/Entity.h>
+#include <Engine/Utils/Profiler.h>
+#include <Engine/Engine/Renderer.h>
+#include <Engine/Core/UpdateableHandler.h>
+#include <Engine/Core/InputHandler.h>
+#include <Engine/Core/SDLHandler.h>
+#include <Engine/Core/CameraHandler.h>
 
 namespace engine
 {
-    enum MessageType
-    {
-        MESSAGE_NONE = 0,
-        MESSAGE_RENDER = 1 << 0,
-        MESSAGE_UPDATE = 1 << 1,
-    };
-
     class Scene
     {
     public:
-        Scene();
+        Scene(float timeStep);
+        ~Scene(void);
+
+        void Init(CameraHandler *cameraHandler, char const *programName);
+        void GameLoop();
+
+        const Camera& GetCamera() const;
+        Camera& GetCamera();
+        float GetAverageFrameLength() const;
+
+        InputHandler mInputHandler;
+        UpdateableHandler mUpdateableMenager;
+        Renderer mRenderer;
+        SDLHandler mSDLHandler;
     private:
-        std::vector<Entity*> mEntities;
+        inline void GameLoopStep();
+        inline void PrintProfile() const;
+
+        Profiler mProfiler;
+        int mCtFramesPassed; //For profiling
+        CameraHandler *mCameraHandler;
     };
 }
 

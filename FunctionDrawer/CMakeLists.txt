@@ -14,7 +14,6 @@ set(FunctionDrawer_SRCS
 # Define the header files.
 set(FunctionDrawer_HDRS
     GUIHandler.h
-    TmpHandlers.h
     UserSettings.h
     TwoVariableFunction.h
     FunctionRasterizer.h

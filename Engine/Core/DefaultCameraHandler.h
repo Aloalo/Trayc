@@ -15,15 +15,15 @@ namespace engine
         DefaultCameraHandler(const Camera &cam, float speed, float rotationSpeed);
         ~DefaultCameraHandler(void);
 
-        void KeyPress(const SDL_KeyboardEvent &e) override;
-        void MouseMotion(const SDL_MouseMotionEvent &e) override;
-        void WindowEvent(const SDL_WindowEvent &e) override;
-        void MouseWheel(const SDL_MouseWheelEvent &e) override;
+        virtual void KeyPress(const SDL_KeyboardEvent &e) override;
+        virtual void MouseMotion(const SDL_MouseMotionEvent &e) override;
+        virtual void WindowEvent(const SDL_WindowEvent &e) override;
+        virtual void MouseWheel(const SDL_MouseWheelEvent &e) override;
 
-        void Update(float dt) override;
+        virtual void Update(float dt) override;
 
-        glm::mat4 GetProjectionMatrix() const override;
-        glm::mat4 GetViewMatrix() const override;
+        virtual glm::mat4 GetProjectionMatrix() const override;
+        virtual glm::mat4 GetViewMatrix() const override;
 
     private:
         bool mObserveMouse;

@@ -66,6 +66,20 @@ namespace engine
         if(gs)
             Detach(*gs);
         Detach(*fs);
+
+        //Cache all the uniforms
+        GLint uniformCount;
+        glGetProgramiv(mID, GL_ACTIVE_UNIFORMS, &uniformCount);
+        const GLsizei bufferSize = 100;
+        for(GLint i = 0; i < uniformCount; ++i)
+        {
+            GLchar uniformName[bufferSize];
+            GLsizei length;
+            GLint size;
+            GLenum type;
+            glGetActiveUniform(mID, i, bufferSize, &length, &size, &type, uniformName);
+            mUniformLocations[string(uniformName)] = i;
+        }
     }
 
     void Program::Init(const char *name)
@@ -82,7 +96,6 @@ namespace engine
         f.close();
     }
 
-
     void Program::Use() const
     {
         glUseProgram(mID);
@@ -93,22 +106,22 @@ namespace engine
         glUseProgram(0);
     }
 
-    GLint Program::GetUniformLocation(const GLchar *name)
+    /*GLint Program::GetUniformLocation(const GLchar *name)
     {
-        const auto it = mUniformLocations.find(name);
-        if(it != mUniformLocations.end())
-            return it->second;
-        else
-        {
-            const GLint location = glGetUniformLocation(mID, name);
-            if(location == -1)
-            {
-                cerr << "Uniform '" << name << "' not in shader '" << mID << "'" << endl;
-            }
-            mUniformLocations[name] = location;
-            return location;
-        }
+    const auto it = mUniformLocations.find(name);
+    if(it != mUniformLocations.end())
+    return it->second;
+    else
+    {
+    const GLint location = glGetUniformLocation(mID, name);
+    if(location == -1)
+    {
+    cerr << "Uniform '" << name << "' not in shader '" << mID << "'" << endl;
     }
+    mUniformLocations[name] = location;
+    return location;
+    }
+    }*/
 
     GLuint Program::GetUniformBlockLocation(const GLchar *name)
     {
@@ -118,7 +131,7 @@ namespace engine
     GLint Program::GetUniformi(const GLchar *name)
     {
         GLint ret;
-        glGetUniformiv(mID, GetUniformLocation(name), &ret);
+        glGetUniformiv(mID, mUniformLocations[name], &ret);
         return ret;
     }
 
@@ -127,59 +140,59 @@ namespace engine
         glUniformBlockBinding(mID, GetUniformBlockLocation(name), bindingPoint);
     }
 
-    void Program::SetUniform(const GLchar *name, GLint x)
+    void Program::SetUniform(const string &name, GLint x) const
     {
-        glUniform1i(GetUniformLocation(name), x);
+        glUniform1i(mUniformLocations.find(name)->second, x);
     }
 
-    void Program::SetUniform(const GLchar *name, GLfloat x)
+    void Program::SetUniform(const string &name, GLfloat x) const
     {
-        glUniform1f(GetUniformLocation(name), x);
+        glUniform1f(mUniformLocations.find(name)->second, x);
     }
 
-    void Program::SetUniform(const GLchar *name, const vec2 &x)
+    void Program::SetUniform(const string &name, const vec2 &x) const
     {
-        glUniform2f(GetUniformLocation(name), x.x, x.y);
+        glUniform2f(mUniformLocations.find(name)->second, x.x, x.y);
     }
 
-    void Program::SetUniform(const GLchar *name, const vec3 &x)
+    void Program::SetUniform(const string &name, const vec3 &x) const
     {
-        glUniform3f(GetUniformLocation(name), x.x, x.y, x.z);
+        glUniform3f(mUniformLocations.find(name)->second, x.x, x.y, x.z);
     }
 
-    void Program::SetUniform(const GLchar *name, const vec4 &x)
+    void Program::SetUniform(const string &name, const vec4 &x) const
     {
-        glUniform4f(GetUniformLocation(name), x.x, x.y, x.z, x.w);
+        glUniform4f(mUniformLocations.find(name)->second, x.x, x.y, x.z, x.w);
     }
 
-    void Program::SetUniform(const GLchar *name, const mat3 &x)
+    void Program::SetUniform(const string &name, const mat3 &x) const
     {
-        glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, (float*)&x);
+        glUniformMatrix3fv(mUniformLocations.find(name)->second, 1, GL_FALSE, (float*)&x);
     }
 
-    void Program::SetUniform(const GLchar *name, const mat4 &x)
+    void Program::SetUniform(const string &name, const mat4 &x) const
     {
-        glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, (float*)&x);
+        glUniformMatrix4fv(mUniformLocations.find(name)->second, 1, GL_FALSE, (float*)&x);
     }
 
-    void Program::SetUniform(const GLchar *name, GLsizei cnt, const GLfloat *x)
+    void Program::SetUniform(const string &name, GLsizei cnt, const GLfloat *x) const
     {
-        glUniform1fv(GetUniformLocation(name), cnt, x);
+        glUniform1fv(mUniformLocations.find(name)->second, cnt, x);
     }
 
-    void Program::SetUniform(const GLchar *name, GLsizei cnt, const vec2 *x)
+    void Program::SetUniform(const string &name, GLsizei cnt, const vec2 *x) const
     {
-        glUniform2fv(GetUniformLocation(name), cnt, (float*)x);
+        glUniform2fv(mUniformLocations.find(name)->second, cnt, (float*)x);
     }
 
-    void Program::SetUniform(const GLchar *name, GLsizei cnt, const vec3 *x)
+    void Program::SetUniform(const string &name, GLsizei cnt, const vec3 *x) const
     {
-        glUniform3fv(GetUniformLocation(name), cnt, (float*)x);
+        glUniform3fv(mUniformLocations.find(name)->second, cnt, (float*)x);
     }
 
-    void Program::SetUniform(const GLchar *name, GLsizei cnt, const vec4 *x)
+    void Program::SetUniform(const string &name, GLsizei cnt, const vec4 *x) const
     {
-        glUniform4fv(GetUniformLocation(name), cnt, (float*)x);
+        glUniform4fv(mUniformLocations.find(name)->second, cnt, (float*)x);
     }
 
    /* void Program::bindSamplerObjectToSampler(const char *name, const TextureSampler &tex)

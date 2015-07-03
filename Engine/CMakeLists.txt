@@ -57,13 +57,13 @@ set(Engine_Utils
     Utils/StlExtensions.hpp
     Utils/InitialSettings.h
     Utils/NormalDrawer.h
-    Utils/FPSCounter.h
+    Utils/Profiler.h
     Utils/MathFunctions.h
     Utils/Utilities.h
     Utils/ErrorCheck.h
     Utils/InitialSettings.cpp
     Utils/NormalDrawer.cpp
-    Utils/FPSCounter.cpp
+    Utils/Profiler.cpp
     Utils/MathFunctions.cpp
     Utils/MathFunctions.tpp
     Utils/Utilities.cpp
@@ -71,18 +71,14 @@ set(Engine_Utils
 )
 
 set(Engine_Engine
-    Engine/Component.h
-	Engine/GraphicsComponent.h
-	Engine/PhysicsComponent.h
-	Engine/InputComponent.h
-	Engine/Entity.h
 	Engine/Scene.h
-    Engine/Component.cpp
-	Engine/GraphicsComponent.cpp
-	Engine/PhysicsComponent.cpp
-	Engine/InputComponent.cpp
-	Engine/Entity.cpp
 	Engine/Scene.cpp
+	Engine/Renderable.h
+	Engine/Renderable.cpp
+	Engine/Renderer.h
+	Engine/Renderer.cpp
+    Engine/Light.h
+	Engine/Light.cpp
 )
 
 set(Engine_GL_SHADERS

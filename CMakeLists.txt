@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
 project(Tracing)
 
 option(BUILD_TRAYC "Build the Trayc library" OFF)
+option(BUILD_FUNCTIONDRAWER "Build the FunctionDrawer" ON)
+option(BUILD_GAMEBLOCKS "Build GameBlocks" ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 set(SDL2_BUILDING_LIBRARY FALSE)
@@ -19,8 +21,16 @@ include_directories(
 )
 
 add_subdirectory(Engine)
-add_subdirectory(FunctionDrawer)
+
+if(BUILD_FUNCTIONDRAWER)
+    add_subdirectory(FunctionDrawer)
+endif(BUILD_FUNCTIONDRAWER)
+
 if(BUILD_TRAYC)
     add_subdirectory(Trayc)
     add_subdirectory(Tester)
 endif(BUILD_TRAYC)
+
+if(BUILD_GAMEBLOCKS)
+    add_subdirectory(GameBlocks)
+endif(BUILD_GAMEBLOCKS)

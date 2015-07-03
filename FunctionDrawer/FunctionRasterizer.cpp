@@ -77,12 +77,11 @@ int FunctionRasterizer::GenerateMesh(int ctVertices)
     
     TwoVariableFunction f(mF);
     AABB box;
-    const GLuint uiCtVertices = static_cast<GLuint>(ctVertices);
-    for(GLuint i = 0; i < uiCtVertices; ++i)
+    for(int i = 0; i < ctVertices; ++i)
     {
         const float x = float(i) * scale.x + minv.x;
         const half xhf(x);
-        for(GLuint j = 0; j < uiCtVertices; ++j)
+        for(int j = 0; j < ctVertices; ++j)
         {
             const float z = float(j) * scale.y + minv.y;
 
@@ -95,7 +94,7 @@ int FunctionRasterizer::GenerateMesh(int ctVertices)
             vertices.push_back(half(p.z));
         }
     }
-    mBox = box;
+    mBoundingBox = box;
 
     for(Batch &batch : mBatches)
     {
@@ -225,7 +224,7 @@ void FunctionRasterizer::ApplyFunction()
     mProgram.SetUniform("lightIntensity", vec3(0.9f));
 }
 
-void FunctionRasterizer::Draw(const Camera &cam)
+void FunctionRasterizer::Draw(const engine::Camera &cam) const
 {
     mProgram.Use();
 

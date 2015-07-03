@@ -1,8 +1,8 @@
 Opcenito:
     -Refactor
-        -Make Scene/World
-        -IndexContainer
+        -Settings
         -Rendering
+        -IndexContainer
     -Physics engine (ODE)
     -Game
 

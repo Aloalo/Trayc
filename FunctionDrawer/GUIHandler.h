@@ -6,24 +6,22 @@
 #define FD_GUIHANDLER_H
 
 #include <AntTweakBar.h>
-#include <Engine/Core/SDLHandler.h>
-#include <Engine/Core/InputObserver.h>
-#include <Engine/Core/CameraHandler.h>
+#include <Engine/Engine/Scene.h>
 #include "FunctionDrawer.h"
-#include "TmpHandlers.h"
 
-class GUIHandler : public engine::InputObserver
+class GUIHandler : public engine::InputObserver, public engine::Renderable
 {
 public:
-    static void CreateTweakBars(engine::CameraHandler *cam, FunctionDrawer *rasterizer, FunctionDrawer *tracer);
-    static FunctionDrawer *mCurrentRenderer;
-    static GLbitfield mClearMask;
-    static float mFPS;
-    static float mMiliseconds;
-    static void TW_CALL SwitchDrawer(void *userData);
+    static void CreateTweakBars(engine::Scene *scene);
+    ~GUIHandler(void);
 
 private:
-    static engine::CameraHandler *mCamera;
+    static float mFPS;
+    static float mMiliseconds;
+
+    static void TW_CALL SwitchDrawer(void *userData);
+    static engine::Scene *mScene;
+    static FunctionDrawer *mCurrentRenderer;
     static FunctionDrawer *mTracer;
     static FunctionDrawer *mRasterizer;
 
@@ -32,7 +30,8 @@ private:
     static void TW_CALL ApplyTracer(void *userData);
     static void TW_CALL ApplyRasterizer(void *userData);
 
-    void HandleEvent(const SDL_Event &e);
+    virtual void Draw(const engine::RenderingContext &rContext) const override;
+    virtual void HandleEvent(const SDL_Event &e) override;
 };
 
 #endif

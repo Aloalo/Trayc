@@ -30,25 +30,25 @@ namespace engine
         void Use() const;
         static void Unbind();
 
-        GLint GetUniformLocation(const GLchar *name);
+        //GLint GetUniformLocation(const GLchar *name);
         GLuint GetUniformBlockLocation(const GLchar *name);
         GLint GetUniformi(const GLchar *name);
 
         void SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint);
 
         //bind the program before using these
-        void SetUniform(const GLchar *name, GLint x);
-        void SetUniform(const GLchar *name, GLfloat x);
-        void SetUniform(const GLchar *name, const glm::vec2 &x);
-        void SetUniform(const GLchar *name, const glm::vec3 &x);
-        void SetUniform(const GLchar *name, const glm::vec4 &x);
-        void SetUniform(const GLchar *name, const glm::mat3 &x);
-        void SetUniform(const GLchar *name, const glm::mat4 &x);
+        void SetUniform(const std::string &name, GLint x) const;
+        void SetUniform(const std::string &name, GLfloat x) const;
+        void SetUniform(const std::string &name, const glm::vec2 &x) const;
+        void SetUniform(const std::string &name, const glm::vec3 &x) const;
+        void SetUniform(const std::string &name, const glm::vec4 &x) const;
+        void SetUniform(const std::string &name, const glm::mat3 &x) const;
+        void SetUniform(const std::string &name, const glm::mat4 &x) const;
 
-        void SetUniform(const GLchar *name, GLsizei cnt, const GLfloat *x);
-        void SetUniform(const GLchar *name, GLsizei cnt, const glm::vec2 *x);
-        void SetUniform(const GLchar *name, GLsizei cnt, const glm::vec3 *x);
-        void SetUniform(const GLchar *name, GLsizei cnt, const glm::vec4 *x);
+        void SetUniform(const std::string &name, GLsizei cnt, const GLfloat *x) const;
+        void SetUniform(const std::string &name, GLsizei cnt, const glm::vec2 *x) const;
+        void SetUniform(const std::string &name, GLsizei cnt, const glm::vec3 *x) const;
+        void SetUniform(const std::string &name, GLsizei cnt, const glm::vec4 *x) const;
         //void bindSamplerObjectToSampler(const char *samplerName, const TextureSampler& tex);
 
 
@@ -57,7 +57,7 @@ namespace engine
         void Detach(const Shader &sh) const;
 
         GLuint mID;
-        std::map<const GLchar*, GLint> mUniformLocations;
+        std::map<std::string, GLint> mUniformLocations;
     };
 }
 

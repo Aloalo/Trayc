@@ -15,6 +15,13 @@ namespace engine
     {
     }
 
+    SDLHandler::~SDLHandler(void)
+    {
+        SDL_GL_DeleteContext(mOpenglContext);
+        SDL_DestroyWindow(mWindow);
+        SDL_Quit();
+    }
+
     void SDLHandler::Init(Uint32 flags, const char *programName)
     {
         SDLErrCheck(SDL_Init(flags));
@@ -22,13 +29,6 @@ namespace engine
         SDL_VERSION(&mCompiled);
         SDL_GetVersion(&mLinked);
         mProgramName = programName;
-    }
-
-    void SDLHandler::CleanUp()
-    {
-        SDL_GL_DeleteContext(mOpenglContext);
-        SDL_DestroyWindow(mWindow);
-        SDL_Quit();
     }
 
     void SDLHandler::PrintSoftwareVersions() const
@@ -59,14 +59,14 @@ namespace engine
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, verionMajor));
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, versionMinor));
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, profile));
+        SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32));
 
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1));
 
         // create the opengl context
         mOpenglContext = SDL_GL_CreateContext(mWindow);
         SDLErrCheck(!mOpenglContext);
-    
-        //SDLErrCheck(SDL_GL_SetSwapInterval(1));
+        SDLErrCheck(SDL_GL_SetSwapInterval(0));
 
         glewExperimental = GL_TRUE;
         GLEWErrCheck(glewInit());

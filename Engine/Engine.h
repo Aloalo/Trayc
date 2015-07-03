@@ -5,7 +5,6 @@
 #ifndef EN_ENGINE_H
 #define EN_ENGINE_H
 
-#include <Engine/Geometry/Geometry.h>
-#include <Engine/Core/Core.h>
+#include <Engine/Engine/Scene.h>
 
 #endif

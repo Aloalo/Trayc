@@ -11,7 +11,7 @@ using namespace glm;
 namespace engine
 {
     DefaultCameraHandler::DefaultCameraHandler(const Camera &cam, float speed, float rotationSpeed) :
-        CameraHandler(cam), mObserveMouse(true), mSpeed(speed), mRotationSpeed(rotationSpeed), mSpringiness(100), mDx(0), mDy(0)
+        CameraHandler(cam), mObserveMouse(true), mSpeed(speed), mRotationSpeed(rotationSpeed), mSpringiness(30.0f), mDx(0), mDy(0)
     {
     }
 

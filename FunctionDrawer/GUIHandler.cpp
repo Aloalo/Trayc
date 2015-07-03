@@ -7,27 +7,35 @@
 #include <Engine/Core/SDLHandler.h>
 #include <fstream>
 
+#include "FunctionRasterizer.h"
+#include "FunctionTracer.h"
+
 using namespace std;
 using namespace engine;
 
-CameraHandler *GUIHandler::mCamera = nullptr;
+Scene *GUIHandler::mScene = nullptr;
 FunctionDrawer *GUIHandler::mRasterizer = nullptr;
 FunctionDrawer *GUIHandler::mTracer = nullptr;
 FunctionDrawer *GUIHandler::mCurrentRenderer = nullptr;
-GLbitfield GUIHandler::mClearMask = 0;
 float GUIHandler::mFPS = 0.0f;
 float GUIHandler::mMiliseconds = 0.0f;
 
-void GUIHandler::CreateTweakBars(CameraHandler *cam, FunctionDrawer *rasterizer, FunctionDrawer *tracer)
+GUIHandler::~GUIHandler(void)
 {
-    mCamera = cam;
-    mTracer = tracer;
-    mRasterizer = rasterizer;
+    delete mTracer;
+    delete mRasterizer;
+}
+
+void GUIHandler::CreateTweakBars(Scene *scene)
+{
+    mScene = scene;
+    mTracer = new FunctionTracer();
+    mRasterizer = new FunctionRasterizer();
     ApplyFunction(nullptr);
 
     mCurrentRenderer = mRasterizer;
+
     glEnable(GL_DEPTH_TEST);
-    mClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 
     TwDefine(" GLOBAL help='Two variable function drawer.\n"
         "Press [w/a/s/d/q/e] to move and use the mouse to rotate the camera.\n"
@@ -79,16 +87,16 @@ void TW_CALL GUIHandler::ApplyTracer(void *userData)
 
 void TW_CALL GUIHandler::ApplyRasterizer(void *userData)
 {
-    mCamera->mCamera.mFarDistance = UserSettings::Get().drawDistance;
+    mScene->GetCamera().mFarDistance = UserSettings::Get().drawDistance;
     mRasterizer->ApplyFunction();
 }
 
 void TW_CALL GUIHandler::ApplySettings(void *userData)
 {
-    mCamera->mCamera.mFoV = UserSettings::Get().FOV;
-    mCamera->mCamera.mFarDistance = UserSettings::Get().drawDistance;
-    mCamera->mCamera.mAspectRatio = float(UserSettings::Get().screenWidth) / float(UserSettings::Get().screenHeight);
-    sdlHandler.SetWindowSize(UserSettings::Get().screenWidth, UserSettings::Get().screenHeight);
+    mScene->GetCamera().mFoV = UserSettings::Get().FOV;
+    mScene->GetCamera().mFarDistance = UserSettings::Get().drawDistance;
+    mScene->GetCamera().mAspectRatio = float(UserSettings::Get().screenWidth) / float(UserSettings::Get().screenHeight);
+    mScene->mSDLHandler.SetWindowSize(UserSettings::Get().screenWidth, UserSettings::Get().screenHeight);
 
     mTracer->ApplyFunction();
 }
@@ -128,12 +136,17 @@ void TW_CALL GUIHandler::SwitchDrawer(void *userData)
     {
         mCurrentRenderer = mRasterizer;
         glEnable(GL_DEPTH_TEST);
-        mClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
     }
     else
     {
         mCurrentRenderer = mTracer;
         glDisable(GL_DEPTH_TEST);
-        mClearMask = GL_COLOR_BUFFER_BIT;
     }
+}
+
+void GUIHandler::Draw(const engine::RenderingContext &rContext) const
+{
+    mCurrentRenderer->Draw(mScene->GetCamera());
+    mMiliseconds = mScene->GetAverageFrameLength();
+    mFPS = 1000.0f / mMiliseconds;
 }

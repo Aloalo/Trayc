@@ -42,10 +42,10 @@ void FunctionDrawer::SetFunction(const string &F, const string &Fx, const string
 
 const AABB& FunctionDrawer::GetAABB() const
 {
-    return mBox;
+    return mBoundingBox;
 }
 
 void FunctionDrawer::SetAABB(const AABB &box)
 {
-    this->mBox = box;
+    mBoundingBox = box;
 }

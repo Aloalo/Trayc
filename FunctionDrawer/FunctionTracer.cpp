@@ -6,7 +6,6 @@
 #include "UserSettings.h"
 #include <Engine/Utils/Utilities.h>
 #include <Engine/Utils/MathFunctions.h>
-#include "TmpHandlers.h"
 
 using namespace std;
 using namespace glm;
@@ -77,8 +76,8 @@ void FunctionTracer::ApplyFunction()
 
     mProgram.Init(&mVertexShader, nullptr, &FragmentShader(newSource, mFileName.c_str()), mFileName.c_str());
 
-    AABB expanded(mBox);
-    const float expansion = 0.1f * (mBox.mMaxv.y - mBox.mMinv.y);
+    AABB expanded(mBoundingBox);
+    const float expansion = 0.1f * (mBoundingBox.mMaxv.y - mBoundingBox.mMinv.y);
     expanded.mMinv.y -= expansion;
     expanded.mMaxv.y += expansion;
 
@@ -105,7 +104,7 @@ void FunctionTracer::ApplyFunction()
     mProgram.SetUniform("missColor", vec3(0.3f, 0.3f, 0.3f));
 }
 
-void FunctionTracer::Draw(const Camera &cam)
+void FunctionTracer::Draw(const engine::Camera &cam) const
 {
     mProgram.Use();
 

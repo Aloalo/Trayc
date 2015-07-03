@@ -25,7 +25,7 @@ public:
     void SetFunction(const std::string &F, const std::string &Fx, const std::string &Fy);
     void ApplyFunction();
 
-    void Draw(const engine::Camera &cam);
+    virtual void Draw(const engine::Camera &cam) const override;
 
 private:
     int GenerateMesh(int ctVertices);
