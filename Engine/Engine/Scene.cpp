@@ -87,15 +87,14 @@ namespace engine
 
     void Scene::PrintProfile() const
     {
-        const float rendering = mProfiler.GetTargetAverage("rendering");
-        const float events = mProfiler.GetTargetAverage("events");
-        const float update = mProfiler.GetTargetAverage("update");
-
+        float sum = 0.0f;
         cout << "------PROFILE------" << endl;
-        cout << "Rendering: " << rendering << endl;
-        cout << "Event handling: " << events << endl;
-        cout << "Update: " << update << endl;
-        cout << "NET: " << rendering + update + events << endl << endl;
+        for(const auto &psf : mProfiler.GetAllTargetsAverage())
+        {
+            cout << psf.first + ": " << psf.second << endl;
+            sum += psf.second;
+        }
+        cout << "NET: " << sum << endl << endl;
     }
 
     const Camera& Scene::GetCamera() const
@@ -110,9 +109,7 @@ namespace engine
 
     float Scene::GetAverageFrameLength() const
     {
-        return mProfiler.GetTargetAverage("rendering") + 
-            mProfiler.GetTargetAverage("events") + 
-            mProfiler.GetTargetAverage("update");
+        return mProfiler.GetAverage();
     }
 
 }

@@ -8,6 +8,7 @@
 #include <deque>
 #include <string>
 #include <map>
+#include <vector>
 
 namespace engine
 {
@@ -19,8 +20,13 @@ namespace engine
 
         void StartClock(const std::string &targetName);
         void StopClock(const std::string &targetName);
-        //Return the average number of miliseconds over ctFrames for target
+        //Return the average time in ms over ctFrames for target
         float GetTargetAverage(const std::string &targetName) const;
+        float GetAverage() const;
+
+        //Return the average time in ms over ctFrames for all targets
+        std::vector<std::pair<std::string, float>> GetAllTargetsAverage() const;
+
 
 	private:
         std::map<std::string, std::deque<int>> mProfileTargets;

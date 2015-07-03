@@ -36,4 +36,21 @@ namespace engine
         return float(sum) / float(targetFrameLengths.size());
     }
 
+    float Profiler::GetAverage() const
+    {
+        float sum = 0.0f;
+        for(const auto &si : mProfileTargets)
+            sum += GetTargetAverage(si.first);
+        return sum;
+    }
+
+    using psf = pair<string, float>;
+    vector<psf> Profiler::GetAllTargetsAverage() const
+    {
+        vector<psf> ret;
+        for(const auto &si : mProfileTargets)
+            ret.push_back(psf(si.first, GetTargetAverage(si.first)));
+        return ret;
+    }
+
 };
