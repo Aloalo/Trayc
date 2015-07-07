@@ -1,0 +1,14 @@
+-Wireframe cube
+-Rotational camera handler
+-Instanced ball rendering
+
+Physics:
+    -Ball representation
+    -Plane representation
+    -Broad phase solvers
+        -n^2
+        -Octree
+        -grid
+        -paralelism
+    -vector fields
+    -big ball?

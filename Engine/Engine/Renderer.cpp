@@ -17,17 +17,14 @@ namespace engine
 
     Renderer::~Renderer(void)
     {
-        for(Program &p : mPrograms)
-            p.Delete();
     }
 
     void Renderer::InitRendering(const Camera *camera)
     {
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL);
+        glDepthFunc(GL_LESS);
         mCamera = camera;
-        //TODO: Programs
     }
 
     void Renderer::Render() const
@@ -46,7 +43,6 @@ namespace engine
             if(light.mIsEnabled)
             {
                 rContext.mLight = &light;
-                rContext.mProgram = &mPrograms[light.mFlag];
                 for(Renderable *renderable : mRenderables)
                 {
                     if(renderable->mIsActive)

@@ -8,21 +8,20 @@
 #include <Engine/Engine/Renderable.h>
 #include <Engine/Core/Camera.h>
 #include <vector>
-#include <map>
 
 namespace engine
 {
     enum ProgramType
     {
-        PROGRAM_DIRECTIONAL_LIGHT = LIGHT_DIRECTIONAL,
-        PROGRAM_POINT_LIGHT = LIGHT_POINT,
-        PROGRAM_SPOT_LIGHT = LIGHT_SPOT,
+        PROGRAM_NONE = 0,
+        PROGRAM_DIRECTIONAL_LIGHT = LightFlag::LIGHT_DIRECTIONAL,
+        PROGRAM_POINT_LIGHT = LightFlag::LIGHT_POINT,
+        PROGRAM_SPOT_LIGHT = LightFlag::LIGHT_SPOT,
 
-        PROGRAM_DIRECTIONAL_SHADOW = LIGHT_DIRECTIONAL | LIGHT_CASTS_SHADOWS,
-        PROGRAM_POINT_SHADOW = LIGHT_POINT | LIGHT_CASTS_SHADOWS,
-        PROGRAM_SPOT_SHADOW = LIGHT_SPOT | LIGHT_CASTS_SHADOWS,
+        PROGRAM_SHADOW_MAP = LightFlag::LIGHT_CASTS_SHADOWS,
+        PROGRAM_INSANCED = 1 << 4,
 
-        PROGRAM_COUNT = 7
+        PROGRAM_COUNT = 1 << 5
     };
 
     class Renderer
@@ -53,7 +52,6 @@ namespace engine
         const Camera *mCamera;
         GLbitfield mClearMask;
         std::vector<Light> mLights;
-        Program mPrograms[PROGRAM_COUNT];
         std::vector<Renderable*> mRenderables;
     };
 }

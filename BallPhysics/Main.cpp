@@ -1,0 +1,55 @@
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
+#include <Engine/Engine.h>
+#include <Engine/Core/DefaultCameraHandler.h>
+#include <Engine/Utils/Setting.h>
+#include <iostream>
+
+using namespace engine;
+using namespace std;
+using namespace glm;
+
+DefaultCameraHandler ConstructCameraHandler()
+{
+    const Setting<int> screenWidth("screenWidth");
+    const Setting<int> screenHeight("screenHeight");
+
+    if(screenWidth < 100 || screenWidth > 1920 || screenHeight < 100 || screenHeight > 1080)
+    {
+        cerr << "ERROR: Incorrect screen size, accepted values are 100x100 to 1920x1080." << endl;
+        exit(-1);
+    }
+
+    const Setting<float> FOV("FOV");
+
+    if(FOV < 30.0f || FOV > 120.0f)
+    {
+        cerr << "ERROR: Incorrect FOV, accepted values are 30 to 120." << endl;
+        exit(-1);
+    }
+
+    const float nearDist = 0.1f;
+    const float farDist = 1000.0f;
+    const vec3 cameraPos(7.0f, 9.2f, -6.0f);
+
+    const Camera camera(cameraPos, float(screenWidth) / float(screenHeight), FOV, nearDist, farDist);
+
+    const float moveSpeed = 7.0f;
+    const float rotSpeed = 0.006f;
+
+    return DefaultCameraHandler(camera, moveSpeed, rotSpeed);
+}
+
+int main(int argc, char *argv[])
+{
+    DefaultCameraHandler camHandler(ConstructCameraHandler());
+
+    Scene scene(1.0f / 60.0f);
+    scene.Init(&camHandler, argv[0]);
+    scene.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
+
+    scene.GameLoop();
+    return 0;
+}

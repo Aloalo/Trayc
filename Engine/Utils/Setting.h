@@ -25,6 +25,11 @@ namespace engine
             return mValue;
         }
 
+        operator const T&() const
+        {
+            return mValue;
+        }
+
         T& operator=(const T &v)
         {
             return mValue = v;

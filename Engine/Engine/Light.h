@@ -11,9 +11,10 @@ namespace engine
 {
     enum LightFlag
     {
-        LIGHT_DIRECTIONAL = 0,
-        LIGHT_POINT = 1,
-        LIGHT_SPOT = 2,
+        LIGHT_NONE = 0,
+        LIGHT_DIRECTIONAL = 1 << 0,
+        LIGHT_POINT = 1 << 1,
+        LIGHT_SPOT = 1 << 2,
 
         LIGHT_CASTS_SHADOWS = 1 << 3
     };

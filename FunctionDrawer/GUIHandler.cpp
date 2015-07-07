@@ -128,6 +128,9 @@ void GUIHandler::HandleEvent(const SDL_Event &e)
     }
     else if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_l)
         SwitchDrawer(nullptr);
+
+    if(mScene->mInputHandler.IsCursorFree() == false)
+        TwEventSDL(&e, mScene->mSDLHandler.GetLinkedVersion().major, mScene->mSDLHandler.GetLinkedVersion().minor);
 }
 
 void TW_CALL GUIHandler::SwitchDrawer(void *userData)
@@ -149,4 +152,6 @@ void GUIHandler::Draw(const engine::RenderingContext &rContext) const
     mCurrentRenderer->Draw(mScene->GetCamera());
     mMiliseconds = mScene->GetAverageFrameLength();
     mFPS = 1000.0f / mMiliseconds;
+
+    TwDraw();
 }

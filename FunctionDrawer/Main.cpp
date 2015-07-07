@@ -12,32 +12,6 @@ using namespace engine;
 using namespace std;
 using namespace glm;
 
-struct TweakBarHandler : public InputObserver, public Renderable
-{
-    TweakBarHandler(const Scene &scene)
-        : mScene(scene)
-    {}
-
-    ~TweakBarHandler(void)
-    {
-        TwTerminate();
-    }
-
-    virtual void HandleEvent(const SDL_Event &e) override
-    {
-        if(mScene.mInputHandler.IsCursorFree() == false)
-            TwEventSDL(&e, mScene.mSDLHandler.GetLinkedVersion().major, mScene.mSDLHandler.GetLinkedVersion().minor);
-    }
-
-    virtual void Draw(const engine::RenderingContext &rContext) const override
-    {
-        TwDraw();
-    }
-
-private:
-    const Scene &mScene;
-};
-
 void RenderingLoop(char const *programName)
 {
     DefaultCameraHandler camHandler(Camera(vec3(7.0f, 9.2f, -6.0f), (float)UserSettings::Get().screenWidth / UserSettings::Get().screenHeight,
@@ -59,12 +33,10 @@ void RenderingLoop(char const *programName)
     scene.mInputHandler.AddEventListener(&guiHandler);
     scene.mRenderer.AddRenderable(&guiHandler);
 
-    TweakBarHandler twHandler(scene);
-    scene.mInputHandler.AddEventListener(&twHandler);
-    scene.mRenderer.AddRenderable(&twHandler);
-
     scene.mRenderer.AddLight(Light());
     scene.GameLoop();
+
+    TwTerminate();
 }
 
 int main(int argc, char *argv[])

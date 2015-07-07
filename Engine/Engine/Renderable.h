@@ -22,8 +22,9 @@ namespace engine
         //Projection * View
         glm::mat4 mVP;
 
+        //normal matrix = transpose(inverse(mat3(modelView)));
+
         const Light *mLight;
-        const Program *mProgram;
         const Camera *mCamera;
     };
 
