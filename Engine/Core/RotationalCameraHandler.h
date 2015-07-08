@@ -12,7 +12,7 @@ namespace engine
     class RotationalCameraHandler : public CameraHandler
     {
     public:
-        RotationalCameraHandler(const Camera &cam, const glm::vec3 &lookAtPoint, float rotationSpeed);
+        RotationalCameraHandler(const Camera &cam, const glm::vec3 &lookAtPoint, float rotationSpeed, float zoomSpeed);
         ~RotationalCameraHandler(void);
 
         virtual void KeyPress(const SDL_KeyboardEvent &e) override;
@@ -31,6 +31,7 @@ namespace engine
         bool mMouseDown;
         bool mObserveMouse;
 
+        float mZoomSpeed;
         float mRotationSpeed;
         float mRadius;
         glm::vec3 mLookAtPoint;

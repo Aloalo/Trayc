@@ -55,6 +55,8 @@ WireCube::WireCube(float cubeSize)
     mProgram.Use();
     mProgram.SetUniform("color", vec3(1.0f, 0.3f, 0.3f));
     mProgram.Unbind();
+
+    glEnable(GL_LINE_SMOOTH);
 }
 
 WireCube::~WireCube(void)

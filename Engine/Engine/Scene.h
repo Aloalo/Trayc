@@ -21,7 +21,7 @@ namespace engine
         Scene(float timeStep);
         ~Scene(void);
 
-        void Init(CameraHandler *cameraHandler, char const *programName);
+        void Init(CameraHandler *cameraHandler, char const *programName, int screenWidth, int screenHeight);
         void GameLoop();
 
         const Camera& GetCamera() const;
@@ -37,6 +37,7 @@ namespace engine
         inline void PrintProfile() const;
 
         Profiler mProfiler;
+        const int mFrameCap;
         int mCtFramesPassed; //For profiling
         CameraHandler *mCameraHandler;
     };

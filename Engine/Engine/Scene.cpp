@@ -11,7 +11,7 @@ using namespace std;
 namespace engine
 {
     Scene::Scene(float timeStep)
-        : mUpdateableMenager(timeStep), mCameraHandler(nullptr), mCtFramesPassed(120)
+        : mUpdateableMenager(timeStep), mCameraHandler(nullptr), mFrameCap(100), mCtFramesPassed(0)
     {
     }
 
@@ -19,7 +19,7 @@ namespace engine
     {
     }
 
-    void Scene::Init(CameraHandler *cameraHandler, char const *programName)
+    void Scene::Init(CameraHandler *cameraHandler, char const *programName, int screenWidth, int screenHeight)
     {
         assert(cameraHandler != nullptr);
         mCameraHandler = cameraHandler;
@@ -32,8 +32,8 @@ namespace engine
             "Function Drawer",
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
-            1280, //TODO: settings
-            720,
+            screenWidth,
+            screenHeight,
             SDL_WINDOW_OPENGL |
             SDL_WINDOW_RESIZABLE |
             SDL_WINDOW_SHOWN
@@ -50,9 +50,9 @@ namespace engine
 
         mRenderer.InitRendering(mCameraHandler);
 
-        mProfiler.AddProfileTarget("rendering", mCtFramesPassed);
-        mProfiler.AddProfileTarget("events", mCtFramesPassed);
-        mProfiler.AddProfileTarget("update", mCtFramesPassed);
+        mProfiler.AddProfileTarget("rendering", mFrameCap);
+        mProfiler.AddProfileTarget("events", mFrameCap);
+        mProfiler.AddProfileTarget("update", mFrameCap);
     }
 
     void Scene::GameLoop()
@@ -63,11 +63,6 @@ namespace engine
 
     void Scene::GameLoopStep()
     {
-        mProfiler.StartClock("rendering");
-        mRenderer.Render();
-        mSDLHandler.SwapBuffers();
-        mProfiler.StopClock("rendering");
-
         mProfiler.StartClock("events");
         mInputHandler.ProcessPolledEvents();
         mProfiler.StopClock("events");
@@ -76,11 +71,16 @@ namespace engine
         mUpdateableMenager.Update();
         mProfiler.StopClock("update");
 
+        mProfiler.StartClock("rendering");
+        mRenderer.Render();
+        mSDLHandler.SwapBuffers();
+        mProfiler.StopClock("rendering");
+
         //Profiling
-        mCtFramesPassed--;
-        if(!mCtFramesPassed)
+        ++mCtFramesPassed;
+        if(mCtFramesPassed == mFrameCap)
         {
-            mCtFramesPassed = 120;
+            mCtFramesPassed = 0;
             PrintProfile();
         }
     }

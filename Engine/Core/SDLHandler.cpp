@@ -66,11 +66,15 @@ namespace engine
         // create the opengl context
         mOpenglContext = SDL_GL_CreateContext(mWindow);
         SDLErrCheck(!mOpenglContext);
-        SDLErrCheck(SDL_GL_SetSwapInterval(1));
 
         glewExperimental = GL_TRUE;
         GLEWErrCheck(glewInit());
         GLErrCheck(true);
+    }
+
+    void SDLHandler::VsyncMode(int mode) const
+    {
+        SDLErrCheck(SDL_GL_SetSwapInterval(mode));
     }
 
     void SDLHandler::SwapBuffers()

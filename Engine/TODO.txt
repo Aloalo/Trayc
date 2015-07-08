@@ -1,6 +1,6 @@
 Opcenito:
+    -in source shaders
     -Refactor
-        -Settings
         -Rendering
         -IndexContainer
     -Physics engine (ODE)

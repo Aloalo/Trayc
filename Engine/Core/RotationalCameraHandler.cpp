@@ -12,9 +12,9 @@ using namespace glm;
 
 namespace engine
 {
-    RotationalCameraHandler::RotationalCameraHandler(const Camera &cam, const vec3 &lookAtPoint, float rotationSpeed) :
+    RotationalCameraHandler::RotationalCameraHandler(const Camera &cam, const vec3 &lookAtPoint, float rotationSpeed, float zoomSpeed) :
         CameraHandler(cam), mObserveMouse(true), mRotationSpeed(rotationSpeed), mLookAtPoint(lookAtPoint), 
-        mRadius(length(cam.mPosition - lookAtPoint)), mSpringiness(10.0f), mDx(0.0f), mDy(0.0f), mMouseDown(false)
+        mRadius(length(cam.mPosition - lookAtPoint)), mSpringiness(10.0f), mDx(0.0f), mDy(0.0f), mMouseDown(false), mZoomSpeed(zoomSpeed)
     {
         mCamera.SetDirection(mLookAtPoint - mCamera.mPosition);
     }
@@ -54,10 +54,10 @@ namespace engine
 
     void RotationalCameraHandler::MouseWheel(const SDL_MouseWheelEvent &e)
     {
-        const float dR = float(-e.y);
+        const float dR = mZoomSpeed * float(-e.y);
         const vec3 dP = normalize(mCamera.mPosition - mLookAtPoint) * dR;
 
-        if(length(mCamera.mPosition + dP) > 0.1f)
+        if(length(mCamera.mPosition + dP) > mZoomSpeed)
             mCamera.mPosition += normalize(mCamera.mPosition - mLookAtPoint) * dR;
     }
 

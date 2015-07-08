@@ -23,6 +23,9 @@ namespace engine
         void GetWindowSize(int *w, int *h);
         void SetWindowSize(int w, int h);
 
+        //0 -> off, 1-> on
+        void VsyncMode(int mode) const;
+
         const SDL_version& GetLinkedVersion() const;
         const SDL_version& GetCompiledVersion() const;
         char const* GetProgramName() const;

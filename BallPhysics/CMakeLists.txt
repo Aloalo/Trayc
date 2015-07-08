@@ -3,15 +3,17 @@ project(BallPhysics)
 # Define the source files.
 set(BallPhysics_SRCS
     Main.cpp
+    BallRenderer.h
+    BallRenderer.cpp
     WireCube.cpp
+    WireCube.h
 )
 
 # Define the header files.
 set(BallPhysics_HDRS
-    WireCube.h
 )
 
-add_executable(BallPhysics ${BallPhysics_SRCS} ${BallPhysics_HDRS})
+add_executable(BallPhysics ${BallPhysics_SRCS})
 
 target_link_libraries(BallPhysics
     Engine
