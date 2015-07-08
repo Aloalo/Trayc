@@ -17,6 +17,8 @@ set(Engine_Core
     Core/Camera.cpp
     Core/CameraHandler.cpp
     Core/DefaultCameraHandler.cpp
+    Core/RotationalCameraHandler.cpp
+    Core/RotationalCameraHandler.h
     Core/InputHandler.cpp
     Core/InputObserver.cpp
     Core/Updateable.cpp
@@ -26,6 +28,8 @@ set(Engine_Core
 
 set(Engine_Geometry
     Geometry/Geometry.h
+    Geometry/GeometryMeshes.h
+    Geometry/GeometryMeshes.cpp
     Geometry/TriangleMesh.h
     Geometry/IndexContainer.h
     Geometry/Material.h

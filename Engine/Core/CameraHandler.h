@@ -21,7 +21,9 @@ namespace engine
         virtual glm::mat4 GetProjectionMatrix() const = 0;
         virtual glm::mat4 GetViewMatrix() const = 0;
         const glm::vec3& GetPosition() const;
-
+    protected:
+        friend class Renderer;
+        friend class Scene;
         Camera mCamera;
     };
 }

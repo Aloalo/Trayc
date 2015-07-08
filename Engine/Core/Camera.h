@@ -22,6 +22,7 @@ namespace engine
         glm::mat4 GetViewMatrix() const;
 
         void SetDirection(const glm::vec3 &direction);
+        void SetLookAtPoint(const glm::vec3 &p);
 
         glm::vec3 GetDirection() const;
         glm::vec3 GetRight() const;

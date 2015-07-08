@@ -18,16 +18,19 @@ namespace engine
     }
 
     Program::Program(const VertexShader &vs, const GeometryShader &gs, const FragmentShader &fs)
+        : mID(0)
     {
         Init(&vs, &gs, &fs);
     }
 
     Program::Program(const VertexShader &vs, const FragmentShader &fs)
+        : mID(0)
     {
         Init(&vs, nullptr, &fs);
     }
 
     Program::Program(const char *name)
+        : mID(0)
     {
         Init(name);
     }
@@ -40,8 +43,7 @@ namespace engine
 
     void Program::Init(const VertexShader *vs, const GeometryShader *gs, const FragmentShader *fs, const char *name)
     {
-        if(mID)
-            Delete();
+        Delete();
 
         mID = glCreateProgram();
         Attach(*vs);

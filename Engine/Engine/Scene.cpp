@@ -48,7 +48,7 @@ namespace engine
         mInputHandler.AddEventListener(mCameraHandler);
         mUpdateableMenager.AddUpdateable(mCameraHandler);
 
-        mRenderer.InitRendering(&mCameraHandler->mCamera);
+        mRenderer.InitRendering(mCameraHandler);
 
         mProfiler.AddProfileTarget("rendering", mCtFramesPassed);
         mProfiler.AddProfileTarget("events", mCtFramesPassed);

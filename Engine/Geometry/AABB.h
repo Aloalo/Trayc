@@ -12,6 +12,7 @@ namespace engine
     struct AABB
     {
         AABB(void);
+        AABB(const glm::vec3 &minv, const glm::vec3 &maxv);
 
         AABB& operator|=(const glm::vec3 &p);
         AABB& operator|=(const AABB &box);

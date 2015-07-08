@@ -3,15 +3,17 @@
 */
 
 #include <Engine/Engine.h>
-#include <Engine/Core/DefaultCameraHandler.h>
+#include <Engine/Core/RotationalCameraHandler.h>
 #include <Engine/Utils/Setting.h>
 #include <iostream>
+#include "WireCube.h"
 
 using namespace engine;
 using namespace std;
 using namespace glm;
 
-DefaultCameraHandler ConstructCameraHandler()
+
+RotationalCameraHandler ConstructCameraHandler()
 {
     const Setting<int> screenWidth("screenWidth");
     const Setting<int> screenHeight("screenHeight");
@@ -36,19 +38,24 @@ DefaultCameraHandler ConstructCameraHandler()
 
     const Camera camera(cameraPos, float(screenWidth) / float(screenHeight), FOV, nearDist, farDist);
 
-    const float moveSpeed = 7.0f;
     const float rotSpeed = 0.006f;
 
-    return DefaultCameraHandler(camera, moveSpeed, rotSpeed);
+    return RotationalCameraHandler(camera, vec3(0.0f), rotSpeed);
 }
+
+
 
 int main(int argc, char *argv[])
 {
-    DefaultCameraHandler camHandler(ConstructCameraHandler());
+    RotationalCameraHandler camHandler(ConstructCameraHandler());
 
     Scene scene(1.0f / 60.0f);
     scene.Init(&camHandler, argv[0]);
     scene.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
+
+    WireCube cube(2.0f);
+    scene.mRenderer.AddRenderable(&cube);
+    scene.mRenderer.AddLight(Light());
 
     scene.GameLoop();
     return 0;

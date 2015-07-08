@@ -3,7 +3,6 @@
 */
 
 #include <Engine/Core/Camera.h>
-#include <Engine/Utils/MathFunctions.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <cstdio>
 
@@ -29,15 +28,11 @@ namespace engine
     {
         mYaw += yaw;
         mPitch += pitch;
-        if(mPitch > HALF_PI)
-            mPitch = HALF_PI;
-        if(mPitch < -HALF_PI)
-            mPitch = -HALF_PI;
     }
 
     mat4 Camera::GetProjectionMatrix() const
     {
-        return perspective(mFoV, mAspectRatio, mNearDistance, mFarDistance);
+        return perspective(radians(mFoV), mAspectRatio, mNearDistance, mFarDistance);
     }
 
     mat4 Camera::GetViewMatrix() const
@@ -66,4 +61,17 @@ namespace engine
     {
         return cross(GetRight(), GetDirection());
     }
+
+    void Camera::SetDirection(const glm::vec3 &direction)
+    {
+        const vec3 dir(normalize(direction));
+        mPitch = asinf(dir.y);
+        mYaw = atan2f(dir.x, dir.z);
+    }
+
+    void Camera::SetLookAtPoint(const glm::vec3 &p)
+    {
+        SetDirection(p - mPosition);
+    }
+
 }

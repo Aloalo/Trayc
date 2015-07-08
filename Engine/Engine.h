@@ -5,6 +5,8 @@
 #ifndef EN_ENGINE_H
 #define EN_ENGINE_H
 
+#define GLM_FORCE
+
 #include <Engine/Engine/Scene.h>
 
 #endif

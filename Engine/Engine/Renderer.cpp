@@ -19,7 +19,7 @@ namespace engine
     {
     }
 
-    void Renderer::InitRendering(const Camera *camera)
+    void Renderer::InitRendering(const CameraHandler *camera)
     {
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
@@ -36,7 +36,7 @@ namespace engine
         rContext.mV = mCamera->GetViewMatrix();
         rContext.mP = mCamera->GetProjectionMatrix();
         rContext.mVP = rContext.mP * rContext.mV;
-        rContext.mCamera = mCamera;
+        rContext.mCamera = &mCamera->mCamera;
 
         for(const Light &light : mLights)
         {

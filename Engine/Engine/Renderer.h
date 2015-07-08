@@ -6,7 +6,7 @@
 #define EN_RENDERER_H
 
 #include <Engine/Engine/Renderable.h>
-#include <Engine/Core/Camera.h>
+#include <Engine/Core/CameraHandler.h>
 #include <vector>
 
 namespace engine
@@ -46,10 +46,10 @@ namespace engine
     private:
         friend class Scene;
         //Rendering
-        void InitRendering(const Camera *camera);
+        void InitRendering(const CameraHandler *camera);
         void Render() const;
 
-        const Camera *mCamera;
+        const CameraHandler *mCamera;
         GLbitfield mClearMask;
         std::vector<Light> mLights;
         std::vector<Renderable*> mRenderables;

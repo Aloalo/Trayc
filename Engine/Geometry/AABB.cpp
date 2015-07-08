@@ -15,6 +15,11 @@ namespace engine
     {
     }
 
+    AABB::AABB(const glm::vec3 &minv, const glm::vec3 &maxv)
+        : mMinv(minv), mMaxv(maxv)
+    {
+    }
+
     AABB& AABB::operator|=(const glm::vec3 &p)
     {
         mMinv = glm::min(mMinv, p);

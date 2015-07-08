@@ -3,10 +3,12 @@ project(BallPhysics)
 # Define the source files.
 set(BallPhysics_SRCS
     Main.cpp
+    WireCube.cpp
 )
 
 # Define the header files.
-set(GameBlocks_HDRS
+set(BallPhysics_HDRS
+    WireCube.h
 )
 
 add_executable(BallPhysics ${BallPhysics_SRCS} ${BallPhysics_HDRS})

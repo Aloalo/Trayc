@@ -5,6 +5,7 @@
 #include <Engine/Core/DefaultCameraHandler.h>
 #include <Engine/Core/SDLHandler.h>
 #include <Engine/Core/InputHandler.h>
+#include <Engine/Utils/MathFunctions.h>
 
 using namespace glm;
 
@@ -81,6 +82,10 @@ namespace engine
         const float dxr = cf * mDx;
         const float dyr = cf * mDy;
         mCamera.Rotate(dxr, dyr);
+        if(mCamera.mPitch > HALF_PI)
+            mCamera.mPitch = HALF_PI;
+        if(mCamera.mPitch < -HALF_PI)
+            mCamera.mPitch = -HALF_PI;
         mDx -= dxr;
         mDy -= dyr;
 
