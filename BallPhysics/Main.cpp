@@ -37,8 +37,9 @@ RotationalCameraHandler ConstructCameraHandler(int screenWidth, int screenHeight
 
     const float rotSpeed = 0.006f;
     const float zoomSpeed = 6.0f;
+    const float springiness = 15.0f;
 
-    return RotationalCameraHandler(camera, vec3(0.0f), rotSpeed, zoomSpeed);
+    return RotationalCameraHandler(camera, vec3(0.0f), rotSpeed, zoomSpeed, springiness);
 }
 
 vector<vec3> InitBalls(int ctBalls, float cubeSize, float ballRadius)
@@ -87,8 +88,6 @@ int main(int argc, char *argv[])
     BallRenderer ballRenderer(ctBalls, cubeSize, ballRadius, screenHeight, FOV, light.mPosition);
     ballRenderer.SetBalls(InitBalls(ctBalls, cubeSize, ballRadius).data());
     scene.mRenderer.AddRenderable(&ballRenderer);
-
-    
 
     scene.mRenderer.AddLight(light);
     scene.GameLoop();

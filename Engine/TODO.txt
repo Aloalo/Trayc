@@ -1,8 +1,8 @@
 Opcenito:
-    -in source shaders
+    -In source shaders
+    -Rename TriangleMesh to Mesh
     -Refactor
         -Rendering
         -IndexContainer
-    -Physics engine (ODE)
-    -Game
+    -Physics engine (ODE)?
 

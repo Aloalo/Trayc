@@ -16,12 +16,14 @@ namespace engine
     public:
         UpdateableHandler(float timeStep);
 
-        //Update handling
-        void Update();
         void AddUpdateable(Updateable *updateable);
         void RemoveUpdateable(const Updateable *updateable);
 
     private:
+        friend class Scene;
+        //Update handling
+        void Update();
+
         float mTimeStep;
         float mAccumulator;
 

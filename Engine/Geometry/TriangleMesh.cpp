@@ -6,4 +6,7 @@
 
 namespace engine
 {
+    TriangleMesh::TriangleMesh(void)
+    {
+    }
 }

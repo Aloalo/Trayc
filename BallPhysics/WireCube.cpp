@@ -4,6 +4,7 @@
 
 #include "WireCube.h"
 #include <vector>
+#include <Engine/Geometry/GeometryMeshes.h>
 
 using namespace engine;
 using namespace glm;
@@ -16,29 +17,9 @@ WireCube::WireCube(float cubeSize)
     //Load mesh to GPU
     glGenBuffers(1, &mVBO);
 
-    static const vec3 vertices[] =  
-    {
-        vec3(1.0f, 1.0f, 1.0f),
-        vec3(1.0f, 1.0f, -1.0f),
-        vec3(1.0f, -1.0f, 1.0f),
-        vec3(1.0f, -1.0f, -1.0f),
-        vec3(-1.0f, 1.0f, 1.0f),
-        vec3(-1.0f, 1.0f, -1.0f),
-        vec3(-1.0f, -1.0f, 1.0f),
-        vec3(-1.0f, -1.0f, -1.0f),
-    };
-
-    static const GLushort indices[] =
-    {
-        0, 1, 0, 2, 0, 4,
-        3, 1, 3, 2, 3, 7,
-        5, 1, 5, 7, 5, 4,
-        6, 2, 6, 7, 6, 4
-    };
-
-    vector<vec3> vertexArray;
-    for(GLushort i : indices)
-        vertexArray.push_back(vertices[i] * cubeSize);
+    vector<vec3> vertexArray(GetCubeMesh(false, true).mPositions);
+    for(vec3 &p : vertexArray)
+        p *= cubeSize;
 
     glBindVertexArray(mVAO);
     {

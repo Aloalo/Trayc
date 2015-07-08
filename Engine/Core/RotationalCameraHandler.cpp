@@ -12,9 +12,9 @@ using namespace glm;
 
 namespace engine
 {
-    RotationalCameraHandler::RotationalCameraHandler(const Camera &cam, const vec3 &lookAtPoint, float rotationSpeed, float zoomSpeed) :
-        CameraHandler(cam), mObserveMouse(true), mRotationSpeed(rotationSpeed), mLookAtPoint(lookAtPoint), 
-        mRadius(length(cam.mPosition - lookAtPoint)), mSpringiness(10.0f), mDx(0.0f), mDy(0.0f), mMouseDown(false), mZoomSpeed(zoomSpeed)
+    RotationalCameraHandler::RotationalCameraHandler(const Camera &cam, const vec3 &lookAtPoint, float rotationSpeed, float zoomSpeed, float springiness) :
+        CameraHandler(cam), mObserveMouse(true), mRotationSpeed(rotationSpeed), mLookAtPoint(lookAtPoint), mRadius(length(cam.mPosition - lookAtPoint)), 
+        mDx(0.0f), mDy(0.0f), mMouseDown(false), mZoomSpeed(zoomSpeed), mSpringiness(springiness)
     {
         mCamera.SetDirection(mLookAtPoint - mCamera.mPosition);
     }
@@ -72,7 +72,7 @@ namespace engine
 
     void RotationalCameraHandler::Update(float deltaTime)
     {
-        const float cf = 1 - expf(-mSpringiness * deltaTime);
+        const float cf = 1.0f - expf(-mSpringiness * deltaTime);
         const float dxr = cf * mDx;
         float dyr = cf * mDy;
         mCamera.Rotate(-dxr, -dyr);

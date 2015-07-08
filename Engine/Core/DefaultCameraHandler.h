@@ -9,10 +9,11 @@
 
 namespace engine
 {
+    //Models a free moving camera
     class DefaultCameraHandler : public CameraHandler
     {
     public:
-        DefaultCameraHandler(const Camera &cam, float speed, float rotationSpeed);
+        DefaultCameraHandler(const Camera &cam, float moveSpeed, float rotationSpeed, float springiness);
         ~DefaultCameraHandler(void);
 
         virtual void KeyPress(const SDL_KeyboardEvent &e) override;

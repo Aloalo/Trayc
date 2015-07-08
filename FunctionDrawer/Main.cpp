@@ -14,17 +14,20 @@ using namespace glm;
 
 void RenderingLoop(char const *programName)
 {
-    DefaultCameraHandler camHandler(Camera(vec3(7.0f, 9.2f, -6.0f), (float)UserSettings::Get().screenWidth / UserSettings::Get().screenHeight,
-        UserSettings::Get().FOV, 0.1f, UserSettings::Get().drawDistance), 7.0f, 0.006f);
+    const int screenWidth = UserSettings::Get().screenWidth;
+    const int screenHeight = UserSettings::Get().screenHeight;
+
+    const Camera camera(vec3(7.0f, 9.2f, -6.0f), (float)screenWidth / screenHeight, UserSettings::Get().FOV, 0.1f, UserSettings::Get().drawDistance);
+    DefaultCameraHandler camHandler(camera, 7.0f, 0.006f, 25.0f);
 
     Scene scene(1.0f / 60.0f);
 
-    scene.Init(&camHandler, programName, UserSettings::Get().screenWidth, UserSettings::Get().screenHeight);
+    scene.Init(&camHandler, programName, screenWidth, screenHeight);
 
     //Init AntTweakBar
     TwInit(TW_OPENGL_CORE, nullptr);
 
-    TwWindowSize(UserSettings::Get().screenWidth, UserSettings::Get().screenHeight);
+    TwWindowSize(screenWidth, screenHeight);
 
     scene.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
 
