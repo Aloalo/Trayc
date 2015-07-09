@@ -23,7 +23,7 @@ namespace engine
     {
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
+        glDepthFunc(GL_LEQUAL);
         mCamera = camera;
     }
 

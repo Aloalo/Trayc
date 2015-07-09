@@ -7,11 +7,12 @@
 
 #include <Engine/Engine/Renderable.h>
 #include <Engine/Engine/Scene.h>
+#include "BallPhysics.h"
 
 class BallRenderer : public engine::Renderable
 {
 public:
-    BallRenderer(int ctBalls, float cubeSize, float ballRadius, int windowHeight, float FOV, const glm::vec3 &lightDir);
+    BallRenderer(const BallPhysics *mPhysics, int ctBalls, float cubeSize, float ballRadius, int windowHeight, float FOV, const glm::vec3 &lightDir);
     ~BallRenderer(void);
 
     //Copies memory to GPU, expensive
@@ -20,6 +21,7 @@ public:
 
 private:
     const int mCtBalls;
+    const BallPhysics *mPhysics;
     GLuint mVBO;
     engine::Program mProgram;
 };

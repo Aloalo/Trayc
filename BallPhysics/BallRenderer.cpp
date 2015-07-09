@@ -11,8 +11,8 @@ using namespace engine;
 using namespace glm;
 using namespace std;
 
-BallRenderer::BallRenderer(int ctBalls, float cubeSize, float ballRadius, int windowHeight, float FOV, const vec3 &lightDir)
-    : mCtBalls(ctBalls), mProgram("Shaders/PointSpheres")
+BallRenderer::BallRenderer(const BallPhysics *physics, int ctBalls, float cubeSize, float ballRadius, int windowHeight, float FOV, const vec3 &lightDir)
+    : mPhysics(physics), mCtBalls(ctBalls), mProgram("Shaders/PointSpheres")
 {
     mBoundingBox = AABB(vec3(-cubeSize), vec3(cubeSize));
     glGenBuffers(1, &mVBO);
@@ -29,8 +29,9 @@ BallRenderer::BallRenderer(int ctBalls, float cubeSize, float ballRadius, int wi
     glBindVertexArray(mVAO);
     {
         glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-        //Positions and colors
+        //Allocate space for positions and colors
         glBufferData(GL_ARRAY_BUFFER, mCtBalls * sizeof(vec3) * 2, nullptr, GL_STATIC_DRAW);
+        //Copy color buffer
         glBufferSubData(GL_ARRAY_BUFFER, mCtBalls * sizeof(vec3), mCtBalls * sizeof(vec3), colors.data());
         //Position
         glEnableVertexAttribArray(0);
@@ -58,16 +59,15 @@ BallRenderer::~BallRenderer(void)
 
 void BallRenderer::SetBalls(const glm::vec3 *balls) const
 {
-    glBindVertexArray(mVAO); //TODO: Is this needed?
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, mCtBalls * sizeof(vec3), balls);
-    }
-    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, mCtBalls * sizeof(vec3), balls);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void BallRenderer::Draw(const engine::RenderingContext &rContext) const
 {
+    SetBalls(mPhysics->GetBallPositions().data());
+    glDepthFunc(GL_LESS);
     mProgram.Use();
 
     mProgram.SetUniform("MVP", rContext.mVP);
@@ -77,4 +77,5 @@ void BallRenderer::Draw(const engine::RenderingContext &rContext) const
     glDrawArrays(GL_POINTS, 0, mCtBalls);
     glBindVertexArray(0);
     mProgram.Unbind();
+    glDepthFunc(GL_LEQUAL);
 }

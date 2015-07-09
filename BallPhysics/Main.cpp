@@ -7,8 +7,13 @@
 #include <Engine/Utils/Setting.h>
 #include <iostream>
 #include <random>
+
 #include "WireCube.h"
 #include "BallRenderer.h"
+
+#include "BallPhysics.h"
+#include "Solvers/SlowSolver.h"
+#include "Solvers/VectorFields.h"
 
 using namespace engine;
 using namespace std;
@@ -38,9 +43,8 @@ void CheckSettings(int screenWidth, int screenHeight, float FOV, int vsync)
 RotationalCameraHandler ConstructCameraHandler(int screenWidth, int screenHeight, float FOV)
 {
     const float nearDist = 0.1f;
-    const float farDist = 2000.0f;
+    const float farDist = 500.0f;
     const vec3 cameraPos(275.0f, 30.0f, 0.0f);
-
     const Camera camera(cameraPos, float(screenWidth) / float(screenHeight), FOV, nearDist, farDist);
 
     const float rotSpeed = 0.006f;
@@ -48,20 +52,6 @@ RotationalCameraHandler ConstructCameraHandler(int screenWidth, int screenHeight
     const float springiness = 15.0f;
 
     return RotationalCameraHandler(camera, vec3(0.0f), rotSpeed, zoomSpeed, springiness);
-}
-
-vector<vec3> InitBalls(int ctBalls, float cubeSize, float ballRadius)
-{
-    random_device rd;
-    mt19937 gen(rd());
-    const uniform_real_distribution<float> dis(-cubeSize + ballRadius, cubeSize - ballRadius);
-
-    vector<vec3> balls;
-    balls.reserve(ctBalls);
-    for(int i = 0; i < ctBalls; ++i)
-        balls.push_back(vec3(dis(gen), dis(gen), dis(gen)));
-
-    return balls;
 }
 
 int main(int argc, char *argv[])
@@ -72,31 +62,39 @@ int main(int argc, char *argv[])
     const Setting<float> FOV("FOV");
     const Setting<int> Vsync("Vsync");
     CheckSettings(screenWidth, screenHeight, FOV, Vsync);
-    const float cubeSize = 80.0f;
+    const float cubeSize = 32.0f;
     const float ballRadius = 1.0f;
-    const int ctBalls = 1 << 18;
-    const float timeStep = 1.0f / 100.0f;
+    const int ctBalls = 1 << 10;
+    const float timeStep = 1.0f / 60.0f;
     //Init light
     Light light;
     light.mFlag = LightFlag::LIGHT_DIRECTIONAL;
     light.mPosition = normalize(vec3(1.0f));
     light.mAttenuation = vec3(1.0f, 0.0f, 0.0f);
     light.mIntensity = vec3(1.0f);
-
     //Init Camera handler
     RotationalCameraHandler camHandler(ConstructCameraHandler(screenWidth, screenHeight, FOV));
 
     //Init Scene
     Scene scene(timeStep);
     scene.Init(&camHandler, argv[0], screenWidth, screenHeight);
-    scene.mSDLHandler.VsyncMode(Vsync);
+    scene.mSDLHandler.VsyncMode(0);
     scene.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
+
+    //Init ball physics
+    Gravity gravity;
+    SlowSolver slowSolver(cubeSize, ballRadius);
+    slowSolver.SetVectorField(&gravity);
+    BallPhysics ballPhysics(&slowSolver, ctBalls, cubeSize, ballRadius);
+    ballPhysics.InitBalls();
+    scene.mUpdateableMenager.AddUpdateable(&ballPhysics);
+
     //Init objects
     WireCube cube(cubeSize);
     scene.mRenderer.AddRenderable(&cube);
 
-    BallRenderer ballRenderer(ctBalls, cubeSize, ballRadius, screenHeight, FOV, light.mPosition);
-    ballRenderer.SetBalls(InitBalls(ctBalls, cubeSize, ballRadius).data());
+    BallRenderer ballRenderer(&ballPhysics, ctBalls, cubeSize, ballRadius, screenHeight, FOV, light.mPosition);
+    ballRenderer.SetBalls(ballPhysics.GetBallPositions().data());
     scene.mRenderer.AddRenderable(&ballRenderer);
 
     scene.mRenderer.AddLight(light);
