@@ -71,7 +71,7 @@ void BallRenderer::Draw(const engine::RenderingContext &rContext) const
     mProgram.Use();
 
     mProgram.SetUniform("MVP", rContext.mVP);
-    mProgram.SetUniform("V", rContext.mV);
+    mProgram.SetUniform("cameraPos", rContext.mCamera->mPosition);
 
     glBindVertexArray(mVAO);
     glDrawArrays(GL_POINTS, 0, mCtBalls);

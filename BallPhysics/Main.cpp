@@ -14,8 +14,7 @@ using namespace engine;
 using namespace std;
 using namespace glm;
 
-
-RotationalCameraHandler ConstructCameraHandler(int screenWidth, int screenHeight, float FOV)
+void CheckSettings(int screenWidth, int screenHeight, float FOV, int vsync)
 {
     if(screenWidth < 100 || screenWidth > 1920 || screenHeight < 100 || screenHeight > 1080)
     {
@@ -29,6 +28,15 @@ RotationalCameraHandler ConstructCameraHandler(int screenWidth, int screenHeight
         exit(-1);
     }
 
+    if(vsync != 0 && vsync != 1)
+    {
+        cerr << "ERROR: Incorrect Vsync, accepted values are 0 or 1." << endl;
+        exit(-1);
+    }
+}
+
+RotationalCameraHandler ConstructCameraHandler(int screenWidth, int screenHeight, float FOV)
+{
     const float nearDist = 0.1f;
     const float farDist = 2000.0f;
     const vec3 cameraPos(275.0f, 30.0f, 0.0f);
@@ -63,25 +71,27 @@ int main(int argc, char *argv[])
     const Setting<int> screenHeight("screenHeight");
     const Setting<float> FOV("FOV");
     const Setting<int> Vsync("Vsync");
+    CheckSettings(screenWidth, screenHeight, FOV, Vsync);
     const float cubeSize = 80.0f;
     const float ballRadius = 1.0f;
-    const int ctBalls = 1 << 14;
+    const int ctBalls = 1 << 18;
     const float timeStep = 1.0f / 100.0f;
-
+    //Init light
     Light light;
     light.mFlag = LightFlag::LIGHT_DIRECTIONAL;
     light.mPosition = normalize(vec3(1.0f));
     light.mAttenuation = vec3(1.0f, 0.0f, 0.0f);
     light.mIntensity = vec3(1.0f);
 
-    //Camera handler
+    //Init Camera handler
     RotationalCameraHandler camHandler(ConstructCameraHandler(screenWidth, screenHeight, FOV));
 
+    //Init Scene
     Scene scene(timeStep);
     scene.Init(&camHandler, argv[0], screenWidth, screenHeight);
     scene.mSDLHandler.VsyncMode(Vsync);
     scene.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
-
+    //Init objects
     WireCube cube(cubeSize);
     scene.mRenderer.AddRenderable(&cube);
 

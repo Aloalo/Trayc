@@ -1,10 +1,15 @@
+MISC:
+    -num balls setting
+
 Physics:
     -Ball representation
     -Plane representation
     -Broad phase solvers
         -n^2
         -Octree
-        -grid
-        -paralelism
+        -paralell Octree
     -vector fields
     -big ball?
+Graphics:
+    -shadows
+    

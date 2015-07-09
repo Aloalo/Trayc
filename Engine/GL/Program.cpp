@@ -125,21 +125,21 @@ namespace engine
     }
     }*/
 
-    GLuint Program::GetUniformBlockLocation(const GLchar *name)
+    /*GLuint Program::GetUniformBlockLocation(const GLchar *name)
     {
         return glGetUniformBlockIndex(mID, name);
-    }
+    }*/
 
-    GLint Program::GetUniformi(const GLchar *name)
+    /*void Program::SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint)
+    {
+    glUniformBlockBinding(mID, GetUniformBlockLocation(name), bindingPoint);
+    }*/
+
+    GLint Program::GetUniformi(const GLchar *name) const
     {
         GLint ret;
-        glGetUniformiv(mID, mUniformLocations[name], &ret);
+        glGetUniformiv(mID, mUniformLocations.find(name)->second, &ret);
         return ret;
-    }
-
-    void Program::SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint)
-    {
-        glUniformBlockBinding(mID, GetUniformBlockLocation(name), bindingPoint);
     }
 
     void Program::SetUniform(const string &name, GLint x) const
@@ -196,13 +196,6 @@ namespace engine
     {
         glUniform4fv(mUniformLocations.find(name)->second, cnt, (float*)x);
     }
-
-   /* void Program::bindSamplerObjectToSampler(const char *name, const TextureSampler &tex)
-    {
-        int texUnit = GetUniformi(name);
-        glActiveTexture(GL_TEXTURE0 + texUnit);
-        glBindSampler(texUnit, tex.GetID());
-    }*/
 
     void Program::Attach(const Shader &sh) const
     {

@@ -1,5 +1,4 @@
 Opcenito:
-    -In source shaders
     -Rename TriangleMesh to Mesh
     -Refactor
         -Rendering

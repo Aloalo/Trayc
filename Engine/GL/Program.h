@@ -31,10 +31,11 @@ namespace engine
         static void Unbind();
 
         //GLint GetUniformLocation(const GLchar *name);
-        GLuint GetUniformBlockLocation(const GLchar *name);
-        GLint GetUniformi(const GLchar *name);
+        //GLuint GetUniformBlockLocation(const GLchar *name);
+        //void SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint);
 
-        void SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint);
+
+        GLint GetUniformi(const GLchar *name) const;
 
         //bind the program before using these
         void SetUniform(const std::string &name, GLint x) const;
@@ -49,7 +50,6 @@ namespace engine
         void SetUniform(const std::string &name, GLsizei cnt, const glm::vec2 *x) const;
         void SetUniform(const std::string &name, GLsizei cnt, const glm::vec3 *x) const;
         void SetUniform(const std::string &name, GLsizei cnt, const glm::vec4 *x) const;
-        //void bindSamplerObjectToSampler(const char *samplerName, const TextureSampler& tex);
 
 
     private:
