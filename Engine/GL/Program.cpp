@@ -80,7 +80,7 @@ namespace engine
             GLint size;
             GLenum type;
             glGetActiveUniform(mID, i, bufferSize, &length, &size, &type, uniformName);
-            mUniformLocations[string(uniformName)] = i;
+            mUniformLocations[string(uniformName)] = glGetUniformLocation(mID, uniformName);
         }
     }
 

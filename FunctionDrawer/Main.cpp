@@ -23,7 +23,7 @@ void RenderingLoop(char const *programName)
     Scene scene(1.0f / 60.0f);
 
     scene.Init(&camHandler, programName, screenWidth, screenHeight);
-
+    scene.mSDLHandler.VsyncMode(1);
     //Init AntTweakBar
     TwInit(TW_OPENGL_CORE, nullptr);
 

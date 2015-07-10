@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
     //Init Scene
     Scene scene(timeStep);
     scene.Init(&camHandler, argv[0], screenWidth, screenHeight);
-    scene.mSDLHandler.VsyncMode(0);
+    scene.mSDLHandler.VsyncMode(Vsync);
     scene.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
 
     //Init ball physics
