@@ -62,9 +62,9 @@ int main(int argc, char *argv[])
     const Setting<float> FOV("FOV");
     const Setting<int> Vsync("Vsync");
     CheckSettings(screenWidth, screenHeight, FOV, Vsync);
-    const float cubeSize = 32.0f;
+    const float cubeSize = 80.0f;
     const float ballRadius = 1.0f;
-    const int ctBalls = 1 << 10;
+    const int ctBalls = 1 << 18;
     const float timeStep = 1.0f / 60.0f;
     //Init light
     Light light;
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     slowSolver.SetVectorField(&gravity);
     BallPhysics ballPhysics(&slowSolver, ctBalls, cubeSize, ballRadius);
     ballPhysics.InitBalls();
-    scene.mUpdateableMenager.AddUpdateable(&ballPhysics);
+    //scene.mUpdateableMenager.AddUpdateable(&ballPhysics);
 
     //Init objects
     WireCube cube(cubeSize);

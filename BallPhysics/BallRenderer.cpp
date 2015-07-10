@@ -57,17 +57,16 @@ BallRenderer::~BallRenderer(void)
     mProgram.Delete();
 }
 
-void BallRenderer::SetBalls(const glm::vec3 *balls) const
+void BallRenderer::SetBalls(const vec3 *balls) const
 {
     glBindBuffer(GL_ARRAY_BUFFER, mVBO);
     glBufferSubData(GL_ARRAY_BUFFER, 0, mCtBalls * sizeof(vec3), balls);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void BallRenderer::Draw(const engine::RenderingContext &rContext) const
+void BallRenderer::Draw(const RenderingContext &rContext) const
 {
     SetBalls(mPhysics->GetBallPositions().data());
-    glDepthFunc(GL_LESS);
     mProgram.Use();
 
     mProgram.SetUniform("MVP", rContext.mVP);
