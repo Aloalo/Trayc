@@ -12,14 +12,9 @@ using namespace engine;
 using namespace glm;
 using namespace std;
 
-BallPhysics::BallPhysics(PhysicsSolver *solver, int ctBalls, float cubeSize, float ballRadius)
-    : mSolver(solver), mCtBalls(ctBalls), mCubeSize(cubeSize), mBallRadius(ballRadius)
+BallPhysics::BallPhysics(const SimulationParams &simParams)
+    : mSolver(nullptr), mCtBalls(simParams.mCtBalls), mCubeSize(simParams.mCubeSize), mBallRadius(simParams.mBallRadius), mPaused(false)
 {
-}
-
-void BallPhysics::Update(float dt)
-{
-    mSolver->Solve(dt);
 }
 
 std::vector<glm::vec3> BallPhysics::GetBallPositions() const
@@ -30,6 +25,24 @@ std::vector<glm::vec3> BallPhysics::GetBallPositions() const
         positions[i] = balls[i].mPosition;
     return positions;
 }
+
+
+const SimulationParams& BallPhysics::GetSimParams() const
+{
+    return mSolver->GetSimParams();
+}
+
+void BallPhysics::SetSolver(PhysicsSolver *solver)
+{
+    mSolver = solver;
+}
+
+void BallPhysics::Update(float dt)
+{
+    if(!mPaused)
+        mSolver->Solve(dt);
+}
+
 
 void BallPhysics::InitBalls()
 {
@@ -71,3 +84,9 @@ void BallPhysics::InitBalls()
 
     mSolver->SetBalls(balls);
 }
+
+void BallPhysics::Pause(bool pause)
+{
+    mPaused = pause;
+}
+

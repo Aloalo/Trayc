@@ -11,6 +11,8 @@ set(BallPhysics_SRCS
     Ball.cpp
     WireCube.cpp
     WireCube.h
+    SimulationHandler.cpp
+    SimulationHandler.h
 )
 
 set(BallPhysics_Solvers

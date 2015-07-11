@@ -11,10 +11,9 @@ using namespace engine;
 using namespace glm;
 using namespace std;
 
-BallRenderer::BallRenderer(const BallPhysics *physics, int ctBalls, float cubeSize, float ballRadius, int windowHeight, float FOV, const vec3 &lightDir)
-    : mPhysics(physics), mCtBalls(ctBalls), mProgram("Shaders/PointSpheres")
+BallRenderer::BallRenderer(const RenderingParams &rParams, int ctBalls, float cubeSize, float ballRadius)
+    : mCtBalls(ctBalls), mProgram("Shaders/PointSpheres")
 {
-    mBoundingBox = AABB(vec3(-cubeSize), vec3(cubeSize));
     glGenBuffers(1, &mVBO);
 
     random_device rd;
@@ -43,8 +42,8 @@ BallRenderer::BallRenderer(const BallPhysics *physics, int ctBalls, float cubeSi
     glBindVertexArray(0);
 
     mProgram.Use();
-    mProgram.SetUniform("lightDir", lightDir);
-    mProgram.SetUniform("pointScale", float(windowHeight) / tanf(FOV * HALF_PI / 180.0f));
+    mProgram.SetUniform("lightDir", rParams.mLight.mPosition);
+    mProgram.SetUniform("pointScale", float(rParams.mSSize.y) / tanf(rParams.mFOV * HALF_PI / 180.0f));
     mProgram.SetUniform("pointRadius", ballRadius);
     mProgram.Unbind();
 
@@ -66,10 +65,11 @@ void BallRenderer::SetBalls(const vec3 *balls) const
 
 void BallRenderer::Draw(const RenderingContext &rContext) const
 {
-    SetBalls(mPhysics->GetBallPositions().data());
     mProgram.Use();
 
     mProgram.SetUniform("MVP", rContext.mVP);
+    mProgram.SetUniform("V", rContext.mV);
+    mProgram.SetUniform("P", rContext.mP);
     mProgram.SetUniform("cameraPos", rContext.mCamera->mPosition);
 
     glBindVertexArray(mVAO);

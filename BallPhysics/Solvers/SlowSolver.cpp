@@ -8,19 +8,28 @@
 using namespace glm;
 using namespace std;
 
-SlowSolver::SlowSolver(float cubeSize, float ballRadius)
-    : PhysicsSolver(cubeSize, ballRadius)
+SlowSolver::SlowSolver(const SimulationParams &simParams)
+    : PhysicsSolver(simParams)
 {
 }
 
-void SlowSolver::Solve(float dt)
+void SlowSolver::CollisionDetection()
 {
-    const int ctBalls = mBalls.size();
-    for(Ball &b : mBalls)
+    const int ctBalls = mSimParams.mCtBalls;
+    for(int i = 0; i < ctBalls; ++i)
     {
-        b.mVelocity += dt * mField->F(b.mPosition);
-        b.mPosition += dt * b.mVelocity;
-    }
+        vec3 force(0.0f);
+        const Ball A = mBalls[i];
 
-    CollideCube();
+        for(int j = 0; j < ctBalls; ++j)
+        {
+            if(i != j)
+            {
+                const Ball B = mBalls[j];
+                force += CollideBalls(A, B);
+            }
+        }
+
+        mBalls[i].mVelocity += force;
+    }
 }

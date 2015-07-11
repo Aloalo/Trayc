@@ -4,19 +4,15 @@
 
 #include "PhysicsSolver.h"
 #include <vector>
+#include <assert.h>
 
 using namespace glm;
 using namespace std;
 
 
-PhysicsSolver::PhysicsSolver(float cubeSize, float ballRadius)
-    : mCubeSize(cubeSize), mBallRadius(ballRadius), mField(nullptr)
+PhysicsSolver::PhysicsSolver(const SimulationParams &simParams)
+    : mSimParams(simParams)
 {
-}
-
-void PhysicsSolver::SetVectorField(const VectorField *field)
-{
-    mField = field;
 }
 
 void PhysicsSolver::SetBalls(const vector<Ball> &balls)
@@ -29,24 +25,97 @@ const std::vector<Ball>& PhysicsSolver::GetBalls() const
     return mBalls;
 }
 
-void PhysicsSolver::CollideCube()
+void PhysicsSolver::Solve(float dt)
 {
-    const float cubeSize = mCubeSize;
-    const float ballRadius = mBallRadius;
+    Integrate(dt);
+    CollisionDetection();
+}
+
+void PhysicsSolver::Integrate(float dt)
+{
+    const float globalDamping = mSimParams.mGlobalDamping;
+    const float cubeDamping = mSimParams.mBoundaryDamping;
+    const float minPos = -mSimParams.mCubeSize + mSimParams.mBallRadius;
+    const float maxPos = mSimParams.mCubeSize - mSimParams.mBallRadius;
+    const VectorField *field = mSimParams.mField;
+
     for(Ball &ball : mBalls)
     {
-        const vec3 p(ball.mPosition);
-        if(p.x - ballRadius < -cubeSize || p.x + ballRadius > cubeSize)
+        vec3 p(ball.mPosition);
+        vec3 v(ball.mVelocity);
+
+        v += dt * field->F(p);
+        v *= globalDamping;
+        p += dt * v;
+
+        if(p.x > maxPos)
         {
-            ball.mVelocity.x -= 2.0f * ball.mVelocity.x;
+            p.x = maxPos;
+            v.x *= cubeDamping;
         }
-        if(p.y - ballRadius < -cubeSize || p.y + ballRadius > cubeSize)
+        else if(p.x < minPos)
         {
-            ball.mVelocity.y -= 2.0f * ball.mVelocity.y;
+            p.x = minPos;
+            v.x *= cubeDamping;
         }
-        if(p.z - ballRadius < -cubeSize || p.z + ballRadius > cubeSize)
+
+        if(p.y > maxPos)
         {
-            ball.mVelocity.z -= 2.0f * ball.mVelocity.z;
+            p.y = maxPos;
+            v.y *= cubeDamping;
         }
+        else if(p.y < minPos)
+        {
+            p.y = minPos;
+            v.y *= cubeDamping;
+        }
+
+        if(p.z > maxPos)
+        {
+            p.z = maxPos;
+            v.z *= cubeDamping;
+        }
+        else if(p.z < minPos)
+        {
+            p.z = minPos;
+            v.z *= cubeDamping;
+        }
+
+        ball.mPosition = p;
+        ball.mVelocity = v;
     }
+}
+
+glm::vec3 PhysicsSolver::CollideBalls(const Ball &A, const Ball &B) const
+{
+    const vec3 relPos = B.mPosition - A.mPosition;
+    const float dist = length(relPos);
+    const float collideDist = 2.0f * mSimParams.mBallRadius;
+
+    vec3 force(0.0f);
+
+    if(dist < collideDist)
+    {
+        const vec3 norm = relPos / dist;
+        //Relative velocity
+        const vec3 relVel = B.mVelocity - A.mVelocity;
+        //Relative tangential velocity
+        const vec3 tanVel = relVel - (dot(relVel, norm) * norm);
+
+        //Spring force
+        force = mSimParams.mSpring * (dist - collideDist) * norm;
+        //Damping force
+        force += mSimParams.mDamping * relVel;
+        //Tangential shear force
+        force += mSimParams.mShear * tanVel;
+        //Attraction
+        force += mSimParams.mAttraction * relPos;
+    }
+
+    return force;
+}
+
+const SimulationParams& PhysicsSolver::GetSimParams() const
+{
+    return mSimParams;
 }

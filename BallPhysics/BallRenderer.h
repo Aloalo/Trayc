@@ -2,17 +2,24 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 
-#ifndef BP_BALLHANDLER_H
-#define BP_BALLHANDLER_H
+#ifndef BP_BALLRENDERER_H
+#define BP_BALLRENDERER_H
 
-#include <Engine/Engine/Renderable.h>
 #include <Engine/Engine/Scene.h>
-#include "BallPhysics.h"
+
+struct RenderingParams
+{
+    //Screen size
+    glm::ivec2 mSSize;
+    float mFOV;
+    bool mVsync;
+    engine::Light mLight;
+};
 
 class BallRenderer : public engine::Renderable
 {
 public:
-    BallRenderer(const BallPhysics *mPhysics, int ctBalls, float cubeSize, float ballRadius, int windowHeight, float FOV, const glm::vec3 &lightDir);
+    BallRenderer(const RenderingParams &rParams, int ctBalls, float cubeSize, float ballRadius);
     ~BallRenderer(void);
 
     //Copies memory to GPU, expensive
@@ -21,7 +28,6 @@ public:
 
 private:
     const int mCtBalls;
-    const BallPhysics *mPhysics;
     GLuint mVBO;
     engine::Program mProgram;
 };

@@ -2,13 +2,10 @@ MISC:
     -num balls setting
 
 Physics:
-    -Ball representation
-    -Plane representation
-    -Broad phase solvers
-        -n^2
-        -Octree
-        -paralell Octree
-    -vector fields
+    -optimize SlowSolver
+    -gauss descent?
+    -Octree
+    -paralell Octree
     -big ball?
 Graphics:
     -shadows

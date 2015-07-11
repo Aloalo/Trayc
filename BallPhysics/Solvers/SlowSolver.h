@@ -11,9 +11,9 @@
 class SlowSolver : public PhysicsSolver
 {
 public:
-    SlowSolver(float cubeSize, float ballRadius);
+    SlowSolver(const SimulationParams &simParams);
 
-    virtual void Solve(float dt) override;
+    virtual void CollisionDetection() override;
 };
 
 #endif

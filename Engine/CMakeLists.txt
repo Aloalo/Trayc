@@ -59,6 +59,7 @@ set(Engine_Utils
     Utils/Singleton.h
     Utils/Setting.h
     Utils/StlExtensions.hpp
+    Utils/VectorZip.hpp
     Utils/InitialSettings.h
     Utils/NormalDrawer.h
     Utils/Profiler.h
