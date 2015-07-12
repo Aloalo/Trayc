@@ -27,6 +27,7 @@ namespace engine
         //Return the average time in ms over ctFrames for all targets
         std::vector<std::pair<std::string, float>> GetAllTargetsAverage() const;
 
+        void PrintProfile() const;
 
 	private:
         std::map<std::string, std::deque<int>> mProfileTargets;

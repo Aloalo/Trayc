@@ -20,7 +20,7 @@ void main()
 
     N.z = sqrt(1.0 - mag);
     
-    vec2 clipZW = center_z * P[2].zw + P[3].zw;
+    vec2 clipZW = (center_z + N.z) * P[2].zw + P[3].zw;
  
     float depth = 0.5 + 0.5 * clipZW.x / clipZW.y;
  

@@ -81,20 +81,8 @@ namespace engine
         if(mCtFramesPassed == mFrameCap)
         {
             mCtFramesPassed = 0;
-            PrintProfile();
+            mProfiler.PrintProfile();
         }
-    }
-
-    void Scene::PrintProfile() const
-    {
-        float sum = 0.0f;
-        cout << "------PROFILE------" << endl;
-        for(const auto &psf : mProfiler.GetAllTargetsAverage())
-        {
-            cout << psf.first + ": " << psf.second << endl;
-            sum += psf.second;
-        }
-        cout << "NET: " << sum << endl << endl;
     }
 
     const Camera& Scene::GetCamera() const

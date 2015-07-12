@@ -7,14 +7,10 @@
 
 #include "VectorFields.h"
 #include "../Ball.h"
-//#include "Contact.h"
 #include <vector>
 
 struct SimulationParams
 {
-    //vec3 colliderPos;
-    //float  colliderRadius;
-
     const VectorField *mField;
     int mCtBalls;
 
@@ -39,14 +35,19 @@ public:
     const SimulationParams& GetSimParams() const;
 
 protected:
+    friend class SimulationHandler;
     //Integrates simulation and collides with cube
     void Integrate(float dt);
     virtual void CollisionDetection() = 0;
+    virtual void Init() = 0;
     //Collide two balls
-    glm::vec3 CollideBalls(Ball &A, Ball &B);
-
+    glm::vec3 CollideBalls(Ball &A, Ball &B) const;
+    //Collide balls which are intersected
+    glm::vec3 CollideIntersectedBalls(Ball &A, Ball &B) const;
 
     SimulationParams mSimParams;
+    float mBallDiameter;
+    float mInterpenetrationEps;
     std::vector<Ball> mBalls;
 };
 

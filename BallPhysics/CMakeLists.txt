@@ -20,7 +20,10 @@ set(BallPhysics_Solvers
     Solvers/SlowSolver.h
     Solvers/PhysicsSolver.h
     Solvers/PhysicsSolver.cpp
-    Solvers/VectorFields.cpp
+    Solvers/UniformGridSolver.h
+    Solvers/UniformGridSolver.cpp
+    Solvers/UniformGrid.h
+    Solvers/UniformGrid.cpp
     Solvers/VectorFields.h
 )
 
@@ -35,6 +38,10 @@ target_link_libraries(BallPhysics
     ${GLEW_LIBRARY}
     ${OPENGL_LIBRARIES}
 )
+
+if(MSVC)
+	set(CMAKE_CXX_FLAGS_RELEASE "/Ox /Ob2 /Oi /Ot /Oy /GT /GL") 
+endif()
 
 file(COPY Shaders DESTINATION .)
 file(COPY Settings.ini DESTINATION .)

@@ -12,8 +12,8 @@ class SlowSolver : public PhysicsSolver
 {
 public:
     SlowSolver(const SimulationParams &simParams);
-
     virtual void CollisionDetection() override;
+    virtual void Init();
 };
 
 #endif

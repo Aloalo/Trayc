@@ -11,13 +11,15 @@ using namespace std;
 
 
 PhysicsSolver::PhysicsSolver(const SimulationParams &simParams)
-    : mSimParams(simParams)
+    : mSimParams(simParams), mBallDiameter(2.0f * simParams.mBallRadius), 
+    mInterpenetrationEps(simParams.mBallRadius * 0.001f)
 {
 }
 
 void PhysicsSolver::SetBalls(const vector<Ball> &balls)
 {
     mBalls = balls;
+    Init();
 }
 
 const std::vector<Ball>& PhysicsSolver::GetBalls() const
@@ -86,11 +88,11 @@ void PhysicsSolver::Integrate(float dt)
     }
 }
 
-glm::vec3 PhysicsSolver::CollideBalls(Ball &A, Ball &B)
+glm::vec3 PhysicsSolver::CollideBalls(Ball &A, Ball &B) const
 {
     const vec3 relPos = B.mPosition - A.mPosition;
     const float dist = length(relPos);
-    const float collideDist = 2.0f * mSimParams.mBallRadius;
+    const float collideDist = mBallDiameter;
 
     vec3 force(0.0f);
 
@@ -114,10 +116,40 @@ glm::vec3 PhysicsSolver::CollideBalls(Ball &A, Ball &B)
         force += mSimParams.mAttraction * relPos;
 
         //Resolve interpenetration
-        const vec3 relMove = norm * interpenetration * 0.5f;
+        const vec3 relMove = norm * (0.5f * interpenetration + mInterpenetrationEps);
         A.mPosition -= relMove;
         B.mPosition += relMove;
     }
+
+    return force;
+}
+
+glm::vec3 PhysicsSolver::CollideIntersectedBalls(Ball &A, Ball &B) const
+{
+    const vec3 relPos = B.mPosition - A.mPosition;
+    const float dist = length(relPos);
+
+    const vec3 norm = relPos / dist;
+    //Relative velocity
+    const vec3 relVel = B.mVelocity - A.mVelocity;
+    //Relative tangential velocity
+    const vec3 tanVel = relVel - dot(relVel, norm) * norm;
+
+    const float interpenetration = mBallDiameter - dist;
+
+    //Spring force
+    vec3 force = -mSimParams.mSpring * interpenetration * norm;
+    //Damping force
+    force += mSimParams.mDamping * relVel;
+    //Tangential shear force
+    force += mSimParams.mShear * tanVel;
+    //Attraction
+    force += mSimParams.mAttraction * relPos;
+
+    //Resolve interpenetration
+    const vec3 relMove = norm * (0.5f * interpenetration + mInterpenetrationEps);
+    A.mPosition -= relMove;
+    B.mPosition += relMove;
 
     return force;
 }

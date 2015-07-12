@@ -19,7 +19,7 @@ RenderingParams GetRenderingParams()
     const Setting<int> screenWidth("screenWidth");
     const Setting<int> screenHeight("screenHeight");
     const Setting<float> FOV("FOV");
-    const Setting<int> Vsync("Vsync");
+    const Setting<bool> Vsync("Vsync");
 
     if(screenWidth < 100 || screenWidth > 1920 || screenHeight < 100 || screenHeight > 1080)
     {
@@ -50,7 +50,7 @@ RenderingParams GetRenderingParams()
     ret.mFOV = FOV;
     ret.mSSize = ivec2(screenWidth, screenHeight);
     ret.mLight = light;
-    ret.mVsync = bool(Vsync);
+    ret.mVsync = Vsync;
 
     return ret;
 }
@@ -74,16 +74,15 @@ int main(int argc, char *argv[])
     RenderingParams rParams = GetRenderingParams();
 
     //Simulation params
-    Gravity gravity;
     SimulationParams simParams;
-    simParams.mField = &gravity;
-    simParams.mCtBalls = 1 << 10;
+    simParams.mField = nullptr;
+    simParams.mCtBalls = 1 << 13;
     simParams.mBallRadius = 1.0f;
-    simParams.mCubeSize = 32.0f;
+    simParams.mCubeSize = 64.0f;
     simParams.mGlobalDamping = 1.0f;
-    simParams.mSpring = 0.5f;
+    simParams.mSpring = 1.5f;
     simParams.mDamping = 0.02f;
-    simParams.mShear = 0.1f;
+    simParams.mShear = 0.0f;
     simParams.mAttraction = 0.0f;
     simParams.mBoundaryDamping = -0.5f;
     const float timeStep = 1.0f / 60.0f;

@@ -32,11 +32,11 @@ namespace engine
         UpdateableHandler mUpdateableMenager;
         Renderer mRenderer;
         SDLHandler mSDLHandler;
+        Profiler mProfiler;
+
     private:
         inline void GameLoopStep();
-        inline void PrintProfile() const;
 
-        Profiler mProfiler;
         const int mFrameCap;
         int mCtFramesPassed; //For profiling
         CameraHandler *mCameraHandler;

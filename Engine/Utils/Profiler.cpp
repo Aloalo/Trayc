@@ -4,6 +4,7 @@
 
 #include <Engine/Utils/Profiler.h>
 #include <ctime>
+#include <iostream>
 
 using namespace std;
 
@@ -51,6 +52,18 @@ namespace engine
         for(const auto &si : mProfileTargets)
             ret.push_back(psf(si.first, GetTargetAverage(si.first)));
         return ret;
+    }
+
+    void Profiler::PrintProfile() const
+    {
+        float sum = 0.0f;
+        cout << "------PROFILE------" << endl;
+        for(const auto &psf : GetAllTargetsAverage())
+        {
+            cout << psf.first + ": " << psf.second << endl;
+            sum += psf.second;
+        }
+        cout << "NET: " << sum << endl << endl;
     }
 
 };

@@ -34,3 +34,7 @@ void SlowSolver::CollisionDetection()
     }
 
 }
+
+void SlowSolver::Init()
+{
+}

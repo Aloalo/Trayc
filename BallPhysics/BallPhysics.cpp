@@ -34,7 +34,13 @@ const SimulationParams& BallPhysics::GetSimParams() const
 
 void BallPhysics::SetSolver(PhysicsSolver *solver)
 {
-    mSolver = solver;
+    if(mSolver == nullptr)
+        mSolver = solver;
+    else
+    {
+        solver->SetBalls(mSolver->GetBalls());
+        mSolver = solver;
+    }
 }
 
 void BallPhysics::Update(float dt)
@@ -72,7 +78,7 @@ void BallPhysics::InitBalls()
                     break;
 
                 const float y = float(k * 2 + 2) * mBallRadius - mCubeSize;
-                balls.push_back(Ball(vec3(x + dis(gen), y + dis(gen), z + dis(gen))));
+                balls.push_back(Ball(vec3(y + dis(gen), x + dis(gen), z + dis(gen))));
                 ++ctBalls;
             }
             if(ctBalls == mCtBalls)

@@ -25,9 +25,11 @@ private:
 
     //Solvers
     std::vector<PhysicsSolver*> mSolvers;
+    int mCurrentSolver;
+    std::vector<VectorField*> mFields;
+    int mCurrentField;
 
     bool mPhysicsPaused;
-    SimulationParams mSimParams;
     BallPhysics mPhysics;
 
     RenderingParams mRenderingParams;

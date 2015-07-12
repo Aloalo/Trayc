@@ -1,4 +1,6 @@
--64 bit build
+CMAKE
+    -64 bit build
+    
 Opcenito:
     -Rename TriangleMesh to Mesh
     -Refactor

@@ -1,8 +1,8 @@
 MISC:
     -num balls setting
-
+    -batch VectorField get?
+    
 Physics:
-    -paralellize SlowSolver
     -Octree
     -paralell Octree
     -big ball?
