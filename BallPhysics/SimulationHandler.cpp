@@ -23,9 +23,9 @@ SimulationHandler::SimulationHandler(const SimulationParams &simParams, const Re
     mFields.push_back(new CameraGravity(rParams.mCamera));
     mCurrentField = 0;
 
-    mSolvers.push_back(new SlowSolver(simParams));
+    //mSolvers.push_back(new SlowSolver(simParams));
     mSolvers.push_back(new UniformGridSolver(simParams));
-    mCurrentSolver = 1;
+    mCurrentSolver = 0;
 
     for(auto solver : mSolvers)
         solver->mSimParams.mField = mFields[mCurrentField];
@@ -52,7 +52,7 @@ void SimulationHandler::KeyPress(const SDL_KeyboardEvent &e)
             mPhysics.Pause(mPhysicsPaused);
             break;
         case SDLK_s:
-            mCurrentSolver = (mCurrentSolver + 1) % mFields.size();
+            mCurrentSolver = (mCurrentSolver + 1) % mSolvers.size();
             mPhysics.SetSolver(mSolvers[mCurrentSolver]);
             break;
         case SDLK_f:
