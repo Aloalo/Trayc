@@ -20,6 +20,7 @@ SimulationHandler::SimulationHandler(const SimulationParams &simParams, const Re
     mFields.push_back(new SphereAttractor());
     mFields.push_back(new SphereRepulsor());
     mFields.push_back(new SphereRotator());
+    mFields.push_back(new CameraGravity(rParams.mCamera));
     mCurrentField = 0;
 
     mSolvers.push_back(new SlowSolver(simParams));
@@ -58,6 +59,10 @@ void SimulationHandler::KeyPress(const SDL_KeyboardEvent &e)
             mCurrentField = (mCurrentField + 1) % mFields.size();
             for(auto solver : mSolvers)
                 solver->mSimParams.mField = mFields[mCurrentField];
+            break;
+        case SDLK_c:
+            for(auto solver : mSolvers)
+                solver->mParallel = !solver->mParallel;
             break;
         default:
             break;

@@ -8,7 +8,7 @@
 #include "PhysicsSolver.h"
 #include "UniformGrid.h"
 
-//O(N) solver
+//O(N) * big_constant solver
 class UniformGridSolver : public PhysicsSolver
 {
 public:
@@ -16,6 +16,7 @@ public:
 
 private:
     virtual void CollisionDetection() override;
+    void CollisionDetectionRange(int first, int last);
     virtual void Init();
 
     UniformGrid mUnformGrid;

@@ -14,6 +14,16 @@ using namespace engine;
 using namespace std;
 using namespace glm;
 
+template<class T>
+void CheckSetting(T minVal, T maxVal, T val, const string &name)
+{
+    if(val < minVal || val > maxVal)
+    {
+        cerr << "ERROR: Incorrect " << name << ", accepted values are " << minVal << " to " << maxVal << "." << endl;
+        std::exit(-1);
+    }
+}
+
 RenderingParams GetRenderingParams()
 {
     const Setting<int> screenWidth("screenWidth");
@@ -21,23 +31,9 @@ RenderingParams GetRenderingParams()
     const Setting<float> FOV("FOV");
     const Setting<bool> Vsync("Vsync");
 
-    if(screenWidth < 100 || screenWidth > 1920 || screenHeight < 100 || screenHeight > 1080)
-    {
-        cerr << "ERROR: Incorrect screen size, accepted values are 100x100 to 1920x1080." << endl;
-        std::exit(-1);
-    }
-
-    if(FOV < 30.0f || FOV > 120.0f)
-    {
-        cerr << "ERROR: Incorrect FOV, accepted values are 30 to 120." << endl;
-        std::exit(-1);
-    }
-
-    if(Vsync != 0 && Vsync != 1)
-    {
-        cerr << "ERROR: Incorrect Vsync, accepted values are 0 or 1." << endl;
-        std::exit(-1);
-    }
+    CheckSetting(100, 1920, screenWidth.mValue, "screenWidth");
+    CheckSetting(100, 1920, screenHeight.mValue, "screenHeight");
+    CheckSetting(30.0f, 120.0f, FOV.mValue, "FOV");
 
     //Init light
     Light light;
@@ -55,11 +51,11 @@ RenderingParams GetRenderingParams()
     return ret;
 }
 
-RotationalCameraHandler ConstructCameraHandler(ivec2 ss, float FOV)
+RotationalCameraHandler ConstructCameraHandler(ivec2 ss, float FOV, float cubeSize)
 {
     const float nearDist = 0.1f;
-    const float farDist = 500.0f;
-    const vec3 cameraPos(275.0f, 30.0f, 0.0f);
+    const float farDist = cubeSize * 10.0f;
+    const vec3 cameraPos(cubeSize * 2.5f);
     const Camera camera(cameraPos, float(ss.x) / float(ss.y), FOV, nearDist, farDist);
 
     const float rotSpeed = 0.006f;
@@ -69,27 +65,40 @@ RotationalCameraHandler ConstructCameraHandler(ivec2 ss, float FOV)
     return RotationalCameraHandler(camera, vec3(0.0f), rotSpeed, zoomSpeed, springiness);
 }
 
+/*
+Speed:
+    -decrease mCtBalls
+    -increase timeStep
+    -decrease max number of balls in cell
+    -Vsync off
+*/
+
 int main(int argc, char *argv[])
 {
     RenderingParams rParams = GetRenderingParams();
 
+    const Setting<int> numBalls("numBalls");
+    const Setting<float> invTimeStep("invTimeStep");
+    CheckSetting(30.0f, 120.0f, invTimeStep.mValue, "invTimeStep");
+    CheckSetting(10, 1 << 20, numBalls.mValue, "numBalls");
+
     //Simulation params
     SimulationParams simParams;
     simParams.mField = nullptr;
-    simParams.mCtBalls = 1 << 13;
-    simParams.mBallRadius = 1.0f;
-    simParams.mCubeSize = 64.0f;
+    simParams.mCtBalls = numBalls;
+    simParams.mBallRadius = 0.25f;
+    simParams.mCubeSize = 16.0f;
     simParams.mGlobalDamping = 1.0f;
-    simParams.mSpring = 1.5f;
+    simParams.mSpring = 1.0f;
     simParams.mDamping = 0.02f;
     simParams.mShear = 0.0f;
     simParams.mAttraction = 0.0f;
     simParams.mBoundaryDamping = -0.5f;
-    const float timeStep = 1.0f / 60.0f;
+    const float timeStep = 1.0f / invTimeStep;
 
     //Init Camera handler
-    RotationalCameraHandler camHandler(ConstructCameraHandler(rParams.mSSize, rParams.mFOV));
-
+    RotationalCameraHandler camHandler(ConstructCameraHandler(rParams.mSSize, rParams.mFOV, simParams.mCubeSize));
+    rParams.mCamera = &camHandler.GetCamera();
     //Init Scene
     Scene scene(timeStep);
     scene.Init(&camHandler, argv[0], rParams.mSSize.x, rParams.mSSize.y);

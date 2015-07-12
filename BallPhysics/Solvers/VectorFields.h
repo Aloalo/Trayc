@@ -7,6 +7,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
+#include <Engine/Core/Camera.h>
 
 
 struct VectorField
@@ -77,6 +78,23 @@ struct SphereRotator : public VectorField
     }
 private:
     glm::vec3 mPosition;
+};
+
+struct CameraGravity : public VectorField
+{
+    CameraGravity(const engine::Camera *cam, float mag = -9.81f)
+        : mCamera(cam), mMag(mag)
+    {
+    }
+
+    virtual glm::vec3 F(const glm::vec3 &p) const override
+    {
+        return mCamera->GetUp() * mMag;
+    }
+
+private:
+    float mMag;
+    const engine::Camera *mCamera;
 };
 
 #endif

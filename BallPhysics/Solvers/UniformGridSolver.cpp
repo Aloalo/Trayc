@@ -3,6 +3,8 @@
 */
 
 #include "UniformGridSolver.h"
+#include <thread>
+#include <cmath>
 
 using namespace glm;
 using namespace std;
@@ -24,23 +26,27 @@ void UniformGridSolver::CollisionDetection()
         mCellIndices[i] = newGridIdx;
     }
 
-    //Collision detection
-    for(int i = 0; i < ctBalls; ++i)
+    if(mParallel)
     {
-        Ball A = mBalls[i];
-        const int gridIdx = mCellIndices[i];
+        //Parallel collision detection
+        const int numThreads = thread::hardware_concurrency();
+        const int ballsPerThread = (ctBalls % numThreads == 0 ? ctBalls / numThreads : ctBalls / numThreads + 1);
+        vector<thread> threads;
 
-        for(int neighbourIdx : mUnformGrid.GetNeighbours(gridIdx))
+        for(int i = 0; i < numThreads; ++i)
         {
-            if(neighbourIdx != i)
-            {
-                Ball &B = mBalls[neighbourIdx];
-                const vec3 force_ij = CollideBalls(A, B);
-                A.mVelocity += force_ij;
-                B.mVelocity -= force_ij;
-            }
+            const int first = i * ballsPerThread;
+            const int last = std::min((i + 1) * ballsPerThread, ctBalls);
+            threads.push_back(thread(&UniformGridSolver::CollisionDetectionRange, this, first, last));
         }
-        mBalls[i] = A;
+
+        for(auto &t : threads)
+            t.join();
+    }
+    else
+    {
+        //Non-parallel collision detection
+        CollisionDetectionRange(0, ctBalls);
     }
 }
 
@@ -49,4 +55,27 @@ void UniformGridSolver::Init()
     const int ctBalls = mSimParams.mCtBalls;
     for(int i = 0; i < ctBalls; ++i)
         mCellIndices[i] = mUnformGrid.AddToGrid(mBalls[i].mPosition, i);
+}
+
+void UniformGridSolver::CollisionDetectionRange(int first, int last)
+{
+    //Collision detection
+    for(int i = first; i < last; ++i)
+    {
+        Ball A = mBalls[i];
+        const int gridIdx = mCellIndices[i];
+
+        for(int neighbourIdx : mUnformGrid.GetNeighbours(gridIdx))
+        {
+            if(neighbourIdx != i)
+            {
+                Ball B = mBalls[neighbourIdx];
+                const vec3 force_ij = CollideBalls(A, B);
+                A.mVelocity += force_ij;
+                B.mVelocity -= force_ij;
+                mBalls[neighbourIdx] = B;
+            }
+        }
+        mBalls[i] = A;
+    }
 }

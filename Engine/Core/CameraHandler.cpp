@@ -21,4 +21,10 @@ namespace engine
     {
         return mCamera.mPosition;
     }
+
+    const Camera& CameraHandler::GetCamera() const
+    {
+        return mCamera;
+    }
+
 }

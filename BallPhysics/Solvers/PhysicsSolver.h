@@ -42,8 +42,9 @@ protected:
     virtual void Init() = 0;
     //Collide two balls
     glm::vec3 CollideBalls(Ball &A, Ball &B) const;
-    //Collide balls which are intersected
-    glm::vec3 CollideIntersectedBalls(Ball &A, Ball &B) const;
+
+    //execute in parallel if available
+    bool mParallel;
 
     SimulationParams mSimParams;
     float mBallDiameter;

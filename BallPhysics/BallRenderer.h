@@ -14,6 +14,7 @@ struct RenderingParams
     float mFOV;
     bool mVsync;
     engine::Light mLight;
+    const engine::Camera *mCamera;
 };
 
 class BallRenderer : public engine::Renderable
