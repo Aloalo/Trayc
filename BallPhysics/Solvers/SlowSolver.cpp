@@ -18,18 +18,19 @@ void SlowSolver::CollisionDetection()
     const int ctBalls = mSimParams.mCtBalls;
     for(int i = 0; i < ctBalls; ++i)
     {
-        vec3 force(0.0f);
-        const Ball A = mBalls[i];
+        Ball A = mBalls[i];
 
-        for(int j = 0; j < ctBalls; ++j)
+        for(int j = i + 1; j < ctBalls; ++j)
         {
-            if(i != j)
-            {
-                const Ball B = mBalls[j];
-                force += CollideBalls(A, B);
-            }
+            Ball B = mBalls[j];
+            const vec3 force_ij = CollideBalls(A, B);
+            A.mVelocity += force_ij;
+            B.mVelocity -= force_ij;
+
+            mBalls[j] = B;
         }
 
-        mBalls[i].mVelocity += force;
+        mBalls[i] = A;
     }
+
 }

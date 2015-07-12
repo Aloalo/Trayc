@@ -7,6 +7,7 @@
 
 #include "VectorFields.h"
 #include "../Ball.h"
+//#include "Contact.h"
 #include <vector>
 
 struct SimulationParams
@@ -40,13 +41,12 @@ public:
 protected:
     //Integrates simulation and collides with cube
     void Integrate(float dt);
-    //Collide two balls
-    glm::vec3 CollideBalls(const Ball &A, const Ball &B) const;
-
     virtual void CollisionDetection() = 0;
+    //Collide two balls
+    glm::vec3 CollideBalls(Ball &A, Ball &B);
+
 
     SimulationParams mSimParams;
-
     std::vector<Ball> mBalls;
 };
 

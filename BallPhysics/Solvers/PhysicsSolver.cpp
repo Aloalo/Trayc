@@ -86,7 +86,7 @@ void PhysicsSolver::Integrate(float dt)
     }
 }
 
-glm::vec3 PhysicsSolver::CollideBalls(const Ball &A, const Ball &B) const
+glm::vec3 PhysicsSolver::CollideBalls(Ball &A, Ball &B)
 {
     const vec3 relPos = B.mPosition - A.mPosition;
     const float dist = length(relPos);
@@ -100,16 +100,23 @@ glm::vec3 PhysicsSolver::CollideBalls(const Ball &A, const Ball &B) const
         //Relative velocity
         const vec3 relVel = B.mVelocity - A.mVelocity;
         //Relative tangential velocity
-        const vec3 tanVel = relVel - (dot(relVel, norm) * norm);
+        const vec3 tanVel = relVel - dot(relVel, norm) * norm;
+
+        const float interpenetration = collideDist - dist;
 
         //Spring force
-        force = mSimParams.mSpring * (dist - collideDist) * norm;
+        force = -mSimParams.mSpring * interpenetration * norm;
         //Damping force
         force += mSimParams.mDamping * relVel;
         //Tangential shear force
         force += mSimParams.mShear * tanVel;
         //Attraction
         force += mSimParams.mAttraction * relPos;
+
+        //Resolve interpenetration
+        const vec3 relMove = norm * interpenetration * 0.5f;
+        A.mPosition -= relMove;
+        B.mPosition += relMove;
     }
 
     return force;

@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
     simParams.mCubeSize = 32.0f;
     simParams.mGlobalDamping = 1.0f;
     simParams.mSpring = 0.5f;
-    simParams.mDamping = 0.05f;
+    simParams.mDamping = 0.02f;
     simParams.mShear = 0.1f;
     simParams.mAttraction = 0.0f;
     simParams.mBoundaryDamping = -0.5f;

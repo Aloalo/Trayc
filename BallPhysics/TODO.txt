@@ -2,8 +2,7 @@ MISC:
     -num balls setting
 
 Physics:
-    -optimize SlowSolver
-    -gauss descent?
+    -paralellize SlowSolver
     -Octree
     -paralell Octree
     -big ball?
