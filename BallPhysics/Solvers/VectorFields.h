@@ -74,7 +74,7 @@ struct SphereRotator : public VectorField
     virtual glm::vec3 F(const glm::vec3 &p) const override
     {
         static const glm::vec3 up(0.0f, 1.0f, 0.0f);
-        return glm::cross(mPosition - p, up);
+        return glm::normalize(glm::cross(mPosition - p, up) - 4.0f * (mPosition + p));
     }
 private:
     glm::vec3 mPosition;
