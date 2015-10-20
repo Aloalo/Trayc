@@ -66,6 +66,7 @@ set(Engine_Utils
     Utils/MathFunctions.h
     Utils/Utilities.h
     Utils/ErrorCheck.h
+    Utils/BSpline.h
     Utils/InitialSettings.cpp
     Utils/NormalDrawer.cpp
     Utils/Profiler.cpp
@@ -73,6 +74,7 @@ set(Engine_Utils
     Utils/MathFunctions.tpp
     Utils/Utilities.cpp
     Utils/ErrorCheck.cpp
+    Utils/BSpline.cpp
 )
 
 set(Engine_Engine
