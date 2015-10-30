@@ -6,7 +6,6 @@
 #define BP_UNFIRMGRID_H
 
 #include "PhysicsSolver.h"
-#include <array>
 
 template<class T, int N>
 struct tcell

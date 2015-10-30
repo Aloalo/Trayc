@@ -21,10 +21,12 @@ namespace engine
         //Tangent at t
         glm::vec3 Tangent(float t) const;
 
+        int NumControlPoints() const;
+
     private:
         std::vector<glm::vec4> r;
         static glm::mat4 B;
-        static glm::mat3x4 B_;
+        static glm::mat4x3 B_;
     };
 }
 

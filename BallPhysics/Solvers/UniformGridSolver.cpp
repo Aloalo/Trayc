@@ -36,7 +36,7 @@ void UniformGridSolver::CollisionDetection()
         for(int i = 0; i < numThreads; ++i)
         {
             const int first = i * ballsPerThread;
-            const int last = std::min((i + 1) * ballsPerThread, ctBalls);
+            const int last = min((i + 1) * ballsPerThread, ctBalls);
             threads.push_back(thread(&UniformGridSolver::CollisionDetectionRange, this, first, last));
         }
 

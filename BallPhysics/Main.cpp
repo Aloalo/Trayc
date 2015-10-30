@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     simParams.mSpring = 1.0f;
     simParams.mDamping = 0.02f;
     simParams.mShear = 0.0f;
-    simParams.mAttraction = 0.1f;
+    simParams.mAttraction = 0.0f;
     simParams.mBoundaryDamping = -0.5f;
     const float timeStep = 1.0f / invTimeStep;
 
