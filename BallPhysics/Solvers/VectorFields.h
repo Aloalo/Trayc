@@ -12,6 +12,10 @@
 
 struct VectorField
 {
+    virtual ~VectorField(void)
+    {
+    }
+
     virtual glm::vec3 F(const glm::vec3 &p) const = 0;
 };
 
@@ -93,8 +97,8 @@ struct CameraGravity : public VectorField
     }
 
 private:
-    float mMag;
     const engine::Camera *mCamera;
+    float mMag;
 };
 
 #endif

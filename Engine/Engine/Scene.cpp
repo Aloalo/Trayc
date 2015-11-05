@@ -11,7 +11,7 @@ using namespace std;
 namespace engine
 {
     Scene::Scene(float timeStep)
-        : mUpdateableMenager(timeStep), mCameraHandler(nullptr), mFrameCap(100), mCtFramesPassed(0)
+        : mUpdateableMenager(timeStep), mFrameCap(100), mCtFramesPassed(0), mCameraHandler(nullptr)
     {
     }
 

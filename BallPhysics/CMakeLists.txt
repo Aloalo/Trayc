@@ -39,9 +39,5 @@ target_link_libraries(BallPhysics
     ${OPENGL_LIBRARIES}
 )
 
-if(MSVC)
-	set(CMAKE_CXX_FLAGS_RELEASE "/Ox /Ob2 /Oi /Ot /Oy /GT /GL") 
-endif()
-
 file(COPY Shaders DESTINATION .)
 file(COPY Settings.ini DESTINATION .)

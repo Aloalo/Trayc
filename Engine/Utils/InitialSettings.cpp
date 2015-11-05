@@ -1,7 +1,13 @@
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
+
 #include <Engine/Utils/InitialSettings.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <string>
+#include <cstdint>
 #include <GL/glew.h>
 
 using namespace std;
@@ -9,7 +15,7 @@ using namespace std;
 namespace engine
 {
     InitialSettings::InitialSettings()
-    {    
+    {
         const string path("Settings.ini");
 
         mFormat["GL_NEAREST"] = GL_NEAREST;
@@ -29,13 +35,13 @@ namespace engine
                     if(value[0] == 'f')
                     {
                         float fl = stof(value.substr(1));
-                        mValues[name] = (void*)*(unsigned int*)&fl;
+                        mValues[name] = (void*)(intptr_t)*(int*)&fl;
                     }
                     else if(value.substr(0, 2) == "GL")
-                        mValues[name] = (void*)mFormat[value];
+                        mValues[name] = (void*)(intptr_t)mFormat[value];
                     else
-                        mValues[name] = (void*)stoi(value);
-                 
+                        mValues[name] = (void*)(intptr_t)stoi(value);
+
                 }
             }
         }

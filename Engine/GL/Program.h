@@ -22,7 +22,8 @@ namespace engine
         Program(const VertexShader &vs, const FragmentShader &fs);
         Program(const char *name);
 
-        void Init(const VertexShader *vs, const GeometryShader *gs, const FragmentShader *fs, const char *name = nullptr);
+        void Init(const VertexShader &vs, const GeometryShader &gs, const FragmentShader &fs, const char *name = nullptr);
+        void Init(const VertexShader &vs, const FragmentShader &fs, const char *name = nullptr);
         void Init(const char *name); //init from filename
 
         void Delete();

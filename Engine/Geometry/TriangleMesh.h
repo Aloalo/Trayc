@@ -22,7 +22,7 @@ namespace engine
         std::vector<glm::vec3> mBiTangents;
         std::vector<glm::vec3> mColors;
         std::vector<glm::vec2> mUVs;
-        std::vector<glm::ivec3> mIndices;
+        std::vector<GLuint> mIndices;
     };
 }
 

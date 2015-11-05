@@ -11,8 +11,12 @@ using namespace std;
 
 
 PhysicsSolver::PhysicsSolver(const SimulationParams &simParams)
-    : mSimParams(simParams), mBallDiameter(2.0f * simParams.mBallRadius), 
-    mInterpenetrationEps(simParams.mBallRadius * 0.001f), mParallel(true)
+    : mParallel(true), mSimParams(simParams), mBallDiameter(2.0f * simParams.mBallRadius),
+    mInterpenetrationEps(simParams.mBallRadius * 0.001f)
+{
+}
+
+PhysicsSolver::~PhysicsSolver(void)
 {
 }
 

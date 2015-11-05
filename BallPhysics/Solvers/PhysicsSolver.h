@@ -28,6 +28,7 @@ class PhysicsSolver
 {
 public:
     PhysicsSolver(const SimulationParams &simParams);
+    virtual ~PhysicsSolver(void);
 
     void Solve(float dt);
     void SetBalls(const std::vector<Ball> &balls);

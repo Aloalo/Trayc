@@ -2,6 +2,29 @@ cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
 
 project(Tracing)
 
+if(MSVC)
+	set(CMAKE_CXX_FLAGS_RELEASE "/Ox /Ob2 /Oi /Ot /Oy /GT /GL")
+else(MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wno-comment -Wextra -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -std=c++11")
+	set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+	set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os -DNDEBUG")
+	set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g")
+endif(MSVC)
+
+INCLUDE(CheckCXXSourceCompiles) 
+CHECK_CXX_SOURCE_COMPILES(
+"
+#include <memory>
+
+int main() {
+    std::shared_ptr<int>();
+}
+"
+ENTITYX_HAVE_CXX11_STDLIB
+)
+
+
 option(BUILD_TRAYC "Build the Trayc library" OFF)
 option(BUILD_FUNCTIONDRAWER "Build the FunctionDrawer" ON)
 option(BUILD_GAMEBLOCKS "Build GameBlocks" ON)

@@ -11,12 +11,12 @@ using namespace glm;
 namespace engine
 {
     Camera::Camera(const vec3 &position, float aspectRatio, float FoV, float nearDistance, float farDistance)
-        : mPosition(position), mAspectRatio(aspectRatio), mFoV(FoV), mFarDistance(farDistance), mNearDistance(nearDistance), mYaw(0.0f), mPitch(0.0f)
+        : mPosition(position), mAspectRatio(aspectRatio), mFoV(FoV), mNearDistance(nearDistance), mFarDistance(farDistance), mYaw(0.0f), mPitch(0.0f)
     {
     }
 
     Camera::Camera(void)
-        : mPosition(vec3(0.0f, 0.0f, 0.0f)), mAspectRatio(4.0f / 3.0f), mFoV(60.0f), mFarDistance(100.0f), mNearDistance(0.1f), mYaw(0.0f), mPitch(0.0f)
+        : mPosition(vec3(0.0f, 0.0f, 0.0f)), mAspectRatio(4.0f / 3.0f), mFoV(60.0f), mNearDistance(0.1f), mFarDistance(100.0f), mYaw(0.0f), mPitch(0.0f)
     {
     }
 
@@ -46,7 +46,7 @@ namespace engine
     vec3 Camera::GetDirection() const
     {
         return vec3(
-            cosf(mPitch) * sinf(mYaw), 
+            cosf(mPitch) * sinf(mYaw),
             sinf(mPitch),
             cosf(mPitch) * cosf(mYaw)
             );

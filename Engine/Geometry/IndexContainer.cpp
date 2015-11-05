@@ -8,6 +8,7 @@ using namespace std;
 
 namespace engine
 {
+    /*
     IndexContainer::IndexContainer(const IndexContainer &other)
     {
         *this = other;
@@ -109,4 +110,5 @@ namespace engine
         else
             Cast<GLuint>(indexData);
     }
+    */
 }

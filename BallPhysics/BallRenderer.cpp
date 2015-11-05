@@ -18,7 +18,7 @@ BallRenderer::BallRenderer(const RenderingParams &rParams, int ctBalls, float cu
 
     random_device rd;
     mt19937 gen(rd());
-    const uniform_real_distribution<float> dis(0.0f, 1.0f);
+    uniform_real_distribution<float> dis(0.0f, 1.0f);
     vector<vec3> colors;
     colors.reserve(mCtBalls);
 

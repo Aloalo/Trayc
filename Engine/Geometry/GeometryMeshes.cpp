@@ -27,7 +27,7 @@ namespace engine
         vec3(-1.0f, -1.0f, -1.0f),
     };
 
-    static const GLubyte indicesCubeWire[] =
+    static const GLuint indicesCubeWire[] =
     {
         0, 1, 0, 2, 0, 4,
         3, 1, 3, 2, 3, 7,
@@ -35,7 +35,7 @@ namespace engine
         6, 2, 6, 7, 6, 4
     };
 
-    static const GLubyte indicesCubeSolid[] =
+    static const GLuint indicesCubeSolid[] =
     {
         0, 3, 1, 0, 2, 3,
         0, 5, 4, 0, 1, 5,
@@ -47,7 +47,7 @@ namespace engine
 
     TriangleMesh GetCubeMesh(bool indexed, bool wire) //TODO: normals, UVs
     {
-        const GLubyte *indices = (wire ? indicesCubeWire : indicesCubeSolid);
+        const GLuint *indices = (wire ? indicesCubeWire : indicesCubeSolid);
         const int ctIndices = (wire ? size(indicesCubeWire) : size(indicesCubeSolid));
         const int ctVertices = size(positionsCube);
 

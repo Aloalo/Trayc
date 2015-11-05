@@ -11,7 +11,7 @@ using namespace stdext;
 namespace engine
 {
     Renderer::Renderer(void)
-        : mClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT), mCamera(nullptr)
+        : mCamera(nullptr), mClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     {
     }
 

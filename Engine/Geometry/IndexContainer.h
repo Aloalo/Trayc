@@ -10,6 +10,7 @@
 
 namespace engine
 {
+    /*
     class IndexContainer
     {
     public:
@@ -38,6 +39,7 @@ namespace engine
         GLuint indexCount;
         GLsizeiptr sizeInBytes;
     };
+    */
 }
 
 #endif

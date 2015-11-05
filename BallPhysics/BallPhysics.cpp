@@ -13,7 +13,7 @@ using namespace glm;
 using namespace std;
 
 BallPhysics::BallPhysics(const SimulationParams &simParams)
-    : mSolver(nullptr), mCtBalls(simParams.mCtBalls), mCubeSize(simParams.mCubeSize), mBallRadius(simParams.mBallRadius), mPaused(false)
+    : mPaused(false), mSolver(nullptr), mCtBalls(simParams.mCtBalls), mBallRadius(simParams.mBallRadius), mCubeSize(simParams.mCubeSize)
 {
 }
 
@@ -60,11 +60,11 @@ void BallPhysics::InitBalls()
         std::exit(-1);
     }
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    const std::uniform_real_distribution<float> dis(-mBallRadius * 0.05f, mBallRadius * 0.05f);
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_real_distribution<float> dis(-mBallRadius * 0.05f, mBallRadius * 0.05f);
 
-    std::vector<Ball> balls;
+    vector<Ball> balls;
     int ctBalls = 0;
     for(int i = 0; i < ballsPerRow; ++i)
     {

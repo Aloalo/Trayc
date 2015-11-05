@@ -12,7 +12,7 @@ using namespace stdext;
 namespace engine
 {
     InputHandler::InputHandler(void)
-        : mIsCursorFree(true), mQuit(false)
+        : mQuit(false), mIsCursorFree(true)
     {
     }
 

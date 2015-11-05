@@ -35,11 +35,11 @@ namespace engine
     {
         cout << "GLEW version: " << glewGetString(GLEW_VERSION) << endl << endl;
 
-        cout << "Compiled against SDL version "  << static_cast<int>(mCompiled.major) << "." << 
-                                                     static_cast<int>(mCompiled.minor)  << "." <<  
+        cout << "Compiled against SDL version "  << static_cast<int>(mCompiled.major) << "." <<
+                                                     static_cast<int>(mCompiled.minor)  << "." <<
                                                      static_cast<int>(mCompiled.patch) << endl;
-        cout << "Linked against SDL version "  << static_cast<int>(mLinked.major) << "." << 
-                                                   static_cast<int>(mLinked.minor)  << "." <<  
+        cout << "Linked against SDL version "  << static_cast<int>(mLinked.major) << "." <<
+                                                   static_cast<int>(mLinked.minor)  << "." <<
                                                    static_cast<int>(mLinked.patch) << endl << endl;
 
         cout << "OpenGL vendor: " << glGetString(GL_VENDOR) << endl;

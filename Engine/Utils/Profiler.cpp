@@ -66,4 +66,4 @@ namespace engine
         cout << "NET: " << sum << endl << endl;
     }
 
-};
+}

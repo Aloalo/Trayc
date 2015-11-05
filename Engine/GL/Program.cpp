@@ -20,13 +20,13 @@ namespace engine
     Program::Program(const VertexShader &vs, const GeometryShader &gs, const FragmentShader &fs)
         : mID(0)
     {
-        Init(&vs, &gs, &fs);
+        Init(vs, gs, fs);
     }
 
     Program::Program(const VertexShader &vs, const FragmentShader &fs)
         : mID(0)
     {
-        Init(&vs, nullptr, &fs);
+        Init(vs, fs);
     }
 
     Program::Program(const char *name)
@@ -41,15 +41,14 @@ namespace engine
         mID = 0;
     }
 
-    void Program::Init(const VertexShader *vs, const GeometryShader *gs, const FragmentShader *fs, const char *name)
+    void Program::Init(const VertexShader &vs, const GeometryShader &gs, const FragmentShader &fs, const char *name)
     {
         Delete();
 
         mID = glCreateProgram();
-        Attach(*vs);
-        if(gs)
-            Attach(*gs);
-        Attach(*fs);
+        Attach(vs);
+        Attach(gs);
+        Attach(fs);
         glLinkProgram(mID);
         GLint status;
         glGetProgramiv(mID, GL_LINK_STATUS, &status);
@@ -64,10 +63,48 @@ namespace engine
             cerr << "Linking failure in program " << name << ":" << endl << strInfoLog << endl;
             delete[] strInfoLog;
         }
-        Detach(*vs);
-        if(gs)
-            Detach(*gs);
-        Detach(*fs);
+        Detach(vs);
+        Detach(gs);
+        Detach(fs);
+
+        //Cache all the uniforms
+        GLint uniformCount;
+        glGetProgramiv(mID, GL_ACTIVE_UNIFORMS, &uniformCount);
+        const GLsizei bufferSize = 100;
+        for(GLint i = 0; i < uniformCount; ++i)
+        {
+            GLchar uniformName[bufferSize];
+            GLsizei length;
+            GLint size;
+            GLenum type;
+            glGetActiveUniform(mID, i, bufferSize, &length, &size, &type, uniformName);
+            mUniformLocations[string(uniformName)] = glGetUniformLocation(mID, uniformName);
+        }
+    }
+
+        void Program::Init(const VertexShader &vs, const FragmentShader &fs, const char *name)
+    {
+        Delete();
+
+        mID = glCreateProgram();
+        Attach(vs);
+        Attach(fs);
+        glLinkProgram(mID);
+        GLint status;
+        glGetProgramiv(mID, GL_LINK_STATUS, &status);
+        if(status == GL_FALSE)
+        {
+            GLint infoLogLength;
+            glGetProgramiv(mID, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+            GLchar *strInfoLog = new GLchar[infoLogLength+1];
+            glGetProgramInfoLog(mID, infoLogLength, nullptr, strInfoLog);
+
+            cerr << "Linking failure in program " << name << ":" << endl << strInfoLog << endl;
+            delete[] strInfoLog;
+        }
+        Detach(vs);
+        Detach(fs);
 
         //Cache all the uniforms
         GLint uniformCount;
@@ -91,9 +128,9 @@ namespace engine
         ifstream f(sn.c_str());
 
         if(f.good())
-            Init(&VertexShader(name), &GeometryShader(name), &FragmentShader(name), name);
+            Init(VertexShader(name), GeometryShader(name), FragmentShader(name), name);
         else
-            Init(&VertexShader(name), nullptr, &FragmentShader(name), name);
+            Init(VertexShader(name), FragmentShader(name), name);
 
         f.close();
     }

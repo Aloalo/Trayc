@@ -13,8 +13,9 @@ using namespace glm;
 namespace engine
 {
     RotationalCameraHandler::RotationalCameraHandler(const Camera &cam, const vec3 &lookAtPoint, float rotationSpeed, float zoomSpeed, float springiness) :
-        CameraHandler(cam), mObserveMouse(true), mRotationSpeed(rotationSpeed), mLookAtPoint(lookAtPoint), mRadius(length(cam.mPosition - lookAtPoint)), 
-        mDx(0.0f), mDy(0.0f), mMouseDown(false), mZoomSpeed(zoomSpeed), mSpringiness(springiness)
+        CameraHandler(cam), mMouseDown(false), mObserveMouse(true), mZoomSpeed(zoomSpeed), mRotationSpeed(rotationSpeed),
+        mRadius(length(cam.mPosition - lookAtPoint)), mLookAtPoint(lookAtPoint),
+        mSpringiness(springiness), mDx(0.0f), mDy(0.0f)
     {
         mCamera.SetDirection(mLookAtPoint - mCamera.mPosition);
     }
