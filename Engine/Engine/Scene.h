@@ -21,7 +21,7 @@ namespace engine
         Scene(float timeStep);
         ~Scene(void);
 
-        void Init(CameraHandler *cameraHandler, char const *programName, int screenWidth, int screenHeight);
+        void Init(CameraHandler *cameraHandler, char const *programName, const char *windowTitle, int screenWidth, int screenHeight);
         void GameLoop();
 
         const Camera& GetCamera() const;

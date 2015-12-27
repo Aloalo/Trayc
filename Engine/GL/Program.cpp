@@ -44,51 +44,39 @@ namespace engine
     void Program::Init(const VertexShader &vs, const GeometryShader &gs, const FragmentShader &fs, const char *name)
     {
         Delete();
-
         mID = glCreateProgram();
+
         Attach(vs);
         Attach(gs);
         Attach(fs);
-        glLinkProgram(mID);
-        GLint status;
-        glGetProgramiv(mID, GL_LINK_STATUS, &status);
-        if(status == GL_FALSE)
-        {
-            GLint infoLogLength;
-            glGetProgramiv(mID, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-            GLchar *strInfoLog = new GLchar[infoLogLength+1];
-            glGetProgramInfoLog(mID, infoLogLength, nullptr, strInfoLog);
+        LinkProgram(name);
 
-            cerr << "Linking failure in program " << name << ":" << endl << strInfoLog << endl;
-            delete[] strInfoLog;
-        }
         Detach(vs);
         Detach(gs);
         Detach(fs);
 
-        //Cache all the uniforms
-        GLint uniformCount;
-        glGetProgramiv(mID, GL_ACTIVE_UNIFORMS, &uniformCount);
-        const GLsizei bufferSize = 100;
-        for(GLint i = 0; i < uniformCount; ++i)
-        {
-            GLchar uniformName[bufferSize];
-            GLsizei length;
-            GLint size;
-            GLenum type;
-            glGetActiveUniform(mID, i, bufferSize, &length, &size, &type, uniformName);
-            mUniformLocations[string(uniformName)] = glGetUniformLocation(mID, uniformName);
-        }
+        CacheUniforms();
     }
 
-        void Program::Init(const VertexShader &vs, const FragmentShader &fs, const char *name)
+    void Program::Init(const VertexShader &vs, const FragmentShader &fs, const char *name)
     {
         Delete();
-
         mID = glCreateProgram();
+
         Attach(vs);
         Attach(fs);
+
+        LinkProgram(name);
+
+        Detach(vs);
+        Detach(fs);
+
+        CacheUniforms();
+    }
+
+    void Program::LinkProgram(const char *name)
+    {
         glLinkProgram(mID);
         GLint status;
         glGetProgramiv(mID, GL_LINK_STATUS, &status);
@@ -97,15 +85,16 @@ namespace engine
             GLint infoLogLength;
             glGetProgramiv(mID, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-            GLchar *strInfoLog = new GLchar[infoLogLength+1];
+            GLchar *strInfoLog = new GLchar[infoLogLength + 1];
             glGetProgramInfoLog(mID, infoLogLength, nullptr, strInfoLog);
 
             cerr << "Linking failure in program " << name << ":" << endl << strInfoLog << endl;
             delete[] strInfoLog;
         }
-        Detach(vs);
-        Detach(fs);
+    }
 
+    void Program::CacheUniforms()
+    {
         //Cache all the uniforms
         GLint uniformCount;
         glGetProgramiv(mID, GL_ACTIVE_UNIFORMS, &uniformCount);
@@ -145,32 +134,15 @@ namespace engine
         glUseProgram(0);
     }
 
-    /*GLint Program::GetUniformLocation(const GLchar *name)
-    {
-    const auto it = mUniformLocations.find(name);
-    if(it != mUniformLocations.end())
-    return it->second;
-    else
-    {
-    const GLint location = glGetUniformLocation(mID, name);
-    if(location == -1)
-    {
-    cerr << "Uniform '" << name << "' not in shader '" << mID << "'" << endl;
-    }
-    mUniformLocations[name] = location;
-    return location;
-    }
-    }*/
-
-    /*GLuint Program::GetUniformBlockLocation(const GLchar *name)
+    GLuint Program::GetUniformBlockLocation(const GLchar *name)
     {
         return glGetUniformBlockIndex(mID, name);
-    }*/
+    }
 
-    /*void Program::SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint)
+    void Program::SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint)
     {
-    glUniformBlockBinding(mID, GetUniformBlockLocation(name), bindingPoint);
-    }*/
+        glUniformBlockBinding(mID, GetUniformBlockLocation(name), bindingPoint);
+    }
 
     GLint Program::GetUniformi(const GLchar *name) const
     {

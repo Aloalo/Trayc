@@ -19,7 +19,7 @@ namespace engine
     {
     }
 
-    void Scene::Init(CameraHandler *cameraHandler, char const *programName, int screenWidth, int screenHeight)
+    void Scene::Init(CameraHandler *cameraHandler, char const *programName, const char *windowTitle, int screenWidth, int screenHeight)
     {
         assert(cameraHandler != nullptr);
         mCameraHandler = cameraHandler;
@@ -29,7 +29,7 @@ namespace engine
 
         //Create window
         mSDLHandler.CreateGLWindow(
-            "Function Drawer",
+            windowTitle,
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
             screenWidth,

@@ -31,10 +31,8 @@ namespace engine
         void Use() const;
         static void Unbind();
 
-        //GLint GetUniformLocation(const GLchar *name);
-        //GLuint GetUniformBlockLocation(const GLchar *name);
-        //void SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint);
-
+        GLuint GetUniformBlockLocation(const GLchar *name);
+        void SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint);
 
         GLint GetUniformi(const GLchar *name) const;
 
@@ -56,6 +54,9 @@ namespace engine
     private:
         void Attach(const Shader &sh) const;
         void Detach(const Shader &sh) const;
+
+        void CacheUniforms();
+        void LinkProgram(const char *name);
 
         GLuint mID;
         std::map<std::string, GLint> mUniformLocations;

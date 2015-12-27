@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
     RotationalCameraHandler camHandler(ConstructCameraHandler(SSize, 60.0f, 1000.0f));
     //Init Scene
     Scene scene(timeStep);
-    scene.Init(&camHandler, argv[0], SSize.x, SSize.y);
+    scene.Init(&camHandler, argv[0], "Test", SSize.x, SSize.y);
     scene.mSDLHandler.VsyncMode(1);
     scene.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
 

@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
     rParams.mCamera = &camHandler.GetCamera();
     //Init Scene
     Scene scene(timeStep);
-    scene.Init(&camHandler, argv[0], rParams.mSSize.x, rParams.mSSize.y);
+    scene.Init(&camHandler, argv[0], "Ball physics", rParams.mSSize.x, rParams.mSSize.y);
     scene.mSDLHandler.VsyncMode(rParams.mVsync);
     scene.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
 

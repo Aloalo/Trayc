@@ -53,6 +53,18 @@ set(Engine_GL
     GL/GeometryShader.cpp
     GL/FragmentShader.cpp
     GL/Program.cpp
+    GL/BufferObject.cpp
+    GL/BufferObject.h
+    GL/ScreenBuffer.cpp
+    GL/ScreenBuffer.h
+    GL/FrameBuffer.cpp
+    GL/FrameBuffer.h
+    GL/VertexArray.cpp
+    GL/VertexArray.h
+    GL/VertexArrayInstanced.cpp
+    GL/VertexArrayInstanced.h
+    GL/UniformBuffer.cpp
+    GL/UniformBuffer.h
 )
 
 set(Engine_Utils
