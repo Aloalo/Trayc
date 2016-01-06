@@ -18,4 +18,4 @@ target_link_libraries(Mandelbrot
     ${OPENGL_LIBRARIES}
 )
 
-#file(COPY Shaders DESTINATION .)
+file(COPY Shaders DESTINATION .)
