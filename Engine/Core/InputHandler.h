@@ -27,6 +27,7 @@ namespace engine
         void SetQuit();
         //Is cursor free?
         bool IsCursorFree() const;
+        void SetCursorFree(bool cursorFree);
 
     private:
         friend class Scene;

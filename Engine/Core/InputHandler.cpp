@@ -12,7 +12,7 @@ using namespace stdext;
 namespace engine
 {
     InputHandler::InputHandler(void)
-        : mQuit(false), mIsCursorFree(true)
+        : mQuit(false), mIsCursorFree(false)
     {
     }
 
@@ -27,6 +27,7 @@ namespace engine
 
             else if(testEvent.type == SDL_KEYDOWN && testEvent.key.keysym.sym == SDLK_LSHIFT)
             {
+                mIsCursorFree = !mIsCursorFree;
                 if(mIsCursorFree)
                 {
                     SDL_SetRelativeMouseMode(SDL_FALSE);
@@ -37,7 +38,6 @@ namespace engine
                     SDL_SetRelativeMouseMode(SDL_TRUE);
                     SDL_ShowCursor(0);
                 }
-                mIsCursorFree = !mIsCursorFree;
             }
 
             for(InputObserver *listener : mListenerList)
@@ -101,5 +101,12 @@ namespace engine
     bool InputHandler::IsCursorFree() const
     {
         return mIsCursorFree;
+    }
+
+    void InputHandler::SetCursorFree(bool cursorFree)
+    {
+        mIsCursorFree = cursorFree;
+        SDL_ShowCursor(int(cursorFree));
+        SDL_SetRelativeMouseMode(SDL_bool(!cursorFree));
     }
 }

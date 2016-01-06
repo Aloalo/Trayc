@@ -3,6 +3,8 @@ project(Mandelbrot)
 # Define the source files.
 set(Mandelbrot_SRCS
     Main.cpp
+    MandelbrotRenderer.cpp
+    MandelbrotRenderer.h
 )
 
 source_group(Mandelbrot FILES ${Mandelbrot_SRCS})
