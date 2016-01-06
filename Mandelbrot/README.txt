@@ -6,8 +6,5 @@ Controls:
    -Mouse wheel: zoom in/out
    [q]: zoom in
    [w]: zoom out
-   [1]: set low number of iterations
-   [2]: set high number of iterations
-   [3]: toogle anti aliasing
-   [4]: toogle precision
-   
+   [1]: toggle number of iterations
+   [2]: toggle anti aliasing

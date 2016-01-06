@@ -27,9 +27,7 @@ private:
     void ApplyState() const;
 
     engine::VertexArray mQuad;
-    engine::Program mMandelProgF;
-    engine::Program mMandelProgD;
-    engine::Program *mCurrentProg;
+    engine::Program mMandelProg;
 
     bool mMovingView;
 
@@ -38,9 +36,8 @@ private:
         glm::vec2 mTopLeftCoord;
         glm::vec2 mWindowSize;
         float mScale;
-        float mLimit;
+        int mLimit;
         int mAA;
-        int mPrecision;
     } mState;
 
 };

@@ -4,19 +4,14 @@ using namespace glm;
 using namespace engine;
 
 MandelbrotRenderer::MandelbrotRenderer(vec2 windowSize) :
-    mQuad(GL_STATIC_DRAW), mMovingView(false)
+    mQuad(GL_STATIC_DRAW), mMandelProg("Shaders/mandelbrot"), mMovingView(false)
 {
     mState.mTopLeftCoord = vec2(2.0f, 1.0f);
     mState.mWindowSize = windowSize;
     mState.mScale = 512.0f;
-    mState.mLimit = 400.0f;
+    mState.mLimit = 402;
     mState.mAA = 0;
-    mState.mPrecision = 0;
 
-    mMandelProgF.Init(VertexShader("Shaders/mandelbrot"), FragmentShader("Shaders/mandelbrotF"), "mandelbrotF");
-    mMandelProgD.Init(VertexShader("Shaders/mandelbrot"), FragmentShader("Shaders/mandelbrotD"), "mandelbrotD");
-
-    mCurrentProg = &mMandelProgF;
     ApplyState();
 
     glViewport(0, 0, GLsizei(windowSize.x), GLsizei(windowSize.y));
@@ -35,8 +30,7 @@ MandelbrotRenderer::MandelbrotRenderer(vec2 windowSize) :
 
 MandelbrotRenderer::~MandelbrotRenderer(void)
 {
-    mMandelProgD.Delete();
-    mMandelProgF.Delete();
+    mMandelProg.Delete();
 }
 
 vec2 lpo;
@@ -55,20 +49,11 @@ void MandelbrotRenderer::KeyPress(const SDL_KeyboardEvent &e)
             mState.mScale *= 0.9f;
             break;
         case SDLK_1:
-            mState.mLimit = 402.0f;
+            mState.mLimit = (mState.mLimit == 402 ? (1 << 12) + 2 : 402);
             break;
         case SDLK_2:
-            mState.mLimit = float(1 << 12) + 2.0f;
-            break;
-        case SDLK_3:
             mState.mAA = !mState.mAA;
             break;
-        case SDLK_4:
-        {
-            mState.mPrecision = !mState.mPrecision;
-            mCurrentProg = (mState.mPrecision == 0 ? &mMandelProgF : &mMandelProgD);
-            break;
-        }
         default:
             break;
         }
@@ -128,10 +113,10 @@ void MandelbrotRenderer::Draw(const engine::RenderingContext &rContext) const
 
 void MandelbrotRenderer::ApplyState() const
 {
-    mCurrentProg->Use();
-    mCurrentProg->SetUniform("translation", mState.mTopLeftCoord);
-    mCurrentProg->SetUniform("scale", mState.mScale);
-    mCurrentProg->SetUniform("windowSize", mState.mWindowSize);
-    mCurrentProg->SetUniform("limit", mState.mLimit);
-    mCurrentProg->SetUniform("aa", mState.mAA);
+    mMandelProg.Use();
+    mMandelProg.SetUniform("translation", mState.mTopLeftCoord);
+    mMandelProg.SetUniform("scale", mState.mScale);
+    mMandelProg.SetUniform("windowSize", mState.mWindowSize);
+    mMandelProg.SetUniform("limit", mState.mLimit);
+    mMandelProg.SetUniform("aa", mState.mAA);
 }
