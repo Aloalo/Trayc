@@ -55,8 +55,6 @@ set(Engine_GL
     GL/Program.cpp
     GL/BufferObject.cpp
     GL/BufferObject.h
-    GL/ScreenBuffer.cpp
-    GL/ScreenBuffer.h
     GL/FrameBuffer.cpp
     GL/FrameBuffer.h
     GL/VertexArray.cpp

@@ -5,52 +5,78 @@ using namespace std;
 
 namespace engine
 {
-    FrameBuffer::FrameBuffer(void) :
-        mID(0), mTexID(0), mRBID(0), mWidth(0), mHeight(0)
+    FrameBuffer::FBAttachment::FBAttachment(GLenum format, GLenum internalFormat, GLenum type, float scale)
+        :mFormat(format), mInternalFormat(internalFormat), mType(type), mScale(scale), mID(0)
     {
+    }
+
+    static const GLenum colorAttachments[8] = 
+    {
+        GL_COLOR_ATTACHMENT0,
+        GL_COLOR_ATTACHMENT1,
+        GL_COLOR_ATTACHMENT2,
+        GL_COLOR_ATTACHMENT3,
+        GL_COLOR_ATTACHMENT4,
+        GL_COLOR_ATTACHMENT5,
+        GL_COLOR_ATTACHMENT6,
+        GL_COLOR_ATTACHMENT7
+    };
+
+    FrameBuffer::FrameBuffer(int width, int height) :
+        mID(0), mRBID(0), mWidth(width), mHeight(height)
+    {
+        glGenFramebuffers(1, &mID);
     }
 
     FrameBuffer::~FrameBuffer(void)
     {
-        glDeleteTextures(1, &mTexID);
+        for(FBAttachment &fba : mAttachments)
+            glDeleteTextures(1, &fba.mID);
+
         glDeleteRenderbuffers(1, &mRBID);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glDeleteFramebuffers(1, &mID);
     }
 
-    void FrameBuffer::Init(int width, int height)
+    void FrameBuffer::AddAttachment(const FBAttachment &fba)
     {
-        mWidth = width;
-        mHeight = height;
+        mAttachments.push_back(FBAttachment(fba));
+        FBAttachment &mFBA = mAttachments.back();
 
-        // Init texture
-        glGenTextures(1, &mTexID);
-        glBindTexture(GL_TEXTURE_2D, mTexID);
+        glGenTextures(1, &mFBA.mID);
+        glBindTexture(GL_TEXTURE_2D, mFBA.mID);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        const int width = int(float(mWidth) * mFBA.mScale);
+        const int height = int(float(mHeight) * mFBA.mScale);
+        glTexImage2D(GL_TEXTURE_2D, 0, mFBA.mFormat, width, height, 0, mFBA.mInternalFormat, mFBA.mType, nullptr);
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        // Init FBO
-        glGenFramebuffers(1, &mID);
         glBindFramebuffer(GL_FRAMEBUFFER, mID);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[mAttachments.size() - 1], GL_TEXTURE_2D, mFBA.mID, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
 
-        // Attach texture
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexID, 0);
-        const GLenum drawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
-        glDrawBuffers(1, drawBuffers);
-        glReadBuffer(GL_NONE);
-
+    void FrameBuffer::AttachRBO()
+    {
         // Init RBO
         glGenRenderbuffers(1, &mRBID);
         glBindRenderbuffer(GL_RENDERBUFFER, mRBID);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, mWidth, mHeight);
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
         // Attach RBO
+        glBindFramebuffer(GL_FRAMEBUFFER, mID);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRBID);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    void FrameBuffer::Compile() const
+    {
+        glDrawBuffers(mAttachments.size(), colorAttachments);
+        glReadBuffer(GL_NONE);
 
         // Check completeness
         Check();
@@ -61,15 +87,23 @@ namespace engine
         mWidth = width;
         mHeight = height;
 
-        // Resize color texture
-        glBindTexture(GL_TEXTURE_2D, mTexID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        // Resize color textures
+        for(const FBAttachment &fba : mAttachments)
+        {
+            const int width = int(float(mWidth) * fba.mScale);
+            const int height = int(float(mHeight) * fba.mScale);
+            glBindTexture(GL_TEXTURE_2D, fba.mID);
+            glTexImage2D(GL_TEXTURE_2D, 0, fba.mFormat, width, height, 0, fba.mInternalFormat, fba.mType, nullptr);
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
 
-        // Resize render buffer
-        glBindRenderbuffer(GL_RENDERBUFFER, mRBID);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        if(mRBID != 0)
+        {
+            // Resize render buffer
+            glBindRenderbuffer(GL_RENDERBUFFER, mRBID);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+            glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        }
     }
 
     void FrameBuffer::Check() const
@@ -114,14 +148,14 @@ namespace engine
         cerr << endl;
     }
 
+    void FrameBuffer::BindTexture(int idx) const
+    {
+        glBindTexture(GL_TEXTURE_2D, mAttachments[idx].mID);
+    }
+
     void FrameBuffer::Bind() const
     {
         glBindFramebuffer(GL_FRAMEBUFFER, mID);
-    }
-
-    void FrameBuffer::BindTexture() const
-    {
-        glBindTexture(GL_TEXTURE_2D, mTexID);
     }
 
     void FrameBuffer::UnBind()

@@ -6,29 +6,49 @@
 #define EN_FRAME_BUFFER_H
 
 #include <GL/glew.h>
+#include <vector>
 
 namespace engine
 {
     class FrameBuffer
     {
     public:
-        FrameBuffer(void);
+        struct FBAttachment
+        {
+            friend class FrameBuffer;
+
+            FBAttachment(GLenum format, GLenum internalFormat, GLenum type, float scale);
+
+            GLenum mFormat;
+            GLenum mInternalFormat;
+            GLenum mType;
+            float mScale; // Scale to the buffers width/height
+
+        private:
+            GLuint mID;
+        };
+
+
+        FrameBuffer(int width, int height);
         ~FrameBuffer(void);
 
-        void Init(int width, int height);
+        void AddAttachment(const FBAttachment &fba);
+        void AttachRBO();
+        void Compile() const;
         void Resize(int width, int height);
         void Check() const;
 
+        void BindTexture(int idx) const;
         void Bind() const;
-        void BindTexture() const;
         static void UnBind();
 
         int Width() const;
         int Height() const;
 
     private:
+        std::vector<FBAttachment> mAttachments;
+
         GLuint mID;
-        GLuint mTexID;
         GLuint mRBID;
 
         int mWidth;
