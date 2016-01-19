@@ -2,6 +2,7 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 #include <Engine/Engine/Renderer.h>
+#include <Engine/Engine/Scene.h>
 #include <Engine/Utils/StlExtensions.hpp>
 
 using namespace glm;
@@ -10,13 +11,14 @@ using namespace stdext;
 
 namespace engine
 {
-    Renderer::Renderer(void)
-        : mCamera(nullptr), mClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    Renderer::Renderer(Scene *scene)
+        : mCamera(nullptr), mScene(scene), mClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     {
     }
 
     Renderer::~Renderer(void)
     {
+        mGBuffer.Destroy();
     }
 
     void Renderer::InitRendering(const CameraHandler *camera)
@@ -24,6 +26,18 @@ namespace engine
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
+
+        int width;
+        int height;
+        mScene->mSDLHandler.GetWindowSize(&width, &height);
+
+        mGBuffer.Init(width, height);
+        mGBuffer.AddAttachment(FrameBuffer::FBAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT, 1.0f)); //Poisition worldspace / Linear Depth
+        mGBuffer.AddAttachment(FrameBuffer::FBAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT, 1.0f)); //Normal world space / x
+        mGBuffer.AddAttachment(FrameBuffer::FBAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, 1.0f)); //Specular / Gloss
+        mGBuffer.AddAttachment(FrameBuffer::FBAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, 1.0f)); //Albedo / x
+        mGBuffer.Compile();
+
         mCamera = camera;
     }
 

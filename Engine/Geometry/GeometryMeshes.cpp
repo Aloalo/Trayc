@@ -10,7 +10,7 @@ using namespace glm;
 namespace engine
 {
     template<typename T, int sz>
-    int size(T(&)[sz])
+    static inline int size(T(&)[sz])
     {
         return sz;
     }

@@ -17,10 +17,10 @@ namespace engine
         {
             friend class FrameBuffer;
 
-            FBAttachment(GLenum format, GLenum internalFormat, GLenum type, float scale);
+            FBAttachment(GLenum internalFormat, GLenum format, GLenum type, float scale);
 
-            GLenum mFormat;
             GLenum mInternalFormat;
+            GLenum mFormat;
             GLenum mType;
             float mScale; // Scale to the buffers width/height
 
@@ -28,9 +28,10 @@ namespace engine
             GLuint mID;
         };
 
+        FrameBuffer(void);
 
-        FrameBuffer(int width, int height);
-        ~FrameBuffer(void);
+        void Init(int width, int height);
+        void Destroy();
 
         void AddAttachment(const FBAttachment &fba);
         void AttachRBO();

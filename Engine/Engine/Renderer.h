@@ -7,27 +7,17 @@
 
 #include <Engine/Engine/Renderable.h>
 #include <Engine/Core/CameraHandler.h>
+#include <Engine/GL/FrameBuffer.h>
 #include <vector>
 
 namespace engine
 {
-    enum ProgramType
-    {
-        PROGRAM_NONE = 0,
-        PROGRAM_DIRECTIONAL_LIGHT = LightFlag::LIGHT_DIRECTIONAL,
-        PROGRAM_POINT_LIGHT = LightFlag::LIGHT_POINT,
-        PROGRAM_SPOT_LIGHT = LightFlag::LIGHT_SPOT,
-
-        PROGRAM_SHADOW_MAP = LightFlag::LIGHT_CASTS_SHADOWS,
-        PROGRAM_INSANCED = 1 << 4,
-
-        PROGRAM_COUNT = 1 << 5
-    };
+    class Scene;
 
     class Renderer
     {
     public:
-        Renderer(void);
+        Renderer(Scene *scene);
         ~Renderer(void);
 
         void SetClearColor(const glm::vec4 &clearColor) const;
@@ -50,6 +40,9 @@ namespace engine
         void Render() const;
 
         const CameraHandler *mCamera;
+        Scene *mScene;
+
+        engine::FrameBuffer mGBuffer;
         GLbitfield mClearMask;
         std::vector<Light> mLights;
         std::vector<Renderable*> mRenderables;

@@ -17,7 +17,7 @@ namespace engine
         glm::vec3 mKs;
         float mPhongExponent;
 
-        std::string mDiffuseMap;
+        std::string mAlbedoMap;
         std::string mSpecularMap;
         std::string mNormalMap;
     };

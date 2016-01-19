@@ -5,8 +5,8 @@ using namespace std;
 
 namespace engine
 {
-    FrameBuffer::FBAttachment::FBAttachment(GLenum format, GLenum internalFormat, GLenum type, float scale)
-        :mFormat(format), mInternalFormat(internalFormat), mType(type), mScale(scale), mID(0)
+    FrameBuffer::FBAttachment::FBAttachment(GLenum internalFormat, GLenum format, GLenum type, float scale)
+        : mInternalFormat(internalFormat), mFormat(format), mType(type), mScale(scale), mID(0)
     {
     }
 
@@ -22,13 +22,22 @@ namespace engine
         GL_COLOR_ATTACHMENT7
     };
 
-    FrameBuffer::FrameBuffer(int width, int height) :
-        mID(0), mRBID(0), mWidth(width), mHeight(height)
+    FrameBuffer::FrameBuffer(void)
+        : mID(0), mRBID(0), mWidth(0), mHeight(0)
     {
-        glGenFramebuffers(1, &mID);
     }
 
-    FrameBuffer::~FrameBuffer(void)
+    void FrameBuffer::Init(int width, int height)
+    {
+        if(mID == 0)
+        {
+            mWidth = width;
+            mHeight = height;
+            glGenFramebuffers(1, &mID);
+        }
+    }
+
+    void FrameBuffer::Destroy()
     {
         for(FBAttachment &fba : mAttachments)
             glDeleteTextures(1, &fba.mID);
@@ -51,7 +60,7 @@ namespace engine
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         const int width = int(float(mWidth) * mFBA.mScale);
         const int height = int(float(mHeight) * mFBA.mScale);
-        glTexImage2D(GL_TEXTURE_2D, 0, mFBA.mFormat, width, height, 0, mFBA.mInternalFormat, mFBA.mType, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, mFBA.mInternalFormat, width, height, 0, mFBA.mFormat, mFBA.mType, nullptr);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         glBindFramebuffer(GL_FRAMEBUFFER, mID);
@@ -61,16 +70,19 @@ namespace engine
 
     void FrameBuffer::AttachRBO()
     {
-        // Init RBO
-        glGenRenderbuffers(1, &mRBID);
-        glBindRenderbuffer(GL_RENDERBUFFER, mRBID);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, mWidth, mHeight);
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        if(mRBID == 0)
+        {
+            // Init RBO
+            glGenRenderbuffers(1, &mRBID);
+            glBindRenderbuffer(GL_RENDERBUFFER, mRBID);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, mWidth, mHeight);
+            glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-        // Attach RBO
-        glBindFramebuffer(GL_FRAMEBUFFER, mID);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRBID);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            // Attach RBO
+            glBindFramebuffer(GL_FRAMEBUFFER, mID);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRBID);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
     }
 
     void FrameBuffer::Compile() const
