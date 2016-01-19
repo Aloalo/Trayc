@@ -7,34 +7,22 @@
 # GLEW_LIBRARY
 # 
 
-IF (WIN32)
-	FIND_PATH( GLEW_INCLUDE_PATH GL/glew.h
-		$ENV{PROGRAMFILES}/GLEW/include
-        $ENV{GLEW_HOME}/include
-		${GLEW_ROOT_DIR}/include
-		DOC "The directory where GL/glew.h resides")
-
-	IF (NV_SYSTEM_PROCESSOR STREQUAL "AMD64")
-		FIND_LIBRARY( GLEW_LIBRARY
-			NAMES glew64 glew64s
-			PATHS
-			$ENV{PROGRAMFILES}/GLEW/lib
-			${PROJECT_SOURCE_DIR}/src/nvgl/glew/bin
-	    	${PROJECT_SOURCE_DIR}/src/nvgl/glew/lib
-			DOC "The GLEW library (64-bit)"
-		)
-	ELSE(NV_SYSTEM_PROCESSOR STREQUAL "AMD64")
-		FIND_LIBRARY( GLEW_LIBRARY
-			NAMES glew GLEW glew32 glew32s
-			PATHS
-			$ENV{PROGRAMFILES}/GLEW/lib
-            $ENV{GLEW_HOME}/lib
-            $ENV{GLEW_HOME}/lib/Release/Win32
-			${PROJECT_SOURCE_DIR}/src/nvgl/glew/bin
-	    	${PROJECT_SOURCE_DIR}/src/nvgl/glew/lib
-			DOC "The GLEW library"
-		)
-	ENDIF(NV_SYSTEM_PROCESSOR STREQUAL "AMD64")
+IF(WIN32)
+	FIND_PATH(GLEW_INCLUDE_PATH GL/glew.h
+        PATHS
+		"${CMAKE_SOURCE_DIR}/libs/glew/include"
+        )
+        
+    FIND_PATH(GLEW_BIN_PATH glew32.dll
+        PATHS
+		"${CMAKE_SOURCE_DIR}/libs/glew/bin/Release/Win32"
+        )
+        
+    FIND_LIBRARY( GLEW_LIBRARY
+        NAMES glew GLEW glew32 glew32s
+        PATHS
+        "${CMAKE_SOURCE_DIR}/libs/glew/lib/Release/Win32"
+    )
 ELSE (WIN32)
 	FIND_PATH( GLEW_INCLUDE_PATH GL/glew.h
 		/usr/include
@@ -56,14 +44,11 @@ ELSE (WIN32)
 		${GLEW_ROOT_DIR}/lib
         $ENV{GLEW_HOME}/lib
 		DOC "The GLEW library")
-ENDIF (WIN32)
+ENDIF(WIN32)
 
 SET(GLEW_FOUND "NO")
-IF (GLEW_INCLUDE_PATH AND GLEW_LIBRARY)
+IF (GLEW_INCLUDE_PATH AND GLEW_LIBRARY AND GLEW_BIN_PATH)
 	SET(GLEW_LIBRARIES ${GLEW_LIBRARY})
 	SET(GLEW_FOUND "YES")
-ENDIF (GLEW_INCLUDE_PATH AND GLEW_LIBRARY)
+ENDIF (GLEW_INCLUDE_PATH AND GLEW_LIBRARY AND GLEW_BIN_PATH)
 
-
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(GLEW DEFAULT_MSG GLEW_LIBRARY GLEW_INCLUDE_PATH)

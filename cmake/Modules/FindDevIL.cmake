@@ -1,6 +1,3 @@
-# This module locates the developer's image library.
-# http://openil.sourceforge.net/
-#
 # This module sets:
 #   IL_LIBRARIES -   the name of the IL library. These include the full path to
 #                    the core DevIL library. This one has to be linked into the
@@ -18,56 +15,45 @@
 #                    even if they are not needed. In most systems, if one
 #                    library is found all the others are as well. That's the
 #                    way the DevIL developers release it.
-
-#=============================================================================
-# Copyright 2008-2009 Kitware, Inc.
-# Copyright 2008 Christopher Harvey
 #
-# Distributed under the OSI-approved BSD License (the "License");
-# see accompanying file Copyright.txt for details.
-#
-# This software is distributed WITHOUT ANY WARRANTY; without even the
-# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the License for more information.
-#=============================================================================
-# (To distribute this file outside of CMake, substitute the full
-#  License text for the above reference.)
 
-# TODO: Add version support.
-# Tested under Linux and Windows (MSVC)
-
-#include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
-
-find_path(IL_INCLUDE_DIR il.h
-  PATH_SUFFIXES include IL include/IL
-  DOC "The path the the directory that contains il.h"
+find_path(IL_INCLUDE_DIR IL/il.h
+    PATHS
+    "${CMAKE_SOURCE_DIR}/libs/DevIL/include"
 )
 
-#message("IL_INCLUDE_DIR is ${IL_INCLUDE_DIR}")
+find_path(IL_BIN_DIR DevIL.dll
+    PATHS
+    "${CMAKE_SOURCE_DIR}/libs/DevIL/lib"
+)
+
+find_path(ILU_BIN_DIR ILU.dll
+    PATHS
+    "${CMAKE_SOURCE_DIR}/libs/DevIL/lib"
+)
+
+find_path(ILUT_BIN_DIR ILUT.dll
+    PATHS
+    "${CMAKE_SOURCE_DIR}/libs/DevIL/lib"
+)
 
 find_library(IL_LIBRARIES
-  NAMES IL DEVIL
-  PATH_SUFFIXES lib64 lib lib32
-  DOC "The file that corresponds to the base il library."
+  NAMES IL DevIL
+  PATHS
+   "${CMAKE_SOURCE_DIR}/libs/DevIL/lib"
 )
-
-#message("IL_LIBRARIES is ${IL_LIBRARIES}")
 
 find_library(ILUT_LIBRARIES
   NAMES ILUT
-  PATH_SUFFIXES lib64 lib lib32
-  DOC "The file that corresponds to the il (system?) utility library."
+  PATHS
+  "${CMAKE_SOURCE_DIR}/libs/DevIL/lib"
 )
-
-#message("ILUT_LIBRARIES is ${ILUT_LIBRARIES}")
 
 find_library(ILU_LIBRARIES
   NAMES ILU
-  PATH_SUFFIXES lib64 lib lib32
-  DOC "The file that corresponds to the il utility library."
+  PATHS
+  "${CMAKE_SOURCE_DIR}/libs/DevIL/lib"
 )
-
-#message("ILU_LIBRARIES is ${ILU_LIBRARIES}")
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(IL DEFAULT_MSG
                                   IL_LIBRARIES ILU_LIBRARIES
