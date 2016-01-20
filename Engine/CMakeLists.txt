@@ -92,6 +92,8 @@ set(Engine_Engine
 	Engine/Scene.cpp
 	Engine/Renderable.h
 	Engine/Renderable.cpp
+    Engine/RenderableObject3D.h
+	Engine/RenderableObject3D.cpp
 	Engine/Renderer.h
 	Engine/Renderer.cpp
     Engine/Light.h

@@ -13,7 +13,6 @@ using namespace std;
 WireCube::WireCube(float cubeSize)
     : mProgram("Shaders/WireBox")
 {
-    mBoundingBox = AABB(vec3(-cubeSize), vec3(cubeSize));
     //Load mesh to GPU
     glGenBuffers(1, &mVBO);
 
@@ -21,6 +20,7 @@ WireCube::WireCube(float cubeSize)
     for(vec3 &p : vertexArray)
         p *= cubeSize;
 
+    glGenVertexArrays(1, &mVAO);
     glBindVertexArray(mVAO);
     {
         glBindBuffer(GL_ARRAY_BUFFER, mVBO);
@@ -43,6 +43,7 @@ WireCube::WireCube(float cubeSize)
 WireCube::~WireCube(void)
 {
     glDeleteBuffers(1, &mVBO);
+    glDeleteVertexArrays(1, &mVAO);
     mProgram.Delete();
 }
 

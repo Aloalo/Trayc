@@ -8,6 +8,7 @@
 #include <Engine/Engine/Renderable.h>
 #include <Engine/Core/InputObserver.h>
 #include <Engine/GL/VertexArray.h>
+#include <Engine/GL/Program.h>
 
 class MandelbrotRenderer : public engine::Renderable, public engine::InputObserver
 {

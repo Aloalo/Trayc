@@ -25,11 +25,12 @@ BallRenderer::BallRenderer(const RenderingParams &rParams, int ctBalls, float cu
     for(int i = 0; i < mCtBalls; ++i)
         colors.push_back(normalize(vec3(dis(gen) * 2.0f, dis(gen) * 1.1f, dis(gen) * 1.5f)));
 
+    glGenVertexArrays(1, &mVAO);
     glBindVertexArray(mVAO);
     {
         glBindBuffer(GL_ARRAY_BUFFER, mVBO);
         //Allocate space for positions and colors
-        glBufferData(GL_ARRAY_BUFFER, mCtBalls * sizeof(vec3) * 2, nullptr, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, mCtBalls * sizeof(vec3) * 2, nullptr, GL_STREAM_DRAW);
         //Copy color buffer
         glBufferSubData(GL_ARRAY_BUFFER, mCtBalls * sizeof(vec3), mCtBalls * sizeof(vec3), colors.data());
         //Position
@@ -53,6 +54,7 @@ BallRenderer::BallRenderer(const RenderingParams &rParams, int ctBalls, float cu
 BallRenderer::~BallRenderer(void)
 {
     glDeleteBuffers(1, &mVBO);
+    glDeleteVertexArrays(1, &mVAO);
     mProgram.Delete();
 }
 

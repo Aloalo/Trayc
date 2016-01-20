@@ -5,14 +5,14 @@
 #ifndef EN_RENDERABLE_H
 #define EN_RENDERABLE_H
 
-#include <Engine/Geometry/AABB.h>
-#include <Engine/Engine/Light.h>
-#include <Engine/Geometry/Transform.h>
-#include <Engine/Core/Camera.h>
-#include <Engine/GL/Program.h>
+#include <glm/glm.hpp>
+#include <GL/glew.h>
 
 namespace engine
 {
+    struct Light;
+    class Camera;
+
     struct RenderingContext
     {
         //View matrix
@@ -38,11 +38,6 @@ namespace engine
         virtual void Draw(const RenderingContext &rContext) const = 0;
 
         bool mIsActive;
-
-    protected:
-        Transform mTransform;
-        AABB mBoundingBox;
-        GLuint mVAO;
     };
 }
 

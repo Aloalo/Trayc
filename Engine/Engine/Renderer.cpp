@@ -32,7 +32,7 @@ namespace engine
         mScene->mSDLHandler.GetWindowSize(&width, &height);
 
         mGBuffer.Init(width, height);
-        mGBuffer.AddAttachment(FrameBuffer::FBAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT, 1.0f)); //Poisition worldspace / Linear Depth
+        mGBuffer.AddAttachment(FrameBuffer::FBAttachment(GL_R32F, GL_R, GL_FLOAT, 1.0f)); //Linear Depth
         mGBuffer.AddAttachment(FrameBuffer::FBAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT, 1.0f)); //Normal world space / x
         mGBuffer.AddAttachment(FrameBuffer::FBAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, 1.0f)); //Specular / Gloss
         mGBuffer.AddAttachment(FrameBuffer::FBAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, 1.0f)); //Albedo / x
@@ -43,27 +43,22 @@ namespace engine
 
     void Renderer::Render() const
     {
+        // First deferred rendere
+
+        // TODO : deferred rendere
+
+        // Then costum forward render
         glClear(mClearMask);
 
         RenderingContext rContext;
-
         rContext.mV = mCamera->GetViewMatrix();
         rContext.mP = mCamera->GetProjectionMatrix();
         rContext.mVP = rContext.mP * rContext.mV;
         rContext.mCamera = &mCamera->mCamera;
 
-        for(const Light &light : mLights)
-        {
-            if(light.mIsEnabled)
-            {
-                rContext.mLight = &light;
-                for(Renderable *renderable : mRenderables)
-                {
-                    if(renderable->mIsActive)
-                    {
-                        renderable->Draw(rContext);
-                    }
-                }
+        for(Renderable *renderable : mRenderables) {
+            if(renderable->mIsActive) {
+                renderable->Draw(rContext);
             }
         }
     }
@@ -76,6 +71,16 @@ namespace engine
     void Renderer::RemoveRenderable(Renderable *renderable)
     {
         erase(mRenderables, renderable);
+    }
+
+    void Renderer::AddRenderable(RenderableObject3D *renderable)
+    {
+        mDeferredRenderables.push_back(renderable);
+    }
+
+    void Renderer::RemoveRenderable(RenderableObject3D *renderable)
+    {
+        erase(mDeferredRenderables, renderable);
     }
 
     const std::vector<Light>& Renderer::GetLights() const

@@ -6,6 +6,7 @@
 #define BP_WIRECUBE_H
 
 #include <Engine/Engine/Renderable.h>
+#include <Engine/GL/Program.h>
 
 class WireCube : public engine::Renderable
 {
@@ -17,6 +18,7 @@ public:
 
 private:
     GLsizei mCount;
+    GLuint mVAO;
     GLuint mVBO;
     engine::Program mProgram;
 };

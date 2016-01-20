@@ -6,8 +6,11 @@
 #define EN_RENDERER_H
 
 #include <Engine/Engine/Renderable.h>
+#include <Engine/Engine/RenderableObject3D.h>
+#include <Engine/Engine/Light.h>
 #include <Engine/Core/CameraHandler.h>
 #include <Engine/GL/FrameBuffer.h>
+#include <Engine/GL/Program.h>
 #include <vector>
 
 namespace engine
@@ -25,6 +28,9 @@ namespace engine
         //Renderables
         void AddRenderable(Renderable *renderable);
         void RemoveRenderable(Renderable *renderable);
+
+        void AddRenderable(RenderableObject3D *renderable);
+        void RemoveRenderable(RenderableObject3D *renderable);
 
         //Lights
         void AddLight(const Light &light);
@@ -46,6 +52,7 @@ namespace engine
         GLbitfield mClearMask;
         std::vector<Light> mLights;
         std::vector<Renderable*> mRenderables;
+        std::vector<RenderableObject3D*> mDeferredRenderables;
     };
 }
 

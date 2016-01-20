@@ -29,6 +29,7 @@ public:
 
 private:
     const int mCtBalls;
+    GLuint mVAO;
     GLuint mVBO;
     engine::Program mProgram;
 };
