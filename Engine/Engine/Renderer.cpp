@@ -32,10 +32,10 @@ namespace engine
         mScene->mSDLHandler.GetWindowSize(&width, &height);
 
         mGBuffer.Init(width, height);
-        mGBuffer.AddAttachment(FrameBuffer::FBAttachment(GL_R32F, GL_R, GL_FLOAT, 1.0f)); //Linear Depth
-        mGBuffer.AddAttachment(FrameBuffer::FBAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT, 1.0f)); //Normal world space / x
-        mGBuffer.AddAttachment(FrameBuffer::FBAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, 1.0f)); //Specular / Gloss
-        mGBuffer.AddAttachment(FrameBuffer::FBAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, 1.0f)); //Albedo / x
+        mGBuffer.AddAttachment(GL_R32F, GL_RED, GL_FLOAT); //Linear Depth
+        mGBuffer.AddAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); //Normal world space / x
+        mGBuffer.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Specular / Gloss
+        mGBuffer.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
         mGBuffer.Compile();
 
         mCamera = camera;
@@ -43,11 +43,11 @@ namespace engine
 
     void Renderer::Render() const
     {
-        // First deferred rendere
+        // First deferred render
 
-        // TODO : deferred rendere
+        // TODO : deferred render
 
-        // Then costum forward render
+        // Then custom forward render
         glClear(mClearMask);
 
         RenderingContext rContext;

@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 
     //Init Scene
     Scene scene(timeStep);
-    scene.Init(&dummyCam, argv[0], "Test", SSize.x, SSize.y);
+    scene.Init(&dummyCam, argv[0], "Mandelbrot, Jure Ratkovic KAOS2015, FER", SSize.x, SSize.y);
     scene.mSDLHandler.VsyncMode(1);
     scene.mRenderer.SetClearColor(vec4(0.0f));
     scene.mInputHandler.SetCursorFree(true);

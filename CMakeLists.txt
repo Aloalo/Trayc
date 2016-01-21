@@ -37,12 +37,14 @@ find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLM REQUIRED)
+find_package(DevIL REQUIRED)
 
 include_directories(
     ${SDL2_INCLUDE_DIR} 
     ${GLEW_INCLUDE_PATH}
     ${OPENGL_INCLUDE_DIRS}
     ${GLM_INCLUDE_DIR}
+    ${IL_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}
 )
 

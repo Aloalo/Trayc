@@ -63,6 +63,8 @@ set(Engine_GL
     GL/VertexArrayInstanced.h
     GL/UniformBuffer.cpp
     GL/UniformBuffer.h
+    GL/Texture.cpp
+    GL/Texture.h
 )
 
 set(Engine_Utils
@@ -126,6 +128,8 @@ add_library(Engine STATIC
 target_link_libraries(Engine 
     ${SDL2_LIBRARY} 
     ${GLEW_LIBRARY} 
+    ${IL_LIBRARIES}
+    ${ILU_LIBRARIES}
     ${OPENGL_LIBRARIES}
 )
 

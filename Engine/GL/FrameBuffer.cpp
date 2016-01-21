@@ -2,14 +2,10 @@
 #include <iostream>
 
 using namespace std;
+using namespace glm;
 
 namespace engine
 {
-    FrameBuffer::FBAttachment::FBAttachment(GLenum internalFormat, GLenum format, GLenum type, float scale)
-        : mInternalFormat(internalFormat), mFormat(format), mType(type), mScale(scale), mID(0)
-    {
-    }
-
     static const GLenum colorAttachments[8] = 
     {
         GL_COLOR_ATTACHMENT0,
@@ -39,32 +35,22 @@ namespace engine
 
     void FrameBuffer::Destroy()
     {
-        for(FBAttachment &fba : mAttachments)
-            glDeleteTextures(1, &fba.mID);
+        for(Texture2D &fba : mAttachments)
+            fba.Delete();
 
         glDeleteRenderbuffers(1, &mRBID);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glDeleteFramebuffers(1, &mID);
     }
 
-    void FrameBuffer::AddAttachment(const FBAttachment &fba)
+    void FrameBuffer::AddAttachment(GLenum internalFormat, GLenum format, GLenum type)
     {
-        mAttachments.push_back(FBAttachment(fba));
-        FBAttachment &mFBA = mAttachments.back();
-
-        glGenTextures(1, &mFBA.mID);
-        glBindTexture(GL_TEXTURE_2D, mFBA.mID);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        const int width = int(float(mWidth) * mFBA.mScale);
-        const int height = int(float(mHeight) * mFBA.mScale);
-        glTexImage2D(GL_TEXTURE_2D, 0, mFBA.mInternalFormat, width, height, 0, mFBA.mFormat, mFBA.mType, nullptr);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        mAttachments.push_back(Texture2D());
+        Texture2D &attachement = mAttachments.back();
+        attachement.Init(internalFormat, ivec2(mWidth, mHeight), format, type);
 
         glBindFramebuffer(GL_FRAMEBUFFER, mID);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[mAttachments.size() - 1], GL_TEXTURE_2D, mFBA.mID, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[mAttachments.size() - 1], GL_TEXTURE_2D, attachement.ID(), 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
@@ -100,14 +86,10 @@ namespace engine
         mHeight = height;
 
         // Resize color textures
-        for(const FBAttachment &fba : mAttachments)
-        {
-            const int width = int(float(mWidth) * fba.mScale);
-            const int height = int(float(mHeight) * fba.mScale);
-            glBindTexture(GL_TEXTURE_2D, fba.mID);
-            glTexImage2D(GL_TEXTURE_2D, 0, fba.mFormat, width, height, 0, fba.mInternalFormat, fba.mType, nullptr);
-            glBindTexture(GL_TEXTURE_2D, 0);
+        for(Texture2D &fba : mAttachments) {
+            fba.Resize(ivec2(mWidth, mHeight));
         }
+            
 
         if(mRBID != 0)
         {
@@ -162,7 +144,7 @@ namespace engine
 
     void FrameBuffer::BindTexture(int idx) const
     {
-        glBindTexture(GL_TEXTURE_2D, mAttachments[idx].mID);
+        glBindTexture(GL_TEXTURE_2D, mAttachments[idx].ID());
     }
 
     void FrameBuffer::Bind() const
