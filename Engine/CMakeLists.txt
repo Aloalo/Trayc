@@ -100,6 +100,8 @@ set(Engine_Engine
 	Engine/Renderer.cpp
     Engine/Light.h
 	Engine/Light.cpp
+    Engine/TextureCombiner.h
+	Engine/TextureCombiner.cpp
 )
 
 set(Engine_GL_SHADERS
@@ -133,4 +135,4 @@ target_link_libraries(Engine
     ${OPENGL_LIBRARIES}
 )
 
-file(COPY ${Engine_GL_SHADERS} DESTINATION "../Resources/Shaders")
+file(COPY "Resources/" DESTINATION "../Resources")

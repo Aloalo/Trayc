@@ -26,7 +26,6 @@ int main(int argc, char *argv[])
 
     scene.mRenderer.AddRenderable(&mandelRenderer);
     scene.mInputHandler.AddEventListener(&mandelRenderer);
-    scene.mRenderer.AddLight(Light());
 
     scene.GameLoop();
     return 0;
