@@ -10,10 +10,6 @@ layout(location = 2) in vec3 normal;
     layout(location = 4) in vec3 bitangent;
 #endif
 
-#ifdef VERTEX_COLOR
-    layout(location = 5) in vec3 color;
-#endif
-
 uniform mat4 MVP;
 uniform mat4 MV;
 
@@ -27,10 +23,6 @@ out VS_OUT
     mat3 TBN;
 #else
     vec3 normal;
-#endif
-
-#ifdef VERTEX_COLOR
-    vec3 color;
 #endif
 } vs_out;
 
@@ -47,9 +39,5 @@ void main()
    vs_out.TBN = mat3(T, B, N);
 #else
     vs_out.normal = normalize(vec3(MV * vec4(normal, 0.0)));
-#endif
-
-#ifdef VERTEX_COLOR
-    vs_out.color = color;
 #endif
 }

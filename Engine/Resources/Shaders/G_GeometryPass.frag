@@ -1,27 +1,24 @@
 #version 330 core
 
+// Input
 in VS_OUT
 {
-    //fragment depth
+    // Fragment depth
     float depth;
     vec2 uv;
-    // view space normal/TBN
+    // View space normal/TBN
 #ifdef NORMAL_MAP
     mat3 TBN;
 #else
     vec3 normal;
 #endif
-
-#ifdef VERTEX_COLOR
-    vec3 color;
-#endif
 } fs_in;
 
+// Uniforms
 #ifdef DIFFUSE_MAP
     uniform sampler2D diffuseMap;
-#else
-    uniform vec3 constColor = vec3(1.0);
 #endif
+uniform vec3 diffuseColor = vec3(1.0);
 
 #ifdef NORMAL_MAP
     uniform sampler2D normalMap;
@@ -29,16 +26,16 @@ in VS_OUT
 
 #ifdef SPECULAR_MAP
     uniform sampler2D specularMap;
-#else
-    uniform vec4 specularGloss;
 #endif
+uniform vec4 specularGloss;
 
-vec4 GetSpecGloss()
+// Getters
+vec3 GetColor()
 {
-#ifdef SPECULAR_MAP
-    return texture(specularMap, fs_in.uv);
+#ifdef DIFFUSE_MAP
+    return diffuseColor * texture(diffuseMap, fs_in.uv).rgb;
 #else
-    return specularGloss;
+    return diffuseColor;
 #endif
 }
 
@@ -54,20 +51,16 @@ vec3 GetNormal()
 #endif
 }
 
-vec3 GetColor()
+vec4 GetSpecGloss()
 {
-#ifdef DIFFUSE_MAP
-    vec3 fragColor = texture(diffuseMap, fs_in.uv).rgb;
+#ifdef SPECULAR_MAP
+    return specularGloss * texture(specularMap, fs_in.uv);
 #else
-    vec3 fragColor = constColor;
+    return specularGloss;
 #endif
-
-#ifdef VERTEX_COLOR
-    fragColor *= fs_in.color;
-#endif
-    return fragColor;
 }
 
+// Outputs
 layout(location = 0) out float depth;
 layout(location = 1) out vec3 normal;
 layout(location = 2) out vec4 specGloss;

@@ -12,8 +12,10 @@ using namespace glm;
 using namespace std;
 
 BallRenderer::BallRenderer(const RenderingParams &rParams, int ctBalls, float cubeSize, float ballRadius)
-    : mCtBalls(ctBalls), mProgram("Shaders/PointSpheres")
+    : mCtBalls(ctBalls)
 {
+    mProgram.Init("Shaders/PointSpheres");
+
     glGenBuffers(1, &mVBO);
 
     random_device rd;

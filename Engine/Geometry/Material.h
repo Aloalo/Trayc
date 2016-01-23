@@ -15,11 +15,12 @@ namespace engine
         glm::vec3 mKa;
         glm::vec3 mKd;
         glm::vec3 mKs;
-        float mPhongExponent;
+        float mGloss;
 
         std::string mAlbedoMap;
         std::string mSpecularMap;
         std::string mNormalMap;
+        std::string mDepthMap;
     };
 }
 
