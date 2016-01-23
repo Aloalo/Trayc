@@ -15,12 +15,12 @@
 
 namespace engine
 {
-    class Scene;
+    class Game;
 
     class Renderer
     {
     public:
-        Renderer(Scene *scene);
+        Renderer(Game *scene);
         ~Renderer(void);
 
         void SetClearColor(const glm::vec4 &clearColor) const;
@@ -39,14 +39,16 @@ namespace engine
         const Light& GetLight(int idx) const;
         Light& GetLight(int idx);
 
+        void SetScreenSize(int width, int height);
+
     private:
-        friend class Scene;
+        friend class Game;
         //Rendering
         void InitRendering(const CameraHandler *camera);
         void Render() const;
 
         const CameraHandler *mCamera;
-        Scene *mScene;
+        Game *mGame;
 
         engine::FrameBuffer mGBuffer;
         GLbitfield mClearMask;

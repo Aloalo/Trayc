@@ -3,7 +3,7 @@
 */
 
 #include <Engine/Core/InputHandler.h>
-#include <Engine/Core/SDLHandler.h>
+#include <Engine/Core/ContextHandler.h>
 #include <Engine/Utils/StlExtensions.hpp>
 
 using namespace std;

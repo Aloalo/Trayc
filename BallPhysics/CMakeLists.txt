@@ -39,5 +39,6 @@ target_link_libraries(BallPhysics
     ${OPENGL_LIBRARIES}
 )
 
+copy_dlls()
 file(COPY Shaders DESTINATION .)
 file(COPY Settings.ini DESTINATION .)

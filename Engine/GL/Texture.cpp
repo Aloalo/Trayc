@@ -115,7 +115,7 @@ namespace engine
     {
         mSize = size;
         glBindTexture(GL_TEXTURE_2D, mID);
-        glTexImage2D(GL_TEXTURE_2D, 0, mFormat, mSize.x, mSize.y, 0, mInternalFormat, mType, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, mInternalFormat, mSize.x, mSize.y, 0, mFormat, mType, nullptr);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 

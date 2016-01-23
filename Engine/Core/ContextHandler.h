@@ -2,8 +2,8 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 
-#ifndef EN_SDLHANDLER_H
-#define EN_SDLHANDLER_H
+#ifndef EN_CONTEXT_HANDLER_H
+#define EN_CONTEXT_HANDLER_H
 
 #include "SDL.h"
 #include <GL/glew.h>
@@ -11,11 +11,11 @@
 namespace engine
 {
     //handles SDL and GLEW contexts and stuff
-    class SDLHandler
+    class ContextHandler
     {
     public:
-        SDLHandler(void);
-        ~SDLHandler(void);
+        ContextHandler(void);
+        ~ContextHandler(void);
 
         void PrintSoftwareVersions() const;
         void SwapBuffers();
@@ -31,10 +31,11 @@ namespace engine
         char const* GetProgramName() const;
 
     private:
-        friend class Scene;
+        friend class Game;
         void Init(Uint32 flags, const char *programName);
         void CreateGLWindow(const char* title, int x, int y, int w, int h, Uint32 flags);
         void InitGL(int verionMajor, int versionMinor, int profile);
+        void InitIL();
 
 
         SDL_version mCompiled;

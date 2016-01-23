@@ -99,14 +99,14 @@ int main(int argc, char *argv[])
     //Init Camera handler
     RotationalCameraHandler camHandler(ConstructCameraHandler(rParams.mSSize, rParams.mFOV, simParams.mCubeSize));
     rParams.mCamera = &camHandler.GetCamera();
-    //Init Scene
-    Scene scene(timeStep);
-    scene.Init(&camHandler, argv[0], "Ball physics", rParams.mSSize.x, rParams.mSSize.y);
-    scene.mSDLHandler.VsyncMode(rParams.mVsync);
-    scene.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
+    //Init Game
+    Game game(timeStep);
+    game.Init(&camHandler, argv[0], "Ball physics", rParams.mSSize.x, rParams.mSSize.y);
+    game.mContextHandler.VsyncMode(rParams.mVsync);
+    game.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
 
     SimulationHandler simHandler(simParams, rParams);
-    simHandler.Init(scene);
-    scene.GameLoop();
+    simHandler.Init(game);
+    game.GameLoop();
     return 0;
 }

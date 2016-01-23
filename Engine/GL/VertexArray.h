@@ -32,6 +32,8 @@ namespace engine
 
         void AddAttribute(const VertexAttribDef &attrib);
         void Init(int ctVertices, int capacity);
+        void Destroy();
+
         // Ensures that the data store is big enaugh for size vertices
         // Sets mSize to size
         // if size > mSize not allocates size+reallocSize space
@@ -44,6 +46,9 @@ namespace engine
         const BufferObject& VBO() const;
 
         void Render(GLenum mode, GLint first = 0) const;
+
+        int Size() const;
+        int Capacity() const;
 
     private:
         void RegisterToGPU();

@@ -2,27 +2,33 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 
-#include <Engine/Core/SDLHandler.h>
+#include <Engine/Core/ContextHandler.h>
 #include <Engine/Utils/ErrorCheck.h>
+
+#include <glm/glm.hpp>
+#include <IL/il.h>
+#include <IL/ilu.h>
+#include <IL/ilut.h>
+
 #include <iostream>
 
 using namespace std;
 
 namespace engine
 {
-    SDLHandler::SDLHandler(void)
+    ContextHandler::ContextHandler(void)
         : mProgramName(nullptr), mWindow(nullptr)
     {
     }
 
-    SDLHandler::~SDLHandler(void)
+    ContextHandler::~ContextHandler(void)
     {
         SDL_GL_DeleteContext(mOpenglContext);
         SDL_DestroyWindow(mWindow);
         SDL_Quit();
     }
 
-    void SDLHandler::Init(Uint32 flags, const char *programName)
+    void ContextHandler::Init(Uint32 flags, const char *programName)
     {
         SDLErrCheck(SDL_Init(flags));
         SDLErrCheck(SDL_SetRelativeMouseMode(SDL_TRUE));
@@ -31,7 +37,7 @@ namespace engine
         mProgramName = programName;
     }
 
-    void SDLHandler::PrintSoftwareVersions() const
+    void ContextHandler::PrintSoftwareVersions() const
     {
         cout << "GLEW version: " << glewGetString(GLEW_VERSION) << endl << endl;
 
@@ -46,15 +52,21 @@ namespace engine
         cout << "OpenGL renderer: " << glGetString(GL_RENDERER) << endl;
         cout << "OpenGL version: " << glGetString(GL_VERSION) << endl;
         cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl << endl;
+
+        cout << "IL version: " << IL_VERSION << endl;
+        cout << "ILU version: " << ILU_VERSION << endl;
+        cout << "ILUT version: " << ILUT_VERSION << endl << endl;
+
+        cout << "GLM version: " << GLM_VERSION_MAJOR << "." << GLM_VERSION_MINOR << "." << GLM_VERSION_PATCH << endl;
     }
 
-    void SDLHandler::CreateGLWindow(const char *title, int x, int y, int w, int h, Uint32 flags)
+    void ContextHandler::CreateGLWindow(const char *title, int x, int y, int w, int h, Uint32 flags)
     {
         mWindow = SDL_CreateWindow(title, x, y, w, h, flags);
         SDLErrCheck(!mWindow);
     }
 
-    void SDLHandler::InitGL(int verionMajor, int versionMinor, int profile)
+    void ContextHandler::InitGL(int verionMajor, int versionMinor, int profile)
     {
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, verionMajor));
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, versionMinor));
@@ -72,37 +84,43 @@ namespace engine
         GLErrCheck(true);
     }
 
-    void SDLHandler::VsyncMode(int mode) const
+    void ContextHandler::InitIL()
+    {
+        ilInit();
+        iluInit();
+    }
+
+    void ContextHandler::VsyncMode(int mode) const
     {
         SDLErrCheck(SDL_GL_SetSwapInterval(mode));
     }
 
-    void SDLHandler::SwapBuffers()
+    void ContextHandler::SwapBuffers()
     {
         SDL_GL_SwapWindow(mWindow);
     }
 
-    void SDLHandler::GetWindowSize(int *w, int *h)
+    void ContextHandler::GetWindowSize(int *w, int *h)
     {
         SDL_GetWindowSize(mWindow, w, h);
     }
 
-    void SDLHandler::SetWindowSize(int w, int h)
+    void ContextHandler::SetWindowSize(int w, int h)
     {
         SDL_SetWindowSize(mWindow, w, h);
     }
 
-    const SDL_version& SDLHandler::GetLinkedVersion() const
+    const SDL_version& ContextHandler::GetLinkedVersion() const
     {
         return mLinked;
     }
 
-    const SDL_version& SDLHandler::GetCompiledVersion() const
+    const SDL_version& ContextHandler::GetCompiledVersion() const
     {
         return mCompiled;
     }
 
-    char const* SDLHandler::GetProgramName() const
+    char const* ContextHandler::GetProgramName() const
     {
         return mProgramName;
     }

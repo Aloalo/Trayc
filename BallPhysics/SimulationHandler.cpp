@@ -70,15 +70,15 @@ void SimulationHandler::KeyPress(const SDL_KeyboardEvent &e)
     }
 }
 
-void SimulationHandler::Init(Scene &scene)
+void SimulationHandler::Init(Game &game)
 {
     mPhysics.InitBalls();
-    scene.mUpdateableMenager.AddUpdateable(&mPhysics);
-    scene.mRenderer.AddLight(mRenderingParams.mLight);
-    scene.mRenderer.AddRenderable(this);
-    scene.mInputHandler.AddEventListener(this);
+    game.mUpdateableMenager.AddUpdateable(&mPhysics);
+    game.mRenderer.AddLight(mRenderingParams.mLight);
+    game.mRenderer.AddRenderable(this);
+    game.mInputHandler.AddEventListener(this);
 
-    scene.mRenderer.AddRenderable(&mCube);
+    game.mRenderer.AddRenderable(&mCube);
 }
 
 void SimulationHandler::Draw(const RenderingContext &rContext) const

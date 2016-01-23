@@ -3,7 +3,7 @@
 */
 
 #include <Engine/Core/RotationalCameraHandler.h>
-#include <Engine/Core/SDLHandler.h>
+#include <Engine/Core/ContextHandler.h>
 #include <Engine/Core/InputHandler.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <Engine/Utils/MathFunctions.h>

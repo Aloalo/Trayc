@@ -2,7 +2,7 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 
-#include <Engine/Engine/Scene.h>
+#include <Engine/Engine/Game.h>
 #include <assert.h>
 #include <iostream>
 
@@ -10,25 +10,25 @@ using namespace std;
 
 namespace engine
 {
-    Scene::Scene(float timeStep)
+    Game::Game(float timeStep)
         : mUpdateableMenager(timeStep), mRenderer(this), mFrameCap(100), mCtFramesPassed(0), mCameraHandler(nullptr)
     {
     }
 
-    Scene::~Scene(void)
+    Game::~Game(void)
     {
     }
 
-    void Scene::Init(CameraHandler *cameraHandler, char const *programName, const char *windowTitle, int screenWidth, int screenHeight)
+    void Game::Init(CameraHandler *cameraHandler, char const *programName, const char *windowTitle, int screenWidth, int screenHeight)
     {
         assert(cameraHandler != nullptr);
         mCameraHandler = cameraHandler;
 
         //Init SDL
-        mSDLHandler.Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS, programName);
+        mContextHandler.Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS, programName);
 
         //Create window
-        mSDLHandler.CreateGLWindow(
+        mContextHandler.CreateGLWindow(
             windowTitle,
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
@@ -40,13 +40,19 @@ namespace engine
             );
 
         //Init OpenGL
-        mSDLHandler.InitGL(3, 3, SDL_GL_CONTEXT_PROFILE_CORE);
+        mContextHandler.InitGL(3, 3, SDL_GL_CONTEXT_PROFILE_CORE);
 
-        mSDLHandler.PrintSoftwareVersions();
+        // Init DevIL
+        mContextHandler.InitIL();
 
-        //Register camera
+        mContextHandler.PrintSoftwareVersions();
+
+        // Register camera
         mInputHandler.AddEventListener(mCameraHandler);
         mUpdateableMenager.AddUpdateable(mCameraHandler);
+
+        // Register self
+        mInputHandler.AddEventListener(this);
 
         mRenderer.InitRendering(mCameraHandler);
 
@@ -55,13 +61,13 @@ namespace engine
         mProfiler.AddProfileTarget("update", mFrameCap);
     }
 
-    void Scene::GameLoop()
+    void Game::GameLoop()
     {
         while(!mInputHandler.Quit())
             GameLoopStep();
     }
 
-    void Scene::GameLoopStep()
+    void Game::GameLoopStep()
     {
         mProfiler.StartClock("events");
         mInputHandler.ProcessPolledEvents();
@@ -73,7 +79,7 @@ namespace engine
 
         mProfiler.StartClock("rendering");
         mRenderer.Render();
-        mSDLHandler.SwapBuffers();
+        mContextHandler.SwapBuffers();
         mProfiler.StopClock("rendering");
 
         //Profiling
@@ -85,17 +91,24 @@ namespace engine
         }
     }
 
-    const Camera& Scene::GetCamera() const
+    void Game::WindowEvent(const SDL_WindowEvent &e)
+    {
+        if(e.event == SDL_WINDOWEVENT_RESIZED) {
+            mRenderer.SetScreenSize(e.data1, e.data2);
+        }
+    }
+
+    const Camera& Game::GetCamera() const
     {
         return mCameraHandler->mCamera;
     }
 
-    Camera& Scene::GetCamera()
+    Camera& Game::GetCamera()
     {
         return mCameraHandler->mCamera;
     }
 
-    float Scene::GetAverageFrameLength() const
+    float Game::GetAverageFrameLength() const
     {
         return mProfiler.GetAverage();
     }

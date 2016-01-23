@@ -39,6 +39,18 @@ find_package(GLEW REQUIRED)
 find_package(GLM REQUIRED)
 find_package(DevIL REQUIRED)
 
+function(copy_dlls)
+    set(DLLS 
+        ${SDL2_BIN_DIR}/SDL2.dll
+        ${IL_BIN_DIR}/DevIL.dll
+        ${ILU_BIN_DIR}/ILU.dll
+        ${ILUT_BIN_DIR}/ILUT.dll
+        ${GLEW_BIN_PATH}/glew32.dll)
+
+    file(COPY ${DLLS} DESTINATION ./Debug)
+    file(COPY ${DLLS} DESTINATION ./Release)
+endfunction()
+
 include_directories(
     ${SDL2_INCLUDE_DIR} 
     ${GLEW_INCLUDE_PATH}

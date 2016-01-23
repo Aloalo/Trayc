@@ -34,7 +34,6 @@ namespace engine
 
     VertexArray::~VertexArray(void)
     {
-        glDeleteVertexArrays(1, &mVAO);
     }
 
     void VertexArray::Resize(int size, int reallocSize)
@@ -118,6 +117,12 @@ namespace engine
         mVBO.SetData(arraySize);
     }
 
+    void VertexArray::Destroy()
+    {
+        glDeleteVertexArrays(1, &mVAO);
+        mVBO.Destroy();
+    }
+
     void VertexArray::RegisterToGPU()
     {
         glDeleteVertexArrays(1, &mVAO);
@@ -153,6 +158,16 @@ namespace engine
         glBindVertexArray(mVAO);
         glDrawArrays(mode, first, mSize);
         glBindVertexArray(0);
+    }
+
+    int VertexArray::Size() const
+    {
+        return mSize;
+    }
+
+    int VertexArray::Capacity() const
+    {
+        return mCapacity;
     }
 
     int VertexArray::VertexSize() const

@@ -39,7 +39,6 @@ namespace engine
             fba.Delete();
 
         glDeleteRenderbuffers(1, &mRBID);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glDeleteFramebuffers(1, &mID);
     }
 
@@ -73,8 +72,10 @@ namespace engine
 
     void FrameBuffer::Compile() const
     {
+        glBindFramebuffer(GL_FRAMEBUFFER, mID);
         glDrawBuffers(mAttachments.size(), colorAttachments);
         glReadBuffer(GL_NONE);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // Check completeness
         Check();

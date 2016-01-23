@@ -30,7 +30,7 @@ namespace engine
         void SetCursorFree(bool cursorFree);
 
     private:
-        friend class Scene;
+        friend class Game;
 
         void ProcessPolledEvents();
 

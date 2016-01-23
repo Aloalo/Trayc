@@ -18,5 +18,4 @@ target_link_libraries(GameBlocks
     ${OPENGL_LIBRARIES}
 )
 
-#file(COPY Shaders DESTINATION .)
-#file(COPY Settings.ini DESTINATION .)
+copy_dlls()

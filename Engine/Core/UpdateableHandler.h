@@ -20,7 +20,7 @@ namespace engine
         void RemoveUpdateable(const Updateable *updateable);
 
     private:
-        friend class Scene;
+        friend class Game;
         //Update handling
         void Update();
 

@@ -5,7 +5,7 @@
 #ifndef BP_BALLPHYSICS_H
 #define BP_BALLPHYSICS_H
 
-#include <Engine/Engine/Scene.h>
+#include <Engine/Engine/Game.h>
 #include "Solvers/PhysicsSolver.h"
 
 class BallPhysics : public engine::Updateable

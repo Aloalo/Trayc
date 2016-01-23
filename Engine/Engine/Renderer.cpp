@@ -2,7 +2,8 @@
 * Copyright (c) 2014 Jure Ratkovic
 */
 #include <Engine/Engine/Renderer.h>
-#include <Engine/Engine/Scene.h>
+#include <Engine/Engine/Game.h>
+#include <Engine/Engine/TextureCombiner.h>
 #include <Engine/Utils/StlExtensions.hpp>
 
 using namespace glm;
@@ -11,14 +12,15 @@ using namespace stdext;
 
 namespace engine
 {
-    Renderer::Renderer(Scene *scene)
-        : mCamera(nullptr), mScene(scene), mClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    Renderer::Renderer(Game *scene)
+        : mCamera(nullptr), mGame(scene), mClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     {
     }
 
     Renderer::~Renderer(void)
     {
         mGBuffer.Destroy();
+        TextureCombiner::DestroyVAO();
     }
 
     void Renderer::InitRendering(const CameraHandler *camera)
@@ -29,7 +31,7 @@ namespace engine
 
         int width;
         int height;
-        mScene->mSDLHandler.GetWindowSize(&width, &height);
+        mGame->mContextHandler.GetWindowSize(&width, &height);
 
         mGBuffer.Init(width, height);
         mGBuffer.AddAttachment(GL_R32F, GL_RED, GL_FLOAT); //Linear Depth
@@ -96,6 +98,16 @@ namespace engine
     Light& Renderer::GetLight(int idx)
     {
         return mLights[idx];
+    }
+
+    void Renderer::SetScreenSize(int width, int height)
+    {
+        mGBuffer.Resize(width, height);
+        mGBuffer.Bind();
+        glViewport(0, 0, width, height);
+        FrameBuffer::UnBind();
+
+        glViewport(0, 0, width, height);
     }
 
     void Renderer::AddLight(const Light &light)

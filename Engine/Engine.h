@@ -7,6 +7,6 @@
 
 #define GLM_FORCE
 
-#include <Engine/Engine/Scene.h>
+#include <Engine/Engine/Game.h>
 
 #endif

@@ -6,14 +6,14 @@ set(Engine_HDRS
 
 set(Engine_Core
     Core/Core.h
-    Core/SDLHandler.h
+    Core/ContextHandler.h
+    Core/ContextHandler.cpp
     Core/Camera.h
     Core/CameraHandler.h
     Core/DefaultCameraHandler.h
     Core/InputHandler.h
     Core/InputObserver.h
     Core/Updateable.h
-    Core/SDLHandler.cpp
     Core/Camera.cpp
     Core/CameraHandler.cpp
     Core/DefaultCameraHandler.cpp
@@ -90,8 +90,8 @@ set(Engine_Utils
 )
 
 set(Engine_Engine
-	Engine/Scene.h
-	Engine/Scene.cpp
+	Engine/Game.h
+	Engine/Game.cpp
 	Engine/Renderable.h
 	Engine/Renderable.cpp
     Engine/RenderableObject3D.h
@@ -102,6 +102,8 @@ set(Engine_Engine
 	Engine/Light.cpp
     Engine/TextureCombiner.h
 	Engine/TextureCombiner.cpp
+    Engine/AssetLoader.h
+	Engine/AssetLoader.cpp
 )
 
 set(Engine_GL_SHADERS

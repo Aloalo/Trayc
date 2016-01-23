@@ -25,7 +25,7 @@ namespace engine
 
     protected:
         friend class Renderer;
-        friend class Scene;
+        friend class Game;
         Camera mCamera;
     };
 }

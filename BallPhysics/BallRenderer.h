@@ -5,7 +5,7 @@
 #ifndef BP_BALLRENDERER_H
 #define BP_BALLRENDERER_H
 
-#include <Engine/Engine/Scene.h>
+#include <Engine/Engine/Game.h>
 
 struct RenderingParams
 {

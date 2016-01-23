@@ -5,6 +5,7 @@
 #include <Engine/Engine.h>
 #include <Engine/Core/DefaultCameraHandler.h>
 #include <Engine/Engine/TextureCombiner.h>
+#include <Engine/Engine/AssetLoader.h>
 
 using namespace engine;
 using namespace std;
@@ -15,8 +16,14 @@ class TestRenderTexture : public Renderable
 public:
     TestRenderTexture(void)
     {
-        mTexRenderer.Init("../Resources/Shaders/C_TexToScreen");
-        mTex.Init("../Resources/Textures/ErrorTex.png");
+        mTexRenderer.Init(AssetLoader::ShaderPath("C_TexToScreen").data());
+        mTex.Init(AssetLoader::TexturePath("ErrorTex.png").data());
+    }
+
+    ~TestRenderTexture(void)
+    {
+        mTexRenderer.Destroy();
+        mTex.Delete();
     }
 
     virtual void Draw(const RenderingContext &rContext) const override
@@ -51,16 +58,16 @@ int main(int argc, char *argv[])
     const float timeStep = 1.0f / 60.0f;
     //Init Camera handler
     DefaultCameraHandler camHandler(ConstructCameraHandler(SSize, 60.0f, 1000.0f));
-    //Init Scene
-    Scene scene(timeStep);
-    scene.Init(&camHandler, argv[0], "Test", SSize.x, SSize.y);
-    scene.mSDLHandler.VsyncMode(1);
-    scene.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
+    //Init Game
+    Game game(timeStep);
+    game.Init(&camHandler, argv[0], "Test", SSize.x, SSize.y);
+    game.mContextHandler.VsyncMode(1);
+    game.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
 
     TestRenderTexture test;
 
-    scene.mRenderer.AddRenderable(&test);
+    game.mRenderer.AddRenderable(&test);
 
-    scene.GameLoop();
+    game.GameLoop();
     return 0;
 }

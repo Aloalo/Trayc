@@ -31,6 +31,7 @@ MandelbrotRenderer::MandelbrotRenderer(vec2 windowSize) :
 MandelbrotRenderer::~MandelbrotRenderer(void)
 {
     mMandelProg.Delete();
+    mQuad.Destroy();
 }
 
 vec2 lpo;
@@ -98,9 +99,7 @@ void MandelbrotRenderer::MouseWheel(const SDL_MouseWheelEvent &e)
 
 void MandelbrotRenderer::WindowEvent(const SDL_WindowEvent & e)
 {
-    if(e.event == SDL_WINDOWEVENT_RESIZED)
-    {
-        glViewport(0, 0, e.data1, e.data2);
+    if(e.event == SDL_WINDOWEVENT_RESIZED) {
         mState.mWindowSize = vec2(e.data1, e.data2);
     }
 }

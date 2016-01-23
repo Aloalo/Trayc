@@ -19,6 +19,7 @@ namespace engine
         ~BufferObject(void);
 
         void Init();
+        void Destroy();
 
         void Bind() const;
         void UnBind() const;

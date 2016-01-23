@@ -3,7 +3,7 @@
 */
 
 #include <Engine/Core/DefaultCameraHandler.h>
-#include <Engine/Core/SDLHandler.h>
+#include <Engine/Core/ContextHandler.h>
 #include <Engine/Core/InputHandler.h>
 #include <Engine/Utils/MathFunctions.h>
 

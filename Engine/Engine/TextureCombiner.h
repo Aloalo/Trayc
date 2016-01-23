@@ -20,15 +20,17 @@ namespace engine
 
         // Get program
         const Program& Prog() const;
-        void SetTexture(int idx, const Texture2D &tex) const;
+        static void SetTexture(int idx, const Texture2D &tex);
         // To frambuffer
         void Draw(const FrameBuffer &FBO) const;
         // To back buffer
         void Draw() const;
 
+        static void DestroyVAO();
+
     private:
         Program mProgram;
-        VertexArray mVAO;
+        static VertexArray mVAO;
     };
 }
 

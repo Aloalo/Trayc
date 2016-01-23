@@ -17,7 +17,7 @@ public:
     SimulationHandler(const SimulationParams &simParams, const RenderingParams &rParams);
     ~SimulationHandler(void);
 
-    void Init(engine::Scene &scene);
+    void Init(engine::Game &game);
 
 private:
     virtual void KeyPress(const SDL_KeyboardEvent &e) override;

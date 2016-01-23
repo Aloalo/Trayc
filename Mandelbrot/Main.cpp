@@ -16,17 +16,17 @@ int main(int argc, char *argv[])
     DefaultCameraHandler dummyCam(Camera(), 0.0f, 0.0f, 0.0f);
 
     //Init Scene
-    Scene scene(timeStep);
-    scene.Init(&dummyCam, argv[0], "Mandelbrot, Jure Ratkovic KAOS2015, FER", SSize.x, SSize.y);
-    scene.mSDLHandler.VsyncMode(1);
-    scene.mRenderer.SetClearColor(vec4(0.0f));
-    scene.mInputHandler.SetCursorFree(true);
+    Game game(timeStep);
+    game.Init(&dummyCam, argv[0], "Mandelbrot, Jure Ratkovic KAOS2015, FER", SSize.x, SSize.y);
+    game.mContextHandler.VsyncMode(1);
+    game.mRenderer.SetClearColor(vec4(0.0f));
+    game.mInputHandler.SetCursorFree(true);
 
     MandelbrotRenderer mandelRenderer(SSize);
 
-    scene.mRenderer.AddRenderable(&mandelRenderer);
-    scene.mInputHandler.AddEventListener(&mandelRenderer);
+    game.mRenderer.AddRenderable(&mandelRenderer);
+    game.mInputHandler.AddEventListener(&mandelRenderer);
 
-    scene.GameLoop();
+    game.GameLoop();
     return 0;
 }

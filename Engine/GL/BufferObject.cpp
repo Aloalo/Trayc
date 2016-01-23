@@ -10,13 +10,17 @@ namespace engine
 
     BufferObject::~BufferObject(void)
     {
-        glDeleteBuffers(1, &mBO);
     }
 
     void BufferObject::Init()
     {
         glDeleteBuffers(1, &mBO);
         glGenBuffers(1, &mBO);
+    }
+
+    void BufferObject::Destroy()
+    {
+        glDeleteBuffers(1, &mBO);
     }
 
     void BufferObject::Bind() const
