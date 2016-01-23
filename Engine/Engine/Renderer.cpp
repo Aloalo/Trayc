@@ -35,7 +35,7 @@ namespace engine
 
         mGBuffer.Init(width, height);
         mGBuffer.AddAttachment(GL_R32F, GL_RED, GL_FLOAT); //Linear Depth
-        mGBuffer.AddAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); //Normal world space / x
+        mGBuffer.AddAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); //Normal view space / x
         mGBuffer.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Specular / Gloss
         mGBuffer.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
         mGBuffer.Compile();

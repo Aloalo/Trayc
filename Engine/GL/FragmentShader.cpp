@@ -6,16 +6,10 @@
 
 namespace engine
 {
-    FragmentShader::FragmentShader(const char *name)
+    FragmentShader::FragmentShader(const char *name, const Defines &defines)
     {
-        Init(name);
+        Init(name, defines);
     }
-
-    FragmentShader::FragmentShader(const std::string &source, const char *name)
-    {
-        Init2(source.c_str(), name);
-    }
-
 
     FragmentShader::~FragmentShader(void)
     {

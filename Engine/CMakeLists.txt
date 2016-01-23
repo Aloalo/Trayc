@@ -73,14 +73,12 @@ set(Engine_Utils
     Utils/StlExtensions.hpp
     Utils/VectorZip.hpp
     Utils/InitialSettings.h
-    Utils/NormalDrawer.h
     Utils/Profiler.h
     Utils/MathFunctions.h
     Utils/Utilities.h
     Utils/ErrorCheck.h
     Utils/BSpline.h
     Utils/InitialSettings.cpp
-    Utils/NormalDrawer.cpp
     Utils/Profiler.cpp
     Utils/MathFunctions.cpp
     Utils/MathFunctions.tpp

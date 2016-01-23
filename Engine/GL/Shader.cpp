@@ -17,7 +17,7 @@ namespace engine
         glDeleteShader(mID);
     }
 
-    void Shader::Init(const char *name)
+    void Shader::Init(const char *name, const Defines &defines)
     {
         string sn(name);
         sn += GetExtension();
@@ -29,6 +29,7 @@ namespace engine
             strStream << in.rdbuf();
             string source(strStream.str());
             source.erase(source.find_last_of('}')+1, source.length());
+            InsertDefines(source, defines);
 
             Init2(source.c_str(), name);
         }
@@ -61,5 +62,16 @@ namespace engine
             cerr << "Compile failure in " << GetTypeString() << " shader " << name << endl << strInfoLog << endl;
             delete[] strInfoLog;
         }
+    }
+
+    void Shader::InsertDefines(string &source, const Defines& defines)
+    {
+        string strDefines;
+
+        for(const string &def : defines) {
+            strDefines += "#define " + def + "\n";
+        }
+
+        source.insert(source.find("\n") + 1, strDefines);
     }
 }

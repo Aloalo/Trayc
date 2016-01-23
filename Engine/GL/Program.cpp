@@ -17,24 +17,6 @@ namespace engine
     {
     }
 
-    Program::Program(const VertexShader &vs, const GeometryShader &gs, const FragmentShader &fs)
-        : mID(0)
-    {
-        Init(vs, gs, fs);
-    }
-
-    Program::Program(const VertexShader &vs, const FragmentShader &fs)
-        : mID(0)
-    {
-        Init(vs, fs);
-    }
-
-    Program::Program(const char *name)
-        : mID(0)
-    {
-        Init(name);
-    }
-
     void Program::Delete()
     {
         glDeleteProgram(mID);
@@ -110,16 +92,16 @@ namespace engine
         }
     }
 
-    void Program::Init(const char *name)
+    void Program::Init(const char *name, const Shader::Defines &defines)
     {
         string sn(name);
         sn += ".geom";
         ifstream f(sn.c_str());
 
         if(f.good())
-            Init(VertexShader(name), GeometryShader(name), FragmentShader(name), name);
+            Init(VertexShader(name, defines), GeometryShader(name, defines), FragmentShader(name, defines), name);
         else
-            Init(VertexShader(name), FragmentShader(name), name);
+            Init(VertexShader(name, defines), FragmentShader(name, defines), name);
 
         f.close();
     }

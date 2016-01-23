@@ -4,8 +4,9 @@ using namespace glm;
 using namespace engine;
 
 MandelbrotRenderer::MandelbrotRenderer(vec2 windowSize) :
-    mQuad(GL_STATIC_DRAW), mMandelProg("Shaders/mandelbrot"), mMovingView(false)
+    mQuad(GL_STATIC_DRAW), mMovingView(false)
 {
+    mMandelProg.Init("Shaders/mandelbrot");
     mState.mTopLeftCoord = vec2(2.0f, 1.0f);
     mState.mWindowSize = windowSize;
     mState.mScale = 512.0f;

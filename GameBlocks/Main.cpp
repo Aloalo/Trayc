@@ -64,8 +64,10 @@ int main(int argc, char *argv[])
     game.mContextHandler.VsyncMode(1);
     game.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
 
-    TestRenderTexture test;
+    Program testGProg;
+    testGProg.Init(AssetLoader::ShaderPath("G_GeometryPass").data(), {"VERTEX_COLOR"});
 
+    TestRenderTexture test;
     game.mRenderer.AddRenderable(&test);
 
     game.GameLoop();

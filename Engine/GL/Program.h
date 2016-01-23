@@ -8,9 +8,9 @@
 #include <Engine/GL/VertexShader.h>
 #include <Engine/GL/GeometryShader.h>
 #include <Engine/GL/FragmentShader.h>
-//#include "TextureSampler.h"
 #include <glm/glm.hpp>
 #include <map>
+#include <vector>
 
 namespace engine
 {
@@ -18,13 +18,10 @@ namespace engine
     {
     public:
         Program(void);
-        Program(const VertexShader &vs, const GeometryShader &gs, const FragmentShader &fs);
-        Program(const VertexShader &vs, const FragmentShader &fs);
-        Program(const char *name);
 
         void Init(const VertexShader &vs, const GeometryShader &gs, const FragmentShader &fs, const char *name = nullptr);
         void Init(const VertexShader &vs, const FragmentShader &fs, const char *name = nullptr);
-        void Init(const char *name); //init from filename
+        void Init(const char *name, const Shader::Defines &defines = Shader::Defines()); //init from filename
 
         void Delete();
 

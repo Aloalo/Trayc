@@ -6,6 +6,7 @@
 #define EN_SHADER_H
 
 #include <GL/glew.h>
+#include <vector>
 
 namespace engine
 {
@@ -20,11 +21,14 @@ namespace engine
 
     protected:
         friend class Program;
+        using Defines = std::vector<std::string>;
 
         GLuint mID;
-        void Init(const char *name);
+        void Init(const char *name, const Defines &defines);
         void Init2(const GLchar *src, const char *name, GLint len = 0);
 
+    private:
+        static void InsertDefines(std::string &source, const Defines &defines);
     };
 }
 
