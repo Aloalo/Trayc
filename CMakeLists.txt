@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)
 
 project(Tracing)
 
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;MinSizeRel;RelWithDebInfo" CACHE STRING "" FORCE)
+set(DEBUG_CONFIGURATIONS "Debug;RelWithDebInfo")
+MESSAGE("DEBUG_CONFIGURATIONS is ${DEBUG_CONFIGURATIONS}")
+
 if(MSVC)
 	set(CMAKE_CXX_FLAGS_RELEASE "/Ox /Ob2 /Oi /Ot /Oy /GT /GL")
 else(MSVC)
@@ -38,6 +42,7 @@ find_package(SDL2 REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLM REQUIRED)
 find_package(DevIL REQUIRED)
+find_package(Assimp REQUIRED)
 
 function(copy_dlls)
     set(DLLS 
@@ -49,6 +54,8 @@ function(copy_dlls)
 
     file(COPY ${DLLS} DESTINATION ./Debug)
     file(COPY ${DLLS} DESTINATION ./Release)
+    file(COPY ${ASSIMP_DLLS_DEBUG} DESTINATION ./Debug)
+    file(COPY ${ASSIMP_DLLS_RELEASE} DESTINATION ./Release)
 endfunction()
 
 include_directories(
@@ -57,6 +64,7 @@ include_directories(
     ${OPENGL_INCLUDE_DIRS}
     ${GLM_INCLUDE_DIR}
     ${IL_INCLUDE_DIR}
+    ${ASSIMP_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}
 )
 

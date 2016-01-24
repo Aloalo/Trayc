@@ -1,0 +1,53 @@
+#
+# Try to find CEGUI library and include path.
+# Once done this will define
+#
+# ASSIMP_INCLUDE_DIR
+# ASSIMP_LIBRARY_DEBUG
+# ASSIMP_LIBRARY_RELEASE
+# ASSIMP_DLLS_DEBUG
+# ASSIMP_DLLS_RELEASE
+# 
+
+if(MSVC14)
+    set(ASSIMP_DIR "${CMAKE_SOURCE_DIR}/libs/assimp/vs2015")
+    set(LIB_NAME "assimp-vc130-mt")
+elseif(MSVC12)
+    set(ASSIMP_DIR "${CMAKE_SOURCE_DIR}/libs/assimp/vs2013")
+    set(LIB_NAME "assimp-vc120-mt")
+endif(MSVC14)
+
+MESSAGE("ASSIMP_DIR is ${ASSIMP_DIR}")
+
+find_path(ASSIMP_INCLUDE_DIR assimp/anim.h
+    PATHS
+    "${CMAKE_SOURCE_DIR}/libs/assimp/include"
+)
+
+MESSAGE("ASSIMP_INCLUDE_DIR is ${ASSIMP_INCLUDE_DIR}")
+
+find_library(ASSIMP_LIBRARY_DEBUG
+  NAMES "${LIB_NAME}d.lib"
+  PATHS
+   "${ASSIMP_DIR}/lib"
+)
+
+find_library(ASSIMP_LIBRARY_RELEASE
+  NAMES "${LIB_NAME}.lib"
+  PATHS
+   "${ASSIMP_DIR}/lib"
+)
+
+file(GLOB ASSIMP_DLLS_DEBUG
+  "${ASSIMP_DIR}/bin/*d.dll"
+)
+
+file(GLOB ASSIMP_DLLS_RELEASE
+  "${ASSIMP_DIR}/bin/*[^d].dll"
+)
+MESSAGE("ASSIMP_DLLS_RELEASE is ${ASSIMP_DLLS_RELEASE}")
+MESSAGE("ASSIMP_DLLS_DEBUG is ${ASSIMP_DLLS_DEBUG}")
+
+MESSAGE("ASSIMP_LIBRARY_DEBUG is ${ASSIMP_LIBRARY_DEBUG}")
+MESSAGE("ASSIMP_LIBRARY_RELEASE is ${ASSIMP_LIBRARY_RELEASE}")
+

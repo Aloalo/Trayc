@@ -50,11 +50,14 @@ namespace engine
         const CameraHandler *mCamera;
         Game *mGame;
 
-        engine::FrameBuffer mGBuffer;
         GLbitfield mClearMask;
         std::vector<Light> mLights;
         std::vector<Renderable*> mRenderables;
+
+        // Deferred rendering stuff
+        engine::FrameBuffer mGBuffer;
         std::vector<RenderableObject3D*> mDeferredRenderables;
+        std::map<std::string, Program> mMatToProg;
     };
 }
 

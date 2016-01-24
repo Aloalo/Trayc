@@ -133,6 +133,8 @@ target_link_libraries(Engine
     ${IL_LIBRARIES}
     ${ILU_LIBRARIES}
     ${OPENGL_LIBRARIES}
+    optimized "${ASSIMP_LIBRARY_RELEASE}"
+    debug "${ASSIMP_LIBRARY_DEBUG}"
 )
 
 file(COPY "Resources/" DESTINATION "../Resources")

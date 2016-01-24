@@ -12,7 +12,8 @@ namespace engine
 {
     struct Material
     {
-        glm::vec3 mKa;
+        Material(void);
+
         glm::vec3 mKd;
         glm::vec3 mKs;
         float mGloss;

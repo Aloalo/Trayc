@@ -5,6 +5,7 @@
 #include <Engine/Engine/Game.h>
 #include <Engine/Engine/TextureCombiner.h>
 #include <Engine/Utils/StlExtensions.hpp>
+#include <Engine/Engine/AssetLoader.h>
 
 using namespace glm;
 using namespace std;
@@ -25,6 +26,12 @@ namespace engine
 
     void Renderer::InitRendering(const CameraHandler *camera)
     {
+        if(mCamera) {
+            return;
+        }
+
+        mCamera = camera;
+
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
@@ -33,6 +40,7 @@ namespace engine
         int height;
         mGame->mContextHandler.GetWindowSize(&width, &height);
 
+        // Init G buffer
         mGBuffer.Init(width, height);
         mGBuffer.AddAttachment(GL_R32F, GL_RED, GL_FLOAT); //Linear Depth
         mGBuffer.AddAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); //Normal view space / x
@@ -40,7 +48,29 @@ namespace engine
         mGBuffer.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
         mGBuffer.Compile();
 
-        mCamera = camera;
+        // Init material to program map
+        const int ctDefines = 3;
+        const string gProgDefines[ctDefines] =
+        {
+            "NORMAL_MAP",
+            "DIFFUSE_MAP",
+            "SPECULAR_MAP"
+        };
+        const int ctProgs = 1 << ctDefines;
+        for(int i = 0; i < ctProgs; ++i) {
+            string strDefines;
+            vector<string> defines;
+
+            for(int j = 0; j < ctDefines; ++j) {
+                if((i << j) & 1) {
+                    strDefines += gProgDefines[j];
+                    defines.push_back(gProgDefines[j]);
+                }
+            }
+
+            mMatToProg[strDefines] = Program();
+            mMatToProg[strDefines].Init(AssetLoader::ShaderPath("G_GeometryPass").data(), defines);
+        }
     }
 
     void Renderer::Render() const
