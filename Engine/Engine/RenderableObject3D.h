@@ -18,8 +18,9 @@ namespace engine
         ~RenderableObject3D(void);
 
         bool mIsActive;
+        bool mIsMovable;
+        bool mDynamicGeometry;
 
-    protected:
         Transform mTransform;
         AABB mBoundingBox;
     };

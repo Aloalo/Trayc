@@ -6,6 +6,7 @@
 namespace engine
 {
     RenderableObject3D::RenderableObject3D(void)
+        : mIsActive(true), mIsMovable(false), mDynamicGeometry(false)
     {
     }
 

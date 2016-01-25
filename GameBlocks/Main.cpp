@@ -28,7 +28,7 @@ public:
 
     virtual void Draw(const RenderingContext &rContext) const override
     {
-        mTexRenderer.SetTexture(0, mTex);
+        TextureCombiner::SetTexture(0, mTex);
         mTexRenderer.Prog().Use();
         mTexRenderer.Prog().SetUniform("tex", 0);
         mTexRenderer.Draw();
