@@ -5,7 +5,6 @@
 #ifndef EN_TRIANGLEMESH_H
 #define EN_TRIANGLEMESH_H
 
-#include <Engine/Geometry/IndexContainer.h>
 #include <glm/glm.hpp>
 #include <vector>
 
@@ -16,13 +15,14 @@ namespace engine
     public:
         TriangleMesh(void);
 
+        int mID;
+
         std::vector<glm::vec3> mPositions;
         std::vector<glm::vec3> mNormals;
         std::vector<glm::vec3> mTangents;
-        std::vector<glm::vec3> mBiTangents;
-        std::vector<glm::vec3> mColors;
+        std::vector<glm::vec3> mBitangents;
         std::vector<glm::vec2> mUVs;
-        std::vector<GLuint> mIndices;
+        std::vector<unsigned int> mIndices;
     };
 }
 

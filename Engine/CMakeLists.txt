@@ -31,15 +31,15 @@ set(Engine_Geometry
     Geometry/GeometryMeshes.h
     Geometry/GeometryMeshes.cpp
     Geometry/TriangleMesh.h
-    Geometry/IndexContainer.h
     Geometry/Material.h
     Geometry/AABB.h
     Geometry/TriangleMesh.cpp
-    Geometry/IndexContainer.cpp
     Geometry/Material.cpp
     Geometry/AABB.cpp
-    Geometry/Transform.h
-    Geometry/Transform.cpp
+    Geometry/Object3D.h
+	Geometry/Object3D.cpp
+    Geometry/Scene.h
+    Geometry/Scene.cpp
 )
 
 set(Engine_GL
@@ -92,8 +92,6 @@ set(Engine_Engine
 	Engine/Game.cpp
 	Engine/Renderable.h
 	Engine/Renderable.cpp
-    Engine/RenderableObject3D.h
-	Engine/RenderableObject3D.cpp
 	Engine/Renderer.h
 	Engine/Renderer.cpp
     Engine/Light.h

@@ -1,10 +1,32 @@
-CMAKE
-    -64 bit build
-    
-Opcenito:
-    -Rename TriangleMesh to Mesh
-    -Refactor
-        -Rendering
-        -IndexContainer
-    -Physics engine (ODE)?
+Deferred renderer prep:
+    -Assimp loading
+        
+    -DebugDraw class
+    -Get rendertargets working
 
+Deferred renderer:
+    -Lighting pass
+    -GAMMA!
+    -Transparancy
+    -Shadows
+    -Reflections
+    
+Misc:
+    -Custom Scene file format
+    
+Post Process Effects:
+    -FXAA
+    -SSAA
+    -SSAO
+    -DOF
+    -Camera motion blur
+    
+Physics:
+    -Rigid body physics
+    -Cloth physics
+    -Particle physics
+
+Bugs:
+    
+GUI:
+    

@@ -7,6 +7,7 @@
 namespace engine
 {
     TriangleMesh::TriangleMesh(void)
+        : mID(-1)
     {
     }
 }

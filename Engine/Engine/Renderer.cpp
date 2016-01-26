@@ -105,31 +105,6 @@ namespace engine
         erase(mRenderables, renderable);
     }
 
-    void Renderer::AddRenderable(RenderableObject3D *renderable)
-    {
-        mDeferredRenderables.push_back(renderable);
-    }
-
-    void Renderer::RemoveRenderable(RenderableObject3D *renderable)
-    {
-        erase(mDeferredRenderables, renderable);
-    }
-
-    const std::vector<Light>& Renderer::GetLights() const
-    {
-        return mLights;
-    }
-
-    const Light& Renderer::GetLight(int idx) const
-    {
-        return mLights[idx];
-    }
-
-    Light& Renderer::GetLight(int idx)
-    {
-        return mLights[idx];
-    }
-
     void Renderer::SetScreenSize(int width, int height)
     {
         mGBuffer.Resize(width, height);
@@ -138,16 +113,6 @@ namespace engine
         FrameBuffer::UnBind();
 
         glViewport(0, 0, width, height);
-    }
-
-    void Renderer::AddLight(const Light &light)
-    {
-        mLights.push_back(light);
-    }
-
-    void Renderer::RemoveLight(int idx)
-    {
-        mLights.erase(mLights.begin() + idx);
     }
 
     void Renderer::SetClearColor(const glm::vec4 &clearColor) const

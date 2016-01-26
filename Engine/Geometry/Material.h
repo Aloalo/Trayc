@@ -14,6 +14,8 @@ namespace engine
     {
         Material(void);
 
+        int mID;
+
         glm::vec3 mKd;
         glm::vec3 mKs;
         float mGloss;
