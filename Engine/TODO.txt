@@ -1,6 +1,8 @@
 Deferred renderer prep:
     -Assimp loading
-        
+        -Recursive transform propagation
+        +Triangle mesh AABB
+        +Scene Object AABB getter
     -DebugDraw class
     -Get rendertargets working
 
@@ -13,6 +15,7 @@ Deferred renderer:
     
 Misc:
     -Custom Scene file format
+    -Editor
     
 Post Process Effects:
     -FXAA

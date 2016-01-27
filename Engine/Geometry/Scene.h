@@ -17,7 +17,6 @@ namespace engine
         Scene(void);
 
         std::vector<Light> mLights;
-
         std::vector<Object3D> mObjects3D;
         std::vector<TriangleMesh> mTriMeshes;
         std::vector<Material> mMaterials;

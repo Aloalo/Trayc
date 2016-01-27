@@ -52,7 +52,6 @@ namespace engine
         {
             scene.mTriMeshes.push_back(TriangleMesh());
             TriangleMesh &mesh = scene.mTriMeshes[i];
-            mesh.mID = i;
 
             const aiMesh *aimesh = aiScene->mMeshes[i];
             const aiMaterial *aimaterial = aiScene->mMaterials[aimesh->mMaterialIndex];
@@ -92,7 +91,6 @@ namespace engine
         {
             scene.mMaterials.push_back(Material());
             Material &material = scene.mMaterials[i];
-            material.mID = i;
             const aiMaterial *aimaterial = aiScene->mMaterials[i];
 
             aiColor3D color;
@@ -144,11 +142,11 @@ namespace engine
         // Add all objects in this node to scene
         for(int i = 0; i < aiNode->mNumMeshes; ++i)
         {
-            scene.mObjects3D.push_back(Object3D());
-            Object3D &obj = scene.mObjects3D.back();
-            obj.mTriMeshIdx = aiNode->mMeshes[i];
-            const aiMesh* mesh = aiScene->mMeshes[aiNode->mMeshes[i]];
-            obj.mMatIdx = mesh->mMaterialIndex;
+            const int meshIdx = aiNode->mMeshes[i];
+            const aiMesh *mesh = aiScene->mMeshes[aiNode->mMeshes[i]];
+            const int matIdx = mesh->mMaterialIndex;
+
+            scene.mObjects3D.push_back(Object3D(scene.mTriMeshes[meshIdx], scene.mMaterials[matIdx]));
         }
 
         // Do the same for children
