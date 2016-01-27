@@ -22,7 +22,7 @@ namespace engine
         static Scene LoadSceneAssimp(const std::string &path);
 
     private:
-        static void RecursiveLoadSceneAssimp(const aiScene *sc, const aiNode *nd, Scene &scene);
+        static void RecursiveLoadSceneAssimp(const aiScene *sc, const aiNode *nd, Scene &scene, const glm::mat4 &currTransform = glm::mat4(1.0f));
 
         static std::string mResourcePath;
         static std::string mShadersPath;

@@ -18,20 +18,13 @@ namespace engine
     void TextureCombiner::Init(const char *progName)
     {
         mProgram.Init(progName);
+        Init();
+    }
 
-        if(mVAO.Capacity() == 0)
-        {
-            static const vec2 quad[4] =
-            {
-                vec2(1.0f, 1.0f),
-                vec2(-1.0f, 1.0f),
-                vec2(-1.0f,-1.0f),
-                vec2(1.0f,-1.0f)
-            };
-            mVAO.AddAttribute(VertexAttribDef(0, 2, GL_FLOAT, GL_FALSE));
-            mVAO.Init(4, 4);
-            mVAO.SetVertices(quad, 0, 4);
-        }
+    void TextureCombiner::Init(const char *vsName, const char *fsName)
+    {
+        mProgram.Init(VertexShader(vsName, {}), FragmentShader(fsName, {}));
+        Init();
     }
 
     void TextureCombiner::Destroy()
@@ -69,5 +62,22 @@ namespace engine
     void TextureCombiner::DestroyVAO()
     {
         mVAO.Destroy();
+    }
+
+    void TextureCombiner::Init()
+    {
+        if(mVAO.Capacity() == 0)
+        {
+            static const vec2 quad[4] =
+            {
+                vec2(1.0f, 1.0f),
+                vec2(-1.0f, 1.0f),
+                vec2(-1.0f,-1.0f),
+                vec2(1.0f,-1.0f)
+            };
+            mVAO.AddAttribute(VertexAttribDef(0, 2, GL_FLOAT, GL_FALSE));
+            mVAO.Init(4, 4);
+            mVAO.SetVertices(quad, 0, 4);
+        }
     }
 }

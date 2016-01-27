@@ -16,6 +16,7 @@ namespace engine
         ~TextureCombiner(void);
 
         void Init(const char *progName);
+        void Init(const char *vsName, const char *fsName);
         void Destroy();
 
         // Get program
@@ -29,6 +30,8 @@ namespace engine
         static void DestroyVAO();
 
     private:
+        void Init();
+
         Program mProgram;
         static VertexArray mVAO;
     };

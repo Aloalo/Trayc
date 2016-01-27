@@ -137,8 +137,11 @@ namespace engine
         return scene;
     }
 
-    void AssetLoader::RecursiveLoadSceneAssimp(const aiScene *aiScene, const aiNode *aiNode, Scene &scene)
+    void AssetLoader::RecursiveLoadSceneAssimp(const aiScene *aiScene, const aiNode *aiNode, Scene &scene, const mat4 &currTransform)
     {
+        const aiMatrix4x4 m = aiNode->mTransformation;
+        const mat4 newTransform = (*(mat4*)&m) * currTransform;
+
         // Add all objects in this node to scene
         for(int i = 0; i < aiNode->mNumMeshes; ++i)
         {
@@ -147,11 +150,13 @@ namespace engine
             const int matIdx = mesh->mMaterialIndex;
 
             scene.mObjects3D.push_back(Object3D(scene.mTriMeshes[meshIdx], scene.mMaterials[matIdx]));
+            Object3D &obj = scene.mObjects3D.back();
+            obj.SetTransform(newTransform);
         }
 
         // Do the same for children
         for(int i = 0; i < aiNode->mNumChildren; ++i) {
-            RecursiveLoadSceneAssimp(aiScene, aiNode->mChildren[i], scene);
+            RecursiveLoadSceneAssimp(aiScene, aiNode->mChildren[i], scene, newTransform);
         }
     }
 }

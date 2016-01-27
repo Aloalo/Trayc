@@ -1,9 +1,9 @@
 Deferred renderer prep:
     -Assimp loading
-        -Recursive transform propagation
+        +Recursive transform propagation
         +Triangle mesh AABB
         +Scene Object AABB getter
-    -DebugDraw class
+    +DebugDraw class
     -Get rendertargets working
 
 Deferred renderer:

@@ -100,6 +100,8 @@ set(Engine_Engine
 	Engine/TextureCombiner.cpp
     Engine/AssetLoader.h
 	Engine/AssetLoader.cpp
+    Engine/DebugDraw.h
+	Engine/DebugDraw.cpp
 )
 
 set(Engine_GL_SHADERS
