@@ -10,6 +10,8 @@
 #include <Engine/Core/CameraHandler.h>
 #include <Engine/GL/FrameBuffer.h>
 #include <Engine/GL/Program.h>
+#include <Engine/GL/VertexArray.h>
+#include <Engine/Geometry/Scene.h>
 #include <vector>
 
 namespace engine
@@ -24,13 +26,11 @@ namespace engine
 
         void SetClearColor(const glm::vec4 &clearColor) const;
 
+        void SetScene(const Scene *scene);
+
         //Renderables
         void AddRenderable(Renderable *renderable);
         void RemoveRenderable(Renderable *renderable);
-
-        //Lights
-        void AddLight(const Light &light);
-        void RemoveLight(int idx);
 
         void SetScreenSize(int width, int height);
 
@@ -40,6 +40,10 @@ namespace engine
         void InitRendering(const CameraHandler *camera);
         void Render() const;
 
+        void ClearVertexArrays();
+        void InitScene(const Scene *scene);
+
+        const Scene *mScene;
         const CameraHandler *mCamera;
         Game *mGame;
 
@@ -49,6 +53,8 @@ namespace engine
         // Deferred rendering stuff
         engine::FrameBuffer mGBuffer;
         std::map<std::string, Program> mMatToProg;
+        // At index i is VA for mesh i
+        std::vector<VertexArray> mVertexArrays;
     };
 }
 

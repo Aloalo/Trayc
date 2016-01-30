@@ -64,11 +64,13 @@ int main(int argc, char *argv[])
     game.mContextHandler.VsyncMode(1);
     game.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
 
-    Program testGProg;
-    testGProg.Init(AssetLoader::ShaderPath("G_GeometryPass").data(), {});
+    //Program testGProg;
+    //testGProg.Init(AssetLoader::ShaderPath("G_GeometryPass").data(), {});
 
-    TestRenderTexture test;
-    game.mRenderer.AddRenderable(&test);
+    //TestRenderTexture test;
+    //game.mRenderer.AddRenderable(&test);
+
+    Scene scene = AssetLoader::LoadSceneAssimp(AssetLoader::ModelPath("cube/cube.obj"));
 
     game.GameLoop();
     return 0;

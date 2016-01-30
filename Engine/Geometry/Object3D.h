@@ -11,16 +11,19 @@ namespace engine
     {
         Object3D(TriangleMesh &triMesh, Material &material);
 
-        bool mIsActive;
-        bool mIsMovable;
-        bool mDynamicGeometry;
-
         void SetTransform(const glm::mat4 &transform);
+
+        const bool HasDynamicGemoetry() const;
+        const TriangleMesh& GetMesh() const;
+        const Material& GetMaterial() const;
+        const AABB& GetAABB() const;
         const glm::mat4& GetTransform() const;
 
     private:
         friend class Scene;
         void CalcAABB();
+
+        bool mDynamicGeometry;
 
         TriangleMesh &mTriMesh;
         Material &mMaterial;

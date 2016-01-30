@@ -30,7 +30,7 @@ namespace engine
         }
 
         glm::vec3 Size() const;
-        std::array<glm::vec3, 6> Vertices() const;
+        std::array<glm::vec3, 8> Vertices() const;
 
         glm::vec3 mMinv;
         glm::vec3 mMaxv;

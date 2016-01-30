@@ -13,7 +13,8 @@ namespace engine
 {
     string AssetLoader::mResourcePath = "../Resources/";
     string AssetLoader::mShadersPath = "Shaders/";
-    string AssetLoader::mTexturesPath = "Textures/" ;
+    string AssetLoader::mTexturesPath = "Textures/";
+    string AssetLoader::mModelsPath = "Models/" ;
 
     AssetLoader::AssetLoader(void)
     {
@@ -31,6 +32,11 @@ namespace engine
     string AssetLoader::ShaderPath(const std::string &name)
     {
         return mResourcePath + mShadersPath + name;
+    }
+
+    std::string AssetLoader::ModelPath(const std::string & name)
+    {
+        return mResourcePath + mModelsPath + name;
     }
 
     Scene AssetLoader::LoadSceneAssimp(const string &path)
@@ -84,6 +90,8 @@ namespace engine
                 if(aimesh->HasTextureCoords(0))
                     mesh.mUVs.push_back(vec2(aimesh->mTextureCoords[0][j].x, aimesh->mTextureCoords[0][j].y));
             }
+
+            mesh.CalcAABB();
         }
 
         // Load materials

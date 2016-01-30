@@ -1,34 +1,11 @@
 #include <Engine/GL/VertexArray.h>
+#include <Engine/Utils/Utilities.h>
 #include <assert.h>
-
-static const inline int GLTypeSize(GLenum type)
-{
-    switch(type)
-    {
-    case GL_UNSIGNED_BYTE:
-        return sizeof(unsigned char);
-    case GL_FLOAT:
-        return sizeof(float);
-    default:
-        assert(false);
-        return -1;
-    }
-}
 
 namespace engine
 {
-    VertexAttribDef::VertexAttribDef(GLint index, GLint size, GLenum type, GLboolean normalized) :
-        index(index), size(size), type(type), normalized(normalized)
-    {
-    }
-
-    int VertexAttribDef::SizeInBytes() const
-    {
-        return size * GLTypeSize(type);
-    }
-
     VertexArray::VertexArray(GLenum VBOusage) :
-        mSize(0), mCapacity(0), mVertexSize(0), mVAO(0), mVBO(GL_ARRAY_BUFFER, VBOusage)
+        mSize(0), mCapacity(0), mVertexSize(0), mVAO(0), mVBO(GL_ARRAY_BUFFER, VBOusage), mIBO(GL_ELEMENT_ARRAY_BUFFER, VBOusage)
     {
     }
 
@@ -123,6 +100,24 @@ namespace engine
         mVBO.Destroy();
     }
 
+    void VertexArray::SetIndices(const void *indices, int ctIndices, GLenum type)
+    {
+        mCtIndices = ctIndices;
+        mIndexType = type;
+
+        mIBO.Destroy();
+        mIBO = BufferObject(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+        mIBO.Init();
+
+        Bind();
+        {
+            mIBO.Bind();
+            mIBO.SetData(ctIndices * SizeOfGLType(type), indices);
+        }
+        UnBind();
+
+    }
+
     void VertexArray::RegisterToGPU()
     {
         glDeleteVertexArrays(1, &mVAO);
@@ -160,6 +155,13 @@ namespace engine
         glBindVertexArray(0);
     }
 
+    void VertexArray::RenderIndexed(GLenum mode) const
+    {
+        glBindVertexArray(mVAO);
+        glDrawElements(mode, mCtIndices, mIndexType, nullptr);
+        glBindVertexArray(0);
+    }
+
     int VertexArray::Size() const
     {
         return mSize;
@@ -174,7 +176,7 @@ namespace engine
     {
         int ret = 0;
         for(const VertexAttribDef &attrib : mVertAttribs)
-            ret += attrib.size * GLTypeSize(attrib.type);
+            ret += attrib.size * SizeOfGLType(attrib.type);
         return ret;
     }
 }

@@ -11,8 +11,9 @@ using namespace glm;
 using namespace std;
 
 WireCube::WireCube(float cubeSize)
-    : mProgram("Shaders/WireBox")
 {
+    mProgram.Init("Shaders/WireBox");
+
     //Load mesh to GPU
     glGenBuffers(1, &mVBO);
 

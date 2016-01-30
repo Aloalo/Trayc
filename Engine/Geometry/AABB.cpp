@@ -39,10 +39,10 @@ namespace engine
         return mMaxv - mMinv;
     }
 
-    std::array<glm::vec3, 6> AABB::Vertices() const
+    std::array<glm::vec3, 8> AABB::Vertices() const
     {
         const vec3 sz = Size();
-        array<vec3, 6> vertices;
+        array<vec3, 8> vertices;
 
         vertices[0] = mMinv + vec3(0.0f, 0.0f, 0.0f);
         vertices[1] = mMinv + vec3(sz.x, 0.0f, 0.0f);

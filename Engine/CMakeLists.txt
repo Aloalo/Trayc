@@ -59,6 +59,8 @@ set(Engine_GL
     GL/FrameBuffer.h
     GL/VertexArray.cpp
     GL/VertexArray.h
+    GL/VertexAttributeDef.cpp
+    GL/VertexAttributeDef.h
     GL/VertexArrayInstanced.cpp
     GL/VertexArrayInstanced.h
     GL/UniformBuffer.cpp
@@ -92,6 +94,8 @@ set(Engine_Engine
 	Engine/Game.cpp
 	Engine/Renderable.h
 	Engine/Renderable.cpp
+    Engine/RenderableObject3D.h
+	Engine/RenderableObject3D.cpp
 	Engine/Renderer.h
 	Engine/Renderer.cpp
     Engine/Light.h

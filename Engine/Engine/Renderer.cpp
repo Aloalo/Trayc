@@ -14,7 +14,7 @@ using namespace stdext;
 namespace engine
 {
     Renderer::Renderer(Game *scene)
-        : mCamera(nullptr), mGame(scene), mClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        : mScene(nullptr), mCamera(nullptr), mGame(scene), mClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     {
     }
 
@@ -22,6 +22,38 @@ namespace engine
     {
         mGBuffer.Destroy();
         TextureCombiner::DestroyVAO();
+        ClearVertexArrays();
+    }
+
+    void Renderer::SetClearColor(const glm::vec4 &clearColor) const
+    {
+        glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+    }
+
+    void Renderer::SetScene(const Scene *scene)
+    {
+        ClearVertexArrays();
+        InitScene(scene);
+    }
+
+    void Renderer::AddRenderable(Renderable *renderable)
+    {
+        mRenderables.push_back(renderable);
+    }
+
+    void Renderer::RemoveRenderable(Renderable *renderable)
+    {
+        erase(mRenderables, renderable);
+    }
+
+    void Renderer::SetScreenSize(int width, int height)
+    {
+        mGBuffer.Resize(width, height);
+        mGBuffer.Bind();
+        glViewport(0, 0, width, height);
+        FrameBuffer::UnBind();
+
+        glViewport(0, 0, width, height);
     }
 
     void Renderer::InitRendering(const CameraHandler *camera)
@@ -48,7 +80,7 @@ namespace engine
         mGBuffer.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
         mGBuffer.Compile();
 
-        // Init material to program map
+        // Init material to program map, and material to vartex arrays map
         const int ctDefines = 3;
         const string gProgDefines[ctDefines] =
         {
@@ -95,28 +127,20 @@ namespace engine
         }
     }
 
-    void Renderer::AddRenderable(Renderable *renderable)
+    void Renderer::ClearVertexArrays()
     {
-        mRenderables.push_back(renderable);
+        for(auto &VA : mVertexArrays)
+            VA.Destroy();
+
+        mVertexArrays.clear();
     }
 
-    void Renderer::RemoveRenderable(Renderable *renderable)
+    void Renderer::InitScene(const Scene *scene)
     {
-        erase(mRenderables, renderable);
-    }
+        mScene = scene;
 
-    void Renderer::SetScreenSize(int width, int height)
-    {
-        mGBuffer.Resize(width, height);
-        mGBuffer.Bind();
-        glViewport(0, 0, width, height);
-        FrameBuffer::UnBind();
-
-        glViewport(0, 0, width, height);
-    }
-
-    void Renderer::SetClearColor(const glm::vec4 &clearColor) const
-    {
-        glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+        for(const TriangleMesh &mesh : scene->mTriMeshes)
+        {
+        }
     }
 }

@@ -6,33 +6,24 @@
 #define EN_VERTEX_ARRAY_H
 
 #include <Engine/GL/BufferObject.h>
+#include <Engine/GL/VertexAttributeDef.h>
 #include <vector>
 
 namespace engine
 {
-    struct VertexAttribDef
-    {
-        VertexAttribDef(GLint index, GLint size, GLenum type, GLboolean normalized);
-
-        int SizeInBytes() const;
-
-        GLuint index;
-        GLint size;
-        GLenum type;
-        GLboolean normalized;
-    };
-
     class VertexArray
     {
         using VertexAttribs = std::vector<VertexAttribDef>;
     public:
 
-        VertexArray(GLenum VBOusage);
+        VertexArray(GLenum VBOusage = GL_STATIC_DRAW);
         ~VertexArray(void);
 
         void AddAttribute(const VertexAttribDef &attrib);
         void Init(int ctVertices, int capacity);
         void Destroy();
+
+        void SetIndices(const void *indices, int ctIndices, GLenum type);
 
         // Ensures that the data store is big enaugh for size vertices
         // Sets mSize to size
@@ -46,6 +37,7 @@ namespace engine
         const BufferObject& VBO() const;
 
         void Render(GLenum mode, GLint first = 0) const;
+        void RenderIndexed(GLenum mode) const;
 
         int Size() const;
         int Capacity() const;
@@ -61,6 +53,10 @@ namespace engine
 
         GLuint mVAO;
         BufferObject mVBO;
+
+        BufferObject mIBO;
+        GLenum mIndexType;
+        int mCtIndices;
 
         VertexAttribs mVertAttribs;
     };

@@ -8,7 +8,7 @@ using namespace glm;
 namespace engine
 {
     Object3D::Object3D(TriangleMesh &triMesh, Material &material)
-        : mIsActive(true), mIsMovable(false), mDynamicGeometry(false), mMaterial(material), mTriMesh(triMesh), mTransform(1.0f)
+        : mDynamicGeometry(false), mMaterial(material), mTriMesh(triMesh), mTransform(1.0f)
     {
     }
 
@@ -16,6 +16,26 @@ namespace engine
     {
         mTransform = transform;
         CalcAABB();
+    }
+
+    const bool Object3D::HasDynamicGemoetry() const
+    {
+        return mDynamicGeometry;
+    }
+
+    const TriangleMesh& Object3D::GetMesh() const
+    {
+        return mTriMesh;
+    }
+
+    const Material& Object3D::GetMaterial() const
+    {
+        return mMaterial;
+    }
+
+    const AABB& Object3D::GetAABB() const
+    {
+        return mAABB;
     }
 
     const mat4& Object3D::GetTransform() const

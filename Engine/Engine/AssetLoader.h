@@ -18,6 +18,7 @@ namespace engine
 
         static std::string TexturePath(const std::string &name);
         static std::string ShaderPath(const std::string &name);
+        static std::string ModelPath(const std::string &name);
 
         static Scene LoadSceneAssimp(const std::string &path);
 
@@ -27,6 +28,7 @@ namespace engine
         static std::string mResourcePath;
         static std::string mShadersPath;
         static std::string mTexturesPath;
+        static std::string mModelsPath;
     };
 }
 

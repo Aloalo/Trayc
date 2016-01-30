@@ -12,8 +12,9 @@
 
 namespace engine
 {
-    struct Scene
+    class Scene
     {
+    public:
         Scene(void);
 
         std::vector<Light> mLights;

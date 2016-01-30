@@ -74,7 +74,6 @@ void SimulationHandler::Init(Game &game)
 {
     mPhysics.InitBalls();
     game.mUpdateableMenager.AddUpdateable(&mPhysics);
-    game.mRenderer.AddLight(mRenderingParams.mLight);
     game.mRenderer.AddRenderable(this);
     game.mInputHandler.AddEventListener(this);
 

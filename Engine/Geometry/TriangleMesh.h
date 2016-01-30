@@ -6,6 +6,7 @@
 #define EN_TRIANGLEMESH_H
 
 #include <Engine/Geometry/AABB.h>
+#include <Engine/GL/VertexAttributeDef.h>
 #include <glm/glm.hpp>
 #include <vector>
 
@@ -17,11 +18,15 @@ namespace engine
         TriangleMesh(void);
 
         std::vector<glm::vec3> mPositions;
+        std::vector<glm::vec2> mUVs;
         std::vector<glm::vec3> mNormals;
         std::vector<glm::vec3> mTangents;
         std::vector<glm::vec3> mBitangents;
-        std::vector<glm::vec2> mUVs;
         std::vector<unsigned int> mIndices;
+
+        std::vector<VertexAttribDef> GetVertexAttribDefs() const;
+        GLenum GetIndexType() const;
+        void* GetIndices() const;
 
         const AABB& GetAABB() const;
         void CalcAABB();
