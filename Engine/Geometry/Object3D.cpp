@@ -7,15 +7,15 @@ using namespace glm;
 
 namespace engine
 {
-    Object3D::Object3D(TriangleMesh &triMesh, Material &material)
-        : mDynamicGeometry(false), mMaterial(material), mTriMesh(triMesh), mTransform(1.0f)
+    Object3D::Object3D(int meshIdx, int matIdx)
+        : mDynamicGeometry(false), mMeshIdx(meshIdx), mMatIdx(matIdx), mTransform(1.0f)
     {
     }
 
-    void Object3D::SetTransform(const mat4 &transform)
+    void Object3D::SetTransform(const mat4 &transform, const AABB &meshAABB)
     {
         mTransform = transform;
-        CalcAABB();
+        CalcAABB(meshAABB);
     }
 
     const bool Object3D::HasDynamicGemoetry() const
@@ -23,14 +23,14 @@ namespace engine
         return mDynamicGeometry;
     }
 
-    const TriangleMesh& Object3D::GetMesh() const
+    int Object3D::GetMeshIdx() const
     {
-        return mTriMesh;
+        return mMeshIdx;
     }
 
-    const Material& Object3D::GetMaterial() const
+    int Object3D::GetMaterialIdx() const
     {
-        return mMaterial;
+        return mMatIdx;
     }
 
     const AABB& Object3D::GetAABB() const
@@ -43,12 +43,12 @@ namespace engine
         return mTransform;
     }
 
-    void Object3D::CalcAABB()
+    void Object3D::CalcAABB(const AABB &meshAABB)
     {
-        AABB meshAABB = mTriMesh.GetAABB();
         auto vertices = meshAABB.Vertices();
 
-        for(int i = 0; i < vertices.size(); ++i)
+        const int ctVertices = vertices.size();
+        for(int i = 0; i < ctVertices; ++i)
             vertices[i] = vec3(mTransform * vec4(vertices[i], 1.0f));
 
         mAABB = AABB();

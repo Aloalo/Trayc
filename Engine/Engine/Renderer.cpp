@@ -23,6 +23,8 @@ namespace engine
         mGBuffer.Destroy();
         TextureCombiner::DestroyVAO();
         ClearVertexArrays();
+        for(auto &spp : mMatToProg)
+            spp.second.Delete();
     }
 
     void Renderer::SetClearColor(const glm::vec4 &clearColor) const
@@ -94,7 +96,7 @@ namespace engine
             vector<string> defines;
 
             for(int j = 0; j < ctDefines; ++j) {
-                if((i << j) & 1) {
+                if((1 << j) & i) {
                     strDefines += gProgDefines[j];
                     defines.push_back(gProgDefines[j]);
                 }
@@ -109,7 +111,15 @@ namespace engine
     {
         // First deferred render
 
-        // TODO : deferred render
+        mGBuffer.Bind();
+        glClear(mClearMask);
+
+        for(const Object3D &obj : mScene->mObjects3D)
+        {
+            const VertexArray &VA = mVertexArrays[obj.GetMeshIdx()];
+        }
+
+        FrameBuffer::UnBind();
 
         // Then custom forward render
         glClear(mClearMask);
@@ -141,6 +151,25 @@ namespace engine
 
         for(const TriangleMesh &mesh : scene->mTriMeshes)
         {
+            mVertexArrays.push_back(VertexArray(GL_STATIC_DRAW));
+            VertexArray &VA = mVertexArrays.back();
+
+            const int ctVertices = mesh.mPositions.size();
+            const int ctIndices = mesh.mIndices.size();
+
+            VA.AddAttributes(mesh.GetVertexAttribDefs());
+            VA.Init(ctVertices, ctVertices);
+
+            VA.SetVertices(static_cast<const GLvoid*>(mesh.GetVertexArray().data()), 0, ctVertices);
+
+            if(ctIndices > 0)
+            {
+                void *indices = mesh.GetIndices();
+                VA.SetIndices(indices, ctIndices, mesh.GetIndexType());
+                delete[] indices;
+            }
+
+
         }
     }
 }

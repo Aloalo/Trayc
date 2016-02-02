@@ -27,6 +27,11 @@ namespace engine
         std::vector<VertexAttribDef> GetVertexAttribDefs() const;
         GLenum GetIndexType() const;
         void* GetIndices() const;
+        std::vector<float> GetVertexArray() const;
+
+        // In number of elements
+        int GetVertexSize() const;
+        int GetVertexSizeInBytes() const;
 
         const AABB& GetAABB() const;
         void CalcAABB();

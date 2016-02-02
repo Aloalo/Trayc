@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     Game game(timeStep);
     game.Init(&camHandler, argv[0], "Test", SSize.x, SSize.y);
     game.mContextHandler.VsyncMode(1);
-    game.mRenderer.SetClearColor(vec4(0.3f, 0.3f, 0.3f, 1.0f));
+    game.mRenderer.SetClearColor(vec4(0.0f));
 
     //Program testGProg;
     //testGProg.Init(AssetLoader::ShaderPath("G_GeometryPass").data(), {});
@@ -71,6 +71,7 @@ int main(int argc, char *argv[])
     //game.mRenderer.AddRenderable(&test);
 
     Scene scene = AssetLoader::LoadSceneAssimp(AssetLoader::ModelPath("cube/cube.obj"));
+    game.mRenderer.SetScene(&scene);
 
     game.GameLoop();
     return 0;

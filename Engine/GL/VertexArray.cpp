@@ -79,6 +79,11 @@ namespace engine
         mVertAttribs.push_back(attrib);
     }
 
+    void VertexArray::AddAttributes(const VertexAttribs &attribs)
+    {
+        mVertAttribs.insert(mVertAttribs.end(), attribs.begin(), attribs.end());
+    }
+
     void VertexArray::Init(int ctVertices, int capacity)
     {
         assert(mVertAttribs.size());
@@ -98,6 +103,7 @@ namespace engine
     {
         glDeleteVertexArrays(1, &mVAO);
         mVBO.Destroy();
+        mIBO.Destroy();
     }
 
     void VertexArray::SetIndices(const void *indices, int ctIndices, GLenum type)
@@ -110,12 +116,8 @@ namespace engine
         mIBO.Init();
 
         Bind();
-        {
-            mIBO.Bind();
-            mIBO.SetData(ctIndices * SizeOfGLType(type), indices);
-        }
+        mIBO.SetData(ctIndices * SizeOfGLType(type), indices);
         UnBind();
-
     }
 
     void VertexArray::RegisterToGPU()

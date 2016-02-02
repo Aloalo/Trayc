@@ -77,7 +77,84 @@ namespace engine
         return nullptr;
     }
 
-    const AABB & TriangleMesh::GetAABB() const
+    vector<float> TriangleMesh::GetVertexArray() const
+    {
+        const int ctVertices = mPositions.size();
+        vector<float> ret;
+        ret.reserve(ctVertices * GetVertexSize());
+
+        const bool hasUV = mUVs.size() > 0;
+        const bool hasNormals = mNormals.size() > 0;
+        const bool hasTangents = mTangents.size() > 0;
+        const bool hasBitangents = mBitangents.size() > 0;
+
+        for(int i = 0; i < ctVertices; ++i)
+        {
+            ret.push_back(mPositions[i].x);
+            ret.push_back(mPositions[i].y);
+            ret.push_back(mPositions[i].z);
+
+            if(hasUV) {
+                ret.push_back(mUVs[i].x);
+                ret.push_back(mUVs[i].y);
+            }
+
+            if(hasNormals) {
+                ret.push_back(mNormals[i].x);
+                ret.push_back(mNormals[i].y);
+                ret.push_back(mNormals[i].z);
+            }
+
+            if(hasTangents) {
+                ret.push_back(mTangents[i].x);
+                ret.push_back(mTangents[i].y);
+                ret.push_back(mTangents[i].z);
+            }
+
+            if(hasBitangents) {
+                ret.push_back(mBitangents[i].x);
+                ret.push_back(mBitangents[i].y);
+                ret.push_back(mBitangents[i].z);
+            }
+        }
+
+        return ret;
+    }
+
+    int TriangleMesh::GetVertexSize() const
+    {
+        int ret = 0;
+
+        if(mPositions.size() > 0)
+        {
+            ret += 3;
+
+            if(mUVs.size() > 0) {
+                ret += 2;
+            }
+
+            if(mNormals.size() > 0) {
+                ret += 3;
+            }
+
+            if(mTangents.size() > 0) {
+                ret += 3;
+            }
+
+            if(mBitangents.size() > 0) {
+                ret += 3;
+            }
+        }
+
+        return ret;
+    }
+
+    int TriangleMesh::GetVertexSizeInBytes() const
+    {
+        return GetVertexSize() * sizeof(float);
+    }
+
+    const AABB& TriangleMesh::GetAABB() const
     {
         return mAABB;
     }

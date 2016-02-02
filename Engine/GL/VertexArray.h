@@ -20,6 +20,7 @@ namespace engine
         ~VertexArray(void);
 
         void AddAttribute(const VertexAttribDef &attrib);
+        void AddAttributes(const VertexAttribs &attribs);
         void Init(int ctVertices, int capacity);
         void Destroy();
 

@@ -51,7 +51,7 @@ namespace engine
         std::vector<Renderable*> mRenderables;
 
         // Deferred rendering stuff
-        engine::FrameBuffer mGBuffer;
+        FrameBuffer mGBuffer;
         std::map<std::string, Program> mMatToProg;
         // At index i is VA for mesh i
         std::vector<VertexArray> mVertexArrays;
