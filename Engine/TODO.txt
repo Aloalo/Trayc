@@ -1,10 +1,13 @@
 Deferred renderer prep:
-    -Assimp loading
+    +Assimp loading
         +Recursive transform propagation
         +Triangle mesh AABB
         +Scene Object AABB getter
     +DebugDraw class
     -Get rendertargets working
+    -Enums instead of strings for g pass materials
+    -Non deferred renderer
+    -Kill unneeded code (classes, files)
 
 Deferred renderer:
     -Lighting pass
@@ -23,11 +26,15 @@ Post Process Effects:
     -SSAO
     -DOF
     -Camera motion blur
+    -Screen space reflections
     
 Physics:
     -Rigid body physics
     -Cloth physics
     -Particle physics
+
+Optimizations:
+    -Reduce number of G pass state changes
 
 Bugs:
     

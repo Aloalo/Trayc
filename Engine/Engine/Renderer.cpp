@@ -7,6 +7,8 @@
 #include <Engine/Utils/StlExtensions.hpp>
 #include <Engine/Engine/AssetLoader.h>
 
+#include <Engine/Engine/GlobalRenderingParams.h>
+
 using namespace glm;
 using namespace std;
 using namespace stdext;
@@ -82,23 +84,16 @@ namespace engine
         mGBuffer.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
         mGBuffer.Compile();
 
-        // Init material to program map, and material to vartex arrays map
-        const int ctDefines = 3;
-        const string gProgDefines[ctDefines] =
-        {
-            "NORMAL_MAP",
-            "DIFFUSE_MAP",
-            "SPECULAR_MAP"
-        };
-        const int ctProgs = 1 << ctDefines;
+        // Init material to program map, and material to vertex arrays map
+        const int ctProgs = 1 << MatTextureType::CT_MAT_TEXTURE_TYPES;
         for(int i = 0; i < ctProgs; ++i) {
             string strDefines;
             vector<string> defines;
 
-            for(int j = 0; j < ctDefines; ++j) {
+            for(int j = 0; j < MatTextureType::CT_MAT_TEXTURE_TYPES; ++j) {
                 if((1 << j) & i) {
-                    strDefines += gProgDefines[j];
-                    defines.push_back(gProgDefines[j]);
+                    strDefines += MAT_TEXTURE_DEFINES[j];
+                    defines.push_back(MAT_TEXTURE_DEFINES[j]);
                 }
             }
 
@@ -109,26 +104,60 @@ namespace engine
 
     void Renderer::Render() const
     {
-        // First deferred render
+        RenderingContext rContext;
+        rContext.mV = mCamera->GetViewMatrix();
+        rContext.mP = mCamera->GetProjectionMatrix();
+        rContext.mVP = rContext.mP * rContext.mV;
+        rContext.mCamera = &mCamera->mCamera;
 
+        // -------------------------- Deferred render -------------------------- //
         mGBuffer.Bind();
         glClear(mClearMask);
 
         for(const Object3D &obj : mScene->mObjects3D)
         {
             const VertexArray &VA = mVertexArrays[obj.GetMeshIdx()];
+            const Material &mat = mScene->mMaterials[obj.GetMaterialIdx()];
+            const string &renderFlags = mat.GetRenderFlags();
+            const Program &prog = mMatToProg.at(renderFlags);
+
+            prog.Use();
+
+            prog.SetUniform("MVP", rContext.mVP * obj.GetTransform());
+            prog.SetUniform("MV", rContext.mV * obj.GetTransform());
+            prog.SetUniform("diffuseColor", mat.mKd);
+            prog.SetUniform("specularGloss", vec4(mat.mKs, mat.mGloss));
+
+            if(mat.HasDiffuseMap()) {
+                prog.SetUniform("diffuseMap", MatTextureType::DIFFUSE_MAP);
+                glActiveTexture(GL_TEXTURE0 + MatTextureType::DIFFUSE_MAP);
+                mNameToTex.at(mat.mAlbedoMap).Bind();
+            }
+            if(mat.HasNormalMap()) {
+                prog.SetUniform("normalMap", MatTextureType::NORMAL_MAP);
+                glActiveTexture(GL_TEXTURE0 + MatTextureType::NORMAL_MAP);
+                mNameToTex.at(mat.mNormalMap).Bind();
+            }
+            if(mat.HasSpecularMap()) {
+                prog.SetUniform("specularMap", MatTextureType::SPECULAR_MAP);
+                glActiveTexture(GL_TEXTURE0 + MatTextureType::SPECULAR_MAP);
+                mNameToTex.at(mat.mSpecularMap).Bind();
+            }
+            if(mat.HasHeightMap()) {
+                prog.SetUniform("heightMap", MatTextureType::HEIGHT_MAP);
+                glActiveTexture(GL_TEXTURE0 + MatTextureType::HEIGHT_MAP);
+                mNameToTex.at(mat.mHeightMap).Bind();
+            }
+
+            VA.RenderIndexed(GL_TRIANGLES);
+
+            Program::Unbind();
         }
 
         FrameBuffer::UnBind();
 
-        // Then custom forward render
+        // -------------------------- Custom forward render -------------------------- //
         glClear(mClearMask);
-
-        RenderingContext rContext;
-        rContext.mV = mCamera->GetViewMatrix();
-        rContext.mP = mCamera->GetProjectionMatrix();
-        rContext.mVP = rContext.mP * rContext.mV;
-        rContext.mCamera = &mCamera->mCamera;
 
         for(Renderable *renderable : mRenderables) {
             if(renderable->mIsActive) {
@@ -168,8 +197,22 @@ namespace engine
                 VA.SetIndices(indices, ctIndices, mesh.GetIndexType());
                 delete[] indices;
             }
+        }
 
-
+        for(const Material &mat : scene->mMaterials)
+        {
+            if(mat.HasDiffuseMap()) {
+                mNameToTex[mat.mAlbedoMap] = Texture2D(mat.mAlbedoMap.c_str());
+            }
+            if(mat.HasNormalMap()) {
+                mNameToTex[mat.mNormalMap] = Texture2D(mat.mNormalMap.c_str());
+            }
+            if(mat.HasSpecularMap()) {
+                mNameToTex[mat.mSpecularMap] = Texture2D(mat.mSpecularMap.c_str());
+            }
+            if(mat.HasHeightMap()) {
+                mNameToTex[mat.mHeightMap] = Texture2D(mat.mHeightMap.c_str());
+            }
         }
     }
 }

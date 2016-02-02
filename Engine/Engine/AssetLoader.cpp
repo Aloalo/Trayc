@@ -151,8 +151,10 @@ namespace engine
             else if(aimaterial->GetTextureCount(aiTextureType_HEIGHT) != 0)
             {
                 aimaterial->GetTexture(aiTextureType_HEIGHT, 0, &name, nullptr, nullptr, nullptr, nullptr, nullptr);
-                material.mDepthMap = path + string(name.C_Str());
+                material.mHeightMap = path + string(name.C_Str());
             }
+
+            material.CalcRenderFlags();
         }
 
         RecursiveLoadSceneAssimp(aiScene, aiScene->mRootNode, scene);

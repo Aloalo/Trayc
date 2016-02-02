@@ -14,6 +14,15 @@ namespace engine
     {
         Material(void);
 
+        // Render flags for geometry program
+        // Call wheh done with initialisation
+        void CalcRenderFlags();
+        const std::string& GetRenderFlags() const;
+        bool HasDiffuseMap() const;
+        bool HasNormalMap() const;
+        bool HasSpecularMap() const;
+        bool HasHeightMap() const;
+
         glm::vec3 mKd;
         glm::vec3 mKs;
         float mGloss;
@@ -21,7 +30,10 @@ namespace engine
         std::string mAlbedoMap;
         std::string mSpecularMap;
         std::string mNormalMap;
-        std::string mDepthMap;
+        std::string mHeightMap;
+
+    private:
+        std::string mRenderFlags;
     };
 }
 

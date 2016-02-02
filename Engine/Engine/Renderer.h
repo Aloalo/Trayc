@@ -53,6 +53,7 @@ namespace engine
         // Deferred rendering stuff
         FrameBuffer mGBuffer;
         std::map<std::string, Program> mMatToProg;
+        std::map<std::string, Texture2D> mNameToTex;
         // At index i is VA for mesh i
         std::vector<VertexArray> mVertexArrays;
     };
