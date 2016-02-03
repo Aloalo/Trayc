@@ -17,7 +17,7 @@ namespace engine
         // Render flags for geometry program
         // Call wheh done with initialisation
         void CalcRenderFlags();
-        const std::string& GetRenderFlags() const;
+        int GetRenderFlags() const;
         bool HasDiffuseMap() const;
         bool HasNormalMap() const;
         bool HasSpecularMap() const;
@@ -33,7 +33,7 @@ namespace engine
         std::string mHeightMap;
 
     private:
-        std::string mRenderFlags;
+        int mRenderFlags;
     };
 }
 

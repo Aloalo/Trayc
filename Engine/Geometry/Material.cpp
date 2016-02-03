@@ -3,6 +3,7 @@
 */
 
 #include <Engine/Geometry/Material.h>
+#include <Engine/Engine/GlobalRenderingParams.h>
 
 using namespace std;
 
@@ -13,7 +14,7 @@ namespace engine
     {
     }
 
-    const string & Material::GetRenderFlags() const
+    int Material::GetRenderFlags() const
     {
         return mRenderFlags;
     }
@@ -40,18 +41,19 @@ namespace engine
 
     void Material::CalcRenderFlags()
     {
-        mRenderFlags = "";
+        mRenderFlags = 0;
         if(HasDiffuseMap()) {
-            mRenderFlags += "DIFFUSE_MAP";
+            mRenderFlags |= (1 << MatTextureType::DIFFUSE_MAP);
         }
         if(HasNormalMap()) {
-            mRenderFlags += "NORMAL_MAP";
+            mRenderFlags |= (1 << MatTextureType::NORMAL_MAP);
+
+            if(HasHeightMap()) {
+                mRenderFlags |= (1 << MatTextureType::HEIGHT_MAP);
+            }
         }
         if(HasSpecularMap()) {
-            mRenderFlags += "SPECULAR_MAP";
-        }
-        if(HasHeightMap()) {
-            mRenderFlags += "HEIGHT_MAP";
+            mRenderFlags |= (1 << MatTextureType::SPECULAR_MAP);
         }
     }
 }

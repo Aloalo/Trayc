@@ -5,7 +5,8 @@ Deferred renderer prep:
         +Scene Object AABB getter
     +DebugDraw class
     +Get rendertargets working
-    -Enums instead of strings for g pass materials
+    +Enums instead of strings for g pass materials
+    -Better g pass material handling
     -Non deferred renderer
     -Kill unneeded code (classes, files)
     -DEBUG/PRODUCTION/DEPLOY flags

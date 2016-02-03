@@ -7,16 +7,17 @@
 
 #include <Engine/Engine/Renderable.h>
 #include <Engine/Engine/Light.h>
-#include <Engine/Core/CameraHandler.h>
 #include <Engine/GL/FrameBuffer.h>
 #include <Engine/GL/Program.h>
 #include <Engine/GL/VertexArray.h>
 #include <Engine/Geometry/Scene.h>
-#include <vector>
+
+#include <Engine/Engine/GlobalRenderingParams.h>
 
 namespace engine
 {
     class Game;
+    class CameraHandler;
 
     class Renderer
     {
@@ -52,7 +53,7 @@ namespace engine
 
         // Deferred rendering stuff
         FrameBuffer mGBuffer;
-        std::map<std::string, Program> mMatToProg;
+        Program mGPrograms[1 << MatTextureType::CT_MAT_TEXTURE_TYPES];
         std::map<std::string, Texture2D> mNameToTex;
         // At index i is VA for mesh i
         std::vector<VertexArray> mVertexArrays;

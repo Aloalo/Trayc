@@ -60,7 +60,7 @@ namespace engine
             // Init RBO
             glGenRenderbuffers(1, &mRBID);
             glBindRenderbuffer(GL_RENDERBUFFER, mRBID);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, mWidth, mHeight);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, mWidth, mHeight);
             glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
             // Attach RBO

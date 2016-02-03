@@ -7,8 +7,6 @@
 #include <Engine/Utils/StlExtensions.hpp>
 #include <Engine/Engine/AssetLoader.h>
 
-#include <Engine/Engine/GlobalRenderingParams.h>
-
 #include <Engine/Engine/DebugDraw.h>
 
 using namespace glm;
@@ -27,8 +25,8 @@ namespace engine
         mGBuffer.Destroy();
         TextureCombiner::DestroyVAO();
         ClearVertexArrays();
-        for(auto &spp : mMatToProg)
-            spp.second.Delete();
+        for(Program &p : mGPrograms)
+            p.Delete();
 
         for(auto &pst : mNameToTex)
             pst.second.Delete();
@@ -95,18 +93,22 @@ namespace engine
         // Init material to program map, and material to vertex arrays map
         const int ctProgs = 1 << MatTextureType::CT_MAT_TEXTURE_TYPES;
         for(int i = 0; i < ctProgs; ++i) {
-            string strDefines;
+            int progDefines = 0;
             vector<string> defines;
 
             for(int j = 0; j < MatTextureType::CT_MAT_TEXTURE_TYPES; ++j) {
                 if((1 << j) & i) {
-                    strDefines += MAT_TEXTURE_DEFINES[j];
+                    progDefines |= (1 << j);
                     defines.push_back(MAT_TEXTURE_DEFINES[j]);
                 }
             }
 
-            mMatToProg[strDefines] = Program();
-            mMatToProg[strDefines].Init(AssetLoader::ShaderPath("G_GeometryPass").data(), defines);
+            // Init program with height map only if it has a normal map
+            const bool hasNormal = progDefines & (1 << MatTextureType::NORMAL_MAP);
+            const bool hasHeight = progDefines & (1 << MatTextureType::HEIGHT_MAP);
+            if(!hasHeight || hasNormal) {
+                mGPrograms[progDefines].Init(AssetLoader::ShaderPath("G_GeometryPass").data(), defines);
+            }
         }
     }
 
@@ -126,8 +128,8 @@ namespace engine
         {
             const VertexArray &VA = mVertexArrays[obj.GetMeshIdx()];
             const Material &mat = mScene->mMaterials[obj.GetMaterialIdx()];
-            const string &renderFlags = mat.GetRenderFlags();
-            const Program &prog = mMatToProg.at(renderFlags);
+            const int renderFlags = mat.GetRenderFlags();
+            const Program &prog = mGPrograms[renderFlags];
 
             prog.Use();
 
@@ -145,34 +147,34 @@ namespace engine
                 prog.SetUniform("normalMap", MatTextureType::NORMAL_MAP);
                 glActiveTexture(GL_TEXTURE0 + MatTextureType::NORMAL_MAP);
                 mNameToTex.at(mat.mNormalMap).Bind();
+
+                if(mat.HasHeightMap()) {
+                    prog.SetUniform("heightMap", MatTextureType::HEIGHT_MAP);
+                    glActiveTexture(GL_TEXTURE0 + MatTextureType::HEIGHT_MAP);
+                    mNameToTex.at(mat.mHeightMap).Bind();
+                }
             }
             if(mat.HasSpecularMap()) {
                 prog.SetUniform("specularMap", MatTextureType::SPECULAR_MAP);
                 glActiveTexture(GL_TEXTURE0 + MatTextureType::SPECULAR_MAP);
                 mNameToTex.at(mat.mSpecularMap).Bind();
             }
-            if(mat.HasHeightMap()) {
-                prog.SetUniform("heightMap", MatTextureType::HEIGHT_MAP);
-                glActiveTexture(GL_TEXTURE0 + MatTextureType::HEIGHT_MAP);
-                mNameToTex.at(mat.mHeightMap).Bind();
-            }
 
             VA.RenderIndexed(GL_TRIANGLES);
-
-            Program::Unbind();
         }
 
+        Program::Unbind();
         FrameBuffer::UnBind();
 
         // -------------------------- Custom forward render -------------------------- //
         glClear(mClearMask);
 
         // Debug Draw
-        DebugDraw::Get().DrawAlbedo(mGBuffer.GetAttachment(3));
+        //DebugDraw::Get().DrawAlbedo(mGBuffer.GetAttachment(3));
         //DebugDraw::Get().DrawGloss(mGBuffer.GetAttachment(2));
         //DebugDraw::Get().DrawSpecular(mGBuffer.GetAttachment(2));
         //DebugDraw::Get().DrawNormal(mGBuffer.GetAttachment(1));
-        //DebugDraw::Get().DrawDepth(mGBuffer.GetAttachment(0), rContext.mCamera->mNearDistance, rContext.mCamera->mFarDistance / 100.0f);
+        DebugDraw::Get().DrawDepth(mGBuffer.GetAttachment(0), rContext.mCamera->mNearDistance, rContext.mCamera->mFarDistance / 100.0f);
 
         for(Renderable *renderable : mRenderables) {
             if(renderable->mIsActive) {

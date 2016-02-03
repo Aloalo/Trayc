@@ -47,7 +47,7 @@ DefaultCameraHandler ConstructCameraHandler(ivec2 ss, float FOV, float farDist)
 
     const float moveSpeed = 0.06f;
     const float rotationSpeed = 0.0015f;
-    const float springiness = 50.0f;
+    const float springiness = 20.0f;
 
     return DefaultCameraHandler(camera, moveSpeed, rotationSpeed, springiness);
 }
