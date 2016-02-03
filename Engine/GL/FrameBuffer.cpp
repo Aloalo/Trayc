@@ -60,7 +60,7 @@ namespace engine
             // Init RBO
             glGenRenderbuffers(1, &mRBID);
             glBindRenderbuffer(GL_RENDERBUFFER, mRBID);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, mWidth, mHeight);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, mWidth, mHeight);
             glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
             // Attach RBO
@@ -74,7 +74,7 @@ namespace engine
     {
         glBindFramebuffer(GL_FRAMEBUFFER, mID);
         glDrawBuffers(mAttachments.size(), colorAttachments);
-        glReadBuffer(GL_NONE);
+        //glReadBuffer(GL_NONE);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // Check completeness
@@ -166,5 +166,10 @@ namespace engine
     int FrameBuffer::Height() const
     {
         return mHeight;
+    }
+
+    const Texture2D& FrameBuffer::GetAttachment(int idx) const
+    {
+        return mAttachments[idx];
     }
 }

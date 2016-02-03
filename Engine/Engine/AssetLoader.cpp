@@ -54,19 +54,20 @@ namespace engine
         }
     }
 
-    Scene AssetLoader::LoadSceneAssimp(const string &path)
+    Scene AssetLoader::LoadSceneAssimp(const string &path, const string &name)
     {
         Scene scene;
 
+        const string fullPath = path + name;
         // Import the scene
         Assimp::Importer importer;
-        const aiScene *aiScene = importer.ReadFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
+        const aiScene *aiScene = importer.ReadFile(fullPath, aiProcessPreset_TargetRealtime_MaxQuality);
         if(!aiScene)
         {
             cerr << importer.GetErrorString() << endl;
             return scene;
         }
-        cout << "Loaded file: " + path << endl;
+        cout << "Loaded file: " + fullPath << endl;
         
         // Load meshes
         for(int i = 0; i < aiScene->mNumMeshes; ++i)
@@ -131,27 +132,28 @@ namespace engine
 
             //aimaterial->Get(AI_MATKEY_REFRACTI, material.mIoR);
             aimaterial->Get(AI_MATKEY_SHININESS, material.mGloss);
+            material.mGloss = clamp(material.mGloss, 0.0f, 255.0f) / 255.0f;
 
-            aiString name;
+            aiString texName;
             if(aimaterial->GetTextureCount(aiTextureType_DIFFUSE) != 0)
             {
-                aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &name, nullptr, nullptr, nullptr, nullptr, nullptr);
-                material.mAlbedoMap = path + string(name.C_Str());
+                aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
+                material.mAlbedoMap = path + string(texName.C_Str());
             }
             if(aimaterial->GetTextureCount(aiTextureType_SPECULAR) != 0)
             {
-                aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &name, nullptr, nullptr, nullptr, nullptr, nullptr);
-                material.mSpecularMap = path + string(name.C_Str());
+                aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
+                material.mSpecularMap = path + string(texName.C_Str());
             }
             if(aimaterial->GetTextureCount(aiTextureType_NORMALS) != 0)
             {
-                aimaterial->GetTexture(aiTextureType_NORMALS, 0, &name, nullptr, nullptr, nullptr, nullptr, nullptr);
-                material.mNormalMap = path + string(name.C_Str());
+                aimaterial->GetTexture(aiTextureType_NORMALS, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
+                material.mNormalMap = path + string(texName.C_Str());
             }
             else if(aimaterial->GetTextureCount(aiTextureType_HEIGHT) != 0)
             {
-                aimaterial->GetTexture(aiTextureType_HEIGHT, 0, &name, nullptr, nullptr, nullptr, nullptr, nullptr);
-                material.mHeightMap = path + string(name.C_Str());
+                aimaterial->GetTexture(aiTextureType_HEIGHT, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
+                material.mHeightMap = path + string(texName.C_Str());
             }
 
             material.CalcRenderFlags();

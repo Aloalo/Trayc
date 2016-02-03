@@ -37,7 +37,6 @@ namespace engine
 
         void init(const ImageLoader &imgl, const char *name);
 
-
         struct ImageLoader
         {
             virtual bool load() const = 0;

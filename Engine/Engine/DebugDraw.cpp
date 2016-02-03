@@ -35,10 +35,7 @@ namespace engine
 
     void DebugDraw::DrawSpecular(const Texture2D &tex) const
     {
-        TextureCombiner::SetTexture(0, tex);
-        mDrawSpecular.Prog().Use();
-        mDrawSpecular.Prog().SetUniform("tex", 0);
-        mDrawSpecular.Draw();
+        DrawAlbedo(tex);
     }
 
     void DebugDraw::DrawGloss(const Texture2D &tex) const
@@ -54,7 +51,6 @@ namespace engine
         mDrawDepth.Destroy();
         mDrawAlbedo.Destroy();
         mDrawNormals.Destroy();
-        mDrawSpecular.Destroy();
         mDrawGloss.Destroy();
     }
 
@@ -64,7 +60,6 @@ namespace engine
         mDrawDepth.Init(vsPath.data(), AssetLoader::ShaderPath("C_DepthToScreen").data());
         mDrawAlbedo.Init(vsPath.data(), AssetLoader::ShaderPath("C_TexToScreen").data());
         mDrawNormals.Init(vsPath.data(), AssetLoader::ShaderPath("C_NormToScreen").data());
-        mDrawSpecular.Init(vsPath.data(), AssetLoader::ShaderPath("C_SpecToScreen").data());
         mDrawGloss.Init(vsPath.data(), AssetLoader::ShaderPath("C_GlossToScreen").data());
     }
 }

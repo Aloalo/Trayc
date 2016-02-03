@@ -112,12 +112,13 @@ namespace engine
         mIndexType = type;
 
         mIBO.Destroy();
-        mIBO = BufferObject(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
         mIBO.Init();
 
         Bind();
-        mIBO.SetData(ctIndices * SizeOfGLType(type), indices);
+        mIBO.Bind();
         UnBind();
+
+        mIBO.SetData(ctIndices * SizeOfGLType(type), indices);
     }
 
     void VertexArray::RegisterToGPU()

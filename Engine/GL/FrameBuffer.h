@@ -32,6 +32,8 @@ namespace engine
         int Width() const;
         int Height() const;
 
+        const Texture2D& GetAttachment(int idx) const;
+
     private:
         std::vector<Texture2D> mAttachments;
 

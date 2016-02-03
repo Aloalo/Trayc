@@ -7,7 +7,7 @@
 namespace engine
 {
     // Combines multiple textures into one using a program
-    class DebugDraw : Singleton<DebugDraw>
+    class DebugDraw : public Singleton<DebugDraw>
     {
     public:
         void DrawDepth(const Texture2D &tex, float nearRange, float farRange) const;
@@ -26,7 +26,6 @@ namespace engine
         TextureCombiner mDrawDepth;
         TextureCombiner mDrawAlbedo;
         TextureCombiner mDrawNormals;
-        TextureCombiner mDrawSpecular;
         TextureCombiner mDrawGloss;
     };
 }

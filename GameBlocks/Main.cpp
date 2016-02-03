@@ -42,12 +42,12 @@ private:
 DefaultCameraHandler ConstructCameraHandler(ivec2 ss, float FOV, float farDist)
 {
     const float nearDist = 0.1f;
-    const vec3 cameraPos(40.0f);
+    const vec3 cameraPos(2.0f);
     const Camera camera(cameraPos, float(ss.x) / float(ss.y), FOV, nearDist, farDist);
 
-    const float moveSpeed = 0.006f;
-    const float rotationSpeed = 6.0f;
-    const float springiness = 15.0f;
+    const float moveSpeed = 0.06f;
+    const float rotationSpeed = 0.0015f;
+    const float springiness = 50.0f;
 
     return DefaultCameraHandler(camera, moveSpeed, rotationSpeed, springiness);
 }
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     //TestRenderTexture test;
     //game.mRenderer.AddRenderable(&test);
 
-    Scene scene = AssetLoader::LoadSceneAssimp(AssetLoader::ModelPath("cube/cube.obj"));
+    Scene scene = AssetLoader::LoadSceneAssimp(AssetLoader::ModelPath("cube/"), "cube.obj");
     game.mRenderer.SetScene(&scene);
 
     game.GameLoop();

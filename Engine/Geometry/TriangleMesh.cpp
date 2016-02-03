@@ -49,7 +49,7 @@ namespace engine
     }
 
     template<typename T>
-    static inline void* CastIndices(const vector<unsigned int> mIndices)
+    static inline void* CastIndices(const vector<unsigned int> &mIndices)
     {
         const int ctIndices = mIndices.size();
 

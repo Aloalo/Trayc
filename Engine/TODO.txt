@@ -4,20 +4,24 @@ Deferred renderer prep:
         +Triangle mesh AABB
         +Scene Object AABB getter
     +DebugDraw class
-    -Get rendertargets working
+    +Get rendertargets working
     -Enums instead of strings for g pass materials
     -Non deferred renderer
     -Kill unneeded code (classes, files)
+    -DEBUG/PRODUCTION/DEPLOY flags
 
 Deferred renderer:
     -Lighting pass
     -GAMMA!
+    -Anisotropic filtering
     -Transparancy
     -Shadows
     -Reflections
+    -Screen space reflections
     
 Misc:
     -Custom Scene file format
+        -Project for assimp -> own format conversion
     -Editor
     
 Post Process Effects:
@@ -26,7 +30,6 @@ Post Process Effects:
     -SSAO
     -DOF
     -Camera motion blur
-    -Screen space reflections
     
 Physics:
     -Rigid body physics
@@ -34,9 +37,15 @@ Physics:
     -Particle physics
 
 Optimizations:
-    -Reduce number of G pass state changes
+    -Reduce number of G pass state changes (sort?)
+    -Frustum culling
 
-Bugs:
+Tester Project:
+    -Rename
+    -GUI
+        -View: DebugDraw
+        -Graphics options
+        -Load model
     
-GUI:
+Bugs:
     

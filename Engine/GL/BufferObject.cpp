@@ -21,6 +21,7 @@ namespace engine
     void BufferObject::Destroy()
     {
         glDeleteBuffers(1, &mBO);
+        mBO = 0;
     }
 
     void BufferObject::Bind() const

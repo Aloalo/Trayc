@@ -9,6 +9,8 @@
 
 #include <Engine/Engine/GlobalRenderingParams.h>
 
+#include <Engine/Engine/DebugDraw.h>
+
 using namespace glm;
 using namespace std;
 using namespace stdext;
@@ -27,6 +29,11 @@ namespace engine
         ClearVertexArrays();
         for(auto &spp : mMatToProg)
             spp.second.Delete();
+
+        for(auto &pst : mNameToTex)
+            pst.second.Delete();
+
+        DebugDraw::Get().Destroy();
     }
 
     void Renderer::SetClearColor(const glm::vec4 &clearColor) const
@@ -82,6 +89,7 @@ namespace engine
         mGBuffer.AddAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); //Normal view space / x
         mGBuffer.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Specular / Gloss
         mGBuffer.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
+        mGBuffer.AttachRBO(); // For depth testing
         mGBuffer.Compile();
 
         // Init material to program map, and material to vertex arrays map
@@ -158,6 +166,13 @@ namespace engine
 
         // -------------------------- Custom forward render -------------------------- //
         glClear(mClearMask);
+
+        // Debug Draw
+        DebugDraw::Get().DrawAlbedo(mGBuffer.GetAttachment(3));
+        //DebugDraw::Get().DrawGloss(mGBuffer.GetAttachment(2));
+        //DebugDraw::Get().DrawSpecular(mGBuffer.GetAttachment(2));
+        //DebugDraw::Get().DrawNormal(mGBuffer.GetAttachment(1));
+        //DebugDraw::Get().DrawDepth(mGBuffer.GetAttachment(0), rContext.mCamera->mNearDistance, rContext.mCamera->mFarDistance / 100.0f);
 
         for(Renderable *renderable : mRenderables) {
             if(renderable->mIsActive) {

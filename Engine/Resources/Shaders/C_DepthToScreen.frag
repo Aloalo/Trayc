@@ -11,6 +11,6 @@ layout(location = 0) out vec4 outColor;
 
 void main()
 {
-    float normDepth = texture(tex, uv).r / (farRange - nearRange);
-    outColor = vec4(normDepth, 0.0, 0.0, 1.0);
+    float normDepth = -texture(tex, uv).r / (farRange - nearRange);
+    outColor = vec4(normDepth, normDepth, normDepth, 1.0);
 }
