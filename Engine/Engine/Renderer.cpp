@@ -104,8 +104,8 @@ namespace engine
             }
 
             // Init program with height map only if it has a normal map
-            const bool hasNormal = progDefines & (1 << MatTextureType::NORMAL_MAP);
-            const bool hasHeight = progDefines & (1 << MatTextureType::HEIGHT_MAP);
+            const int hasNormal = progDefines & (1 << MatTextureType::NORMAL_MAP);
+            const int hasHeight = progDefines & (1 << MatTextureType::HEIGHT_MAP);
             if(!hasHeight || hasNormal) {
                 mGPrograms[progDefines].Init(AssetLoader::ShaderPath("G_GeometryPass").data(), defines);
             }
@@ -133,31 +133,19 @@ namespace engine
 
             prog.Use();
 
+            // Mesh uniforms
             prog.SetUniform("MVP", rContext.mVP * obj.GetTransform());
             prog.SetUniform("MV", rContext.mV * obj.GetTransform());
+
+            // Material uniforms
             prog.SetUniform("diffuseColor", mat.mKd);
             prog.SetUniform("specularGloss", vec4(mat.mKs, mat.mGloss));
 
-            if(mat.HasDiffuseMap()) {
-                prog.SetUniform("diffuseMap", MatTextureType::DIFFUSE_MAP);
-                glActiveTexture(GL_TEXTURE0 + MatTextureType::DIFFUSE_MAP);
-                mNameToTex.at(mat.mAlbedoMap).Bind();
-            }
-            if(mat.HasNormalMap()) {
-                prog.SetUniform("normalMap", MatTextureType::NORMAL_MAP);
-                glActiveTexture(GL_TEXTURE0 + MatTextureType::NORMAL_MAP);
-                mNameToTex.at(mat.mNormalMap).Bind();
-
-                if(mat.HasHeightMap()) {
-                    prog.SetUniform("heightMap", MatTextureType::HEIGHT_MAP);
-                    glActiveTexture(GL_TEXTURE0 + MatTextureType::HEIGHT_MAP);
-                    mNameToTex.at(mat.mHeightMap).Bind();
-                }
-            }
-            if(mat.HasSpecularMap()) {
-                prog.SetUniform("specularMap", MatTextureType::SPECULAR_MAP);
-                glActiveTexture(GL_TEXTURE0 + MatTextureType::SPECULAR_MAP);
-                mNameToTex.at(mat.mSpecularMap).Bind();
+            // Textures
+            for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
+                prog.SetUniform(TEXTURE_UNIFORM_NAMES[texInfo.type], texInfo.type);
+                glActiveTexture(GL_TEXTURE0 + texInfo.type);
+                mNameToTex.at(texInfo.name).Bind();
             }
 
             VA.RenderIndexed(GL_TRIANGLES);
@@ -170,11 +158,11 @@ namespace engine
         glClear(mClearMask);
 
         // Debug Draw
-        //DebugDraw::Get().DrawAlbedo(mGBuffer.GetAttachment(3));
+        DebugDraw::Get().DrawAlbedo(mGBuffer.GetAttachment(3));
         //DebugDraw::Get().DrawGloss(mGBuffer.GetAttachment(2));
         //DebugDraw::Get().DrawSpecular(mGBuffer.GetAttachment(2));
         //DebugDraw::Get().DrawNormal(mGBuffer.GetAttachment(1));
-        DebugDraw::Get().DrawDepth(mGBuffer.GetAttachment(0), rContext.mCamera->mNearDistance, rContext.mCamera->mFarDistance / 100.0f);
+        //DebugDraw::Get().DrawDepth(mGBuffer.GetAttachment(0), rContext.mCamera->mNearDistance, rContext.mCamera->mFarDistance / 100.0f);
 
         for(Renderable *renderable : mRenderables) {
             if(renderable->mIsActive) {
@@ -195,6 +183,7 @@ namespace engine
     {
         mScene = scene;
 
+        // Load mesh to memory
         for(const TriangleMesh &mesh : scene->mTriMeshes)
         {
             mVertexArrays.push_back(VertexArray(GL_STATIC_DRAW));
@@ -216,19 +205,10 @@ namespace engine
             }
         }
 
-        for(const Material &mat : scene->mMaterials)
-        {
-            if(mat.HasDiffuseMap()) {
-                mNameToTex[mat.mAlbedoMap] = Texture2D(mat.mAlbedoMap.c_str());
-            }
-            if(mat.HasNormalMap()) {
-                mNameToTex[mat.mNormalMap] = Texture2D(mat.mNormalMap.c_str());
-            }
-            if(mat.HasSpecularMap()) {
-                mNameToTex[mat.mSpecularMap] = Texture2D(mat.mSpecularMap.c_str());
-            }
-            if(mat.HasHeightMap()) {
-                mNameToTex[mat.mHeightMap] = Texture2D(mat.mHeightMap.c_str());
+        // Load textures to memory
+        for(const Material &mat : scene->mMaterials) {
+            for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
+                mNameToTex[texInfo.name] = Texture2D(texInfo.name.c_str());
             }
         }
     }

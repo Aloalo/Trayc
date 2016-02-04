@@ -1,5 +1,7 @@
 #include <Engine/Engine/AssetLoader.h>
 
+#include <Engine/Engine/GlobalRenderingParams.h>
+
 #include <iostream>
 
 #include <assimp/Importer.hpp>
@@ -138,25 +140,23 @@ namespace engine
             if(aimaterial->GetTextureCount(aiTextureType_DIFFUSE) != 0)
             {
                 aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
-                material.mAlbedoMap = path + string(texName.C_Str());
+                material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), MatTextureType::DIFFUSE_MAP));
             }
             if(aimaterial->GetTextureCount(aiTextureType_SPECULAR) != 0)
             {
                 aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
-                material.mSpecularMap = path + string(texName.C_Str());
+                material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), MatTextureType::SPECULAR_MAP));
             }
             if(aimaterial->GetTextureCount(aiTextureType_NORMALS) != 0)
             {
                 aimaterial->GetTexture(aiTextureType_NORMALS, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
-                material.mNormalMap = path + string(texName.C_Str());
+                material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), MatTextureType::NORMAL_MAP));
             }
             else if(aimaterial->GetTextureCount(aiTextureType_HEIGHT) != 0)
             {
                 aimaterial->GetTexture(aiTextureType_HEIGHT, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
-                material.mHeightMap = path + string(texName.C_Str());
+                material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), MatTextureType::HEIGHT_MAP));
             }
-
-            material.CalcRenderFlags();
         }
 
         RecursiveLoadSceneAssimp(aiScene, aiScene->mRootNode, scene);

@@ -6,10 +6,12 @@ Deferred renderer prep:
     +DebugDraw class
     +Get rendertargets working
     +Enums instead of strings for g pass materials
-    -Better g pass material handling
+    +Better g pass material handling
+    -Texture sampler/slot handling
     -Non deferred renderer
     -Kill unneeded code (classes, files)
     -DEBUG/PRODUCTION/DEPLOY flags
+    -Logging system
 
 Deferred renderer:
     -Lighting pass
@@ -40,6 +42,7 @@ Physics:
 Optimizations:
     -Reduce number of G pass state changes (sort?)
     -Frustum culling
+    -Half float for normals
 
 Tester Project:
     -Rename

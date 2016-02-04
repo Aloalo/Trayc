@@ -3,7 +3,6 @@
 */
 
 #include <Engine/Geometry/Material.h>
-#include <Engine/Engine/GlobalRenderingParams.h>
 
 using namespace std;
 
@@ -16,44 +15,14 @@ namespace engine
 
     int Material::GetRenderFlags() const
     {
-        return mRenderFlags;
+        int retRenderFlags = 0;
+        for(const TextureInfo &texInfo : mTextureMaps)
+            retRenderFlags |= (1 << texInfo.type);
+        return retRenderFlags;
     }
 
-    bool Material::HasDiffuseMap() const
+    Material::TextureInfo::TextureInfo(const std::string & name, int type)
+        : name(name), type(type)
     {
-        return mAlbedoMap != "";
-    }
-
-    bool Material::HasNormalMap() const
-    {
-        return mNormalMap != "";
-    }
-
-    bool Material::HasSpecularMap() const
-    {
-        return mSpecularMap != "";
-    }
-
-    bool Material::HasHeightMap() const
-    {
-        return mHeightMap != "";
-    }
-
-    void Material::CalcRenderFlags()
-    {
-        mRenderFlags = 0;
-        if(HasDiffuseMap()) {
-            mRenderFlags |= (1 << MatTextureType::DIFFUSE_MAP);
-        }
-        if(HasNormalMap()) {
-            mRenderFlags |= (1 << MatTextureType::NORMAL_MAP);
-
-            if(HasHeightMap()) {
-                mRenderFlags |= (1 << MatTextureType::HEIGHT_MAP);
-            }
-        }
-        if(HasSpecularMap()) {
-            mRenderFlags |= (1 << MatTextureType::SPECULAR_MAP);
-        }
     }
 }

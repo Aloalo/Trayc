@@ -6,6 +6,7 @@
 
 namespace engine
 {
+    // Also represents the texture slot idx for the given type
     enum MatTextureType
     {
         DIFFUSE_MAP = 0,
@@ -22,5 +23,13 @@ namespace engine
         "NORMAL_MAP",
         "SPECULAR_MAP",
         "HEIGHT_MAP"
+    };
+
+    static const std::string TEXTURE_UNIFORM_NAMES[CT_MAT_TEXTURE_TYPES] =
+    {
+        "diffuseMap",
+        "normalMap",
+        "specularMap",
+        "heightMap"
     };
 }

@@ -7,6 +7,7 @@
 
 #include <glm/glm.hpp>
 #include <string>
+#include <vector>
 
 namespace engine
 {
@@ -15,25 +16,22 @@ namespace engine
         Material(void);
 
         // Render flags for geometry program
-        // Call wheh done with initialisation
-        void CalcRenderFlags();
         int GetRenderFlags() const;
-        bool HasDiffuseMap() const;
-        bool HasNormalMap() const;
-        bool HasSpecularMap() const;
-        bool HasHeightMap() const;
 
         glm::vec3 mKd;
         glm::vec3 mKs;
         float mGloss;
 
-        std::string mAlbedoMap;
-        std::string mSpecularMap;
-        std::string mNormalMap;
-        std::string mHeightMap;
+        struct TextureInfo
+        {
+            TextureInfo(const std::string &name, int type);
 
-    private:
-        int mRenderFlags;
+            std::string name;
+            // Coresponds to GlobalRenderingParams' MatTextureType
+            int type;
+        };
+
+        std::vector<TextureInfo> mTextureMaps;
     };
 }
 
