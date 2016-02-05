@@ -53,8 +53,9 @@ namespace engine
         int mVertexSize;
 
         GLuint mVAO;
+        // Vertex buffer
         BufferObject mVBO;
-
+        // Index buffer
         BufferObject mIBO;
         GLenum mIndexType;
         int mCtIndices;

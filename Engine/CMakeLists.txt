@@ -67,6 +67,8 @@ set(Engine_GL
     GL/UniformBuffer.h
     GL/Texture.cpp
     GL/Texture.h
+    GL/TextureSampler.cpp
+    GL/TextureSampler.h
 )
 
 set(Engine_Utils

@@ -4,7 +4,7 @@
 namespace engine
 {
     VertexArrayInstanced::VertexArrayInstanced(GLenum VBusage, GLenum IBusage) :
-        VertexArray(VBusage), mIBO(GL_ARRAY_BUFFER, IBusage), mSizeInst(0), mCapacityInst(0), mInstSizeInBytes(0)
+        VertexArray(VBusage), mInstanceBO(GL_ARRAY_BUFFER, IBusage), mSizeInst(0), mCapacityInst(0), mInstSizeInBytes(0)
     {
     }
 
@@ -12,27 +12,27 @@ namespace engine
     {
     }
 
-    void VertexArrayInstanced::Init(int ctVertices, int capacity, const VertexAttribDef &IBOdef)
+    void VertexArrayInstanced::Init(int ctVertices, int capacity, const VertexAttribDef &instanceBOdef)
     {
         VertexArray::Init(ctVertices, capacity);
 
-        mIBO.Init();
+        mInstanceBO.Init();
 
-        mInstSizeInBytes = IBOdef.SizeInBytes();
+        mInstSizeInBytes = instanceBOdef.SizeInBytes();
 
         Bind();
         {
-            mIBO.Bind();
+            mInstanceBO.Bind();
 
-            glEnableVertexAttribArray(IBOdef.index);
+            glEnableVertexAttribArray(instanceBOdef.index);
             glVertexAttribPointer(
-                IBOdef.index,
-                IBOdef.size,
-                IBOdef.type,
-                IBOdef.normalized,
+                instanceBOdef.index,
+                instanceBOdef.size,
+                instanceBOdef.type,
+                instanceBOdef.normalized,
                 mInstSizeInBytes,
                 (void*)0);
-            glVertexAttribDivisor(IBOdef.index, 1);
+            glVertexAttribDivisor(instanceBOdef.index, 1);
 
         }
         UnBind();
@@ -64,16 +64,16 @@ namespace engine
         CBO.SetData(arraySizeOld);
 
         // Copy old buffer to new one
-        CBO.CopyDataFrom(mIBO, 0, 0, arraySizeOld);
+        CBO.CopyDataFrom(mInstanceBO, 0, 0, arraySizeOld);
         // Realloc old buffer
-        mIBO.SetData(arraySizeNew);
+        mInstanceBO.SetData(arraySizeNew);
         // Copy to old buffer
-        mIBO.CopyDataFrom(CBO, 0, 0, arraySizeOld);
+        mInstanceBO.CopyDataFrom(CBO, 0, 0, arraySizeOld);
     }
 
-    const BufferObject& VertexArrayInstanced::IBO() const
+    const BufferObject& VertexArrayInstanced::InstanceBuffer() const
     {
-        return mIBO;
+        return mInstanceBO;
     }
 
     void VertexArrayInstanced::RenderInstanced(GLenum mode, GLint first, GLsizei count, GLsizei primcount) const

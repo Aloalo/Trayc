@@ -91,12 +91,12 @@ namespace engine
         mGBuffer.Compile();
 
         // Init material to program map, and material to vertex arrays map
-        const int ctProgs = 1 << MatTextureType::CT_MAT_TEXTURE_TYPES;
+        const int ctProgs = 1 << TextureType::CT_MAT_TEXTURE_TYPES;
         for(int i = 0; i < ctProgs; ++i) {
             int progDefines = 0;
             vector<string> defines;
 
-            for(int j = 0; j < MatTextureType::CT_MAT_TEXTURE_TYPES; ++j) {
+            for(int j = 0; j < TextureType::CT_MAT_TEXTURE_TYPES; ++j) {
                 if((1 << j) & i) {
                     progDefines |= (1 << j);
                     defines.push_back(MAT_TEXTURE_DEFINES[j]);
@@ -104,12 +104,19 @@ namespace engine
             }
 
             // Init program with height map only if it has a normal map
-            const int hasNormal = progDefines & (1 << MatTextureType::NORMAL_MAP);
-            const int hasHeight = progDefines & (1 << MatTextureType::HEIGHT_MAP);
+            const int hasNormal = progDefines & (1 << TextureType::NORMAL_MAP);
+            const int hasHeight = progDefines & (1 << TextureType::HEIGHT_MAP);
             if(!hasHeight || hasNormal) {
                 mGPrograms[progDefines].Init(AssetLoader::ShaderPath("G_GeometryPass").data(), defines);
             }
         }
+
+        // Init Texture Sampling
+        mTexMapSampler.InitForDiffuse();
+        mTexMapSampler.BindToSlot(0);
+        mTexMapSampler.BindToSlot(1);
+        mTexMapSampler.BindToSlot(2);
+        mTexMapSampler.BindToSlot(3);
     }
 
     void Renderer::Render() const
@@ -158,9 +165,9 @@ namespace engine
         glClear(mClearMask);
 
         // Debug Draw
-        DebugDraw::Get().DrawAlbedo(mGBuffer.GetAttachment(3));
+        DebugDraw::Get().DrawTexture(mGBuffer.GetAttachment(3));
         //DebugDraw::Get().DrawGloss(mGBuffer.GetAttachment(2));
-        //DebugDraw::Get().DrawSpecular(mGBuffer.GetAttachment(2));
+        //DebugDraw::Get().DrawTexture(mGBuffer.GetAttachment(2));
         //DebugDraw::Get().DrawNormal(mGBuffer.GetAttachment(1));
         //DebugDraw::Get().DrawDepth(mGBuffer.GetAttachment(0), rContext.mCamera->mNearDistance, rContext.mCamera->mFarDistance / 100.0f);
 

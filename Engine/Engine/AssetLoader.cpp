@@ -140,22 +140,22 @@ namespace engine
             if(aimaterial->GetTextureCount(aiTextureType_DIFFUSE) != 0)
             {
                 aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
-                material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), MatTextureType::DIFFUSE_MAP));
+                material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), TextureType::DIFFUSE_MAP));
             }
             if(aimaterial->GetTextureCount(aiTextureType_SPECULAR) != 0)
             {
                 aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
-                material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), MatTextureType::SPECULAR_MAP));
+                material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), TextureType::SPECULAR_MAP));
             }
             if(aimaterial->GetTextureCount(aiTextureType_NORMALS) != 0)
             {
                 aimaterial->GetTexture(aiTextureType_NORMALS, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
-                material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), MatTextureType::NORMAL_MAP));
+                material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), TextureType::NORMAL_MAP));
             }
             else if(aimaterial->GetTextureCount(aiTextureType_HEIGHT) != 0)
             {
                 aimaterial->GetTexture(aiTextureType_HEIGHT, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
-                material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), MatTextureType::HEIGHT_MAP));
+                material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), TextureType::HEIGHT_MAP));
             }
         }
 

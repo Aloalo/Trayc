@@ -5,8 +5,8 @@
 #ifndef EN_GEOMETRY_H
 #define EN_GEOMETRY_H
 
-#include <Engine/Geometry/TriangleMesh.h>
 #include <Engine/Utils/StlExtensions.hpp>
+#include <vector>
 #include <map>
 
 namespace engine
@@ -122,7 +122,5 @@ namespace engine
         }
         return outIndexData;
      }
-
-
 }
 #endif

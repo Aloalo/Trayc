@@ -11,9 +11,9 @@ namespace engine
     {
     public:
         void DrawDepth(const Texture2D &tex, float nearRange, float farRange) const;
-        void DrawAlbedo(const Texture2D &tex) const;
+        // Draws rgb part of the texture on screen
+        void DrawTexture(const Texture2D &tex) const;
         void DrawNormal(const Texture2D &tex) const;
-        void DrawSpecular(const Texture2D &tex) const;
         void DrawGloss(const Texture2D &tex) const;
 
         void Destroy();
@@ -24,7 +24,7 @@ namespace engine
         DebugDraw(void);
 
         TextureCombiner mDrawDepth;
-        TextureCombiner mDrawAlbedo;
+        TextureCombiner mDrawTex;
         TextureCombiner mDrawNormals;
         TextureCombiner mDrawGloss;
     };

@@ -17,19 +17,20 @@ namespace engine
         VertexArrayInstanced(GLenum VBusage, GLenum IBusage);
         ~VertexArrayInstanced(void);
 
-        void Init(int ctVertices, int capacity, const VertexAttribDef &IBOdef);
+        void Init(int ctVertices, int capacity, const VertexAttribDef &instanceBOdef);
         // Ensures that the data store is big enaugh for size instances
         // Sets mSize to size
         // if size > mSize not allocates size+reallocSize space
         void ResizeInstanceArray(int size, int reallocSize);
 
         // Instance buffer object
-        const BufferObject& IBO() const;
+        const BufferObject& InstanceBuffer() const;
 
         void RenderInstanced(GLenum mode, GLint first, GLsizei count, GLsizei primcount) const;
 
     private:
-        BufferObject mIBO;
+        // Instance buffer
+        BufferObject mInstanceBO;
         // Number of instances
         int mSizeInst;
         // Capacity of instance array
