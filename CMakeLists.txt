@@ -31,9 +31,9 @@ ENTITYX_HAVE_CXX11_STDLIB
 
 option(BUILD_TRAYC "Build the Trayc library" OFF)
 option(BUILD_FUNCTIONDRAWER "Build the FunctionDrawer" OFF)
-option(BUILD_GAMEBLOCKS "Build GameBlocks" ON)
-option(BUILD_BALLPHYSICS "Build BallPhysics" ON)
-option(BUILD_MANDELBROT "Build BallPhysics" ON)
+option(BUILD_ENGINE_TESTER "Build EngineTester" ON)
+option(BUILD_BALLPHYSICS "Build BallPhysics" OFF)
+option(BUILD_MANDELBROT "Build Mandelbrot" OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 set(SDL2_BUILDING_LIBRARY FALSE)
@@ -81,9 +81,9 @@ if(BUILD_FUNCTIONDRAWER)
     add_subdirectory(FunctionDrawer)
 endif(BUILD_FUNCTIONDRAWER)
 
-if(BUILD_GAMEBLOCKS)
-    add_subdirectory(GameBlocks)
-endif(BUILD_GAMEBLOCKS)
+if(BUILD_ENGINE_TESTER)
+    add_subdirectory(EngineTester)
+endif(BUILD_ENGINE_TESTER)
 
 if(BUILD_BALLPHYSICS)
     add_subdirectory(BallPhysics)

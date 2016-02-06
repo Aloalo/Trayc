@@ -137,41 +137,38 @@ namespace engine
         rContext.mCamera = &mCamera->mCamera;
 
         // -------------------------- Deferred render -------------------------- //
-        if(mScene != nullptr)
+        mGBuffer.Bind();
+        glClear(mClearMask);
+
+        for(const Object3D &obj : mScene->mObjects3D)
         {
-            mGBuffer.Bind();
-            glClear(mClearMask);
+            const VertexArray &VA = mVertexArrays[obj.GetMeshIdx()];
+            const Material &mat = mScene->mMaterials[obj.GetMaterialIdx()];
+            const int renderFlags = mat.GetRenderFlags();
+            const Program &prog = mGPrograms[renderFlags];
 
-            for(const Object3D &obj : mScene->mObjects3D)
-            {
-                const VertexArray &VA = mVertexArrays[obj.GetMeshIdx()];
-                const Material &mat = mScene->mMaterials[obj.GetMaterialIdx()];
-                const int renderFlags = mat.GetRenderFlags();
-                const Program &prog = mGPrograms[renderFlags];
+            prog.Use();
 
-                prog.Use();
+            // Mesh uniforms
+            prog.SetUniform("MVP", rContext.mVP * obj.GetTransform());
+            prog.SetUniform("MV", rContext.mV * obj.GetTransform());
 
-                // Mesh uniforms
-                prog.SetUniform("MVP", rContext.mVP * obj.GetTransform());
-                prog.SetUniform("MV", rContext.mV * obj.GetTransform());
+            // Material uniforms
+            prog.SetUniform("diffuseColor", mat.mKd);
+            prog.SetUniform("specularGloss", vec4(mat.mKs, mat.mGloss));
 
-                // Material uniforms
-                prog.SetUniform("diffuseColor", mat.mKd);
-                prog.SetUniform("specularGloss", vec4(mat.mKs, mat.mGloss));
-
-                // Textures
-                for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
-                    prog.SetUniform(TEXTURE_UNIFORM_NAMES[texInfo.type], texInfo.type);
-                    glActiveTexture(GL_TEXTURE0 + texInfo.type);
-                    mNameToTex.at(texInfo.name).Bind();
-                }
-
-                VA.RenderIndexed(GL_TRIANGLES);
+            // Textures
+            for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
+                prog.SetUniform(TEXTURE_UNIFORM_NAMES[texInfo.type], texInfo.type);
+                glActiveTexture(GL_TEXTURE0 + texInfo.type);
+                mNameToTex.at(texInfo.name).Bind();
             }
 
-            Program::Unbind();
-            FrameBuffer::UnBind();
+            VA.RenderIndexed(GL_TRIANGLES);
         }
+
+        Program::Unbind();
+        FrameBuffer::UnBind();
 
         // -------------------------- Custom forward render -------------------------- //
         glClear(mClearMask);

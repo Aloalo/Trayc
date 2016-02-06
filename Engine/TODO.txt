@@ -8,7 +8,7 @@ Deferred renderer prep:
     +Enums instead of strings for g pass materials
     +Better g pass material handling
     +Texture sampler/slot handling
-    -Non deferred renderer
+    +Non deferred renderer (won't do)
 
 Deferred renderer:
     -Lighting pass
@@ -27,7 +27,7 @@ Misc:
     +Kill unneeded code (classes, files)
     +DEBUG/PRODUCTION/DEPLOY flags
     +Logging system
-    -Fork to new repo
+    +Fork to new repo (won't do)
     
 Post Process Effects:
     -FXAA
@@ -47,7 +47,7 @@ Optimizations:
     -Half float for normals
 
 Tester Project:
-    -Rename
+    +Rename
     -GUI
         -View: DebugDraw
         -Graphics options
