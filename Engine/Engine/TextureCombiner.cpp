@@ -23,7 +23,7 @@ namespace engine
 
     void TextureCombiner::Init(const char *vsName, const char *fsName)
     {
-        mProgram.Init(VertexShader(vsName, {}), FragmentShader(fsName, {}));
+        mProgram.Init(VertexShader(vsName, Shader::Defines()), FragmentShader(fsName, Shader::Defines()));
         Init();
     }
 

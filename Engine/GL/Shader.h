@@ -13,6 +13,8 @@ namespace engine
     class Shader
     {
     public:
+        using Defines = std::vector<std::string>;
+
         virtual ~Shader(void);
 
         virtual const char* GetExtension() const = 0;
@@ -21,7 +23,6 @@ namespace engine
 
     protected:
         friend class Program;
-        using Defines = std::vector<std::string>;
 
         GLuint mID;
         void Init(const char *name, const Defines &defines);
