@@ -3,7 +3,7 @@
 */
 
 #include <Engine/Utils/InitialSettings.h>
-#include <iostream>
+#include <easylogging++.h>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -47,7 +47,7 @@ namespace engine
         }
         else
         {
-            cerr << "Cannot open graphics settings" << endl;
+            LOG(ERROR) << "Cannot open graphics settings";
             exit(-1);
         }
         f.close();

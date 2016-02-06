@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <vector>
 #include <random>
-#include <iostream>
+#include <easylogging++.h>
 
 using namespace engine;
 using namespace glm;
@@ -56,7 +56,7 @@ void BallPhysics::InitBalls()
 
     if(ballsPerRow * ballsPerRow * ballsPerRow < mCtBalls)
     {
-        cerr << "Balls dont fint into the box." << endl;
+        LOG(ERROR) << "Balls dont fint into the box.";
         std::exit(-1);
     }
 

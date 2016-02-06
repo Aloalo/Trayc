@@ -4,8 +4,9 @@
 #include <IL/ilu.h>
 #include <GL/glew.h>
 
+#include <easylogging++.h>
+
 #include <string>
-#include <iostream>
 #include <vector>
 
 using namespace std;
@@ -28,43 +29,46 @@ namespace engine
         unsigned int imgid;
         ilGenImages(1, &imgid);
         ilBindImage(imgid);
-        try
-        {
-            if(!imgl.load())
-                cerr << "Failed to load texture: " << name << endl;
-            if(!ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE))
-                cerr << "Failed to convert texture: " << name << endl;
-            glGenTextures(1, &mID);
-            mSize = ivec2(ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
-            mInternalFormat = GL_RGBA8;
-            mFormat = GL_RGBA;
-            mType = GL_UNSIGNED_BYTE;
-
-            Bind();
-            {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-                glTexImage2D(
-                    GL_TEXTURE_2D,
-                    0,
-                    mInternalFormat,
-                    mSize.x,
-                    mSize.y,
-                    0,
-                    mFormat,
-                    mType,
-                    ilGetData());
-                glGenerateMipmap(GL_TEXTURE_2D);
-            }
-            UnBind();
+        if(!imgl.load()) {
+            LOG(ERROR) << "Failed to load texture: " << name;
+            ilDeleteImages(1, &imgid);
+            return;
         }
-        catch(const char *)
-        {
-            cerr << "Loading " << name << " failed: " << iluErrorString(ilGetError()) << endl;
+        if(!ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE)) {
+            LOG(ERROR) << "Failed to convert texture: " << name;
+            ilDeleteImages(1, &imgid);
+            return;
         }
+
+        LOG(INFO) << "Loaded Texture: " << name;
+
+        glGenTextures(1, &mID);
+        mSize = ivec2(ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
+        mInternalFormat = GL_RGBA8;
+        mFormat = GL_RGBA;
+        mType = GL_UNSIGNED_BYTE;
+
+        Bind();
+        {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+            glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                mInternalFormat,
+                mSize.x,
+                mSize.y,
+                0,
+                mFormat,
+                mType,
+                ilGetData());
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        UnBind();
+
         ilDeleteImages(1, &imgid);
     }
 

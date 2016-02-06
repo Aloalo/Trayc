@@ -8,9 +8,12 @@
 #include <Engine/Engine/AssetLoader.h>
 
 #include <Engine/Core/Defines.h>
-#ifdef PRODUCTION
+
+#if PRODUCTION
 #include <Engine/Engine/DebugDraw.h>
 #endif
+
+#include <easylogging++.h>
 
 using namespace glm;
 using namespace std;
@@ -33,7 +36,9 @@ namespace engine
 
         for(auto &pst : mNameToTex)
             pst.second.Delete();
-#ifdef PRODUCTION
+
+        mTexMapSampler.Destroy();
+#if PRODUCTION
         DebugDraw::Get().Destroy();
 #endif
     }
@@ -132,38 +137,41 @@ namespace engine
         rContext.mCamera = &mCamera->mCamera;
 
         // -------------------------- Deferred render -------------------------- //
-        mGBuffer.Bind();
-        glClear(mClearMask);
-
-        for(const Object3D &obj : mScene->mObjects3D)
+        if(mScene != nullptr)
         {
-            const VertexArray &VA = mVertexArrays[obj.GetMeshIdx()];
-            const Material &mat = mScene->mMaterials[obj.GetMaterialIdx()];
-            const int renderFlags = mat.GetRenderFlags();
-            const Program &prog = mGPrograms[renderFlags];
+            mGBuffer.Bind();
+            glClear(mClearMask);
 
-            prog.Use();
+            for(const Object3D &obj : mScene->mObjects3D)
+            {
+                const VertexArray &VA = mVertexArrays[obj.GetMeshIdx()];
+                const Material &mat = mScene->mMaterials[obj.GetMaterialIdx()];
+                const int renderFlags = mat.GetRenderFlags();
+                const Program &prog = mGPrograms[renderFlags];
 
-            // Mesh uniforms
-            prog.SetUniform("MVP", rContext.mVP * obj.GetTransform());
-            prog.SetUniform("MV", rContext.mV * obj.GetTransform());
+                prog.Use();
 
-            // Material uniforms
-            prog.SetUniform("diffuseColor", mat.mKd);
-            prog.SetUniform("specularGloss", vec4(mat.mKs, mat.mGloss));
+                // Mesh uniforms
+                prog.SetUniform("MVP", rContext.mVP * obj.GetTransform());
+                prog.SetUniform("MV", rContext.mV * obj.GetTransform());
 
-            // Textures
-            for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
-                prog.SetUniform(TEXTURE_UNIFORM_NAMES[texInfo.type], texInfo.type);
-                glActiveTexture(GL_TEXTURE0 + texInfo.type);
-                mNameToTex.at(texInfo.name).Bind();
+                // Material uniforms
+                prog.SetUniform("diffuseColor", mat.mKd);
+                prog.SetUniform("specularGloss", vec4(mat.mKs, mat.mGloss));
+
+                // Textures
+                for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
+                    prog.SetUniform(TEXTURE_UNIFORM_NAMES[texInfo.type], texInfo.type);
+                    glActiveTexture(GL_TEXTURE0 + texInfo.type);
+                    mNameToTex.at(texInfo.name).Bind();
+                }
+
+                VA.RenderIndexed(GL_TRIANGLES);
             }
 
-            VA.RenderIndexed(GL_TRIANGLES);
+            Program::Unbind();
+            FrameBuffer::UnBind();
         }
-
-        Program::Unbind();
-        FrameBuffer::UnBind();
 
         // -------------------------- Custom forward render -------------------------- //
         glClear(mClearMask);
@@ -215,12 +223,13 @@ namespace engine
                 delete[] indices;
             }
         }
-
+        LOG(INFO) << "Loaded meshes to GPU.";
         // Load textures to memory
         for(const Material &mat : scene->mMaterials) {
             for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
                 mNameToTex[texInfo.name] = Texture2D(texInfo.name.c_str());
             }
         }
+        LOG(INFO) << "Loaded textures to GPU.";
     }
 }

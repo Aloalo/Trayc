@@ -1,8 +1,7 @@
 #include <Engine/Engine/AssetLoader.h>
-
 #include <Engine/Engine/GlobalRenderingParams.h>
 
-#include <iostream>
+#include <easylogging++.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -69,10 +68,10 @@ namespace engine
         const aiScene *aiScene = importer.ReadFile(fullPath, aiProcessPreset_TargetRealtime_MaxQuality);
         if(!aiScene)
         {
-            cerr << importer.GetErrorString() << endl;
+            LOG(ERROR) << importer.GetErrorString();
             return scene;
         }
-        cout << "Loaded file: " + fullPath << endl;
+        LOG(INFO) << "Loaded file: " + fullPath;
         
         // Load meshes
         for(int i = 0; i < aiScene->mNumMeshes; ++i)
@@ -87,7 +86,7 @@ namespace engine
             for(int j = 0; j < aimesh->mNumFaces; ++j)
                 mesh.mIndices.insert(mesh.mIndices.end(), aimesh->mFaces[j].mIndices, aimesh->mFaces[j].mIndices+3);
 
-            const bool hasNormalMap = aimaterial == nullptr ? false : aimaterial->GetTextureCount(aiTextureType_NORMALS);
+            const bool hasNormalMap = aimaterial == nullptr ? false : aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0;
             mesh.mPositions.reserve(aimesh->mNumVertices);
             mesh.mNormals.reserve(aimesh->mNumVertices);
             if(hasNormalMap) {

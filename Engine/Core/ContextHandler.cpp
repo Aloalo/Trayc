@@ -5,12 +5,12 @@
 #include <Engine/Core/ContextHandler.h>
 #include <Engine/Utils/ErrorCheck.h>
 
+#include <easylogging++.h>
+
 #include <glm/glm.hpp>
 #include <IL/il.h>
 #include <IL/ilu.h>
 #include <IL/ilut.h>
-
-#include <iostream>
 
 using namespace std;
 
@@ -39,25 +39,25 @@ namespace engine
 
     void ContextHandler::PrintSoftwareVersions() const
     {
-        cout << "GLEW version: " << glewGetString(GLEW_VERSION) << endl << endl;
+        LOG(INFO) << "GLEW version: " << glewGetString(GLEW_VERSION) << endl;
 
-        cout << "Compiled against SDL version "  << static_cast<int>(mCompiled.major) << "." <<
+        LOG(INFO) << "Compiled against SDL version "  << static_cast<int>(mCompiled.major) << "." <<
                                                      static_cast<int>(mCompiled.minor)  << "." <<
-                                                     static_cast<int>(mCompiled.patch) << endl;
-        cout << "Linked against SDL version "  << static_cast<int>(mLinked.major) << "." <<
+                                                     static_cast<int>(mCompiled.patch);
+        LOG(INFO) << "Linked against SDL version "  << static_cast<int>(mLinked.major) << "." <<
                                                    static_cast<int>(mLinked.minor)  << "." <<
-                                                   static_cast<int>(mLinked.patch) << endl << endl;
+                                                   static_cast<int>(mLinked.patch) << endl;
 
-        cout << "OpenGL vendor: " << glGetString(GL_VENDOR) << endl;
-        cout << "OpenGL renderer: " << glGetString(GL_RENDERER) << endl;
-        cout << "OpenGL version: " << glGetString(GL_VERSION) << endl;
-        cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl << endl;
+        LOG(INFO) << "OpenGL vendor: " << glGetString(GL_VENDOR);
+        LOG(INFO) << "OpenGL renderer: " << glGetString(GL_RENDERER);
+        LOG(INFO) << "OpenGL version: " << glGetString(GL_VERSION);
+        LOG(INFO) << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
 
-        cout << "IL version: " << IL_VERSION << endl;
-        cout << "ILU version: " << ILU_VERSION << endl;
-        cout << "ILUT version: " << ILUT_VERSION << endl << endl;
+        LOG(INFO) << "IL version: " << IL_VERSION;
+        LOG(INFO) << "ILU version: " << ILU_VERSION;
+        LOG(INFO) << "ILUT version: " << ILUT_VERSION << endl;
 
-        cout << "GLM version: " << GLM_VERSION_MAJOR << "." << GLM_VERSION_MINOR << "." << GLM_VERSION_PATCH << endl;
+        LOG(INFO) << "GLM version: " << GLM_VERSION_MAJOR << "." << GLM_VERSION_MINOR << "." << GLM_VERSION_PATCH << endl;
     }
 
     void ContextHandler::CreateGLWindow(const char *title, int x, int y, int w, int h, Uint32 flags)

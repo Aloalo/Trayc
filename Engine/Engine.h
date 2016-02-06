@@ -9,4 +9,9 @@
 
 #include <Engine/Engine/Game.h>
 
+namespace engine
+{
+    void InitLogging(int argc, char *argv[]);
+}
+
 #endif

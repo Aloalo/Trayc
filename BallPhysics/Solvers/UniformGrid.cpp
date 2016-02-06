@@ -3,7 +3,7 @@
 */
 
 #include "UniformGrid.h"
-#include <iostream>
+#include <easylogging++.h>
 #include <assert.h>
 #include <glm/gtx/norm.hpp>
 
@@ -19,7 +19,7 @@ UniformGrid::UniformGrid(float cubeSize, float ballRadius)
     const float gridDimF = mCubeSize / mBallRadius;
     if(fabs(gridDimF - float(mGridDim)) > 0.00001f)
     {
-        cerr << "UnformGrid error: mCubeSize must be a multiple of mBallRadius." << endl;
+        LOG(ERROR) << "UnformGrid error: mCubeSize must be a multiple of mBallRadius.";
         std::exit(-1);
     }
 }

@@ -8,6 +8,8 @@
 #include <iostream>
 #include <random>
 
+#include <easylogging++.h>
+
 #include "SimulationHandler.h"
 
 using namespace engine;
@@ -19,7 +21,7 @@ void CheckSetting(T minVal, T maxVal, T val, const string &name)
 {
     if(val < minVal || val > maxVal)
     {
-        cerr << "ERROR: Incorrect " << name << ", accepted values are " << minVal << " to " << maxVal << "." << endl;
+        LOG(ERROR) << "ERROR: Incorrect " << name << ", accepted values are " << minVal << " to " << maxVal << ".";
         std::exit(-1);
     }
 }
@@ -75,6 +77,8 @@ Speed:
 
 int main(int argc, char *argv[])
 {
+    InitLogging(argc, argv);
+
     RenderingParams rParams = GetRenderingParams();
 
     const Setting<int> numBalls("numBalls");

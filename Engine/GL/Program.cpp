@@ -4,7 +4,7 @@
 
 #include <Engine/GL/Program.h>
 #include <Engine/Utils/ErrorCheck.h>
-#include <iostream>
+#include <easylogging++.h>
 #include <fstream>
 
 using namespace glm;
@@ -70,7 +70,7 @@ namespace engine
             GLchar *strInfoLog = new GLchar[infoLogLength + 1];
             glGetProgramInfoLog(mID, infoLogLength, nullptr, strInfoLog);
 
-            cerr << "Linking failure in program " << name << ":" << endl << strInfoLog << endl;
+            LOG(ERROR) << "Linking failure in program " << name << ":" << endl << strInfoLog;
             delete[] strInfoLog;
         }
     }

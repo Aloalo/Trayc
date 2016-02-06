@@ -3,8 +3,10 @@
 */
 
 #include <Engine/Utils/Profiler.h>
+
+#include <easylogging++.h>
+
 #include <ctime>
-#include <iostream>
 
 using namespace std;
 
@@ -57,13 +59,13 @@ namespace engine
     void Profiler::PrintProfile() const
     {
         float sum = 0.0f;
-        cout << "------PROFILE------" << endl;
+        CLOG(INFO, "performance") << "------PROFILE------";
         for(const auto &psf : GetAllTargetsAverage())
         {
-            cout << psf.first + ": " << psf.second << endl;
+            CLOG(INFO, "performance") << psf.first + ": " << psf.second;
             sum += psf.second;
         }
-        cout << "NET: " << sum << endl << endl;
+        CLOG(INFO, "performance") << "NET: " << sum << endl;
     }
 
 }

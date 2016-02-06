@@ -1,5 +1,5 @@
 #include <Engine/GL/FrameBuffer.h>
-#include <iostream>
+#include <easylogging++.h>
 
 using namespace std;
 using namespace glm;
@@ -109,38 +109,37 @@ namespace engine
         if(status == GL_FRAMEBUFFER_COMPLETE)
             return;
 
-        cerr << "FrameBuffer completeness error: ";
+        LOG(ERROR) << "FrameBuffer completeness error: ";
         switch(status)
         {
         case GL_FRAMEBUFFER_UNDEFINED:
-            cerr << "GL_FRAMEBUFFER_UNDEFINED";
+            LOG(ERROR) << "GL_FRAMEBUFFER_UNDEFINED";
             break;
         case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-            cerr << "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
+            LOG(ERROR) << "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
             break;
         case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-            cerr << "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
+            LOG(ERROR) << "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
             break;
         case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-            cerr << "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
+            LOG(ERROR) << "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
             break;
         case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-            cerr << "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
+            LOG(ERROR) << "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
             break;
         case GL_FRAMEBUFFER_UNSUPPORTED:
-            cerr << "GL_FRAMEBUFFER_UNSUPPORTED";
+            LOG(ERROR) << "GL_FRAMEBUFFER_UNSUPPORTED";
             break;
         case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-            cerr << "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE";
+            LOG(ERROR) << "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE";
             break;
         case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
-            cerr << "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS";
+            LOG(ERROR) << "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS";
             break;
         default:
-            cerr << "Unknown error";
+            LOG(ERROR) << "Unknown framebuffer error";
             break;
         }
-        cerr << endl;
     }
 
     void FrameBuffer::BindTexture(int idx) const

@@ -1,7 +1,8 @@
 project(Engine)
 
-set(Engine_HDRS
+set(Engine_HDRS_SRCS
     Engine.h
+    Engine.cpp
 )
 
 set(Engine_Core
@@ -124,7 +125,7 @@ source_group(Utils FILES ${Engine_Utils})
 source_group(Engine FILES ${Engine_Engine})
 
 add_library(Engine STATIC
-    ${Engine_HDRS}
+    ${Engine_HDRS_SRCS}
     ${Engine_Core}
     ${Engine_GL}
     ${Engine_Geometry}

@@ -3,8 +3,10 @@
 */
 
 #include <Engine/GL/Shader.h>
+
+#include <easylogging++.h>
+
 #include <string>
-#include <iostream>
 #include <fstream>
 #include <sstream>
 
@@ -35,7 +37,7 @@ namespace engine
         }
         else
         {
-            cerr << "No shader file found: " << sn << endl;
+            LOG(ERROR) << "No shader file found: " << sn;
         }
         in.close();
     }
@@ -59,7 +61,7 @@ namespace engine
             GLchar *strInfoLog = new GLchar[infoLogLength+1];
             glGetShaderInfoLog(mID, infoLogLength, nullptr, strInfoLog);
 
-            cerr << "Compile failure in " << GetTypeString() << " shader " << name << endl << strInfoLog << endl;
+            LOG(ERROR) << "Compile failure in " << GetTypeString() << " shader " << name << endl << strInfoLog;
             delete[] strInfoLog;
         }
     }

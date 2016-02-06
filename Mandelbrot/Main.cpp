@@ -11,6 +11,8 @@ using namespace glm;
 
 int main(int argc, char *argv[])
 {
+    InitLogging(argc, argv);
+
     const ivec2 SSize(1536, 1024);
     const float timeStep = 1.0f / 60.0f;
     DefaultCameraHandler dummyCam(Camera(), 0.0f, 0.0f, 0.0f);

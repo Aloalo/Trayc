@@ -3,9 +3,9 @@
 */
 
 #include <Engine/Utils/ErrorCheck.h>
+#include <Engine/Utils/Utilities.h>
 #include <GL/glew.h>
-#include <iostream>
-#include <string>
+#include <easylogging++.h>
 
 namespace engine
 {
@@ -40,7 +40,10 @@ namespace engine
                         break;
                 }
  
-                cerr << "GL_" << error << " - " << file << ":" << line << endl;
+                string sfile(file);
+                StringReplace(sfile, "\\", "/");
+                const string fname = sfile.substr(sfile.find_last_of("/")+1);
+                LOG(ERROR) << "GL_" << error << " - " << fname << ":" << line;
             }
 
             err = glGetError();
