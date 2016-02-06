@@ -13,22 +13,25 @@ using namespace glm;
 
 namespace engine
 {
-    string AssetLoader::mResourcePath = "../Resources/";
-    string AssetLoader::mShadersPath = "Shaders/";
-    string AssetLoader::mTexturesPath = "Textures/";
-    string AssetLoader::mModelsPath = "Models/" ;
+    AssetLoader::AssetLoader(void)
+    {
+        mResourcePath = "../Resources/";
+        mShadersPath = "Shaders/";
+        mTexturesPath = "Textures/";
+        mModelsPath = "Models/";
+    }
 
-    string AssetLoader::TexturePath(const std::string &name)
+    string AssetLoader::TexturePath(const std::string &name) const
     {
         return mResourcePath + mTexturesPath + name;
     }
 
-    string AssetLoader::ShaderPath(const std::string &name)
+    string AssetLoader::ShaderPath(const std::string &name) const
     {
         return mResourcePath + mShadersPath + name;
     }
 
-    std::string AssetLoader::ModelPath(const std::string &name)
+    std::string AssetLoader::ModelPath(const std::string &name) const
     {
         return mResourcePath + mModelsPath + name;
     }
@@ -56,7 +59,7 @@ namespace engine
         }
     }
 
-    Scene AssetLoader::LoadSceneAssimp(const string &path, const string &name)
+    Scene AssetLoader::LoadSceneAssimp(const string &path, const string &name) const
     {
         Scene scene;
 

@@ -25,7 +25,7 @@ Misc:
         -.dds texture loading
     -Editor
     +Kill unneeded code (classes, files)
-    -DEBUG/PRODUCTION/DEPLOY flags
+    +DEBUG/PRODUCTION/DEPLOY flags
     -Logging system
     
 Post Process Effects:

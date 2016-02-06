@@ -1,28 +1,29 @@
 #ifndef EN_ASSET_LOADER_H
 #define EN_ASSET_LOADER_H
 
-#include <string>
 #include <Engine/Geometry/Scene.h>
+#include <Engine/Utils/Singleton.h>
 
-struct aiScene;
-struct aiNode;
 
 namespace engine
 {
-    class AssetLoader
+    class AssetLoader : public Singleton<AssetLoader>
     {
     public:
-        static std::string TexturePath(const std::string &name);
-        static std::string ShaderPath(const std::string &name);
-        static std::string ModelPath(const std::string &name);
+        std::string TexturePath(const std::string &name) const;
+        std::string ShaderPath(const std::string &name) const;
+        std::string ModelPath(const std::string &name) const;
 
-        static Scene LoadSceneAssimp(const std::string &path, const std::string &name);
+        Scene LoadSceneAssimp(const std::string &path, const std::string &name) const;
 
     private:
-        static std::string mResourcePath;
-        static std::string mShadersPath;
-        static std::string mTexturesPath;
-        static std::string mModelsPath;
+        friend struct Singleton<AssetLoader>;
+        AssetLoader(void);
+
+        std::string mResourcePath;
+        std::string mShadersPath;
+        std::string mTexturesPath;
+        std::string mModelsPath;
     };
 }
 

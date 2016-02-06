@@ -5,13 +5,13 @@
 #ifndef EN_GAME_H
 #define EN_GAME_H
 
-#include <vector>
 #include <Engine/Utils/Profiler.h>
 #include <Engine/Engine/Renderer.h>
 #include <Engine/Core/UpdateableHandler.h>
 #include <Engine/Core/InputHandler.h>
 #include <Engine/Core/ContextHandler.h>
 #include <Engine/Core/CameraHandler.h>
+#include <vector>
 
 namespace engine
 {
@@ -31,7 +31,6 @@ namespace engine
 
         InputHandler mInputHandler;
         UpdateableHandler mUpdateableMenager;
-        Profiler mProfiler;
         ContextHandler mContextHandler;
         Renderer mRenderer;
 
@@ -39,9 +38,11 @@ namespace engine
         void GameLoopStep();
         float GetAverageFrameLength() const;
 
-        const int mFrameCap;
-        int mCtFramesPassed; //For profiling
         CameraHandler *mCameraHandler;
+
+        Profiler mProfiler;
+        int mFrameCap;
+        int mCtFramesPassed; //For profiling
     };
 }
 

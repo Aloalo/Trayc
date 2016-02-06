@@ -16,8 +16,8 @@ class TestRenderTexture : public Renderable
 public:
     TestRenderTexture(void)
     {
-        mTexRenderer.Init(AssetLoader::ShaderPath("C_TexToScreen").data());
-        mTex.Init(AssetLoader::TexturePath("ErrorTex.png").data());
+        mTexRenderer.Init(AssetLoader::Get().ShaderPath("C_TexToScreen").data());
+        mTex.Init(AssetLoader::Get().TexturePath("ErrorTex.png").data());
     }
 
     ~TestRenderTexture(void)
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     //TestRenderTexture test;
     //game.mRenderer.AddRenderable(&test);
 
-    Scene scene = AssetLoader::LoadSceneAssimp(AssetLoader::ModelPath("cube/"), "cube.obj");
+    Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("cube/"), "cube.obj");
     game.mRenderer.SetScene(&scene);
 
     game.GameLoop();

@@ -6,6 +6,7 @@ set(Engine_HDRS
 
 set(Engine_Core
     Core/Core.h
+    Core/Defines.h
     Core/ContextHandler.h
     Core/ContextHandler.cpp
     Core/Camera.h

@@ -7,7 +7,10 @@
 #include <Engine/Utils/StlExtensions.hpp>
 #include <Engine/Engine/AssetLoader.h>
 
+#include <Engine/Core/Defines.h>
+#ifdef PRODUCTION
 #include <Engine/Engine/DebugDraw.h>
+#endif
 
 using namespace glm;
 using namespace std;
@@ -30,8 +33,9 @@ namespace engine
 
         for(auto &pst : mNameToTex)
             pst.second.Delete();
-
+#ifdef PRODUCTION
         DebugDraw::Get().Destroy();
+#endif
     }
 
     void Renderer::SetClearColor(const glm::vec4 &clearColor) const
@@ -107,7 +111,7 @@ namespace engine
             const int hasNormal = progDefines & (1 << TextureType::NORMAL_MAP);
             const int hasHeight = progDefines & (1 << TextureType::HEIGHT_MAP);
             if(!hasHeight || hasNormal) {
-                mGPrograms[progDefines].Init(AssetLoader::ShaderPath("G_GeometryPass").data(), defines);
+                mGPrograms[progDefines].Init(AssetLoader::Get().ShaderPath("G_GeometryPass").data(), defines);
             }
         }
 
