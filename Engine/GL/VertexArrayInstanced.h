@@ -37,7 +37,6 @@ namespace engine
         int mCapacityInst;
         // Instance data size in bytes
         int mInstSizeInBytes;
-
     };
 }
 

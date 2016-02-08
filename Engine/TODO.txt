@@ -15,6 +15,9 @@ Deferred renderer:
     -GAMMA!
     +Anisotropic filtering
     -Transparancy
+        -Renderbuffer
+        -BlitFramebuffer
+    -Skybox
     -Shadows
     -Reflections
     -Screen space reflections
@@ -28,6 +31,11 @@ Misc:
     +DEBUG/PRODUCTION/DEPLOY flags
     +Logging system
     +Fork to new repo (won't do)
+    -Old code refactor:
+        -UniformBuffer
+        -BSpline
+        -Settings
+        -GeometryMeshes
     
 Post Process Effects:
     -FXAA

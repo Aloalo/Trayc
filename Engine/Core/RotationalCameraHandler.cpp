@@ -6,7 +6,7 @@
 #include <Engine/Core/ContextHandler.h>
 #include <Engine/Core/InputHandler.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include <Engine/Utils/MathFunctions.h>
+#include <glm/gtc/constants.hpp>
 
 using namespace glm;
 

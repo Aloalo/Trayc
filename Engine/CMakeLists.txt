@@ -29,7 +29,6 @@ set(Engine_Core
 )
 
 set(Engine_Geometry
-    Geometry/Geometry.h
     Geometry/GeometryMeshes.h
     Geometry/GeometryMeshes.cpp
     Geometry/TriangleMesh.h
@@ -80,14 +79,11 @@ set(Engine_Utils
     Utils/VectorZip.hpp
     Utils/InitialSettings.h
     Utils/Profiler.h
-    Utils/MathFunctions.h
     Utils/Utilities.h
     Utils/ErrorCheck.h
     Utils/BSpline.h
     Utils/InitialSettings.cpp
     Utils/Profiler.cpp
-    Utils/MathFunctions.cpp
-    Utils/MathFunctions.tpp
     Utils/Utilities.cpp
     Utils/ErrorCheck.cpp
     Utils/BSpline.cpp
