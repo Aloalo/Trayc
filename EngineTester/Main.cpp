@@ -13,10 +13,10 @@ using namespace glm;
 DefaultCameraHandler ConstructCameraHandler(ivec2 ss, float FOV, float farDist)
 {
     const float nearDist = 0.1f;
-    const vec3 cameraPos(2.0f);
+    const vec3 cameraPos(0.0f, 200.0f, 0.0f);
     const Camera camera(cameraPos, float(ss.x) / float(ss.y), FOV, nearDist, farDist);
 
-    const float moveSpeed = 0.06f;
+    const float moveSpeed = 6.0f * 64.0f;
     const float rotationSpeed = 0.0015f;
     const float springiness = 20.0f;
 
@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
     game.mRenderer.SetClearColor(vec4(0.0f));
 
     Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("crytek-sponza/"), "sponza.obj");
+    //Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("cube/"), "cube.obj");
     game.mRenderer.SetScene(&scene);
 
     game.GameLoop();

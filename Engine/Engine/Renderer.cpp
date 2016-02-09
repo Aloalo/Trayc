@@ -94,8 +94,8 @@ namespace engine
         mGBuffer.Init(width, height);
         mGBuffer.AddAttachment(GL_R32F, GL_RED, GL_FLOAT); //Linear Depth
         mGBuffer.AddAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); //Normal view space / x
-        mGBuffer.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Specular / Gloss
-        mGBuffer.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
+        mGBuffer.AddAttachment(GL_SRGB8_ALPHA8, GL_RGBA, GL_UNSIGNED_BYTE); //Specular / Gloss
+        mGBuffer.AddAttachment(GL_SRGB8_ALPHA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
         mGBuffer.AttachRBO(); // For depth testing
         mGBuffer.Compile();
 
@@ -177,7 +177,7 @@ namespace engine
         //DebugDraw::Get().DrawTexture(mGBuffer.GetAttachment(3));
         //DebugDraw::Get().DrawGloss(mGBuffer.GetAttachment(2));
         //DebugDraw::Get().DrawTexture(mGBuffer.GetAttachment(2));
-        DebugDraw::Get().DrawNormal(mGBuffer.GetAttachment(1));
+        //DebugDraw::Get().DrawNormal(mGBuffer.GetAttachment(1));
         //DebugDraw::Get().DrawDepth(mGBuffer.GetAttachment(0), rContext.mCamera->mNearDistance, rContext.mCamera->mFarDistance);
 
         for(Renderable *renderable : mRenderables) {

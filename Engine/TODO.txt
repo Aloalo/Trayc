@@ -12,7 +12,7 @@ Deferred renderer prep:
 
 Deferred renderer:
     -Lighting pass
-    -GAMMA!
+    +GAMMA!
     +Anisotropic filtering
     -Transparancy
         -Renderbuffer
@@ -23,9 +23,9 @@ Deferred renderer:
     -Screen space reflections
     
 Misc:
-    -Custom Scene file format
-        -Project for assimp -> own format conversion
-        -.dds texture loading
+    +Custom Scene file format (won't do)
+        +Project for assimp -> own format conversion
+        +.dds texture loading
     -Editor
     +Kill unneeded code (classes, files)
     +DEBUG/PRODUCTION/DEPLOY flags

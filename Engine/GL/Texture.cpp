@@ -50,7 +50,7 @@ namespace engine
 
         glGenTextures(1, &mID);
         mSize = ivec2(ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
-        mInternalFormat = GL_RGBA8;
+        mInternalFormat = GL_RGBA;
         mFormat = GL_RGBA;
         mType = GL_UNSIGNED_BYTE;
 
