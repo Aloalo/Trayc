@@ -174,7 +174,7 @@ namespace engine
         glClear(mClearMask);
 
         // Debug Draw
-        //DebugDraw::Get().DrawTexture(mGBuffer.GetAttachment(3));
+        DebugDraw::Get().DrawTexture(mGBuffer.GetAttachment(3));
         //DebugDraw::Get().DrawGloss(mGBuffer.GetAttachment(2));
         //DebugDraw::Get().DrawTexture(mGBuffer.GetAttachment(2));
         //DebugDraw::Get().DrawNormal(mGBuffer.GetAttachment(1));

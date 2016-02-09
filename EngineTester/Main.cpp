@@ -6,6 +6,8 @@
 #include <Engine/Core/DefaultCameraHandler.h>
 #include <Engine/Engine/AssetLoader.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 using namespace engine;
 using namespace std;
 using namespace glm;
@@ -13,10 +15,10 @@ using namespace glm;
 DefaultCameraHandler ConstructCameraHandler(ivec2 ss, float FOV, float farDist)
 {
     const float nearDist = 0.1f;
-    const vec3 cameraPos(0.0f, 200.0f, 0.0f);
+    const vec3 cameraPos(0.0f, 2.0f, 0.0f);
     const Camera camera(cameraPos, float(ss.x) / float(ss.y), FOV, nearDist, farDist);
 
-    const float moveSpeed = 6.0f * 64.0f;
+    const float moveSpeed = 6.0f;
     const float rotationSpeed = 0.0015f;
     const float springiness = 20.0f;
 
@@ -37,7 +39,8 @@ int main(int argc, char *argv[])
     game.mContextHandler.VsyncMode(1);
     game.mRenderer.SetClearColor(vec4(0.0f));
 
-    Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("crytek-sponza/"), "sponza.obj");
+    Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("crytek-sponza/"), "sponza.obj", scale(mat4(1.0f), vec3(0.01f)));
+
     //Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("cube/"), "cube.obj");
     game.mRenderer.SetScene(&scene);
 

@@ -14,7 +14,7 @@ namespace engine
         std::string ShaderPath(const std::string &name) const;
         std::string ModelPath(const std::string &name) const;
 
-        Scene LoadSceneAssimp(const std::string &path, const std::string &name) const;
+        Scene LoadSceneAssimp(const std::string &path, const std::string &name, const glm::mat4 &transform) const;
 
     private:
         friend struct Singleton<AssetLoader>;

@@ -17,6 +17,8 @@ namespace engine
     public:
         Scene(void);
 
+        AABB GetAABB() const;
+
         std::vector<Light> mLights;
         std::vector<Object3D> mObjects3D;
         std::vector<TriangleMesh> mTriMeshes;

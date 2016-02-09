@@ -22,7 +22,7 @@ namespace engine
         mAccumulator += currentTime - lastTime;
         lastTime = currentTime;
 
-        for(; mAccumulator > mTimeStep; mAccumulator -= mTimeStep)
+        for(; mAccumulator >= mTimeStep; mAccumulator -= mTimeStep)
             for(Updateable *updateable : mUpdateableList)
                 if(updateable->mActive)
                     updateable->Update(mTimeStep);

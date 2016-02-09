@@ -59,7 +59,7 @@ namespace engine
         }
     }
 
-    Scene AssetLoader::LoadSceneAssimp(const string &path, const string &name) const
+    Scene AssetLoader::LoadSceneAssimp(const string &path, const string &name, const mat4 &transform) const
     {
         Scene scene;
 
@@ -173,7 +173,7 @@ namespace engine
             }
         }
 
-        RecursiveLoadSceneAssimp(aiScene, aiScene->mRootNode, scene);
+        RecursiveLoadSceneAssimp(aiScene, aiScene->mRootNode, scene, transform);
 
         return scene;
     }
