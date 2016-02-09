@@ -1,5 +1,6 @@
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Engine/GlobalRenderingParams.h>
+#include <Engine/Utils/Utilities.h>
 
 #include <easylogging++.h>
 
@@ -86,7 +87,7 @@ namespace engine
             for(int j = 0; j < aimesh->mNumFaces; ++j)
                 mesh.mIndices.insert(mesh.mIndices.end(), aimesh->mFaces[j].mIndices, aimesh->mFaces[j].mIndices+3);
 
-            const bool hasNormalMap = aimaterial == nullptr ? false : aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0;
+            const bool hasNormalMap = aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0 || aimaterial->GetTextureCount(aiTextureType_HEIGHT) > 0;
             mesh.mPositions.reserve(aimesh->mNumVertices);
             mesh.mNormals.reserve(aimesh->mNumVertices);
             if(hasNormalMap) {
@@ -153,11 +154,22 @@ namespace engine
             {
                 aimaterial->GetTexture(aiTextureType_NORMALS, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
                 material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), TextureType::NORMAL_MAP));
+
+                if(aimaterial->GetTextureCount(aiTextureType_HEIGHT) != 0)
+                {
+                    aimaterial->GetTexture(aiTextureType_HEIGHT, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
+                    material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), TextureType::HEIGHT_MAP));
+                }
             }
             else if(aimaterial->GetTextureCount(aiTextureType_HEIGHT) != 0)
             {
                 aimaterial->GetTexture(aiTextureType_HEIGHT, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
-                material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), TextureType::HEIGHT_MAP));
+                string fullPath = path + string(texName.C_Str());
+                // TODO: uncomment when parallax is done
+                // material.mTextureMaps.push_back(Material::TextureInfo(fullPath, TextureType::HEIGHT_MAP));
+
+                StringReplace(fullPath, "bump", "nm");
+                material.mTextureMaps.push_back(Material::TextureInfo(fullPath, TextureType::NORMAL_MAP));
             }
         }
 

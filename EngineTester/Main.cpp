@@ -30,14 +30,14 @@ int main(int argc, char *argv[])
     const ivec2 SSize(1280, 720);
     const float timeStep = 1.0f / 60.0f;
     //Init Camera handler
-    DefaultCameraHandler camHandler(ConstructCameraHandler(SSize, 60.0f, 1000.0f));
+    DefaultCameraHandler camHandler(ConstructCameraHandler(SSize, 60.0f, 5000.0f));
     //Init Game
     Game game(timeStep);
     game.Init(&camHandler, argv[0], "Test", SSize.x, SSize.y);
     game.mContextHandler.VsyncMode(1);
     game.mRenderer.SetClearColor(vec4(0.0f));
 
-    Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("cube/"), "cube.obj");
+    Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("crytek-sponza/"), "sponza.obj");
     game.mRenderer.SetScene(&scene);
 
     game.GameLoop();

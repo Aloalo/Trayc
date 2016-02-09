@@ -21,7 +21,7 @@ namespace engine
         return retRenderFlags;
     }
 
-    Material::TextureInfo::TextureInfo(const std::string & name, int type)
+    Material::TextureInfo::TextureInfo(const string &name, int type)
         : name(name), type(type)
     {
     }

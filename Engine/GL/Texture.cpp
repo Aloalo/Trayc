@@ -40,6 +40,12 @@ namespace engine
             return;
         }
 
+        ILinfo ImageInfo;
+        iluGetImageInfo(&ImageInfo);
+        if(ImageInfo.Origin == IL_ORIGIN_UPPER_LEFT) {
+            iluFlipImage();
+        }
+
         LOG(INFO) << "Loaded Texture: " << name;
 
         glGenTextures(1, &mID);

@@ -174,11 +174,11 @@ namespace engine
         glClear(mClearMask);
 
         // Debug Draw
-        DebugDraw::Get().DrawTexture(mGBuffer.GetAttachment(3));
+        //DebugDraw::Get().DrawTexture(mGBuffer.GetAttachment(3));
         //DebugDraw::Get().DrawGloss(mGBuffer.GetAttachment(2));
         //DebugDraw::Get().DrawTexture(mGBuffer.GetAttachment(2));
-        //DebugDraw::Get().DrawNormal(mGBuffer.GetAttachment(1));
-        //DebugDraw::Get().DrawDepth(mGBuffer.GetAttachment(0), rContext.mCamera->mNearDistance, rContext.mCamera->mFarDistance / 100.0f);
+        DebugDraw::Get().DrawNormal(mGBuffer.GetAttachment(1));
+        //DebugDraw::Get().DrawDepth(mGBuffer.GetAttachment(0), rContext.mCamera->mNearDistance, rContext.mCamera->mFarDistance);
 
         for(Renderable *renderable : mRenderables) {
             if(renderable->mIsActive) {
