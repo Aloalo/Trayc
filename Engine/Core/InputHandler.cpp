@@ -25,21 +25,6 @@ namespace engine
             if(testEvent.type == SDL_QUIT)
                 mQuit = true;
 
-            else if(testEvent.type == SDL_KEYDOWN && testEvent.key.keysym.sym == SDLK_LSHIFT)
-            {
-                mIsCursorFree = !mIsCursorFree;
-                if(mIsCursorFree)
-                {
-                    SDL_SetRelativeMouseMode(SDL_FALSE);
-                    SDL_ShowCursor(1);
-                }
-                else
-                {
-                    SDL_SetRelativeMouseMode(SDL_TRUE);
-                    SDL_ShowCursor(0);
-                }
-            }
-
             for(InputObserver *listener : mListenerList)
             {
                 if(listener->mActive)

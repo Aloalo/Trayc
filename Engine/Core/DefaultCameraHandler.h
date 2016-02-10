@@ -27,8 +27,6 @@ namespace engine
         virtual glm::mat4 GetViewMatrix() const override;
 
     private:
-        bool mObserveMouse;
-
         float mSpeed;
         float mRotationSpeed;
         //Move direction in local camera space

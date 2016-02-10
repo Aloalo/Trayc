@@ -29,6 +29,9 @@ namespace engine
         const Camera& GetCamera() const;
         Camera& GetCamera();
 
+        const CameraHandler* GetCameraHandler() const;
+        CameraHandler* GetCameraHandler();
+
         InputHandler mInputHandler;
         UpdateableHandler mUpdateableMenager;
         ContextHandler mContextHandler;

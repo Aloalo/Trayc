@@ -112,4 +112,13 @@ namespace engine
         return mProfiler.GetAverage();
     }
 
+    const CameraHandler* Game::GetCameraHandler() const
+    {
+        return mCameraHandler;
+    }
+
+    CameraHandler* Game::GetCameraHandler()
+    {
+        return mCameraHandler;
+    }
 }

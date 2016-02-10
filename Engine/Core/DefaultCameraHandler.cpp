@@ -12,7 +12,7 @@ using namespace glm;
 namespace engine
 {
     DefaultCameraHandler::DefaultCameraHandler(const Camera &cam, float moveSpeed, float rotationSpeed, float springiness) :
-        CameraHandler(cam), mObserveMouse(true), mSpeed(moveSpeed), mRotationSpeed(rotationSpeed), mSpringiness(springiness), mDx(0.0f), mDy(0.0f)
+        CameraHandler(cam), mSpeed(moveSpeed), mRotationSpeed(rotationSpeed), mSpringiness(springiness), mDx(0.0f), mDy(0.0f)
     {
     }
 
@@ -24,9 +24,6 @@ namespace engine
     {
         if(e.repeat)
             return;
-
-        if(e.keysym.sym == SDLK_LSHIFT && e.type == SDL_KEYDOWN)
-            mObserveMouse = !mObserveMouse;
 
         const int mod = e.type == SDL_KEYDOWN ? 1 : -1;
         switch(e.keysym.sym)
@@ -56,13 +53,10 @@ namespace engine
 
     void DefaultCameraHandler::MouseMotion(const SDL_MouseMotionEvent &e)
     {
-        if(mObserveMouse)
-        {
-            const float yaw = float(-e.xrel) * mRotationSpeed;
-            const float pitch = float(-e.yrel) * mRotationSpeed;
-            mDx += yaw;
-            mDy += pitch;
-        }
+        const float yaw = float(-e.xrel) * mRotationSpeed;
+        const float pitch = float(-e.yrel) * mRotationSpeed;
+        mDx += yaw;
+        mDy += pitch;
     }
 
     void DefaultCameraHandler::MouseWheel(const SDL_MouseWheelEvent &e)

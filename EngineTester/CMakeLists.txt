@@ -1,15 +1,14 @@
 project(EngineTester)
 
 # Define the source files.
-set(EngineTester_SRCS
+set(EngineTester_SRCS_HDRS
     Main.cpp
+    DebugView.h
+    DebugView.cpp
 )
 
-# Define the header files.
-set(EngineTester_HDRS
-)
-
-add_executable(EngineTester ${EngineTester_SRCS} ${EngineTester_HDRS})
+source_group(Src FILES ${EngineTester_SRCS_HDRS})
+add_executable(EngineTester ${EngineTester_SRCS_HDRS})
 
 target_link_libraries(EngineTester
     Engine
