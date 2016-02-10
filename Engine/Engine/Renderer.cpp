@@ -224,7 +224,9 @@ namespace engine
         // Load textures to memory
         for(const Material &mat : scene->mMaterials) {
             for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
-                mNameToTex[texInfo.name] = Texture2D(texInfo.name.c_str());
+                if(mNameToTex.find(texInfo.name) == mNameToTex.end()) {
+                    mNameToTex[texInfo.name] = Texture2D(texInfo.name.c_str());
+                }
             }
         }
         LOG(INFO) << "Loaded textures to GPU.";

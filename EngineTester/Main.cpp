@@ -8,7 +8,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "DebugView.h"
+#include "GUIView.h"
+//#include "DebugView.h"
 
 using namespace engine;
 using namespace std;
@@ -42,10 +43,15 @@ int main(int argc, char *argv[])
     game.mContextHandler.VsyncMode(1);
     game.mRenderer.SetClearColor(vec4(0.0f));
 
+    //Init GUIView
+    GUIView guiView(&game);
+    game.mInputHandler.AddEventListener(&guiView);
+    game.mRenderer.AddRenderable(&guiView);
+
     //Init DebugView
-    DebugView dView(&game);
-    game.mInputHandler.AddEventListener(&dView);
-    game.mRenderer.AddRenderable(&dView);
+    //DebugView dView(&game);
+    //game.mInputHandler.AddEventListener(&dView);
+    //game.mRenderer.AddRenderable(&dView);
 
     Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("crytek-sponza/"), "sponza.obj", scale(mat4(1.0f), vec3(0.01f)));
     //Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("cube/"), "cube.obj");

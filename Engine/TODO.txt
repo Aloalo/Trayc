@@ -52,13 +52,7 @@ Physics:
 Optimizations:
     -Reduce number of G pass state changes (sort?)
     -Frustum culling
-    -Half float for normals
-
-Tester Project:
-    +Rename
-    -GUI
-        -View: DebugDraw
-        -Graphics options
-        -Load model
+    -Half float for normals/tangents/bitangents
+    -Reduce min mipmap level
     
 Bugs:
