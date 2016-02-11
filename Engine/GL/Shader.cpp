@@ -3,6 +3,7 @@
 */
 
 #include <Engine/GL/Shader.h>
+#include <Engine/Utils/Utilities.h>
 
 #include <easylogging++.h>
 
@@ -23,6 +24,7 @@ namespace engine
     {
         string sn(name);
         sn += GetExtension();
+        StringReplace(sn, "\\", "/");
 
         ifstream in(sn, ifstream::in);
         if(in)
@@ -33,10 +35,12 @@ namespace engine
             source.erase(source.find_last_of('}')+1, source.length());
             InsertDefines(source, defines);
 
+            const string path = sn.substr(0, sn.find_last_of("/") + 1);
+            ExpandIncludes(path, source);
+
             Init2(source.c_str(), name);
         }
-        else
-        {
+        else {
             LOG(ERROR) << "No shader file found: " << sn;
         }
         in.close();
@@ -75,5 +79,37 @@ namespace engine
         }
 
         source.insert(source.find("\n") + 1, strDefines);
+    }
+
+    static inline string FileToString(const string &fname)
+    {
+        ifstream in(fname, ifstream::in);
+        if(in)
+        {
+            stringstream strStream;
+            strStream << in.rdbuf();
+            string source(strStream.str());
+            source.erase(source.find_last_of('}') + 1, source.length());
+            return source;
+        }
+        LOG(ERROR) << "No include file found: " << fname;
+        return string();
+    }
+
+    void Shader::ExpandIncludes(const string &path, string &source)
+    {
+        size_t pos = source.find("#include");
+
+        while(pos != string::npos)
+        {
+            const size_t firstQuote = source.find("\"", pos);
+            const size_t secondQuote = source.find("\"", firstQuote + 1);
+            const size_t len = secondQuote - firstQuote - 1;
+
+            const string includeFile = FileToString(path + source.substr(firstQuote + 1, len));
+            StringReplace(source, source.substr(pos, secondQuote - pos + 1), includeFile);
+
+            pos = source.find("#include");
+        }
     }
 }
