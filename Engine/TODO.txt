@@ -36,6 +36,7 @@ Misc:
         -BSpline
         -Settings
         -GeometryMeshes
+    -Shader include
     
 Post Process Effects:
     -FXAA
@@ -43,6 +44,7 @@ Post Process Effects:
     -SSAO
     -DOF
     -Camera motion blur
+    -Bloom
     
 Physics:
     -Rigid body physics
