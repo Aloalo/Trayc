@@ -74,6 +74,11 @@ namespace engine
         glViewport(0, 0, width, height);
     }
 
+    const Texture2D& Renderer::GetGBufferRenderTarget(TextureType type) const
+    {
+        return mGBuffer.GetAttachment(GetMRTIdx(type));
+    }
+
     void Renderer::InitRendering(const CameraHandler *camera)
     {
         if(mCamera) {

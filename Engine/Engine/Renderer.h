@@ -36,6 +36,8 @@ namespace engine
 
         void SetScreenSize(int width, int height);
 
+        const Texture2D& GetGBufferRenderTarget(TextureType type) const;
+
     private:
         friend class Game;
         //Rendering

@@ -50,9 +50,10 @@ Physics:
     -Particle physics
 
 Optimizations:
-    -Reduce number of G pass state changes (sort?)
+    -Reduce number of G pass state changes (sort by material/geometry)
     -Frustum culling
     -Half float for normals/tangents/bitangents
     -Reduce min mipmap level
+    -Optimize sponza mesh
     
 Bugs:

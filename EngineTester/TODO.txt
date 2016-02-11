@@ -1,6 +1,6 @@
 EngineTester:
     +Rename
-    -DebugView
+    +DebugView
     -GUI
         -Graphics options
         -Load model

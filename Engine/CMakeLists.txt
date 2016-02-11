@@ -93,6 +93,7 @@ set(Engine_Engine
 	Engine/Game.h
 	Engine/Game.cpp
     Engine/GlobalRenderingParams.h
+    Engine/GlobalRenderingParams.cpp
 	Engine/Renderable.h
 	Engine/Renderable.cpp
 	Engine/Renderer.h

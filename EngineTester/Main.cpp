@@ -5,11 +5,14 @@
 #include <Engine/Engine.h>
 #include <Engine/Core/DefaultCameraHandler.h>
 #include <Engine/Engine/AssetLoader.h>
+#include <Engine/Core/Defines.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "GUIView.h"
-//#include "DebugView.h"
+#if PRODUCTION
+#include "DebugView.h"
+#endif
 
 using namespace engine;
 using namespace std;
@@ -35,23 +38,25 @@ int main(int argc, char *argv[])
     const ivec2 SSize(1280, 720);
     const float timeStep = 1.0f / 60.0f;
     //Init Camera handler
-    DefaultCameraHandler camHandler(ConstructCameraHandler(SSize, 60.0f, 5000.0f));
+    DefaultCameraHandler camHandler(ConstructCameraHandler(SSize, 60.0f, 50.0f));
 
     //Init Game
     Game game(timeStep);
-    game.Init(&camHandler, argv[0], "Test", SSize.x, SSize.y);
+    game.Init(&camHandler, argv[0], "EngineTester", SSize.x, SSize.y);
     game.mContextHandler.VsyncMode(1);
     game.mRenderer.SetClearColor(vec4(0.0f));
+
+#if PRODUCTION
+    //Init DebugView
+    DebugView dView(&game.mRenderer, camHandler.GetCamera().mNearDistance, camHandler.GetCamera().mFarDistance);
+    game.mInputHandler.AddEventListener(&dView);
+    game.mRenderer.AddRenderable(&dView);
+#endif
 
     //Init GUIView
     GUIView guiView(&game);
     game.mInputHandler.AddEventListener(&guiView);
     game.mRenderer.AddRenderable(&guiView);
-
-    //Init DebugView
-    //DebugView dView(&game);
-    //game.mInputHandler.AddEventListener(&dView);
-    //game.mRenderer.AddRenderable(&dView);
 
     Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("crytek-sponza/"), "sponza.obj", scale(mat4(1.0f), vec3(0.01f)));
     //Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("cube/"), "cube.obj");
