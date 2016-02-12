@@ -188,6 +188,11 @@ namespace engine
         glUniform4fv(mUniformLocations.find(name)->second, cnt, (float*)x);
     }
 
+    GLuint Program::GetID() const
+    {
+        return mID;
+    }
+
     void Program::Attach(const Shader &sh) const
     {
         glAttachShader(mID, sh.mID);

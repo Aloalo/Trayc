@@ -43,6 +43,24 @@ namespace engine
 
     // Index of the g-pass texture in g-framebuffer
     int GetMRTIdx(TextureType type);
+
+
+    enum LightType
+    {
+        DIRECTIONAL = 0,
+        POINT = 1,
+        SPOT = 2,
+
+        CT_LIGHT_TYPES
+    };
+
+    static const std::string LIGHT_PROG_DEFINES[CT_LIGHT_TYPES] =
+    {
+        "DIRECTIONAL_LIGHT",
+        "POINT_LIGHT",
+        "SPOT_LIGHT"
+    };
+
 }
 
 #endif

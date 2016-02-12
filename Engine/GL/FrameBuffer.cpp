@@ -6,6 +6,8 @@ using namespace glm;
 
 namespace engine
 {
+    FrameBuffer FrameBuffer::mBackBuffer;
+
     static const GLenum colorAttachments[8] = 
     {
         GL_COLOR_ATTACHMENT0,
@@ -170,5 +172,10 @@ namespace engine
     const Texture2D& FrameBuffer::GetAttachment(int idx) const
     {
         return mAttachments[idx];
+    }
+
+    const FrameBuffer& FrameBuffer::BackBuffer()
+    {
+        return mBackBuffer;
     }
 }

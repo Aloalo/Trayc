@@ -47,6 +47,7 @@ namespace engine
         void SetUniform(const std::string &name, GLsizei cnt, const glm::vec3 *x) const;
         void SetUniform(const std::string &name, GLsizei cnt, const glm::vec4 *x) const;
 
+        GLuint GetID() const;
 
     private:
         void Attach(const Shader &sh) const;

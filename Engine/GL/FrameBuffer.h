@@ -34,6 +34,8 @@ namespace engine
 
         const Texture2D& GetAttachment(int idx) const;
 
+        static const FrameBuffer& BackBuffer();
+
     private:
         std::vector<Texture2D> mAttachments;
 
@@ -42,6 +44,8 @@ namespace engine
 
         int mWidth;
         int mHeight;
+
+        static FrameBuffer mBackBuffer;
     };
 }
 

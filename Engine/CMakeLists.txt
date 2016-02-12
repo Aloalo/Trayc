@@ -94,12 +94,20 @@ set(Engine_Engine
 	Engine/Game.cpp
     Engine/GlobalRenderingParams.h
     Engine/GlobalRenderingParams.cpp
-	Engine/Renderable.h
+	Engine/RenderingContext.h
+	Engine/RenderingContext.cpp
+    Engine/Renderable.h
 	Engine/Renderable.cpp
 	Engine/Renderer.h
 	Engine/Renderer.cpp
     Engine/Light.h
 	Engine/Light.cpp
+	Engine/RenderPass.h
+	Engine/RenderPass.cpp
+    Engine/LightRenderPass.h
+	Engine/LightRenderPass.cpp
+    Engine/GeometryRenderPass.h
+	Engine/GeometryRenderPass.cpp
     Engine/TextureCombiner.h
 	Engine/TextureCombiner.cpp
     Engine/AssetLoader.h

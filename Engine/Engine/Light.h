@@ -2,39 +2,45 @@
 #ifndef EN_LIGHT_H
 #define EN_LIGHT_H
 
-#include <Engine/GL/Program.h>
+#include <glm/glm.hpp>
+#include <Engine/Engine/GlobalRenderingParams.h>
 
 namespace engine
 {
-    enum LightType
-    {
-        DIRECTIONAL = 0,
-        POINT,
-        SPOT,
-    };
+    class Program;
 
+    //---------- Light ----------//
     struct Light
     {
-        Light(const glm::vec3 &intensity, LightType type, bool isActive);
+        Light(const glm::vec3 &intensity, bool isActive, LightType type);
         virtual ~Light();
 
-        // Call this from derived functions
-        virtual void ApplyToProgram(const Program &prog) const = 0;
-
         bool operator<(const Light* other) const;
+        LightType GetType() const;
+        // Params need to be transformed to view space
+        virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const = 0;
+
 
         glm::vec3 mIntensity;
-        LightType mType;
         bool mIsActive;
+
+    private:
+        LightType mType;
     };
 
+
+    //---------- DirectionalLight ----------//
     struct DirectionalLight : public Light
     {
-        DirectionalLight(const glm::vec3 &intensity, bool isActive);
+        DirectionalLight(const glm::vec3 &intensity, const glm::vec3 &direction, bool isActive);
 
-        virtual void ApplyToProgram(const Program &prog) const override;
+        virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const override;
+
+        glm::vec3 mDirection;
     };
 
+
+    //---------- PointLight ----------//
     struct PointLight : public Light
     {
         PointLight(const glm::vec3 &intensity, 
@@ -42,7 +48,7 @@ namespace engine
             const glm::vec3 &attenuation,
             const glm::vec3 &position);
 
-        virtual void ApplyToProgram(const Program &prog) const override;
+        virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const override;
 
         //Constant, linear, quadratic
         glm::vec3 mAttenuation;
@@ -50,6 +56,8 @@ namespace engine
         glm::vec3 mPosition;
     };
 
+
+    //---------- SpotLight ----------//
     struct SpotLight : public Light
     {
         SpotLight(const glm::vec3 &intensity,
@@ -60,7 +68,7 @@ namespace engine
             float spotCutoff,
             float spotExp);
 
-        virtual void ApplyToProgram(const Program &prog) const override;
+        virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const override;
 
         //Constant, linear, quadratic
         glm::vec3 mAttenuation;

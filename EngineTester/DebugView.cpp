@@ -52,27 +52,28 @@ void DebugView::KeyPress(const SDL_KeyboardEvent &e)
 
 void DebugView::Draw(const engine::RenderingContext &rContext) const
 {
+    const RenderPass *gPass = mRenderer->GetRenderPass("gPass");
+    const Texture2D &tex = gPass->GetDstBuffer().GetAttachment(GetMRTIdx(mTexType));
+
     switch(mTexType)
     {
     case TextureType::G_DEPTH_TEXTURE:
-        DebugDraw::Get().DrawDepth(mRenderer->GetGBufferRenderTarget(mTexType), mNearDist, mFarDist);
+        DebugDraw::Get().DrawDepth(tex, mNearDist, mFarDist);
         break;
     case TextureType::G_NORMAL_TEXTURE:
-        DebugDraw::Get().DrawNormal(mRenderer->GetGBufferRenderTarget(mTexType));
+        DebugDraw::Get().DrawNormal(tex);
         break;
     case TextureType::G_ALBEDO_TEXTURE:
-        DebugDraw::Get().DrawTexture(mRenderer->GetGBufferRenderTarget(mTexType));
+        DebugDraw::Get().DrawTexture(tex);
         break;
     case TextureType::G_SPEC_GLOSS_TEXTURE:
         if(mDrawGloss) {
-            DebugDraw::Get().DrawGloss(mRenderer->GetGBufferRenderTarget(mTexType));
+            DebugDraw::Get().DrawGloss(tex);
         }
         else {
-            DebugDraw::Get().DrawTexture(mRenderer->GetGBufferRenderTarget(mTexType));
+            DebugDraw::Get().DrawTexture(tex);
         }
         break;
-    //case SDLK_6:
-    //    break;
     default:
         break;
     }

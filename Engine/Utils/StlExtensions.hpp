@@ -16,12 +16,6 @@ namespace stdext
 	template<typename T>
 	using ValueType = typename T::value_type;
 
-	template<typename Container, typename Predicate>
-	inline Iterator<Container> find_if(Container &c, Predicate p)
-	{
-		return std::find_if(begin(c), end(c), p);
-	}
-
 	template<typename Container, typename Value>
 	inline Iterator<Container> find(Container &c, const Value &v)
 	{

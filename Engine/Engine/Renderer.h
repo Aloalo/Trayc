@@ -6,19 +6,15 @@
 #define EN_RENDERER_H
 
 #include <Engine/Engine/Renderable.h>
-#include <Engine/Engine/Light.h>
-#include <Engine/GL/FrameBuffer.h>
-#include <Engine/GL/Program.h>
-#include <Engine/GL/VertexArray.h>
-#include <Engine/GL/TextureSampler.h>
-#include <Engine/Geometry/Scene.h>
-
-#include <Engine/Engine/GlobalRenderingParams.h>
+#include <Engine/Engine/RenderPass.h>
 
 namespace engine
 {
     class Game;
+    class Scene;
     class CameraHandler;
+    class Renderable;
+    class RenderPass;
 
     class Renderer
     {
@@ -36,32 +32,19 @@ namespace engine
 
         void SetScreenSize(int width, int height);
 
-        const Texture2D& GetGBufferRenderTarget(TextureType type) const;
+        const RenderPass* GetRenderPass(const std::string &name) const;
 
     private:
+        RenderPass* GetRenderPass(const std::string &name);
         friend class Game;
         //Rendering
         void InitRendering(const CameraHandler *camera);
         void Render() const;
 
-        void ClearVertexArrays();
-        void InitScene(const Scene *scene);
-
-        const Scene *mScene;
         const CameraHandler *mCamera;
-        Game *mGame;
 
-        GLbitfield mClearMask;
         std::vector<Renderable*> mRenderables;
-
-        // Deferred rendering stuff
-        FrameBuffer mGBuffer;
-        Program mGPrograms[1 << TextureType::CT_MAT_TEXTURE_TYPES];
-        std::map<std::string, Texture2D> mNameToTex;
-        // At index i is VA for mesh i
-        std::vector<VertexArray> mVertexArrays;
-        // Sampler for texture maps (units [0, 3])
-        TextureSampler mTexMapSampler;
+        std::vector<RenderPass*> mRenderPasses;
     };
 }
 
