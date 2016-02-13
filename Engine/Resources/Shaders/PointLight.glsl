@@ -18,5 +18,5 @@ float GetLightAttenuation(in vec3 fragPos)
     float atten = light.attenuation.x + 
                 distance * light.attenuation.y + 
                 distance * distance * light.attenuation.z;
-    return atten;
+    return 1.0f / atten;
 }

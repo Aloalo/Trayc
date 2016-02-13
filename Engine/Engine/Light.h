@@ -41,7 +41,7 @@ namespace engine
     //---------- DirectionalLight ----------//
     struct DirectionalLight : public Light
     {
-        DirectionalLight(const glm::vec3 &intensity, const glm::vec3 &direction, bool isActive);
+        DirectionalLight(const glm::vec3 &intensity, bool isActive, const glm::vec3 &direction);
 
         virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const override;
 

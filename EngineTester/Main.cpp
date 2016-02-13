@@ -11,6 +11,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "GUIView.h"
+#include "LightHandler.h"
+
 #if PRODUCTION
 #include "DebugView.h"
 #endif
@@ -63,8 +65,7 @@ int main(int argc, char *argv[])
     game.mRenderer.SetScene(&scene);
 
     // Init Light
-    DirectionalLight dLight(vec3(1.0f), vec3(1.0f), true);
-    game.mRenderer.AddLight(&dLight);
+    LightHandler lHandler(&game);
 
     game.GameLoop();
     return 0;

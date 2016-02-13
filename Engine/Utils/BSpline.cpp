@@ -10,21 +10,22 @@ using namespace glm;
 
 namespace engine
 {
-    mat4 CubicBSpline::B = 1.0f / 6.0f * transpose(mat4(-1.0f,  3.0f, -3.0f, 1.0f,
+    mat4 CubicBSpline::mB = 1.0f / 6.0f * transpose(mat4(-1.0f,  3.0f, -3.0f, 1.0f,
                                                          3.0f, -6.0f,  3.0f, 0.0f,
                                                         -3.0f,  0.0f,  3.0f, 0.0f,
                                                          1.0f,  4.0f,  1.0f, 0.0f));
 
-    mat4x3 CubicBSpline::B_ = 0.5f * transpose(mat3x4(-1.0f, 3.0f, -3.0f, 1.0f,
+    mat4x3 CubicBSpline::mB_ = 0.5f * transpose(mat3x4(-1.0f, 3.0f, -3.0f, 1.0f,
                                                        2.0f,-4.0f,  2.0f, 0.0f,
                                                       -1.0f, 0.0f,  1.0f, 0.0f));
 
-    CubicBSpline::CubicBSpline(const vector<vec3> &controlPoints)
+    void CubicBSpline::SetControlPoints(const vector<vec3> &r)
     {
-        for(const vec3 &v : controlPoints)
-            r.push_back(vec4(v, 1.0f));
-        r.shrink_to_fit();
+        for(const vec3 &v : r)
+            mR.push_back(vec4(v, 1.0f));
+        mR.shrink_to_fit();
     }
+
 
     vec3 CubicBSpline::operator[](float t) const
     {
@@ -33,9 +34,9 @@ namespace engine
         const float st = t - float(idx);
 
         const vec4 T(st * st * st, st * st, st, 1.0f);
-        const mat4 R(r[idx], r[idx + 1], r[idx + 2], r[idx + 3]);
+        const mat4 R(mR[idx], mR[idx + 1], mR[idx + 2], mR[idx + 3]);
 
-        return vec3(T * B * transpose(R));
+        return vec3(T * mB * transpose(R));
     }
 
     vec3 CubicBSpline::Tangent(float t) const
@@ -45,13 +46,13 @@ namespace engine
         const float st = t - float(idx);
 
         const vec3 T(st * st, st, 1.0f);
-        const mat4 R(r[idx], r[idx + 1], r[idx + 2], r[idx + 3]);
+        const mat4 R(mR[idx], mR[idx + 1], mR[idx + 2], mR[idx + 3]);
 
-        return vec3(T * B_ * transpose(R));
+        return vec3(T * mB_ * transpose(R));
     }
 
     int CubicBSpline::NumControlPoints() const
     {
-        return r.size();
+        return mR.size();
     }
 }

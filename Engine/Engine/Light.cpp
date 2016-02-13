@@ -33,7 +33,7 @@ namespace engine
 
     //---------- DirectionalLight ----------//
 
-    DirectionalLight::DirectionalLight(const vec3 &intensity, const glm::vec3 &direction, bool isActive)
+    DirectionalLight::DirectionalLight(const vec3 &intensity, bool isActive, const glm::vec3 &direction)
         : Light(intensity, isActive, Type::DIRECTIONAL), mDirection(normalize(direction))
     {
     }
@@ -54,7 +54,7 @@ namespace engine
     {
         prog->SetUniform("light.intensity", mIntensity);
         prog->SetUniform("light.attenuation", mAttenuation);
-        prog->SetUniform("light.position", vec3(V * vec4(mPosition, 0.0f)));
+        prog->SetUniform("light.position", vec3(V * vec4(mPosition, 1.0f)));
     }
 
     //---------- SpotLight ----------//
@@ -67,7 +67,7 @@ namespace engine
     {
         prog->SetUniform("light.intensity", mIntensity);
         prog->SetUniform("light.attenuation", mAttenuation);
-        prog->SetUniform("light.position", vec3(V * vec4(mPosition, 0.0f)));
+        prog->SetUniform("light.position", vec3(V * vec4(mPosition, 1.0f)));
         prog->SetUniform("light.spotDir", vec3(V * vec4(mSpotDirection, 0.0f)));
         prog->SetUniform("light.cosSpotCutoff", cos(radians(mSpotCutoff)));
         prog->SetUniform("light.spotExp", mSpotExponent);

@@ -14,7 +14,7 @@ namespace engine
     class CubicBSpline
     {
     public:
-        CubicBSpline(const std::vector<glm::vec3> &controlPoints);
+        void SetControlPoints(const std::vector<glm::vec3> &r);
 
         //Position at t
         glm::vec3 operator[](float t) const;
@@ -24,9 +24,9 @@ namespace engine
         int NumControlPoints() const;
 
     private:
-        std::vector<glm::vec4> r;
-        static glm::mat4 B;
-        static glm::mat4x3 B_;
+        std::vector<glm::vec4> mR;
+        static glm::mat4 mB;
+        static glm::mat4x3 mB_;
     };
 }
 

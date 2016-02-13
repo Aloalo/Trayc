@@ -27,7 +27,6 @@ void main()
     // Retrieve data from G-buffer
     vec3 fragPos = texture(gDepth, UV).r * viewRay;
     vec3 normal = texture(gNormal, UV).rgb;
-    vec4 specularGloss = texture(gSpecGloss, UV);
     vec3 albedo = texture(gAlbedo, UV).rgb;
     
     // Get Light params
@@ -38,7 +37,7 @@ void main()
     // Calculate lighting
     
     // Ambient
-    vec3 ambient = albedo * 0.1;
+    vec3 ambient = albedo * 0.05;
 
     // Diffuse
     float dNL = max(0.0, dot(normal, lightDir));
@@ -48,6 +47,7 @@ void main()
     vec3 specular = vec3(0.0);
     if(dNL > 0.0)
     {
+        vec4 specularGloss = texture(gSpecGloss, UV);
         vec3 E = normalize(fragPos);
         vec3 R = reflect(lightDir, normal);
         float dER = max(0.0, dot(E, R));

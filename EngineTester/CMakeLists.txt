@@ -11,6 +11,8 @@ set(EngineTester_SRCS_HDRS
     Main.cpp
     DebugView.h
     DebugView.cpp
+    LightHandler.h
+    LightHandler.cpp
     GUIView.h
     GUIView.cpp
     GUI.h
