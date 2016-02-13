@@ -14,14 +14,22 @@ using namespace stdext;
 namespace engine
 {
     GeometryRenderPass::GeometryRenderPass(void)
-        : RenderPass("gPass")
+        : RenderPass("gPass", GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     {
     }
 
     void GeometryRenderPass::Init()
     {
-        int width = 1280;
-        int height = 720;
+        const string MAT_TEXTURE_DEFINES[CT_MAT_TEXTURE_TYPES] =
+        {
+            "DIFFUSE_MAP",
+            "NORMAL_MAP",
+            "SPECULAR_MAP",
+            "HEIGHT_MAP"
+        };
+
+        const int width = 1280;
+        const int height = 720;
 
         // Init G buffer
         mDstFB.Init(width, height);
@@ -54,11 +62,11 @@ namespace engine
         }
 
         // Init Texture Sampling
-        mTexMapSampler.InitForDiffuse();
-        mTexMapSampler.BindToSlot(0);
-        mTexMapSampler.BindToSlot(1);
-        mTexMapSampler.BindToSlot(2);
-        mTexMapSampler.BindToSlot(3);
+        mTexSampler.InitForDiffuse();
+        mTexSampler.BindToSlot(TextureType::DIFFUSE_MAP);
+        mTexSampler.BindToSlot(TextureType::NORMAL_MAP);
+        mTexSampler.BindToSlot(TextureType::SPECULAR_MAP);
+        mTexSampler.BindToSlot(TextureType::HEIGHT_MAP);
     }
 
     void GeometryRenderPass::Destroy()
@@ -66,27 +74,24 @@ namespace engine
         mDstFB.Destroy();
         ClearVertexArrays();
         for(Program &p : mGPrograms)
-            p.Delete();
+            p.Destroy();
 
         for(auto &pst : mNameToTex)
-            pst.second.Delete();
+            pst.second.Destroy();
 
-        mTexMapSampler.Destroy();
-    }
-
-    void GeometryRenderPass::BeginRender() const
-    {
-        mDstFB.Bind();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
-    void GeometryRenderPass::EndRender() const
-    {
-        FrameBuffer::UnBind();
+        mTexSampler.Destroy();
     }
 
     void GeometryRenderPass::Render(const vector<RenderPass*> &renderPasses, const RenderingContext &rContext) const
     {
+        const string TEXTURE_UNIFORM_NAMES[CT_MAT_TEXTURE_TYPES] =
+        {
+            "diffuseMap",
+            "normalMap",
+            "specularMap",
+            "heightMap"
+        };
+
         for(const Object3D &obj : mScene->mObjects3D)
         {
             const VertexArray &VA = mVertexArrays[obj.GetMeshIdx()];
@@ -107,8 +112,7 @@ namespace engine
             // Textures
             for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
                 prog.SetUniform(TEXTURE_UNIFORM_NAMES[texInfo.type], texInfo.type);
-                glActiveTexture(GL_TEXTURE0 + texInfo.type);
-                mNameToTex.at(texInfo.name).Bind();
+                mNameToTex.at(texInfo.name).BindToSlot(texInfo.type);
             }
 
             VA.RenderIndexed(GL_TRIANGLES);

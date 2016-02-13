@@ -2,6 +2,7 @@
 #include <Engine/Engine/TextureCombiner.h>
 
 using namespace glm;
+using namespace std;
 
 namespace engine
 {
@@ -15,48 +16,37 @@ namespace engine
     {
     }
 
-    void TextureCombiner::Init(const char *progName)
+    void TextureCombiner::Init(const char *progName, const Shader::Defines &defines)
     {
-        mProgram.Init(progName);
+        mProgram.Init(progName, defines);
         Init();
     }
 
-    void TextureCombiner::Init(const char *vsName, const char *fsName)
+    void TextureCombiner::Init(const char *vsName, const char *fsName, const Shader::Defines &defines)
     {
-        mProgram.Init(VertexShader(vsName, Shader::Defines()), FragmentShader(fsName, Shader::Defines()));
+        mProgram.Init(VertexShader(vsName, defines), FragmentShader(fsName, defines));
         Init();
     }
 
     void TextureCombiner::Destroy()
     {
-        mProgram.Delete();
+        mProgram.Destroy();
     }
 
-    const Program&TextureCombiner::Prog() const
+    const Program& TextureCombiner::Prog() const
     {
         return mProgram;
     }
 
     void TextureCombiner::SetTexture(int idx, const Texture2D &tex)
     {
-        glActiveTexture(GL_TEXTURE0 + idx);
-        tex.Bind();
-    }
-
-    void TextureCombiner::Draw(const FrameBuffer &FBO) const
-    {
-        FBO.Bind();
-        mProgram.Use();
-        mVAO.Render(GL_TRIANGLE_FAN);
-        Program::Unbind();
-        FrameBuffer::UnBind();
+        tex.BindToSlot(idx);
     }
 
     void TextureCombiner::Draw() const
     {
         mProgram.Use();
         mVAO.Render(GL_TRIANGLE_FAN);
-        Program::Unbind();
     }
 
     void TextureCombiner::DestroyVAO()

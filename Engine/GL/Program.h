@@ -23,7 +23,7 @@ namespace engine
         void Init(const VertexShader &vs, const FragmentShader &fs, const char *name = nullptr);
         void Init(const char *name, const Shader::Defines &defines = Shader::Defines()); //init from filename
 
-        void Delete();
+        void Destroy();
 
         void Use() const;
         static void Unbind();
@@ -58,6 +58,8 @@ namespace engine
 
         GLuint mID;
         std::map<std::string, GLint> mUniformLocations;
+
+        static GLuint mBoundProgram;
     };
 }
 

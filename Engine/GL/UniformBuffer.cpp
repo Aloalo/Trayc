@@ -22,7 +22,7 @@ namespace engine
         setData(size, data);
     }
 
-    void UniformBuffer::Delete()
+    void UniformBuffer::Destroy()
     {
         glDeleteBuffers(1, &id);
         id = 0;

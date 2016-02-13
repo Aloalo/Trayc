@@ -14,6 +14,8 @@ using namespace glm;
 
 namespace engine
 {
+    unsigned int Texture2D::mBoundTextures[TextureType::CT_TEX_SLOTS] = {0};
+
     Texture2D::Texture2D(const char *file)
     {
         init(FileImageLoader(file), file);
@@ -54,7 +56,7 @@ namespace engine
         mFormat = GL_RGBA;
         mType = GL_UNSIGNED_BYTE;
 
-        Bind();
+        BindToSlot(0);
         {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -73,19 +75,25 @@ namespace engine
                 ilGetData());
             glGenerateMipmap(GL_TEXTURE_2D);
         }
-        UnBind();
+        UnBindFromSlot(0);
 
         ilDeleteImages(1, &imgid);
     }
 
-    void Texture2D::Bind() const
+    void Texture2D::BindToSlot(int texSlot) const
     {
-        glBindTexture(GL_TEXTURE_2D, mID);
+        if(mBoundTextures[texSlot] != mID) {
+            glActiveTexture(GL_TEXTURE0 + texSlot);
+            glBindTexture(GL_TEXTURE_2D, mID);
+            mBoundTextures[texSlot] = mID;
+        }
     }
 
-    void Texture2D::UnBind()
+    void Texture2D::UnBindFromSlot(int texSlot)
     {
+        glActiveTexture(GL_TEXTURE0 + texSlot);
         glBindTexture(GL_TEXTURE_2D, 0);
+        mBoundTextures[texSlot] = 0;
     }
 
     void Texture2D::Init(const char *name)
@@ -101,7 +109,7 @@ namespace engine
         mType = type;
 
         glGenTextures(1, &mID);
-        Bind();
+        BindToSlot(0);
         {
             glTexImage2D(GL_TEXTURE_2D,
                 0,
@@ -118,18 +126,18 @@ namespace engine
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         }
-        UnBind();
+        UnBindFromSlot(0);
     }
 
     void Texture2D::Resize(ivec2 size)
     {
         mSize = size;
-        glBindTexture(GL_TEXTURE_2D, mID);
+        BindToSlot(30);
         glTexImage2D(GL_TEXTURE_2D, 0, mInternalFormat, mSize.x, mSize.y, 0, mFormat, mType, nullptr);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        UnBindFromSlot(30);
     }
 
-    void Texture2D::Delete()
+    void Texture2D::Destroy()
     {
         glDeleteTextures(1, &mID);
         mID = 0;

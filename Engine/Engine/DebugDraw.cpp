@@ -54,20 +54,21 @@ namespace engine
     DebugDraw::DebugDraw(void)
     {
         const string vsPath = AssetLoader::Get().ShaderPath("C_TexToScreen").data();
+        const Shader::Defines defines;
 
-        mDrawDepth.Init(vsPath.data(), AssetLoader::Get().ShaderPath("C_DepthToScreen").data());
+        mDrawDepth.Init(vsPath.data(), AssetLoader::Get().ShaderPath("C_DepthToScreen").data(), defines);
         mDrawDepth.Prog().Use();
         mDrawDepth.Prog().SetUniform("tex", TextureType::DEBUG_SLOT);
         
-        mDrawTex.Init(vsPath.data(), AssetLoader::Get().ShaderPath("C_TexToScreen").data());
+        mDrawTex.Init(vsPath.data(), AssetLoader::Get().ShaderPath("C_TexToScreen").data(), defines);
         mDrawTex.Prog().Use();
         mDrawTex.Prog().SetUniform("tex", TextureType::DEBUG_SLOT);
 
-        mDrawNormals.Init(vsPath.data(), AssetLoader::Get().ShaderPath("C_NormToScreen").data());
+        mDrawNormals.Init(vsPath.data(), AssetLoader::Get().ShaderPath("C_NormToScreen").data(), defines);
         mDrawNormals.Prog().Use();
         mDrawNormals.Prog().SetUniform("tex", TextureType::DEBUG_SLOT);
 
-        mDrawGloss.Init(vsPath.data(), AssetLoader::Get().ShaderPath("C_GlossToScreen").data());
+        mDrawGloss.Init(vsPath.data(), AssetLoader::Get().ShaderPath("C_GlossToScreen").data(), defines);
         mDrawGloss.Prog().Use();
         mDrawGloss.Prog().SetUniform("tex", TextureType::DEBUG_SLOT);
 

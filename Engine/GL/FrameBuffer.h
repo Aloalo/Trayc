@@ -46,6 +46,7 @@ namespace engine
         int mHeight;
 
         static FrameBuffer mBackBuffer;
+        static GLuint mBoundFBO;
     };
 }
 

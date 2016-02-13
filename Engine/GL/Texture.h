@@ -2,6 +2,7 @@
 #define EN_TEXTURE_H
 
 #include <glm/glm.hpp>
+#include <Engine/Engine/GlobalRenderingParams.h>
 
 namespace engine
 {
@@ -19,9 +20,9 @@ namespace engine
 
         void Resize(glm::ivec2 size);
 
-        void Bind() const;
-        static void UnBind();
-        void Delete();
+        void BindToSlot(int texSlot) const;
+        static void UnBindFromSlot(int texSlot);
+        void Destroy();
 
         uint ID() const;
         glm::ivec2 Size() const;
@@ -49,6 +50,8 @@ namespace engine
             FileImageLoader(const char *file);
             bool load() const;
         };
+
+        static unsigned int mBoundTextures[TextureType::CT_TEX_SLOTS];
     };
 }
 

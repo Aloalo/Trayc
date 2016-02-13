@@ -5,6 +5,7 @@
 #include <Engine/Engine.h>
 #include <Engine/Core/DefaultCameraHandler.h>
 #include <Engine/Engine/AssetLoader.h>
+#include <Engine/Engine/Light.h>
 #include <Engine/Core/Defines.h>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -44,7 +45,6 @@ int main(int argc, char *argv[])
     Game game(timeStep);
     game.Init(&camHandler, argv[0], "EngineTester", SSize.x, SSize.y);
     game.mContextHandler.VsyncMode(1);
-    game.mRenderer.SetClearColor(vec4(0.0f));
 
 #if PRODUCTION
     //Init DebugView
@@ -61,6 +61,10 @@ int main(int argc, char *argv[])
     Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("crytek-sponza/"), "sponza.obj", scale(mat4(1.0f), vec3(0.01f)));
     //Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("cube/"), "cube.obj");
     game.mRenderer.SetScene(&scene);
+
+    // Init Light
+    DirectionalLight dLight(vec3(1.0f), vec3(1.0f), true);
+    game.mRenderer.AddLight(&dLight);
 
     game.GameLoop();
     return 0;

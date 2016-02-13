@@ -3,6 +3,7 @@
 */
 #include <Engine/Engine/Renderer.h>
 #include <Engine/Engine/GeometryRenderPass.h>
+#include <Engine/Engine/LightRenderPass.h>
 
 #include <Engine/Utils/StlExtensions.hpp>
 
@@ -41,11 +42,6 @@ namespace engine
 #endif
     }
 
-    void Renderer::SetClearColor(const glm::vec4 &clearColor) const
-    {
-        glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-    }
-
     void Renderer::SetScene(const Scene *scene)
     {
         GeometryRenderPass *gPass = static_cast<GeometryRenderPass*>(GetRenderPass("gPass"));
@@ -60,6 +56,16 @@ namespace engine
     void Renderer::RemoveRenderable(Renderable *renderable)
     {
         erase(mRenderables, renderable);
+    }
+
+    void Renderer::AddLight(const Light *light)
+    {
+        static_cast<LightRenderPass*>(GetRenderPass("lPass"))->AddLight(light);
+    }
+
+    void Renderer::RemoveLight(const Light *light)
+    {
+        static_cast<LightRenderPass*>(GetRenderPass("lPass"))->RemoveLight(light);
     }
 
     void Renderer::SetScreenSize(int width, int height)
@@ -98,9 +104,11 @@ namespace engine
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
         // Init render passes
         mRenderPasses.push_back(new GeometryRenderPass());
+        mRenderPasses.push_back(new LightRenderPass());
 
         for(RenderPass *rPass : mRenderPasses)
             rPass->Init();
@@ -120,15 +128,19 @@ namespace engine
         {
             rPass->BeginRender();
             rPass->Render(mRenderPasses, rContext);
-            rPass->EndRender();
         }
 
         // -------------------------- Custom forward render -------------------------- //
+        FrameBuffer::UnBind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Temporary
-        const RenderPass *gPass = GetRenderPass("gPass");
+        /*const RenderPass *gPass = GetRenderPass("gPass");
         const Texture2D &tex = gPass->GetDstBuffer().GetAttachment(3);
+        DebugDraw::Get().DrawTexture(tex);*/
+
+        const RenderPass *gPass = GetRenderPass("lPass");
+        const Texture2D &tex = gPass->GetDstBuffer().GetAttachment(0);
         DebugDraw::Get().DrawTexture(tex);
 
         for(Renderable *renderable : mRenderables) {

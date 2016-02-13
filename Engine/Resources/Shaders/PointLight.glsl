@@ -5,7 +5,7 @@ struct Light
     vec3 attenuation;
     vec3 position;
 };
-Light light;
+uniform Light light;
 
 vec3 GetLightDir(in vec3 fragPos)
 {

@@ -4,8 +4,7 @@
 
 #include <Engine/Engine/RenderPass.h>
 #include <Engine/Engine/Light.h>
-#include <Engine/GL/Program.h>
-#include <Engine/GL/Program.h>
+#include <Engine/Engine/TextureCombiner.h>
 
 namespace engine
 {
@@ -17,17 +16,14 @@ namespace engine
         virtual void Init() override;
         virtual void Destroy() override;
 
-        virtual void BeginRender() const override;
-        virtual void EndRender() const override;
-
         virtual void Render(const std::vector<RenderPass*> &renderPasses, const RenderingContext &rContext) const override;
 
-        void AddLight(Light *light);
-        void RemoveLight(Light *light);
+        void AddLight(const Light *light);
+        void RemoveLight(const Light *light);
 
     private:
-        std::vector<Light*> mLights;
-        Program mLightPrograms[LightType::CT_LIGHT_TYPES];
+        std::vector<const Light*> mLights;
+        TextureCombiner mLightCombiners[Light::Type::CT_LIGHT_TYPES];
     };
 }
 

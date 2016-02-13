@@ -46,4 +46,14 @@ namespace engine
         glSamplerParameteri(mID, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glSamplerParameterf(mID, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
     }
+
+    void TextureSampler::InitForDataTexture()
+    {
+        Init();
+
+        glSamplerParameteri(mID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glSamplerParameteri(mID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glSamplerParameteri(mID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glSamplerParameteri(mID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    }
 }

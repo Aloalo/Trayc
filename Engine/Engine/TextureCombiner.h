@@ -15,16 +15,14 @@ namespace engine
         TextureCombiner(void);
         ~TextureCombiner(void);
 
-        void Init(const char *progName);
-        void Init(const char *vsName, const char *fsName);
+        void Init(const char *progName, const Shader::Defines &defines);
+        void Init(const char *vsName, const char *fsName, const Shader::Defines &defines);
         void Destroy();
 
         // Get program
         const Program& Prog() const;
         static void SetTexture(int idx, const Texture2D &tex);
-        // To frambuffer
-        void Draw(const FrameBuffer &FBO) const;
-        // To back buffer
+
         void Draw() const;
 
         static void DestroyVAO();

@@ -30,7 +30,7 @@ GUIView::GUIView(engine::Game *game)
 
 GUIView::~GUIView(void)
 {
-    mProgram.Delete();
+    mProgram.Destroy();
     mVA.Destroy();
 }
 

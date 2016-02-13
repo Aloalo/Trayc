@@ -15,6 +15,7 @@ namespace engine
     class CameraHandler;
     class Renderable;
     class RenderPass;
+    struct Light;
 
     class Renderer
     {
@@ -22,13 +23,14 @@ namespace engine
         Renderer(Game *scene);
         ~Renderer(void);
 
-        void SetClearColor(const glm::vec4 &clearColor) const;
-
         void SetScene(const Scene *scene);
 
         //Renderables
         void AddRenderable(Renderable *renderable);
         void RemoveRenderable(Renderable *renderable);
+
+        void AddLight(const Light *light);
+        void RemoveLight(const Light *light);
 
         void SetScreenSize(int width, int height);
 

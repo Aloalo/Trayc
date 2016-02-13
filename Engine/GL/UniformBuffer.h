@@ -26,7 +26,7 @@ namespace engine
         void Init();
         void Init(int size, void *data = nullptr);
 
-        void Delete();
+        void Destroy();
 
         void bind();
         void setData(int size, void *data, int usage = GL_DYNAMIC_DRAW);

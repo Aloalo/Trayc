@@ -8,7 +8,7 @@ struct Light
     float cosSpotCutoff;
     float spotExponent;
 };
-Light light;
+uniform Light light;
 
 
 /*float clampedCosine = max(0.0, dot(-lightDirection, light0.spotDirection));
@@ -35,5 +35,5 @@ float GetLightAttenuation(in vec3 fragPos)
                 distance * distance * light.attenuation.z;
     float dLS = max(0.0, dot(-GetLightDir(fragPos), light.spotDirection));
     
-    return step(dLS, light.cosSpotCutoff) * atten * pow(clampedCosine, light.spotExponent);
+    return step(dLS, light.cosSpotCutoff) * atten * pow(dLS, light.spotExponent);
 }

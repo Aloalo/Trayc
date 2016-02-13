@@ -12,7 +12,7 @@ namespace engine
 {
     //---------- Light ----------//
 
-    Light::Light(const vec3 &intensity, bool isActive, LightType type)
+    Light::Light(const vec3 &intensity, bool isActive, Type type)
         : mIntensity(intensity), mIsActive(isActive), mType(type)
     {
     }
@@ -26,7 +26,7 @@ namespace engine
         return mType < other->mType;
     }
 
-    LightType Light::GetType() const
+    Light::Type Light::GetType() const
     {
         return mType;
     }
@@ -34,43 +34,43 @@ namespace engine
     //---------- DirectionalLight ----------//
 
     DirectionalLight::DirectionalLight(const vec3 &intensity, const glm::vec3 &direction, bool isActive)
-        : Light(intensity, isActive, LightType::DIRECTIONAL), mDirection(direction)
+        : Light(intensity, isActive, Type::DIRECTIONAL), mDirection(normalize(direction))
     {
     }
 
     void DirectionalLight::ApplyToProgram(const Program *prog, const mat4 &V) const
     {
-        prog->SetUniform("Light.intensity", mIntensity);
-        prog->SetUniform("Light.direction", vec3(V * vec4(mDirection, 0.0f)));
+        prog->SetUniform("light.intensity", mIntensity);
+        prog->SetUniform("light.direction", vec3(V * vec4(mDirection, 0.0f)));
     }
 
     //---------- PointLight ----------//
     PointLight::PointLight(const vec3 &intensity, bool isActive, const vec3 &attenuation, const vec3 &position)
-        : Light(intensity, isActive, LightType::POINT), mAttenuation(attenuation), mPosition(position)
+        : Light(intensity, isActive, Type::POINT), mAttenuation(attenuation), mPosition(position)
     {
     }
 
     void PointLight::ApplyToProgram(const Program *prog, const mat4 &V) const
     {
-        prog->SetUniform("Light.intensity", mIntensity);
-        prog->SetUniform("Light.attenuation", mAttenuation);
-        prog->SetUniform("Light.position", vec3(V * vec4(mPosition, 0.0f)));
+        prog->SetUniform("light.intensity", mIntensity);
+        prog->SetUniform("light.attenuation", mAttenuation);
+        prog->SetUniform("light.position", vec3(V * vec4(mPosition, 0.0f)));
     }
 
     //---------- SpotLight ----------//
     SpotLight::SpotLight(const vec3 &intensity, bool isActive, const vec3 &attenuation, const vec3 &position, const vec3 &spotDir, float spotCutoff, float spotExp)
-        : Light(intensity, isActive, LightType::SPOT), mAttenuation(attenuation), mPosition(position), mSpotDirection(spotDir), mSpotCutoff(spotCutoff), mSpotExponent(spotExp)
+        : Light(intensity, isActive, Type::SPOT), mAttenuation(attenuation), mPosition(position), mSpotDirection(normalize(spotDir)), mSpotCutoff(spotCutoff), mSpotExponent(spotExp)
     {
     }
 
     void SpotLight::ApplyToProgram(const Program *prog, const mat4 &V) const
     {
-        prog->SetUniform("Light.intensity", mIntensity);
-        prog->SetUniform("Light.attenuation", mAttenuation);
-        prog->SetUniform("Light.position", vec3(V * vec4(mPosition, 0.0f)));
-        prog->SetUniform("Light.spotDir", vec3(V * vec4(mSpotDirection, 0.0f)));
-        prog->SetUniform("Light.cosSpotCutoff", cos(radians(mSpotCutoff)));
-        prog->SetUniform("Light.spotExp", mSpotExponent);
+        prog->SetUniform("light.intensity", mIntensity);
+        prog->SetUniform("light.attenuation", mAttenuation);
+        prog->SetUniform("light.position", vec3(V * vec4(mPosition, 0.0f)));
+        prog->SetUniform("light.spotDir", vec3(V * vec4(mSpotDirection, 0.0f)));
+        prog->SetUniform("light.cosSpotCutoff", cos(radians(mSpotCutoff)));
+        prog->SetUniform("light.spotExp", mSpotExponent);
     }
 
 }

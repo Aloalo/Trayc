@@ -12,11 +12,20 @@ namespace engine
     //---------- Light ----------//
     struct Light
     {
-        Light(const glm::vec3 &intensity, bool isActive, LightType type);
+        enum Type
+        {
+            DIRECTIONAL = 0,
+            POINT = 1,
+            SPOT = 2,
+
+            CT_LIGHT_TYPES
+        };
+
+        Light(const glm::vec3 &intensity, bool isActive, Type type);
         virtual ~Light();
 
         bool operator<(const Light* other) const;
-        LightType GetType() const;
+        Type GetType() const;
         // Params need to be transformed to view space
         virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const = 0;
 
@@ -25,7 +34,7 @@ namespace engine
         bool mIsActive;
 
     private:
-        LightType mType;
+        Type mType;
     };
 
 

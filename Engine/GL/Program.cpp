@@ -12,12 +12,14 @@ using namespace std;
 
 namespace engine
 {
+    GLuint Program::mBoundProgram = 0;
+
     Program::Program(void)
         : mID(0)
     {
     }
 
-    void Program::Delete()
+    void Program::Destroy()
     {
         glDeleteProgram(mID);
         mID = 0;
@@ -25,7 +27,7 @@ namespace engine
 
     void Program::Init(const VertexShader &vs, const GeometryShader &gs, const FragmentShader &fs, const char *name)
     {
-        Delete();
+        Destroy();
         mID = glCreateProgram();
 
         Attach(vs);
@@ -43,7 +45,7 @@ namespace engine
 
     void Program::Init(const VertexShader &vs, const FragmentShader &fs, const char *name)
     {
-        Delete();
+        Destroy();
         mID = glCreateProgram();
 
         Attach(vs);
@@ -108,12 +110,16 @@ namespace engine
 
     void Program::Use() const
     {
-        glUseProgram(mID);
+        if(mID != mBoundProgram) {
+            mBoundProgram = mID;
+            glUseProgram(mID);
+        }
     }
 
     void Program::Unbind()
     {
         glUseProgram(0);
+        mBoundProgram = 0;
     }
 
     GLuint Program::GetUniformBlockLocation(const GLchar *name)

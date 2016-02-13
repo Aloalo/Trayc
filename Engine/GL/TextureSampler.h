@@ -19,8 +19,12 @@ namespace engine
         void Parameteri(GLenum pname, GLint param) const;
 
         // Initalisation for diffuse maps
-        // Linear mipmap mag filter, anisotropic min filter
+        // Linear mipmap mag filter, anisotropic min filter, wrap repeat
         void InitForDiffuse();
+
+        // Initalisation for data textures such as g textures
+        // Linear mag filter, Linear min filter, wrap clamp
+        void InitForDataTexture();
 
     private:
         GLuint mID;

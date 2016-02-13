@@ -61,6 +61,8 @@ namespace engine
         int mCtIndices;
 
         VertexAttribs mVertAttribs;
+
+        static GLuint mBoundVAO;
     };
 }
 

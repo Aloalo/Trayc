@@ -38,6 +38,8 @@ namespace engine
             const string path = sn.substr(0, sn.find_last_of("/") + 1);
             ExpandIncludes(path, source);
 
+            //LOG(INFO) << source;
+
             Init2(source.c_str(), name);
         }
         else {

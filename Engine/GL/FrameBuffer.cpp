@@ -7,6 +7,7 @@ using namespace glm;
 namespace engine
 {
     FrameBuffer FrameBuffer::mBackBuffer;
+    GLuint FrameBuffer::mBoundFBO = 0;
 
     static const GLenum colorAttachments[8] = 
     {
@@ -38,7 +39,7 @@ namespace engine
     void FrameBuffer::Destroy()
     {
         for(Texture2D &fba : mAttachments)
-            fba.Delete();
+            fba.Destroy();
 
         glDeleteRenderbuffers(1, &mRBID);
         glDeleteFramebuffers(1, &mID);
@@ -50,9 +51,9 @@ namespace engine
         Texture2D &attachement = mAttachments.back();
         attachement.Init(internalFormat, ivec2(mWidth, mHeight), format, type);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, mID);
+        Bind();
         glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[mAttachments.size() - 1], GL_TEXTURE_2D, attachement.ID(), 0);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        UnBind();
     }
 
     void FrameBuffer::AttachRBO()
@@ -66,18 +67,17 @@ namespace engine
             glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
             // Attach RBO
-            glBindFramebuffer(GL_FRAMEBUFFER, mID);
+            Bind();
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRBID);
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            UnBind();
         }
     }
 
     void FrameBuffer::Compile() const
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, mID);
+        Bind();
         glDrawBuffers(mAttachments.size(), colorAttachments);
-        //glReadBuffer(GL_NONE);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        UnBind();
 
         // Check completeness
         Check();
@@ -105,9 +105,9 @@ namespace engine
 
     void FrameBuffer::Check() const
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, mID);
+        Bind();
         const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        UnBind();
         if(status == GL_FRAMEBUFFER_COMPLETE)
             return;
 
@@ -151,12 +151,16 @@ namespace engine
 
     void FrameBuffer::Bind() const
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, mID);
+        if(mBoundFBO != mID) {
+            mBoundFBO = mID;
+            glBindFramebuffer(GL_FRAMEBUFFER, mID);
+        }
     }
 
     void FrameBuffer::UnBind()
     {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        mBoundFBO = 0;
     }
 
     int FrameBuffer::Width() const
