@@ -8,7 +8,6 @@
 #include <Engine/Geometry/Object3D.h>
 #include <Engine/Geometry/Material.h>
 #include <Engine/Geometry/TriangleMesh.h>
-#include <Engine/Engine/Light.h>
 
 namespace engine
 {
@@ -19,7 +18,6 @@ namespace engine
 
         AABB GetAABB() const;
 
-        std::vector<Light> mLights;
         std::vector<Object3D> mObjects3D;
         std::vector<TriangleMesh> mTriMeshes;
         std::vector<Material> mMaterials;
