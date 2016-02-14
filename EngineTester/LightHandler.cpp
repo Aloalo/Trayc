@@ -1,29 +1,51 @@
 
 #include "LightHandler.h"
-#include <Engine/Engine/Game.h>
+#include <Engine/Geometry/Scene.h>
+#include <Engine/Geometry/GeometryMeshes.h>
+#include <Engine/Geometry/Material.h>
+
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace engine;
 using namespace glm;
 using namespace std;
 
-LightHandler::LightHandler(engine::Game *game) :
+LightHandler::LightHandler(engine::Scene *scene) :
     mDLight(vec3(0.8f), true, vec3(1.0f)),
     mPLight(vec3(0.8f), true, vec3(1.0f, 0.3f, 0.01f), vec3(0.0f, 2.0f, 0.0f))
 {
-    game->mRenderer.AddLight(&mDLight);
-    game->mRenderer.AddLight(&mPLight);
-    game->mUpdateableMenager.AddUpdateable(this);
+    // Init Lights
+    scene->mLights.push_back(&mDLight);
+    scene->mLights.push_back(&mPLight);
 
+    // Init BSpline
     vector<vec3> controlPoints;
     controlPoints.push_back(mPLight.mPosition + vec3(0.0f, 0.0f, 0.0f));
     controlPoints.push_back(mPLight.mPosition + vec3(3.0f, 0.0f, 0.0f));
     controlPoints.push_back(mPLight.mPosition + vec3(0.0f, 3.0f, 0.0f));
-    controlPoints.push_back(mPLight.mPosition + vec3(0.0f, 0.0f, 3.0f));
+    controlPoints.push_back(mPLight.mPosition + vec3(0.0f, 0.0f, 2.0f));
 
     controlPoints.push_back(mPLight.mPosition + vec3(0.0f, 0.0f, 0.0f));
     controlPoints.push_back(mPLight.mPosition + vec3(3.0f, 0.0f, 0.0f));
     controlPoints.push_back(mPLight.mPosition + vec3(0.0f, 3.0f, 0.0f));
     mBSpline.SetControlPoints(controlPoints);
+
+    // Init Light Rendering
+    Material lightMat;
+    lightMat.mGloss = 1.0f;
+    lightMat.mKs = vec3(1.0f);
+    lightMat.mKd = vec3(1.0f);
+    scene->mMaterials.push_back(lightMat);
+    const int lightMatIdx = scene->mMaterials.size() - 1;
+    
+    TriangleMesh lightMesh = GetCubeMeshSolid(true);
+    lightMesh.FlipNormals();
+    scene->mTriMeshes.push_back(lightMesh);
+    const int lightMeshIdx = scene->mTriMeshes.size() - 1;
+
+    scene->mObjects3D.push_back(Object3D(lightMeshIdx, lightMatIdx));
+    mPLightObj = &scene->mObjects3D.back();
+    mPLightObj->mShadowCaster = false;
 }
 
 void LightHandler::Update(float dt)
@@ -38,4 +60,7 @@ void LightHandler::Update(float dt)
 
     const vec3 newPLightPos = mBSpline[accum];
     mPLight.mPosition = newPLightPos;
+
+    //mPLightObj->SetTransform(translate(scale(mat4(1.0f), vec3(0.05f)), newPLightPos));
+    mPLightObj->SetTransform(scale(translate(mat4(1.0f), newPLightPos), vec3(0.05f)));
 }

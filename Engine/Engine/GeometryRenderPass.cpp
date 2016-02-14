@@ -94,6 +94,7 @@ namespace engine
 
         for(const Object3D &obj : mScene->mObjects3D)
         {
+            const int meshIdx = obj.GetMeshIdx();
             const VertexArray &VA = mVertexArrays[obj.GetMeshIdx()];
             const Material &mat = mScene->mMaterials[obj.GetMaterialIdx()];
             const int renderFlags = mat.GetRenderFlags();
@@ -115,7 +116,7 @@ namespace engine
                 mNameToTex.at(texInfo.name).BindToSlot(texInfo.type);
             }
 
-            VA.RenderIndexed(GL_TRIANGLES);
+            VA.Render(mScene->mTriMeshes[meshIdx].GetDrawMode());
         }
     }
 

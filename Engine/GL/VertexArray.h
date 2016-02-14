@@ -37,8 +37,7 @@ namespace engine
         void SetVertices(const GLvoid *data, int idx, int ctVertices = 1) const;
         const BufferObject& VBO() const;
 
-        void Render(GLenum mode, GLint first = 0) const;
-        void RenderIndexed(GLenum mode) const;
+        void Render(GLenum mode) const;
 
         int Size() const;
         int Capacity() const;

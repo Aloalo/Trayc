@@ -8,19 +8,13 @@ using namespace glm;
 namespace engine
 {
     Object3D::Object3D(int meshIdx, int matIdx)
-        : mDynamicGeometry(false), mMeshIdx(meshIdx), mMatIdx(matIdx), mTransform(1.0f)
+        : mDynamicGeometry(false), mShadowCaster(true), mMeshIdx(meshIdx), mMatIdx(matIdx), mMeshAABB(nullptr), mTransform(1.0f)
     {
     }
 
-    void Object3D::SetTransform(const mat4 &transform, const AABB &meshAABB)
+    void Object3D::SetTransform(const mat4 &transform)
     {
         mTransform = transform;
-        CalcAABB(meshAABB);
-    }
-
-    const bool Object3D::HasDynamicGemoetry() const
-    {
-        return mDynamicGeometry;
     }
 
     int Object3D::GetMeshIdx() const
@@ -33,9 +27,18 @@ namespace engine
         return mMatIdx;
     }
 
-    const AABB& Object3D::GetAABB() const
+    AABB Object3D::GetAABB() const
     {
-        return mAABB;
+        auto vertices = mMeshAABB->Vertices();
+
+        const int ctVertices = vertices.size();
+        for(int i = 0; i < ctVertices; ++i)
+            vertices[i] = vec3(mTransform * vec4(vertices[i], 1.0f));
+
+        AABB mRetAABB;
+        mRetAABB |= vertices;
+
+        return mRetAABB;
     }
 
     const mat4& Object3D::GetTransform() const
@@ -43,15 +46,8 @@ namespace engine
         return mTransform;
     }
 
-    void Object3D::CalcAABB(const AABB &meshAABB)
+    void Object3D::SetMeshAABB(const AABB *meshAABB)
     {
-        auto vertices = meshAABB.Vertices();
-
-        const int ctVertices = vertices.size();
-        for(int i = 0; i < ctVertices; ++i)
-            vertices[i] = vec3(mTransform * vec4(vertices[i], 1.0f));
-
-        mAABB = AABB();
-        mAABB |= vertices;
+        mMeshAABB = meshAABB;
     }
 }

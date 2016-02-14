@@ -7,7 +7,7 @@ namespace engine
     GLuint VertexArray::mBoundVAO = 0;
 
     VertexArray::VertexArray(GLenum VBOusage) :
-        mSize(0), mCapacity(0), mVertexSize(0), mVAO(0), mVBO(GL_ARRAY_BUFFER, VBOusage), mIBO(GL_ELEMENT_ARRAY_BUFFER, VBOusage)
+        mSize(0), mCapacity(0), mVertexSize(0), mVAO(0), mVBO(GL_ARRAY_BUFFER, VBOusage), mIBO(GL_ELEMENT_ARRAY_BUFFER, VBOusage), mCtIndices(0)
     {
     }
 
@@ -157,16 +157,15 @@ namespace engine
         UnBind();
     }
 
-    void VertexArray::Render(GLenum mode, GLint first) const
+    void VertexArray::Render(GLenum mode) const
     {
         Bind();
-        glDrawArrays(mode, first, mSize);
-    }
-
-    void VertexArray::RenderIndexed(GLenum mode) const
-    {
-        Bind();
-        glDrawElements(mode, mCtIndices, mIndexType, nullptr);
+        if(mCtIndices) {
+            glDrawElements(mode, mCtIndices, mIndexType, nullptr);
+        }
+        else {
+            glDrawArrays(mode, 0, mSize);
+        }
     }
 
     int VertexArray::Size() const

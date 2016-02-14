@@ -36,7 +36,7 @@ namespace engine
         return mResourcePath + mModelsPath + name;
     }
 
-    static void RecursiveLoadSceneAssimp(const aiScene *aiScene, const aiNode *aiNode, Scene &scene, const mat4 &currTransform = mat4(1.0f))
+    void AssetLoader::RecursiveLoadSceneAssimp(const aiScene *aiScene, const aiNode *aiNode, Scene &scene, const mat4 &currTransform)
     {
         const aiMatrix4x4 m = aiNode->mTransformation;
         const mat4 newTransform = (*(mat4*)&m) * currTransform;
@@ -50,7 +50,8 @@ namespace engine
 
             scene.mObjects3D.push_back(Object3D(meshIdx, matIdx));
             Object3D &obj = scene.mObjects3D.back();
-            obj.SetTransform(newTransform, scene.mTriMeshes[meshIdx].GetAABB());
+            obj.SetTransform(newTransform);
+            obj.SetMeshAABB(&scene.mTriMeshes[meshIdx].GetAABB());
         }
 
         // Do the same for children
@@ -77,7 +78,7 @@ namespace engine
         // Load meshes
         for(int i = 0; i < aiScene->mNumMeshes; ++i)
         {
-            scene.mTriMeshes.push_back(TriangleMesh());
+            scene.mTriMeshes.push_back(TriangleMesh(GL_TRIANGLES));
             TriangleMesh &mesh = scene.mTriMeshes[i];
 
             const aiMesh *aimesh = aiScene->mMeshes[i];

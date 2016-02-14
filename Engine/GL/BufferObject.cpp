@@ -79,5 +79,10 @@ namespace engine
     {
         return mTarget;
     }
+
+    bool BufferObject::Exists() const
+    {
+        return mBO != 0;
+    }
 }
 

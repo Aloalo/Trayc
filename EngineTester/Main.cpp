@@ -60,12 +60,12 @@ int main(int argc, char *argv[])
     game.mInputHandler.AddEventListener(&guiView);
     game.mRenderer.AddRenderable(&guiView);
 
+    // Init scene
     Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("crytek-sponza/"), "sponza.obj", scale(mat4(1.0f), vec3(0.01f)));
-    //Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("cube/"), "cube.obj");
-    game.mRenderer.SetScene(&scene);
-
     // Init Light
-    LightHandler lHandler(&game);
+    LightHandler lHandler(&scene);
+    game.mRenderer.SetScene(&scene);
+    game.mUpdateableMenager.AddUpdateable(&lHandler);
 
     game.GameLoop();
     return 0;

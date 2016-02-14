@@ -35,7 +35,7 @@ Misc:
         -UniformBuffer
         +BSpline
         -Settings
-        -GeometryMeshes
+        +GeometryMeshes
     +Shader include
     
 Post Process Effects:
@@ -57,5 +57,6 @@ Optimizations:
     -Half float for normals/tangents/bitangents
     -Reduce min mipmap level
     -Optimize sponza mesh
+    -Scene binary file cache
     
 Bugs:

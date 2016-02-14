@@ -4,6 +4,8 @@
 #include <Engine/Geometry/Scene.h>
 #include <Engine/Utils/Singleton.h>
 
+struct aiScene;
+struct aiNode;
 
 namespace engine
 {
@@ -17,6 +19,8 @@ namespace engine
         Scene LoadSceneAssimp(const std::string &path, const std::string &name, const glm::mat4 &transform) const;
 
     private:
+        static void RecursiveLoadSceneAssimp(const aiScene *aiScene, const aiNode *aiNode, Scene &scene, const glm::mat4 &currTransform = glm::mat4(1.0f));
+
         friend struct Singleton<AssetLoader>;
         AssetLoader(void);
 

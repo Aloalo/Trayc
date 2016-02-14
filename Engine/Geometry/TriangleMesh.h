@@ -15,7 +15,7 @@ namespace engine
     class TriangleMesh
     {
     public:
-        TriangleMesh(void);
+        TriangleMesh(unsigned int drawMode);
 
         std::vector<glm::vec3> mPositions;
         std::vector<glm::vec2> mUVs;
@@ -23,6 +23,9 @@ namespace engine
         std::vector<glm::vec3> mTangents;
         std::vector<glm::vec3> mBitangents;
         std::vector<unsigned int> mIndices;
+
+        void Clear();
+        void FlipNormals();
 
         std::vector<VertexAttribDef> GetVertexAttribDefs() const;
         GLenum GetIndexType() const;
@@ -35,8 +38,11 @@ namespace engine
 
         const AABB& GetAABB() const;
         void CalcAABB();
+        unsigned int GetDrawMode() const;
 
     private:
+        unsigned int mDrawMode;
+
         friend class Scene;
         AABB mAABB;
     };

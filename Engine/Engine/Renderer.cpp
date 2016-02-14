@@ -10,6 +10,8 @@
 #include <Engine/Core/Defines.h>
 #include <Engine/Core/CameraHandler.h>
 
+#include <Engine/Geometry/Scene.h>
+
 #if PRODUCTION
 #include <Engine/Engine/DebugDraw.h>
 #endif
@@ -46,6 +48,9 @@ namespace engine
     {
         GeometryRenderPass *gPass = static_cast<GeometryRenderPass*>(GetRenderPass("gPass"));
         gPass->InitScene(scene);
+
+        LightRenderPass *lPass = static_cast<LightRenderPass*>(GetRenderPass("lPass"));
+        lPass->SetLights(scene->mLights);
     }
 
     void Renderer::AddRenderable(Renderable *renderable)
@@ -56,16 +61,6 @@ namespace engine
     void Renderer::RemoveRenderable(Renderable *renderable)
     {
         erase(mRenderables, renderable);
-    }
-
-    void Renderer::AddLight(const Light *light)
-    {
-        static_cast<LightRenderPass*>(GetRenderPass("lPass"))->AddLight(light);
-    }
-
-    void Renderer::RemoveLight(const Light *light)
-    {
-        static_cast<LightRenderPass*>(GetRenderPass("lPass"))->RemoveLight(light);
     }
 
     void Renderer::SetScreenSize(int width, int height)
@@ -135,10 +130,6 @@ namespace engine
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Temporary
-        /*const RenderPass *gPass = GetRenderPass("gPass");
-        const Texture2D &tex = gPass->GetDstBuffer().GetAttachment(3);
-        DebugDraw::Get().DrawTexture(tex);*/
-
         const RenderPass *gPass = GetRenderPass("lPass");
         const Texture2D &tex = gPass->GetDstBuffer().GetAttachment(0);
         DebugDraw::Get().DrawTexture(tex);

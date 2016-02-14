@@ -18,8 +18,7 @@ namespace engine
 
         virtual void Render(const std::vector<RenderPass*> &renderPasses, const RenderingContext &rContext) const override;
 
-        void AddLight(const Light *light);
-        void RemoveLight(const Light *light);
+        void SetLights(const std::vector<const Light*> &lights);
 
     private:
         std::vector<const Light*> mLights;

@@ -64,14 +64,9 @@ namespace engine
         mTexSampler.Destroy();
     }
 
-    void LightRenderPass::AddLight(const Light *light)
+    void LightRenderPass::SetLights(const std::vector<const Light*> &lights)
     {
-        mLights.push_back(light);
-    }
-
-    void LightRenderPass::RemoveLight(const Light *light)
-    {
-        erase(mLights, light);
+        mLights = lights;
     }
 
     void LightRenderPass::Render(const vector<RenderPass*> &renderPasses, const RenderingContext &rContext) const

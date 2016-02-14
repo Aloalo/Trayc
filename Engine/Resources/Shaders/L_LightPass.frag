@@ -37,7 +37,7 @@ void main()
     // Calculate lighting
     
     // Ambient
-    vec3 ambient = albedo * 0.05;
+    vec3 ambient = albedo * 0.15;
 
     // Diffuse
     float dNL = max(0.0, dot(normal, lightDir));

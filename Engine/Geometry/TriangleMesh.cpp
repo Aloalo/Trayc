@@ -5,8 +5,26 @@ using namespace std;
 
 namespace engine
 {
-    TriangleMesh::TriangleMesh(void)
+    TriangleMesh::TriangleMesh(unsigned int drawMode)
+        : mDrawMode(drawMode)
     {
+    }
+
+    void TriangleMesh::Clear()
+    {
+        mPositions.clear();
+        mUVs.clear();
+        mNormals.clear();
+        mTangents.clear();
+        mBitangents.clear();
+        mIndices.clear();
+        mAABB = AABB();
+    }
+
+    void TriangleMesh::FlipNormals()
+    {
+        for(vec3 &n : mNormals)
+            n = -n;
     }
 
     vector<VertexAttribDef> TriangleMesh::GetVertexAttribDefs() const
@@ -165,5 +183,10 @@ namespace engine
         for(const vec3 &p : mPositions)
             newAABB |= p;
         mAABB = newAABB;
+    }
+
+    unsigned int TriangleMesh::GetDrawMode() const
+    {
+        return mDrawMode;
     }
 }

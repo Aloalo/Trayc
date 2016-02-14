@@ -7,21 +7,25 @@
 
 namespace engine
 {
-    class Game;
+    class Scene;
+    struct Object3D;
 }
 
 class LightHandler 
     : public engine::Updateable
 {
 public:
-    LightHandler(engine::Game *game);
+    LightHandler(engine::Scene *scene);
 
     virtual void Update(float dt) override;
 
 private:
     engine::DirectionalLight mDLight;
+
     engine::PointLight mPLight;
     engine::CubicBSpline mBSpline;
+    engine::Object3D *mPLightObj;
+
 };
 
 #endif

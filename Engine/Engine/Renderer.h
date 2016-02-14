@@ -29,9 +29,6 @@ namespace engine
         void AddRenderable(Renderable *renderable);
         void RemoveRenderable(Renderable *renderable);
 
-        void AddLight(const Light *light);
-        void RemoveLight(const Light *light);
-
         void SetScreenSize(int width, int height);
 
         const RenderPass* GetRenderPass(const std::string &name) const;

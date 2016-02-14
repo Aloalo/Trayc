@@ -11,24 +11,24 @@ namespace engine
     {
         Object3D(int meshIdx, int matIdx);
 
-        void SetTransform(const glm::mat4 &transform, const AABB &meshAABB);
+        void SetTransform(const glm::mat4 &transform);
 
-        const bool HasDynamicGemoetry() const;
         int GetMeshIdx() const;
         int GetMaterialIdx() const;
-        const AABB& GetAABB() const;
+        AABB GetAABB() const;
         const glm::mat4& GetTransform() const;
 
-    private:
-        friend class Scene;
-        void CalcAABB(const AABB &meshAABB);
-
         bool mDynamicGeometry;
+        bool mShadowCaster;
+
+    private:
+        friend class AssetLoader;
+        void SetMeshAABB(const AABB *meshAABB);
 
         int mMeshIdx;
         int mMatIdx;
 
-        AABB mAABB;
+        const AABB *mMeshAABB;
         glm::mat4 mTransform;
     };
 }

@@ -33,6 +33,9 @@ namespace engine
 
         GLenum Target() const;
 
+        // Has the buffer object been created
+        bool Exists() const;
+
     private:
         GLenum mTarget;
         GLenum mUsage;
