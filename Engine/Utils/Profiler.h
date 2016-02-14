@@ -12,9 +12,9 @@
 
 namespace engine
 {
-	class Profiler
-	{
-	public:
+    class Profiler
+    {
+    public:
         //Name of the profile an the number of frames to average
         void AddProfileTarget(const std::string &targetName, int ctFrames);
 
@@ -29,10 +29,10 @@ namespace engine
 
         void PrintProfile() const;
 
-	private:
+    private:
         std::map<std::string, std::deque<int>> mProfileTargets;
         std::map<std::string, int> mClockStarts;
-	};
+    };
 }
 
 #endif

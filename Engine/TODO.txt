@@ -36,6 +36,7 @@ Misc:
         +BSpline
         -Settings
         +GeometryMeshes
+        -VertexArrayInstanced
     +Shader include
     
 Post Process Effects:

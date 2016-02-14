@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
 
     // Init scene
     Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("crytek-sponza/"), "sponza.obj", scale(mat4(1.0f), vec3(0.01f)));
+    //Scene scene;
     // Init Light
     LightHandler lHandler(&scene);
     game.mRenderer.SetScene(&scene);

@@ -38,7 +38,7 @@ set(Engine_Geometry
     Geometry/Material.cpp
     Geometry/AABB.cpp
     Geometry/Object3D.h
-	Geometry/Object3D.cpp
+    Geometry/Object3D.cpp
     Geometry/Scene.h
     Geometry/Scene.cpp
 )
@@ -76,7 +76,6 @@ set(Engine_Utils
     Utils/Singleton.h
     Utils/Setting.h
     Utils/StlExtensions.hpp
-    Utils/VectorZip.hpp
     Utils/InitialSettings.h
     Utils/Profiler.h
     Utils/Utilities.h
@@ -90,30 +89,30 @@ set(Engine_Utils
 )
 
 set(Engine_Engine
-	Engine/Game.h
-	Engine/Game.cpp
+    Engine/Game.h
+    Engine/Game.cpp
     Engine/GlobalRenderingParams.h
     Engine/GlobalRenderingParams.cpp
-	Engine/RenderingContext.h
-	Engine/RenderingContext.cpp
+    Engine/RenderingContext.h
+    Engine/RenderingContext.cpp
     Engine/Renderable.h
-	Engine/Renderable.cpp
-	Engine/Renderer.h
-	Engine/Renderer.cpp
+    Engine/Renderable.cpp
+    Engine/Renderer.h
+    Engine/Renderer.cpp
     Engine/Light.h
-	Engine/Light.cpp
-	Engine/RenderPass.h
-	Engine/RenderPass.cpp
+    Engine/Light.cpp
+    Engine/RenderPass.h
+    Engine/RenderPass.cpp
     Engine/LightRenderPass.h
-	Engine/LightRenderPass.cpp
+    Engine/LightRenderPass.cpp
     Engine/GeometryRenderPass.h
-	Engine/GeometryRenderPass.cpp
+    Engine/GeometryRenderPass.cpp
     Engine/TextureCombiner.h
-	Engine/TextureCombiner.cpp
+    Engine/TextureCombiner.cpp
     Engine/AssetLoader.h
-	Engine/AssetLoader.cpp
+    Engine/AssetLoader.cpp
     Engine/DebugDraw.h
-	Engine/DebugDraw.cpp
+    Engine/DebugDraw.cpp
 )
 
 set(Engine_GL_SHADERS
@@ -136,7 +135,7 @@ add_library(Engine STATIC
     ${Engine_Geometry}
     ${Engine_Common}
     ${Engine_Utils}
-	${Engine_Engine}
+    ${Engine_Engine}
 )
 
 target_link_libraries(Engine 

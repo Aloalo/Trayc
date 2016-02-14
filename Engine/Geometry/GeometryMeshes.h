@@ -9,14 +9,11 @@
 
 namespace engine
 {
-    // indexed = true, wire = true   -> glDrawElements(GL_LINES, ctIndices, GL_UNSIGNED_BYTE, nullptr)
-    // indexed = true, wire = false  -> glDrawElements(GL_TRIANGLES, ctIndices, GL_UNSIGNED_BYTE, nullptr)
-    // indexed = false, wire = true  -> glDrawArrays(GL_LINES, 0, ctVertices)
-    // indexed = false, wire = false -> glDrawArrays(GL_TRIANGLES, 0, ctVertices)
-
+    // All returned meshes are centered around (0, 0, 0) and have AABB size of (2, 2)
     TriangleMesh GetCubeMeshSolid(bool indexed);
     TriangleMesh GetCubeMeshWire(bool indexed);
-    TriangleMesh GetSphereMesh(bool indexed);
+    // quality in [0, 3]
+    TriangleMesh GetSphereMeshSolid(bool indexed, int quality);
 
 }
 #endif

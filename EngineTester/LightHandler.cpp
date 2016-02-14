@@ -38,7 +38,7 @@ LightHandler::LightHandler(engine::Scene *scene) :
     scene->mMaterials.push_back(lightMat);
     const int lightMatIdx = scene->mMaterials.size() - 1;
     
-    TriangleMesh lightMesh = GetCubeMeshSolid(true);
+    TriangleMesh lightMesh = GetSphereMeshSolid(true, 1);
     lightMesh.FlipNormals();
     scene->mTriMeshes.push_back(lightMesh);
     const int lightMeshIdx = scene->mTriMeshes.size() - 1;
@@ -61,6 +61,5 @@ void LightHandler::Update(float dt)
     const vec3 newPLightPos = mBSpline[accum];
     mPLight.mPosition = newPLightPos;
 
-    //mPLightObj->SetTransform(translate(scale(mat4(1.0f), vec3(0.05f)), newPLightPos));
     mPLightObj->SetTransform(scale(translate(mat4(1.0f), newPLightPos), vec3(0.05f)));
 }
