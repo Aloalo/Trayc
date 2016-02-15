@@ -57,7 +57,7 @@ Optimizations:
     -Frustum culling
     -Half float for normals/tangents/bitangents
     -Reduce min mipmap level
-    -Optimize sponza mesh
-    -Scene binary file cache
+    -Mesh optimizer
+    +Scene binary file cache
     
 Bugs:

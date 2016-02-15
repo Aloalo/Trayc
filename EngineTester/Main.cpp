@@ -61,8 +61,12 @@ int main(int argc, char *argv[])
     game.mRenderer.AddRenderable(&guiView);
 
     // Init scene
-    Scene scene = AssetLoader::Get().LoadSceneAssimp(AssetLoader::Get().ModelPath("crytek-sponza/"), "sponza.obj", scale(mat4(1.0f), vec3(0.01f)));
-    //Scene scene;
+    Scene scene = AssetLoader::Get().LoadScene(AssetLoader::Get().ModelPath("crytek-sponza/"), "sponza.obj");
+    // Scale down
+    const mat4 transform = scale(mat4(1.0f), vec3(0.01f));
+    for(Object3D &obj : scene.mObjects3D)
+        obj.SetTransform(transform* obj.GetTransform());
+
     // Init Light
     LightHandler lHandler(&scene);
     game.mRenderer.SetScene(&scene);

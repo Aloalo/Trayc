@@ -3,13 +3,17 @@
 #include <Engine/Utils/Utilities.h>
 
 #include <easylogging++.h>
+#include <jsonxx.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include <experimental/filesystem>
+
 using namespace std;
 using namespace glm;
+using namespace jsonxx;
 
 namespace engine
 {
@@ -19,6 +23,11 @@ namespace engine
         mShadersPath = "Shaders/";
         mTexturesPath = "Textures/";
         mModelsPath = "Models/";
+
+        mCacheFolderName = "cache/";
+        mMatCacheSuffix = "_materials.json";
+        mMeshCacheSuffix = "_meshes.json";
+        mObjCacheSuffix = "_objects.json";
     }
 
     string AssetLoader::TexturePath(const std::string &name) const
@@ -36,10 +45,224 @@ namespace engine
         return mResourcePath + mModelsPath + name;
     }
 
-    void AssetLoader::RecursiveLoadSceneAssimp(const aiScene *aiScene, const aiNode *aiNode, Scene &scene, const mat4 &currTransform)
+    Scene AssetLoader::LoadScene(const string &path, const string &name) const
+    {
+        const string nameNoExt = name.substr(0, name.find_last_of("."));
+        const string matJsonPath = path + mCacheFolderName + nameNoExt + mMatCacheSuffix;
+        ifstream matFile(matJsonPath);
+
+        // Open from cache if it exists
+        if(matFile.is_open()) {
+            matFile.close();
+            return LoadSceneCached(path, name);
+        }
+        matFile.close();
+        
+        // Else load via assimp and then cache
+        const Scene scene = LoadSceneAssimp(path, name);
+        CacheScene(path, name, scene);
+        return scene;
+    }
+
+    void AssetLoader::CacheScene(const string &path, const string &name, const Scene &scene) const
+    {
+        // Prepare
+        const string nameNoExt = name.substr(0, name.find_last_of("."));
+        const string basePath = path + mCacheFolderName + nameNoExt;
+        experimental::filesystem::create_directory(path + mCacheFolderName);
+
+        // Cache materials
+        Array materials;
+        for(const Material &mat : scene.mMaterials)
+        {
+            Object material;
+
+            Array Kd;
+            Kd << mat.mKd[0] << mat.mKd[1] << mat.mKd[2];
+            material << "Kd" << Kd;
+
+            Array Ks;
+            Ks << mat.mKs[0] << mat.mKs[1] << mat.mKs[2];
+            material << "Ks" << Ks;
+
+            material << "gloss" << mat.mGloss;
+
+            Array matTexMaps;
+            for(const Material::TextureInfo &texInfo : mat.mTextureMaps)
+            {
+                Object texMap;
+                texMap << "type" << texInfo.type;
+                texMap << "name" << texInfo.name;
+                matTexMaps << texMap;
+            }
+
+            material << "textureMaps" << matTexMaps;
+            materials << material;
+        }
+        ofstream(basePath + mMatCacheSuffix, ofstream::out) << materials.json();
+
+        // Cache meshes
+        Array meshes;
+        const int ctMeshes = scene.mTriMeshes.size();
+        for(int i = 0; i < ctMeshes; ++i)
+        {
+            const TriangleMesh &eMesh = scene.mTriMeshes[i];
+            const string meshFileName = basePath + "mesh" + to_string(i) + ".dat";
+            Object jMesh;
+
+            jMesh << "drawMode" << eMesh.GetDrawMode();
+            jMesh << "ctPositions" << eMesh.mPositions.size();
+            jMesh << "ctUVs" << eMesh.mUVs.size();
+            jMesh << "ctNormals" << eMesh.mNormals.size();
+            jMesh << "ctTangents" << eMesh.mTangents.size();
+            jMesh << "ctBitangents" << eMesh.mBitangents.size();
+            jMesh << "ctIndices" << eMesh.mIndices.size();
+            jMesh << "file" << meshFileName;
+
+            std::ofstream meshFile(meshFileName, std::ios::out | std::ofstream::binary);
+            meshFile.write(reinterpret_cast<const char*>(eMesh.mPositions.data()), eMesh.mPositions.size() * sizeof(vec3));
+            meshFile.write(reinterpret_cast<const char*>(eMesh.mUVs.data()), eMesh.mUVs.size() * sizeof(vec2));
+            meshFile.write(reinterpret_cast<const char*>(eMesh.mNormals.data()), eMesh.mNormals.size() * sizeof(vec3));
+            meshFile.write(reinterpret_cast<const char*>(eMesh.mTangents.data()), eMesh.mTangents.size() * sizeof(vec3));
+            meshFile.write(reinterpret_cast<const char*>(eMesh.mBitangents.data()), eMesh.mBitangents.size() * sizeof(vec3));
+            meshFile.write(reinterpret_cast<const char*>(eMesh.mIndices.data()), eMesh.mIndices.size() * sizeof(unsigned int));
+
+            meshes << jMesh;
+        }
+        ofstream(basePath + mMeshCacheSuffix, ofstream::out) << meshes.json();
+
+        // Cache objects
+        Array objects;
+        for(const Object3D &obj : scene.mObjects3D)
+        {
+            Object object3D;
+
+            object3D << "dynamicGeometry" << obj.mDynamicGeometry;
+            object3D << "shadowCaster" << obj.mShadowCaster;
+            object3D << "meshIdx" << obj.GetMeshIdx();
+            object3D << "materialIdx" << obj.GetMaterialIdx();
+
+            const mat4 &t = obj.GetTransform();
+            Array transform;
+            transform << t[0][0] << t[0][1] << t[0][2] << t[0][3] <<
+                t[1][0] << t[1][1] << t[1][2] << t[1][3] <<
+                t[2][0] << t[2][1] << t[2][2] << t[2][3] <<
+                t[3][0] << t[3][1] << t[3][2] << t[3][3];
+
+            object3D << "transform" << transform;
+            objects << object3D;
+        }
+        ofstream(basePath + mObjCacheSuffix, ofstream::out) << objects.json();
+    }
+
+    static inline Array LoadArray(const string &path)
+    {
+        ifstream jsonFile(path);
+        const string jsonStr((istreambuf_iterator<char>(jsonFile)), istreambuf_iterator<char>());
+        Array ret;
+        ret.parse(jsonStr);
+        return ret;
+    }
+
+    Scene AssetLoader::LoadSceneCached(const string &path, const string &name) const
+    {
+        Scene scene;
+
+        // Prepare
+        const string nameNoExt = name.substr(0, name.find_last_of("."));
+        const string basePath = path + mCacheFolderName + nameNoExt;
+
+        // Load materials
+        const Array materials = LoadArray(basePath + mMatCacheSuffix);
+        const int ctMaterials = materials.size();
+        for(int i = 0; i < ctMaterials; ++i)
+        {
+            const Object &jMat = materials.get<Object>(i);
+            scene.mMaterials.push_back(Material());
+            Material &mat = scene.mMaterials.back();
+
+            const Array &Kd = jMat.get<Array>("Kd");
+            mat.mKd = vec3(Kd.get<Number>(0), Kd.get<Number>(1), Kd.get<Number>(2));
+
+            const Array &Ks = jMat.get<Array>("Ks");
+            mat.mKs = vec3(Ks.get<Number>(0), Ks.get<Number>(1), Ks.get<Number>(2));
+            mat.mGloss = jMat.get<Number>("gloss");
+
+            const Array &matTexMaps = jMat.get<Array>("textureMaps");
+            const int ctTexMaps = matTexMaps.size();
+            for(int j = 0; j < ctTexMaps; ++j)
+            {
+                const Object &texMap = matTexMaps.get<Object>(j);
+                mat.mTextureMaps.push_back(Material::TextureInfo(texMap.get<String>("name"), texMap.get<Number>("type")));
+            }
+        }
+
+        // Load meshes
+        const Array meshes = LoadArray(basePath + mMeshCacheSuffix);
+        const int ctMeshes = meshes.size();
+        for(int i = 0; i < ctMeshes; ++i)
+        {
+            const Object &jMesh = meshes.get<Object>(i);
+
+            scene.mTriMeshes.push_back(TriangleMesh(jMesh.get<Number>("drawMode")));
+            TriangleMesh &eMesh = scene.mTriMeshes.back();
+
+            const int ctPositions = jMesh.get<Number>("ctPositions");
+            const int ctUVs = jMesh.get<Number>("ctUVs");
+            const int ctNormals = jMesh.get<Number>("ctNormals");
+            const int ctTangents = jMesh.get<Number>("ctTangents");
+            const int ctBitangents = jMesh.get<Number>("ctBitangents");
+            const int ctIndices = jMesh.get<Number>("ctIndices");
+
+            const string meshFileName = jMesh.get<String>("file");
+
+            std::ifstream meshFile(meshFileName, std::ios::in | std::ofstream::binary);
+            eMesh.mPositions.resize(ctPositions);
+            meshFile.read(reinterpret_cast<char*>(eMesh.mPositions.data()), ctPositions * sizeof(vec3));
+            eMesh.mUVs.resize(ctUVs);
+            meshFile.read(reinterpret_cast<char*>(eMesh.mUVs.data()), ctUVs * sizeof(vec2));
+            eMesh.mNormals.resize(ctNormals);
+            meshFile.read(reinterpret_cast<char*>(eMesh.mNormals.data()), ctNormals * sizeof(vec3));
+            eMesh.mTangents.resize(ctTangents);
+            meshFile.read(reinterpret_cast<char*>(eMesh.mTangents.data()), ctTangents * sizeof(vec3));
+            eMesh.mBitangents.resize(ctBitangents);
+            meshFile.read(reinterpret_cast<char*>(eMesh.mBitangents.data()), ctBitangents * sizeof(vec3));
+            eMesh.mIndices.resize(ctIndices);
+            meshFile.read(reinterpret_cast<char*>(eMesh.mIndices.data()), ctIndices * sizeof(unsigned int));
+
+            eMesh.CalcAABB();
+        }
+
+        // Load objects
+        const Array objects = LoadArray(basePath + mObjCacheSuffix);
+        const int ctObjects = objects.size();
+        for(int i = 0; i < ctObjects; ++i)
+        {
+            const Object &object = objects.get<Object>(i);
+
+            const int meshIdx = object.get<Number>("meshIdx");
+            scene.mObjects3D.push_back(Object3D(meshIdx, object.get<Number>("materialIdx")));
+            Object3D &object3D = scene.mObjects3D.back();
+            object3D.SetMeshAABB(&scene.mTriMeshes[meshIdx].GetAABB());
+
+            object3D.mDynamicGeometry = object.get<Boolean>("dynamicGeometry");
+            object3D.mShadowCaster = object.get<Boolean>("shadowCaster");
+
+            mat4 transform;
+            const Array &t = object.get<Array>("transform");
+            for(int j = 0; j < 4; ++j)
+                for(int k = 0; k < 4; ++k)
+                    transform[j][k] = t.get<Number>(j * 4 + k);
+            object3D.SetTransform(transform);
+        }
+
+        return scene;
+    }
+
+    void AssetLoader::RecursiveLoadSceneAssimp(const aiScene *aiScene, const aiNode *aiNode, Scene &scene) const
     {
         const aiMatrix4x4 m = aiNode->mTransformation;
-        const mat4 newTransform = (*(mat4*)&m) * currTransform;
+        const mat4 transform = (*(mat4*)&m);
 
         // Add all objects in this node to scene
         for(int i = 0; i < aiNode->mNumMeshes; ++i)
@@ -50,17 +273,17 @@ namespace engine
 
             scene.mObjects3D.push_back(Object3D(meshIdx, matIdx));
             Object3D &obj = scene.mObjects3D.back();
-            obj.SetTransform(newTransform);
+            obj.SetTransform(transform);
             obj.SetMeshAABB(&scene.mTriMeshes[meshIdx].GetAABB());
         }
 
         // Do the same for children
         for(int i = 0; i < aiNode->mNumChildren; ++i) {
-            RecursiveLoadSceneAssimp(aiScene, aiNode->mChildren[i], scene, newTransform);
+            RecursiveLoadSceneAssimp(aiScene, aiNode->mChildren[i], scene);
         }
     }
 
-    Scene AssetLoader::LoadSceneAssimp(const string &path, const string &name, const mat4 &transform) const
+    Scene AssetLoader::LoadSceneAssimp(const string &path, const string &name) const
     {
         Scene scene;
 
@@ -172,9 +395,12 @@ namespace engine
                 StringReplace(fullPath, "bump", "nm");
                 material.mTextureMaps.push_back(Material::TextureInfo(fullPath, TextureType::NORMAL_MAP));
             }
+
+            for(Material::TextureInfo &texInfo : material.mTextureMaps)
+                StringReplace(texInfo.name, "\\", "/");
         }
 
-        RecursiveLoadSceneAssimp(aiScene, aiScene->mRootNode, scene, transform);
+        RecursiveLoadSceneAssimp(aiScene, aiScene->mRootNode, scene);
 
         return scene;
     }

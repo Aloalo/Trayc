@@ -1,5 +1,5 @@
 #
-# Try to find GLM include path.
+# Try to find Easyloggingpp include path.
 # Once done this will define
 #
 # ELPP_FOUND

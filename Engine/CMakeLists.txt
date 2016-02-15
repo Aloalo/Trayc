@@ -1,5 +1,11 @@
 project(Engine)
 
+find_package(JsonXX REQUIRED)
+
+include_directories(
+    ${JXX_INCLUDE_DIR} 
+)
+
 set(Engine_HDRS_SRCS
     Engine.h
     Engine.cpp
@@ -115,6 +121,10 @@ set(Engine_Engine
     Engine/DebugDraw.cpp
 )
 
+set(Engine_LIBS
+    ${JXX_SRC_DIR}
+)
+
 set(Engine_GL_SHADERS
     Shaders/NormalShader.vert
     Shaders/NormalShader.geom
@@ -127,6 +137,7 @@ source_group(Geometry FILES ${Engine_Geometry})
 source_group(GL FILES ${Engine_GL})
 source_group(Utils FILES ${Engine_Utils})
 source_group(Engine FILES ${Engine_Engine})
+source_group(Libs FILES ${JXX_SRC_DIR})
 
 add_library(Engine STATIC
     ${Engine_HDRS_SRCS}
@@ -136,6 +147,7 @@ add_library(Engine STATIC
     ${Engine_Common}
     ${Engine_Utils}
     ${Engine_Engine}
+    ${Engine_LIBS}
 )
 
 target_link_libraries(Engine 

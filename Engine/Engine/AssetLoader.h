@@ -16,10 +16,14 @@ namespace engine
         std::string ShaderPath(const std::string &name) const;
         std::string ModelPath(const std::string &name) const;
 
-        Scene LoadSceneAssimp(const std::string &path, const std::string &name, const glm::mat4 &transform) const;
+        Scene LoadScene(const std::string &path, const std::string &name) const;
 
     private:
-        static void RecursiveLoadSceneAssimp(const aiScene *aiScene, const aiNode *aiNode, Scene &scene, const glm::mat4 &currTransform = glm::mat4(1.0f));
+        void CacheScene(const std::string &path, const std::string &name, const Scene &scene) const;
+        Scene LoadSceneCached(const std::string &path, const std::string &name) const;
+
+        Scene LoadSceneAssimp(const std::string &path, const std::string &name) const;
+        void RecursiveLoadSceneAssimp(const aiScene *aiScene, const aiNode *aiNode, Scene &scene) const;
 
         friend struct Singleton<AssetLoader>;
         AssetLoader(void);
@@ -28,6 +32,12 @@ namespace engine
         std::string mShadersPath;
         std::string mTexturesPath;
         std::string mModelsPath;
+
+        // Cache stuff
+        std::string mCacheFolderName;
+        std::string mMatCacheSuffix;
+        std::string mMeshCacheSuffix;
+        std::string mObjCacheSuffix;
     };
 }
 
