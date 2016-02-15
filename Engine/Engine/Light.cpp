@@ -13,7 +13,7 @@ namespace engine
     //---------- Light ----------//
 
     Light::Light(const vec3 &intensity, bool isActive, Type type)
-        : mIntensity(intensity), mIsActive(isActive), mType(type)
+        : mIntensity(intensity), mIsActive(isActive), mType(type), mHasChanged(true)
     {
     }
 
@@ -44,6 +44,17 @@ namespace engine
         prog->SetUniform("light.direction", vec3(V * vec4(mDirection, 0.0f)));
     }
 
+    void DirectionalLight::SetDirection(const vec3 &direction)
+    {
+        mDirection = direction;
+        mHasChanged = true;
+    }
+
+    const vec3& DirectionalLight::GetDirection() const
+    {
+        return mDirection;
+    }
+
     //---------- PointLight ----------//
     PointLight::PointLight(const vec3 &intensity, bool isActive, const vec3 &attenuation, const vec3 &position)
         : Light(intensity, isActive, Type::POINT), mAttenuation(attenuation), mPosition(position)
@@ -55,6 +66,16 @@ namespace engine
         prog->SetUniform("light.intensity", mIntensity);
         prog->SetUniform("light.attenuation", mAttenuation);
         prog->SetUniform("light.position", vec3(V * vec4(mPosition, 1.0f)));
+    }
+
+    void PointLight::SetPosition(const vec3 &position)
+    {
+        mPosition = position;
+    }
+
+    const vec3& PointLight::GetPosition() const
+    {
+        return mPosition;
     }
 
     //---------- SpotLight ----------//

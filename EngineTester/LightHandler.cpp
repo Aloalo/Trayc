@@ -19,15 +19,16 @@ LightHandler::LightHandler(engine::Scene *scene) :
     scene->mLights.push_back(&mPLight);
 
     // Init BSpline
+    const vec3 &lPos = mPLight.GetPosition();
     vector<vec3> controlPoints;
-    controlPoints.push_back(mPLight.mPosition + vec3(0.0f, 0.0f, 0.0f));
-    controlPoints.push_back(mPLight.mPosition + vec3(3.0f, 0.0f, 0.0f));
-    controlPoints.push_back(mPLight.mPosition + vec3(0.0f, 3.0f, 0.0f));
-    controlPoints.push_back(mPLight.mPosition + vec3(0.0f, 0.0f, 2.0f));
+    controlPoints.push_back(lPos + vec3(0.0f, 0.0f, 0.0f));
+    controlPoints.push_back(lPos + vec3(3.0f, 0.0f, 0.0f));
+    controlPoints.push_back(lPos + vec3(0.0f, 3.0f, 0.0f));
+    controlPoints.push_back(lPos + vec3(0.0f, 0.0f, 2.0f));
 
-    controlPoints.push_back(mPLight.mPosition + vec3(0.0f, 0.0f, 0.0f));
-    controlPoints.push_back(mPLight.mPosition + vec3(3.0f, 0.0f, 0.0f));
-    controlPoints.push_back(mPLight.mPosition + vec3(0.0f, 3.0f, 0.0f));
+    controlPoints.push_back(lPos + vec3(0.0f, 0.0f, 0.0f));
+    controlPoints.push_back(lPos + vec3(3.0f, 0.0f, 0.0f));
+    controlPoints.push_back(lPos + vec3(0.0f, 3.0f, 0.0f));
     mBSpline.SetControlPoints(controlPoints);
 
     // Init Light Rendering
@@ -59,7 +60,7 @@ void LightHandler::Update(float dt)
     }
 
     const vec3 newPLightPos = mBSpline[accum];
-    mPLight.mPosition = newPLightPos;
+    mPLight.SetPosition(newPLightPos);
 
     mPLightObj->SetTransform(scale(translate(mat4(1.0f), newPLightPos), vec3(0.05f)));
 }

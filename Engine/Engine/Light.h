@@ -29,9 +29,11 @@ namespace engine
         // Params need to be transformed to view space
         virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const = 0;
 
-
         glm::vec3 mIntensity;
+
         bool mIsActive;
+        // For shadow rendering
+        bool mHasChanged;
 
     private:
         Type mType;
@@ -45,6 +47,10 @@ namespace engine
 
         virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const override;
 
+        void SetDirection(const glm::vec3 &direction);
+        const glm::vec3& GetDirection() const;
+
+    private:
         glm::vec3 mDirection;
     };
 
@@ -59,6 +65,10 @@ namespace engine
 
         virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const override;
 
+        void SetPosition(const glm::vec3 &position);
+        const glm::vec3& GetPosition() const;
+
+    private:
         //Constant, linear, quadratic
         glm::vec3 mAttenuation;
         //This is direction is the light is directional
@@ -79,6 +89,7 @@ namespace engine
 
         virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const override;
 
+    private:
         //Constant, linear, quadratic
         glm::vec3 mAttenuation;
         //This is direction is the light is directional
