@@ -25,7 +25,7 @@ using namespace stdext;
 
 namespace engine
 {
-    Renderer::Renderer(Game *scene)
+    Renderer::Renderer()
         : mCamera(nullptr)
     {
     }
@@ -41,6 +41,7 @@ namespace engine
         TextureCombiner::DestroyVAO();
         mLinearMipMapSampler.Destroy();
         mLinearSampler.Destroy();
+        mViewRayDataUB.Destroy();
 
 #if PRODUCTION
         DebugDraw::Get().Destroy();
@@ -68,6 +69,9 @@ namespace engine
 
     void Renderer::SetScreenSize(int width, int height)
     {
+        const float aspect = float(width) / float(height);
+        mViewRayDataUB.aspectTanHalfFovy(aspect * tanf(radians(mCamera->GetCamera().mFoV) * 0.5f));
+
         for(RenderPass *rPass : mRenderPasses) {
             rPass->ResizeDstBuffer(width, height);
         }
@@ -125,6 +129,13 @@ namespace engine
         mLinearMipMapSampler.BindToSlot(TextureType::NORMAL_MAP);
         mLinearMipMapSampler.BindToSlot(TextureType::SPECULAR_MAP);
         mLinearMipMapSampler.BindToSlot(TextureType::HEIGHT_MAP);
+
+        const Camera &cam = mCamera->GetCamera();
+        mViewRayDataUB.Init(8);
+        const float tanHalfFovy = tanf(radians(cam.mFoV) * 0.5f);
+        const float aspectTanHalfFovy = cam.mAspectRatio * tanHalfFovy;
+        mViewRayDataUB.tanHalfFovy(tanHalfFovy);
+        mViewRayDataUB.aspectTanHalfFovy(aspectTanHalfFovy);
     }
 
     void Renderer::Render() const

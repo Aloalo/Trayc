@@ -28,6 +28,14 @@ namespace engine
             "HEIGHT_MAP"
         };
 
+        const string TEXTURE_UNIFORM_NAMES[CT_MAT_TEXTURE_TYPES] =
+        {
+            "diffuseMap",
+            "normalMap",
+            "specularMap",
+            "heightMap"
+        };
+
         const int width = 1280;
         const int height = 720;
 
@@ -57,9 +65,23 @@ namespace engine
             const int hasNormal = progDefines & (1 << TextureType::NORMAL_MAP);
             const int hasHeight = progDefines & (1 << TextureType::HEIGHT_MAP);
             if(!hasHeight || hasNormal) {
-                mGPrograms[progDefines].Init(AssetLoader::Get().ShaderPath("G_GeometryPass").data(), defines);
+                Program &prog = mGPrograms[progDefines];
+                prog.Init(AssetLoader::Get().ShaderPath("G_GeometryPass").data(), defines);
+
+                prog.Use();
+                // Set sampler uniforms
+                for(int j = 0; j < TextureType::CT_MAT_TEXTURE_TYPES; ++j) {
+                    if((1 << j) & progDefines) {
+
+                        // TODO: remove if() when parallax is done
+                        if(TEXTURE_UNIFORM_NAMES[j] != "heightMap")
+                            prog.SetUniform(TEXTURE_UNIFORM_NAMES[j], j);
+
+                    }
+                }
             }
         }
+        Program::Unbind();
 
         // Bind own textures to appropriate slots
         mDstFB.GetAttachment(GetMRTIdx(TextureType::G_DEPTH_TEXTURE)).BindToSlot(TextureType::G_DEPTH_TEXTURE);
@@ -81,14 +103,6 @@ namespace engine
 
     void GeometryRenderPass::Render(const RenderingContext &rContext) const
     {
-        const string TEXTURE_UNIFORM_NAMES[CT_MAT_TEXTURE_TYPES] =
-        {
-            "diffuseMap",
-            "normalMap",
-            "specularMap",
-            "heightMap"
-        };
-
         for(const Object3D &obj : mScene->mObjects3D)
         {
             const int meshIdx = obj.GetMeshIdx();
@@ -109,7 +123,6 @@ namespace engine
 
             // Textures
             for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
-                prog.SetUniform(TEXTURE_UNIFORM_NAMES[texInfo.type], texInfo.type);
                 mNameToTex.at(texInfo.name).BindToSlot(texInfo.type);
             }
 

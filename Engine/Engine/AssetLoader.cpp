@@ -1,6 +1,7 @@
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Engine/GlobalRenderingParams.h>
 #include <Engine/Utils/Utilities.h>
+#include <Engine/Utils/StlExtensions.hpp>
 
 #include <easylogging++.h>
 #include <jsonxx.h>
@@ -12,6 +13,7 @@
 #include <experimental/filesystem>
 
 using namespace std;
+using namespace stdext;
 using namespace glm;
 using namespace jsonxx;
 
@@ -58,8 +60,9 @@ namespace engine
         }
         matFile.close();
         
-        // Else load via assimp and then cache
-        const Scene scene = LoadSceneAssimp(path, name);
+        // Else load via assimp and then optimize and cache
+        Scene scene = LoadSceneAssimp(path, name);
+        OptimizeScene(scene);
         CacheScene(path, name, scene);
         return scene;
     }
@@ -403,5 +406,18 @@ namespace engine
         RecursiveLoadSceneAssimp(aiScene, aiScene->mRootNode, scene);
 
         return scene;
+    }
+
+    void AssetLoader::OptimizeScene(Scene &scene) const
+    {
+        sort(scene.mObjects3D, [&](const Object3D &obj1, const Object3D &obj2) -> bool
+        {
+            const int matIdx1 = obj1.GetMaterialIdx();
+            const int matIdx2 = obj2.GetMaterialIdx();
+            return matIdx1 < matIdx2 || (matIdx1 == matIdx2 && obj1.GetMeshIdx() < obj2.GetMeshIdx());
+        });
+
+        for(auto o : scene.mObjects3D)
+            LOG(INFO) << o.GetMaterialIdx();
     }
 }

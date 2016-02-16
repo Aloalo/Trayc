@@ -20,6 +20,7 @@ Deferred renderer:
     -Skybox
     -Shadows
     -Reflections
+    -Parallax mapping
     -Screen space reflections
     
 Misc:
@@ -32,7 +33,7 @@ Misc:
     +Logging system
     +Fork to new repo (won't do)
     -Old code refactor:
-        -UniformBuffer
+        +UniformBuffer
         +BSpline
         -Settings
         +GeometryMeshes
@@ -53,7 +54,7 @@ Physics:
     -Particle physics
 
 Optimizations:
-    -Reduce number of G pass state changes (sort by material/geometry)
+    +Reduce number of GL state changes (sort by material/geometry)
     -Frustum culling
     -Half float for normals/tangents/bitangents
     -Reduce min mipmap level

@@ -1,18 +1,13 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
-
 
 #ifndef EN_UNIFORM_BUFFER_H
 #define EN_UNIFORM_BUFFER_H
 
-#include <GL/glew.h>
 #include <glm/glm.hpp>
 
 #define UNIFORM_MACRO(tp,name,offset) \
-    void (name(const tp &x)) \
+    void (name(const tp &x) const) \
         { \
-        setSubData(offset, x); \
+        SetSubData(offset, x); \
         }
 
 namespace engine
@@ -20,31 +15,37 @@ namespace engine
     class UniformBuffer
     {
     public:
-        UniformBuffer(void);
+        UniformBuffer(unsigned int usage);
         virtual ~UniformBuffer(void);
 
         void Init();
-        void Init(int size, void *data = nullptr);
+        void Init(int size, const void *data = nullptr);
 
         void Destroy();
 
-        void bind();
-        void setData(int size, void *data, int usage = GL_DYNAMIC_DRAW);
-        void setSubData(int offset, int size, void *data);
+        void Bind() const;
+        void SetData(int size, const void *data) const;
+        void SetSubData(int offset, int size, const void *data) const;
         template<class T>
-        void setSubData(int offset, const T &data);
-        void bindToPoint(int point) const;
+        void SetSubData(int offset, const T &data) const;
+
+        unsigned int GetBlockBinding() const;
 
     protected:
-        unsigned int id;
+        unsigned int mID;
+
     private:
-        static UniformBuffer *boundBuffer;
+        unsigned int mUsage;
+        unsigned int mBlockBinding;
+
+        static unsigned int mBoundBuffer;
+        static unsigned int mCurrentBlockBinding;
     };
 
     template<class T>
-    void UniformBuffer::setSubData(int offset, const T &data)
+    void UniformBuffer::SetSubData(int offset, const T &data) const
     {
-        setSubData(offset, sizeof data, (void*)&data);
+        SetSubData(offset, sizeof data, (void*)&data);
     }
 }
 

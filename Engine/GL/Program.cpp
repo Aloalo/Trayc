@@ -122,12 +122,12 @@ namespace engine
         mBoundProgram = 0;
     }
 
-    GLuint Program::GetUniformBlockLocation(const GLchar *name)
+    GLuint Program::GetUniformBlockLocation(const GLchar *name) const
     {
         return glGetUniformBlockIndex(mID, name);
     }
 
-    void Program::SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint)
+    void Program::SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint) const
     {
         glUniformBlockBinding(mID, GetUniformBlockLocation(name), bindingPoint);
     }

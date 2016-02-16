@@ -92,6 +92,8 @@ set(Engine_Utils
     Utils/Utilities.cpp
     Utils/ErrorCheck.cpp
     Utils/BSpline.cpp
+    Utils/ViewRayDataUB.h
+    Utils/ViewRayDataUB.cpp
 )
 
 set(Engine_Engine

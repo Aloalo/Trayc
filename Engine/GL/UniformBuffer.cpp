@@ -1,10 +1,16 @@
 #include <Engine/GL/UniformBuffer.h>
+#include <GL/glew.h>
 
 namespace engine
 {
-    UniformBuffer::UniformBuffer(void) :
-        id(0)
+    unsigned int UniformBuffer::mBoundBuffer = 0;
+    unsigned int UniformBuffer::mCurrentBlockBinding = 0;
+
+    UniformBuffer::UniformBuffer(unsigned int usage) :
+        mID(0), mUsage(usage)
     {
+        mBlockBinding = mCurrentBlockBinding;
+        ++mCurrentBlockBinding;
     }
 
     UniformBuffer::~UniformBuffer(void)
@@ -13,46 +19,53 @@ namespace engine
 
     void UniformBuffer::Init()
     {
-        glGenBuffers(1, &id);
+        if(mID == 0)
+        {
+            glGenBuffers(1, &mID);
+            glBindBufferBase(GL_UNIFORM_BUFFER, mBlockBinding, mID);
+        }
     }
 
-    void UniformBuffer::Init(int size, void *data)
+    void UniformBuffer::Init(int size, const void *data)
     {
-        glGenBuffers(1, &id);
-        setData(size, data);
+        if(mID == 0)
+        {
+            glGenBuffers(1, &mID);
+            SetData(size, data);
+            glBindBufferBase(GL_UNIFORM_BUFFER, mBlockBinding, mID);
+        }
+
     }
 
     void UniformBuffer::Destroy()
     {
-        glDeleteBuffers(1, &id);
-        id = 0;
+        glDeleteBuffers(1, &mID);
+        mID = 0;
     }
 
-    void UniformBuffer::bind()
+    void UniformBuffer::Bind() const
     {
-        if(boundBuffer != this)
+        if(mBoundBuffer = mID)
         {
-            boundBuffer = this;
-            glBindBuffer(GL_UNIFORM_BUFFER, id);
+            mBoundBuffer = mID;
+            glBindBuffer(GL_UNIFORM_BUFFER, mID);
         }
     }
 
-    void UniformBuffer::setData(int size, void *data, int usage)
+    void UniformBuffer::SetData(int size, const void *data) const
     {
-        bind();
-        glBufferData(GL_UNIFORM_BUFFER, size, data, usage);
+        Bind();
+        glBufferData(GL_UNIFORM_BUFFER, size, data, mUsage);
     }
 
-    void UniformBuffer::setSubData(int offset, int size, void *data)
+    void UniformBuffer::SetSubData(int offset, int size, const void *data) const
     {
-        bind();
+        Bind();
         glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
     }
 
-    void UniformBuffer::bindToPoint(int point) const
+    unsigned int UniformBuffer::GetBlockBinding() const
     {
-        glBindBufferBase(GL_UNIFORM_BUFFER, point, id);
+        return mBlockBinding;
     }
-
-    UniformBuffer *UniformBuffer::boundBuffer = nullptr;
 }

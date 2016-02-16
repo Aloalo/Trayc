@@ -8,6 +8,7 @@
 #include <Engine/Engine/Renderable.h>
 #include <Engine/Engine/RenderPass.h>
 #include <Engine/GL/TextureSampler.h>
+#include <Engine/Utils/ViewRayDataUB.h>
 
 namespace engine
 {
@@ -21,7 +22,7 @@ namespace engine
     class Renderer
     {
     public:
-        Renderer(Game *scene);
+        Renderer();
         ~Renderer(void);
 
         void SetScene(const Scene *scene);
@@ -48,6 +49,7 @@ namespace engine
 
         TextureSampler mLinearMipMapSampler;
         TextureSampler mLinearSampler;
+        ViewRayDataUB mViewRayDataUB;
     };
 }
 

@@ -10,7 +10,7 @@ using namespace std;
 namespace engine
 {
     Game::Game(float timeStep)
-        : mUpdateableMenager(timeStep), mRenderer(this), mFrameCap(100), mCtFramesPassed(0), mCameraHandler(nullptr)
+        : mUpdateableMenager(timeStep), mFrameCap(100), mCtFramesPassed(0), mCameraHandler(nullptr)
     {
     }
 

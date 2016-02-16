@@ -6,8 +6,13 @@ out vec2 UV;
 
 #ifndef AMBIENT_LIGHT
     out vec3 viewRay;
-    uniform float tanHalfFovy; // tan(fovy / 2)
-    uniform float aspectTanHalfFovy; // aspectRatio * tan(fovy / 2)
+    
+layout(std140) uniform ViewRayData
+{
+    float tanHalfFovy; // tan(fovy / 2)
+    float aspectTanHalfFovy; // aspectRatio * tan(fovy / 2)
+};
+
 #endif
 
 void main()

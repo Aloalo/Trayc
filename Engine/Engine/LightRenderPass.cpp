@@ -47,6 +47,7 @@ namespace engine
                 prog.SetUniform("gDepth", TextureType::G_DEPTH_TEXTURE);
                 prog.SetUniform("gNormal", TextureType::G_NORMAL_TEXTURE);
                 prog.SetUniform("gSpecGloss", TextureType::G_SPEC_GLOSS_TEXTURE);
+                prog.SetUniformBlockBinding("ViewRayData", 0);
             }
             prog.SetUniform("gAlbedo", TextureType::G_ALBEDO_TEXTURE);
             Program::Unbind();
@@ -84,11 +85,6 @@ namespace engine
 
             prog.Use();
             light->ApplyToProgram(&prog, rContext.mV);
-            if(light->GetType() != Light::AMBIENT) {
-                prog.SetUniform("tanHalfFovy", tanHalfFovy);
-                prog.SetUniform("aspectTanHalfFovy", aspectTanHalfFovy);
-            }
-
             combiner.Draw();
         }
 

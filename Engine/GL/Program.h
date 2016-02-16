@@ -28,8 +28,8 @@ namespace engine
         void Use() const;
         static void Unbind();
 
-        GLuint GetUniformBlockLocation(const GLchar *name);
-        void SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint);
+        GLuint GetUniformBlockLocation(const GLchar *name) const;
+        void SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint) const;
 
         GLint GetUniformi(const GLchar *name) const;
 
