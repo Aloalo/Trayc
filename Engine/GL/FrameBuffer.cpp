@@ -178,6 +178,11 @@ namespace engine
         return mAttachments[idx];
     }
 
+    bool FrameBuffer::Exists() const
+    {
+        return mID != 0;
+    }
+
     const FrameBuffer& FrameBuffer::BackBuffer()
     {
         return mBackBuffer;

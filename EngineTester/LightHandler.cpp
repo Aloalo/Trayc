@@ -11,12 +11,16 @@ using namespace glm;
 using namespace std;
 
 LightHandler::LightHandler(engine::Scene *scene) :
+    mALight(vec3(0.15f), true),
     mDLight(vec3(0.8f), true, vec3(1.0f)),
-    mPLight(vec3(0.8f), true, vec3(1.0f, 0.3f, 0.01f), vec3(0.0f, 2.0f, 0.0f))
+    mPLight(vec3(0.8f), true, vec3(1.0f, 0.3f, 0.01f), vec3(0.0f, 2.0f, 0.0f)),
+    mSLight(vec3(0.8f), true, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 5.5f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 15.0f, 200.0f)
 {
     // Init Lights
+    scene->mLights.push_back(&mALight);
     scene->mLights.push_back(&mDLight);
     scene->mLights.push_back(&mPLight);
+    scene->mLights.push_back(&mSLight);
 
     // Init BSpline
     const vec3 &lPos = mPLight.GetPosition();
@@ -51,16 +55,19 @@ LightHandler::LightHandler(engine::Scene *scene) :
 
 void LightHandler::Update(float dt)
 {
-    static float accum = 0.0f;
-    accum += dt;
+    static float accumBSplineDT = 0.0f;
+    accumBSplineDT += dt;
 
     const float maxDT = float(mBSpline.NumControlPoints() - 3);
-    if(accum >= maxDT) {
-        accum -= maxDT;
+    if(accumBSplineDT >= maxDT) {
+        accumBSplineDT -= maxDT;
     }
-
-    const vec3 newPLightPos = mBSpline[accum];
+    const vec3 newPLightPos = mBSpline[accumBSplineDT];
     mPLight.SetPosition(newPLightPos);
-
     mPLightObj->SetTransform(scale(translate(mat4(1.0f), newPLightPos), vec3(0.05f)));
+
+    static float accumSLight = 0.0f;
+    accumSLight += dt;
+
+    mSLight.SetDirection(vec3(cosf(accumSLight), 0.0f, sinf(accumSLight)));
 }

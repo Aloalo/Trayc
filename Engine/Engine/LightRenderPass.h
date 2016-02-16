@@ -16,7 +16,7 @@ namespace engine
         virtual void Init() override;
         virtual void Destroy() override;
 
-        virtual void Render(const std::vector<RenderPass*> &renderPasses, const RenderingContext &rContext) const override;
+        virtual void Render(const RenderingContext &rContext) const override;
 
         void SetLights(const std::vector<const Light*> &lights);
 

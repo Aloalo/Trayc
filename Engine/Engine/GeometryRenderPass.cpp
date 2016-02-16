@@ -61,12 +61,11 @@ namespace engine
             }
         }
 
-        // Init Texture Sampling
-        mTexSampler.InitForDiffuse();
-        mTexSampler.BindToSlot(TextureType::DIFFUSE_MAP);
-        mTexSampler.BindToSlot(TextureType::NORMAL_MAP);
-        mTexSampler.BindToSlot(TextureType::SPECULAR_MAP);
-        mTexSampler.BindToSlot(TextureType::HEIGHT_MAP);
+        // Bind own textures to appropriate slots
+        mDstFB.GetAttachment(GetMRTIdx(TextureType::G_DEPTH_TEXTURE)).BindToSlot(TextureType::G_DEPTH_TEXTURE);
+        mDstFB.GetAttachment(GetMRTIdx(TextureType::G_NORMAL_TEXTURE)).BindToSlot(TextureType::G_NORMAL_TEXTURE);
+        mDstFB.GetAttachment(GetMRTIdx(TextureType::G_SPEC_GLOSS_TEXTURE)).BindToSlot(TextureType::G_SPEC_GLOSS_TEXTURE);
+        mDstFB.GetAttachment(GetMRTIdx(TextureType::G_ALBEDO_TEXTURE)).BindToSlot(TextureType::G_ALBEDO_TEXTURE);
     }
 
     void GeometryRenderPass::Destroy()
@@ -78,11 +77,9 @@ namespace engine
 
         for(auto &pst : mNameToTex)
             pst.second.Destroy();
-
-        mTexSampler.Destroy();
     }
 
-    void GeometryRenderPass::Render(const vector<RenderPass*> &renderPasses, const RenderingContext &rContext) const
+    void GeometryRenderPass::Render(const RenderingContext &rContext) const
     {
         const string TEXTURE_UNIFORM_NAMES[CT_MAT_TEXTURE_TYPES] =
         {

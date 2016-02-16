@@ -11,7 +11,6 @@ using namespace std;
 namespace engine
 {
     //---------- Light ----------//
-
     Light::Light(const vec3 &intensity, bool isActive, Type type)
         : mIntensity(intensity), mIsActive(isActive), mType(type), mHasChanged(true)
     {
@@ -31,8 +30,20 @@ namespace engine
         return mType;
     }
 
-    //---------- DirectionalLight ----------//
 
+    //---------- AmbientLight ----------//
+    AmbientLight::AmbientLight(const vec3 &intensity, bool isActive)
+        : Light(intensity, isActive, Type::AMBIENT)
+    {
+    }
+
+    void AmbientLight::ApplyToProgram(const Program *prog, const mat4 &V) const
+    {
+        prog->SetUniform("light.intensity", mIntensity);
+    }
+
+
+    //---------- DirectionalLight ----------//
     DirectionalLight::DirectionalLight(const vec3 &intensity, bool isActive, const glm::vec3 &direction)
         : Light(intensity, isActive, Type::DIRECTIONAL), mDirection(normalize(direction))
     {
@@ -55,6 +66,7 @@ namespace engine
         return mDirection;
     }
 
+
     //---------- PointLight ----------//
     PointLight::PointLight(const vec3 &intensity, bool isActive, const vec3 &attenuation, const vec3 &position)
         : Light(intensity, isActive, Type::POINT), mAttenuation(attenuation), mPosition(position)
@@ -71,12 +83,14 @@ namespace engine
     void PointLight::SetPosition(const vec3 &position)
     {
         mPosition = position;
+        mHasChanged = true;
     }
 
     const vec3& PointLight::GetPosition() const
     {
         return mPosition;
     }
+
 
     //---------- SpotLight ----------//
     SpotLight::SpotLight(const vec3 &intensity, bool isActive, const vec3 &attenuation, const vec3 &position, const vec3 &spotDir, float spotCutoff, float spotExp)
@@ -90,8 +104,29 @@ namespace engine
         prog->SetUniform("light.attenuation", mAttenuation);
         prog->SetUniform("light.position", vec3(V * vec4(mPosition, 1.0f)));
         prog->SetUniform("light.spotDir", vec3(V * vec4(mSpotDirection, 0.0f)));
-        prog->SetUniform("light.cosSpotCutoff", cos(radians(mSpotCutoff)));
+        prog->SetUniform("light.cosSpotCutoff", cosf(radians(mSpotCutoff)));
         prog->SetUniform("light.spotExp", mSpotExponent);
     }
 
+    void SpotLight::SetPosition(const vec3 &position)
+    {
+        mPosition = position;
+        mHasChanged = true;
+    }
+
+    const vec3& SpotLight::GetPosition() const
+    {
+        return mPosition;
+    }
+
+    void SpotLight::SetDirection(const vec3 &direction)
+    {
+        mSpotDirection = direction;
+        mHasChanged = true;
+    }
+
+    const vec3& SpotLight::GetDirection() const
+    {
+        return mSpotDirection;
+    }
 }

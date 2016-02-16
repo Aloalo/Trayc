@@ -4,6 +4,7 @@
 #include <Engine/Engine/Renderer.h>
 #include <Engine/Engine/GeometryRenderPass.h>
 #include <Engine/Engine/LightRenderPass.h>
+#include <Engine/Engine/BackBufferRenderPass.h>
 
 #include <Engine/Utils/StlExtensions.hpp>
 
@@ -38,6 +39,8 @@ namespace engine
         }
 
         TextureCombiner::DestroyVAO();
+        mLinearMipMapSampler.Destroy();
+        mLinearSampler.Destroy();
 
 #if PRODUCTION
         DebugDraw::Get().Destroy();
@@ -104,9 +107,24 @@ namespace engine
         // Init render passes
         mRenderPasses.push_back(new GeometryRenderPass());
         mRenderPasses.push_back(new LightRenderPass());
+        mRenderPasses.push_back(new BackBufferRenderPass());
 
         for(RenderPass *rPass : mRenderPasses)
             rPass->Init();
+
+        // Init Texture Samplers
+        mLinearSampler.InitForDataTexture();
+        mLinearSampler.BindToSlot(TextureType::G_DEPTH_TEXTURE);
+        mLinearSampler.BindToSlot(TextureType::G_NORMAL_TEXTURE);
+        mLinearSampler.BindToSlot(TextureType::G_ALBEDO_TEXTURE);
+        mLinearSampler.BindToSlot(TextureType::G_SPEC_GLOSS_TEXTURE);
+        mLinearSampler.BindToSlot(TextureType::LIGHT_ACCUM_TEXTURE);
+
+        mLinearMipMapSampler.InitForDiffuse();
+        mLinearMipMapSampler.BindToSlot(TextureType::DIFFUSE_MAP);
+        mLinearMipMapSampler.BindToSlot(TextureType::NORMAL_MAP);
+        mLinearMipMapSampler.BindToSlot(TextureType::SPECULAR_MAP);
+        mLinearMipMapSampler.BindToSlot(TextureType::HEIGHT_MAP);
     }
 
     void Renderer::Render() const
@@ -122,17 +140,10 @@ namespace engine
         for(const RenderPass *rPass : mRenderPasses)
         {
             rPass->BeginRender();
-            rPass->Render(mRenderPasses, rContext);
+            rPass->Render(rContext);
         }
 
         // -------------------------- Custom forward render -------------------------- //
-        FrameBuffer::UnBind();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Temporary
-        const RenderPass *gPass = GetRenderPass("lPass");
-        const Texture2D &tex = gPass->GetDstBuffer().GetAttachment(0);
-        DebugDraw::Get().DrawTexture(tex);
 
         for(Renderable *renderable : mRenderables) {
             if(renderable->mIsActive) {

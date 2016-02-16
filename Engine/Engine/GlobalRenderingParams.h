@@ -17,10 +17,13 @@ namespace engine
         CT_MAT_TEXTURE_TYPES = 4,
 
         // Geometry pass textures
-        G_DEPTH_TEXTURE = 5,
-        G_NORMAL_TEXTURE = 6,
-        G_SPEC_GLOSS_TEXTURE = 7,
-        G_ALBEDO_TEXTURE = 8,
+        G_DEPTH_TEXTURE = 4,
+        G_NORMAL_TEXTURE = 5,
+        G_SPEC_GLOSS_TEXTURE = 6,
+        G_ALBEDO_TEXTURE = 7,
+
+        // Light pass texture
+        LIGHT_ACCUM_TEXTURE = 8,
 
         DEBUG_SLOT = 31,
 

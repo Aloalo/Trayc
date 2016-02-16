@@ -109,6 +109,8 @@ set(Engine_Engine
     Engine/Light.cpp
     Engine/RenderPass.h
     Engine/RenderPass.cpp
+    Engine/BackBufferRenderPass.h
+    Engine/BackBufferRenderPass.cpp
     Engine/LightRenderPass.h
     Engine/LightRenderPass.cpp
     Engine/GeometryRenderPass.h

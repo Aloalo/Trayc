@@ -7,6 +7,7 @@
 
 #include <Engine/Engine/Renderable.h>
 #include <Engine/Engine/RenderPass.h>
+#include <Engine/GL/TextureSampler.h>
 
 namespace engine
 {
@@ -44,6 +45,9 @@ namespace engine
 
         std::vector<Renderable*> mRenderables;
         std::vector<RenderPass*> mRenderPasses;
+
+        TextureSampler mLinearMipMapSampler;
+        TextureSampler mLinearSampler;
     };
 }
 

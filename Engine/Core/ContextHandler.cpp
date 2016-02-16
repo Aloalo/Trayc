@@ -71,7 +71,7 @@ namespace engine
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, verionMajor));
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, versionMinor));
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, profile));
-        SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32));
+        SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16));
 
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1));
 

@@ -1,13 +1,19 @@
 #version 330 core
 
 in vec2 UV;
-in vec3 viewRay;
+
+#ifndef AMBIENT_LIGHT
+    in vec3 viewRay;
+#endif
 
 layout(location = 0) out vec4 fragColor;
 
-uniform sampler2D gDepth;
-uniform sampler2D gNormal;
-uniform sampler2D gSpecGloss;
+#ifndef AMBIENT_LIGHT
+    uniform sampler2D gDepth;
+    uniform sampler2D gNormal;
+    uniform sampler2D gSpecGloss;
+#endif
+
 uniform sampler2D gAlbedo;
 
 #ifdef DIRECTIONAL_LIGHT
@@ -22,8 +28,13 @@ uniform sampler2D gAlbedo;
     #include "SpotLight.glsl"
 #endif
 
+#ifdef AMBIENT_LIGHT
+    #include "AmbientLight.glsl"
+#endif
+
 void main()
 {             
+#ifndef AMBIENT_LIGHT
     // Retrieve data from G-buffer
     vec3 fragPos = texture(gDepth, UV).r * viewRay;
     vec3 normal = texture(gNormal, UV).rgb;
@@ -35,10 +46,6 @@ void main()
     vec3 lightIntensity = atten * light.intensity;
     
     // Calculate lighting
-    
-    // Ambient
-    vec3 ambient = albedo * 0.15;
-
     // Diffuse
     float dNL = max(0.0, dot(normal, lightDir));
     vec3 diffuse = dNL * albedo * lightIntensity;
@@ -54,5 +61,9 @@ void main()
         specular = lightIntensity * specularGloss.rgb * pow(dER, specularGloss.a * 255.0);
     }
     
-    fragColor = vec4(ambient + diffuse + specular, 1.0);
+    fragColor = vec4(diffuse + specular, 1.0);
+#else
+    // Ambient light
+    fragColor = vec4(texture(gAlbedo, UV).rgb * light.intensity, 1.0);
+#endif
 }

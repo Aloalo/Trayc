@@ -34,6 +34,8 @@ namespace engine
 
         const Texture2D& GetAttachment(int idx) const;
 
+        bool Exists() const;
+
         static const FrameBuffer& BackBuffer();
 
     private:

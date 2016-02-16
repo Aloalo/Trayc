@@ -33,7 +33,9 @@ namespace engine
 
     void RenderPass::ResizeDstBuffer(int width, int height)
     {
-        mDstFB.Resize(width, height);
+        if(mDstFB.Exists()) {
+            mDstFB.Resize(width, height);
+        }
         mDstFB.Bind();
         glViewport(0, 0, width, height);
         FrameBuffer::UnBind();

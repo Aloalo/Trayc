@@ -20,12 +20,14 @@ public:
     virtual void Update(float dt) override;
 
 private:
+    engine::AmbientLight mALight;
     engine::DirectionalLight mDLight;
 
     engine::PointLight mPLight;
     engine::CubicBSpline mBSpline;
     engine::Object3D *mPLightObj;
 
+    engine::SpotLight mSLight;
 };
 
 #endif

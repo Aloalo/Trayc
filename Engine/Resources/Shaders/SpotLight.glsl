@@ -4,23 +4,23 @@ struct Light
     vec3 intensity;
     vec3 attenuation;
     vec3 position;
-    vec3 spotDirection;
+    vec3 spotDir;
     float cosSpotCutoff;
-    float spotExponent;
+    float spotExp;
 };
 uniform Light light;
 
 
-/*float clampedCosine = max(0.0, dot(-lightDirection, light0.spotDirection));
-	  if (clampedCosine < cos(radians(light0.spotCutoff))) // outside of spotlight cone?
-	    {
-	      attenuation = 0.0;
-	    }
-	  else
-	    {
-	      attenuation = attenuation * pow(clampedCosine, light0.spotExponent);   
-	    }
-	}
+/*
+float clampedCosine = max(0.0, dot(-lightDirection, light0.spotDir));
+if (clampedCosine < cos(radians(light0.spotCutoff))) // outside of spotlight cone?
+{
+    attenuation = 0.0;
+}
+else
+{
+    attenuation = attenuation * pow(clampedCosine, light0.spotExp);   
+}
 */
 vec3 GetLightDir(in vec3 fragPos)
 {
@@ -33,7 +33,8 @@ float GetLightAttenuation(in vec3 fragPos)
     float atten = light.attenuation.x + 
                 distance * light.attenuation.y + 
                 distance * distance * light.attenuation.z;
-    float dLS = max(0.0, dot(-GetLightDir(fragPos), light.spotDirection));
+    atten = 1.0 / atten;
+    float dLS = max(0.0, dot(-GetLightDir(fragPos), light.spotDir));
     
-    return step(dLS, light.cosSpotCutoff) * atten * pow(dLS, light.spotExponent);
+    return step(light.cosSpotCutoff, dLS) * atten * pow(dLS, light.spotExp);
 }

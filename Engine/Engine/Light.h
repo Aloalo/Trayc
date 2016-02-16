@@ -17,6 +17,7 @@ namespace engine
             DIRECTIONAL = 0,
             POINT = 1,
             SPOT = 2,
+            AMBIENT = 3,
 
             CT_LIGHT_TYPES
         };
@@ -37,6 +38,14 @@ namespace engine
 
     private:
         Type mType;
+    };
+
+    //---------- AmbientLight ----------//
+    struct AmbientLight : public Light
+    {
+        AmbientLight(const glm::vec3 &intensity, bool isActive);
+
+        virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const override;
     };
 
 
@@ -88,6 +97,12 @@ namespace engine
             float spotExp);
 
         virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const override;
+
+        void SetPosition(const glm::vec3 &position);
+        const glm::vec3& GetPosition() const;
+
+        void SetDirection(const glm::vec3 &direction);
+        const glm::vec3& GetDirection() const;
 
     private:
         //Constant, linear, quadratic

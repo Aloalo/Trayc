@@ -20,7 +20,8 @@ namespace engine
         {
             "DIRECTIONAL_LIGHT",
             "POINT_LIGHT",
-            "SPOT_LIGHT"
+            "SPOT_LIGHT",
+            "AMBIENT_LIGHT"
         };
 
         const int width = 1280;
@@ -42,18 +43,17 @@ namespace engine
 
             const Program &prog = combiner.Prog();
             prog.Use();
-            prog.SetUniform("gDepth", TextureType::G_DEPTH_TEXTURE);
-            prog.SetUniform("gNormal", TextureType::G_NORMAL_TEXTURE);
-            prog.SetUniform("gSpecGloss", TextureType::G_SPEC_GLOSS_TEXTURE);
+            if(i != Light::AMBIENT) {
+                prog.SetUniform("gDepth", TextureType::G_DEPTH_TEXTURE);
+                prog.SetUniform("gNormal", TextureType::G_NORMAL_TEXTURE);
+                prog.SetUniform("gSpecGloss", TextureType::G_SPEC_GLOSS_TEXTURE);
+            }
             prog.SetUniform("gAlbedo", TextureType::G_ALBEDO_TEXTURE);
             Program::Unbind();
         }
 
-        mTexSampler.InitForDataTexture();
-        mTexSampler.BindToSlot(TextureType::G_DEPTH_TEXTURE);
-        mTexSampler.BindToSlot(TextureType::G_NORMAL_TEXTURE);
-        mTexSampler.BindToSlot(TextureType::G_ALBEDO_TEXTURE);
-        mTexSampler.BindToSlot(TextureType::G_SPEC_GLOSS_TEXTURE);
+        // Bind own textures to appropriate slots
+        mDstFB.GetAttachment(0).BindToSlot(TextureType::LIGHT_ACCUM_TEXTURE);
     }
 
     void LightRenderPass::Destroy()
@@ -61,7 +61,6 @@ namespace engine
         mDstFB.Destroy();
         for(TextureCombiner &combiner : mLightCombiners)
             combiner.Destroy();
-        mTexSampler.Destroy();
     }
 
     void LightRenderPass::SetLights(const std::vector<const Light*> &lights)
@@ -69,20 +68,13 @@ namespace engine
         mLights = lights;
     }
 
-    void LightRenderPass::Render(const vector<RenderPass*> &renderPasses, const RenderingContext &rContext) const
+    void LightRenderPass::Render(const RenderingContext &rContext) const
     {
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
 
         const float tanHalfFovy = 1.0f / rContext.mP[1][1];
         const float aspectTanHalfFovy = 1.0f / rContext.mP[0][0];
-
-        const FrameBuffer &gBuffer = GetRenderPass(renderPasses, "gPass")->GetDstBuffer();
-
-        gBuffer.GetAttachment(GetMRTIdx(TextureType::G_DEPTH_TEXTURE)).BindToSlot(TextureType::G_DEPTH_TEXTURE);
-        gBuffer.GetAttachment(GetMRTIdx(TextureType::G_NORMAL_TEXTURE)).BindToSlot(TextureType::G_NORMAL_TEXTURE);
-        gBuffer.GetAttachment(GetMRTIdx(TextureType::G_SPEC_GLOSS_TEXTURE)).BindToSlot(TextureType::G_SPEC_GLOSS_TEXTURE);
-        gBuffer.GetAttachment(GetMRTIdx(TextureType::G_ALBEDO_TEXTURE)).BindToSlot(TextureType::G_ALBEDO_TEXTURE);
 
         for(const Light *light : mLights)
         {
@@ -92,8 +84,10 @@ namespace engine
 
             prog.Use();
             light->ApplyToProgram(&prog, rContext.mV);
-            prog.SetUniform("tanHalfFovy", tanHalfFovy);
-            prog.SetUniform("aspectTanHalfFovy", aspectTanHalfFovy);
+            if(light->GetType() != Light::AMBIENT) {
+                prog.SetUniform("tanHalfFovy", tanHalfFovy);
+                prog.SetUniform("aspectTanHalfFovy", aspectTanHalfFovy);
+            }
 
             combiner.Draw();
         }
