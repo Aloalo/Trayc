@@ -10,7 +10,11 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <experimental/filesystem>
+#endif
 
 using namespace std;
 using namespace stdext;
@@ -72,7 +76,13 @@ namespace engine
         // Prepare
         const string nameNoExt = name.substr(0, name.find_last_of("."));
         const string basePath = path + mCacheFolderName + nameNoExt;
+
+        #ifdef _WIN32
+        CreateDirectory((path + mCacheFolderName).c_str(), nullptr);
+        #else
         experimental::filesystem::create_directory(path + mCacheFolderName);
+        #endif
+
 
         // Cache materials
         Array materials;
@@ -416,8 +426,5 @@ namespace engine
             const int matIdx2 = obj2.GetMaterialIdx();
             return matIdx1 < matIdx2 || (matIdx1 == matIdx2 && obj1.GetMeshIdx() < obj2.GetMeshIdx());
         });
-
-        for(auto o : scene.mObjects3D)
-            LOG(INFO) << o.GetMaterialIdx();
     }
 }
