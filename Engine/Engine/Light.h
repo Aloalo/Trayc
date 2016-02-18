@@ -14,10 +14,10 @@ namespace engine
     {
         enum Type
         {
-            DIRECTIONAL = 0,
-            POINT = 1,
-            SPOT = 2,
-            AMBIENT = 3,
+            AMBIENT = 0,
+            DIRECTIONAL = 1,
+            POINT = 2,
+            SPOT = 3,
 
             CT_LIGHT_TYPES
         };

@@ -18,10 +18,10 @@ namespace engine
     {
         const string LIGHT_PROG_DEFINES[Light::Type::CT_LIGHT_TYPES] =
         {
+            "AMBIENT_LIGHT",
             "DIRECTIONAL_LIGHT",
             "POINT_LIGHT",
-            "SPOT_LIGHT",
-            "AMBIENT_LIGHT"
+            "SPOT_LIGHT"
         };
 
         const int width = 1280;
@@ -73,9 +73,6 @@ namespace engine
     {
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
-
-        const float tanHalfFovy = 1.0f / rContext.mP[1][1];
-        const float aspectTanHalfFovy = 1.0f / rContext.mP[0][0];
 
         for(const Light *light : mLights)
         {

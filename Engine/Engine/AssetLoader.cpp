@@ -233,15 +233,20 @@ namespace engine
             eMesh.mPositions.resize(ctPositions);
             meshFile.read(reinterpret_cast<char*>(eMesh.mPositions.data()), ctPositions * sizeof(vec3));
             eMesh.mUVs.resize(ctUVs);
-            meshFile.read(reinterpret_cast<char*>(eMesh.mUVs.data()), ctUVs * sizeof(vec2));
+            if(ctUVs)
+                meshFile.read(reinterpret_cast<char*>(eMesh.mUVs.data()), ctUVs * sizeof(vec2));
             eMesh.mNormals.resize(ctNormals);
-            meshFile.read(reinterpret_cast<char*>(eMesh.mNormals.data()), ctNormals * sizeof(vec3));
+            if(ctNormals)
+                meshFile.read(reinterpret_cast<char*>(eMesh.mNormals.data()), ctNormals * sizeof(vec3));
             eMesh.mTangents.resize(ctTangents);
-            meshFile.read(reinterpret_cast<char*>(eMesh.mTangents.data()), ctTangents * sizeof(vec3));
+            if(ctTangents)
+                meshFile.read(reinterpret_cast<char*>(eMesh.mTangents.data()), ctTangents * sizeof(vec3));
             eMesh.mBitangents.resize(ctBitangents);
-            meshFile.read(reinterpret_cast<char*>(eMesh.mBitangents.data()), ctBitangents * sizeof(vec3));
+            if(ctBitangents)
+                meshFile.read(reinterpret_cast<char*>(eMesh.mBitangents.data()), ctBitangents * sizeof(vec3));
             eMesh.mIndices.resize(ctIndices);
-            meshFile.read(reinterpret_cast<char*>(eMesh.mIndices.data()), ctIndices * sizeof(unsigned int));
+            if(ctIndices)
+                meshFile.read(reinterpret_cast<char*>(eMesh.mIndices.data()), ctIndices * sizeof(unsigned int));
 
             eMesh.CalcAABB();
         }
