@@ -9,6 +9,7 @@ using namespace glm;
 GUIView::GUIView(engine::Game *game)
     : mGame(game), mVA(GL_STATIC_DRAW)
 {
+    // Init half screen shading
     static const vec2 quad[4] =
     {
         vec2(1.0f, 1.0f),

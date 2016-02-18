@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     LightHandler lHandler(&scene);
     game.mRenderer.SetScene(&scene);
     game.mUpdateableMenager.AddUpdateable(&lHandler);
-
+    
     game.GameLoop();
     return 0;
 }

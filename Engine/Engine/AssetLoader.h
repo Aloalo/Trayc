@@ -15,6 +15,7 @@ namespace engine
         std::string TexturePath(const std::string &name) const;
         std::string ShaderPath(const std::string &name) const;
         std::string ModelPath(const std::string &name) const;
+        std::string GUIPath(const std::string &name) const;
 
         Scene LoadScene(const std::string &path, const std::string &name) const;
 
@@ -36,6 +37,7 @@ namespace engine
         std::string mShadersPath;
         std::string mTexturesPath;
         std::string mModelsPath;
+        std::string mGUIPath;
 
         // Cache stuff
         std::string mCacheFolderName;

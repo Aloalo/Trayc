@@ -29,6 +29,7 @@ namespace engine
         mShadersPath = "Shaders/";
         mTexturesPath = "Textures/";
         mModelsPath = "Models/";
+        mGUIPath = "GUI/";
 
         mCacheFolderName = "cache/";
         mMatCacheSuffix = "_materials.json";
@@ -49,6 +50,11 @@ namespace engine
     std::string AssetLoader::ModelPath(const std::string &name) const
     {
         return mResourcePath + mModelsPath + name;
+    }
+
+    std::string AssetLoader::GUIPath(const std::string & name) const
+    {
+        return mResourcePath + mGUIPath + name;
     }
 
     Scene AssetLoader::LoadScene(const string &path, const string &name) const

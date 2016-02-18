@@ -24,6 +24,5 @@ private:
     engine::Game *mGame;
     engine::VertexArray mVA;
     engine::Program mProgram;
-    
 };
 #endif
