@@ -7,6 +7,7 @@
 #include <Engine/Engine/BackBufferRenderPass.h>
 
 #include <Engine/Utils/StlExtensions.hpp>
+#include <Engine/Utils/Setting.h>
 
 #include <Engine/Core/Defines.h>
 #include <Engine/Core/CameraHandler.h>
@@ -75,7 +76,7 @@ namespace engine
         for(RenderPass *rPass : mRenderPasses) {
             rPass->ResizeDstBuffer(width, height);
         }
-
+        FrameBuffer::UnBind();
         glViewport(0, 0, width, height);
     }
 

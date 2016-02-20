@@ -43,6 +43,7 @@ namespace engine
 
         GLuint mID;
         GLuint mRBID;
+        GLenum mRBDepth;
 
         int mWidth;
         int mHeight;

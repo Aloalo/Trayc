@@ -117,7 +117,6 @@ namespace engine
             7, 3, 2, 7, 2, 6,
             7, 4, 5, 7, 6, 4
         };
-        const int ctVertices = size(positionsCube);
 
         TriangleMesh ret(GL_TRIANGLES);
 

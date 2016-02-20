@@ -33,9 +33,6 @@ namespace engine
         mDstFB.Compile();
 
         // Init light programs
-        const string vsPath = AssetLoader::Get().ShaderPath("L_LightPass");
-        const vector<string> defines;
-
         for(int i = 0; i < Light::Type::CT_LIGHT_TYPES; ++i)
         {
             TextureCombiner &combiner = mLightCombiners[i];

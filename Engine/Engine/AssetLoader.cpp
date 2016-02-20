@@ -4,7 +4,7 @@
 #include <Engine/Utils/StlExtensions.hpp>
 
 #include <easylogging++.h>
-#include <jsonxx.h>
+#include <jsonxx/jsonxx.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -37,24 +37,29 @@ namespace engine
         mObjCacheSuffix = "_objects.json";
     }
 
-    string AssetLoader::TexturePath(const std::string &name) const
+    string AssetLoader::TexturePath(const string &name) const
     {
         return mResourcePath + mTexturesPath + name;
     }
 
-    string AssetLoader::ShaderPath(const std::string &name) const
+    string AssetLoader::ShaderPath(const string &name) const
     {
         return mResourcePath + mShadersPath + name;
     }
 
-    std::string AssetLoader::ModelPath(const std::string &name) const
+    string AssetLoader::ModelPath(const string &name) const
     {
         return mResourcePath + mModelsPath + name;
     }
 
-    std::string AssetLoader::GUIPath(const std::string & name) const
+    string AssetLoader::GUIPath(const string &name) const
     {
         return mResourcePath + mGUIPath + name;
+    }
+
+    string AssetLoader::ResourcePath(const string &name) const
+    {
+        return mResourcePath + name;
     }
 
     Scene AssetLoader::LoadScene(const string &path, const string &name) const
@@ -205,14 +210,14 @@ namespace engine
 
             const Array &Ks = jMat.get<Array>("Ks");
             mat.mKs = vec3(Ks.get<Number>(0), Ks.get<Number>(1), Ks.get<Number>(2));
-            mat.mGloss = jMat.get<Number>("gloss");
+            mat.mGloss = float(jMat.get<Number>("gloss"));
 
             const Array &matTexMaps = jMat.get<Array>("textureMaps");
             const int ctTexMaps = matTexMaps.size();
             for(int j = 0; j < ctTexMaps; ++j)
             {
                 const Object &texMap = matTexMaps.get<Object>(j);
-                mat.mTextureMaps.push_back(Material::TextureInfo(texMap.get<String>("name"), texMap.get<Number>("type")));
+                mat.mTextureMaps.push_back(Material::TextureInfo(texMap.get<String>("name"), int(texMap.get<Number>("type"))));
             }
         }
 
@@ -223,15 +228,15 @@ namespace engine
         {
             const Object &jMesh = meshes.get<Object>(i);
 
-            scene.mTriMeshes.push_back(TriangleMesh(jMesh.get<Number>("drawMode")));
+            scene.mTriMeshes.push_back(TriangleMesh((unsigned int)jMesh.get<Number>("drawMode")));
             TriangleMesh &eMesh = scene.mTriMeshes.back();
 
-            const int ctPositions = jMesh.get<Number>("ctPositions");
-            const int ctUVs = jMesh.get<Number>("ctUVs");
-            const int ctNormals = jMesh.get<Number>("ctNormals");
-            const int ctTangents = jMesh.get<Number>("ctTangents");
-            const int ctBitangents = jMesh.get<Number>("ctBitangents");
-            const int ctIndices = jMesh.get<Number>("ctIndices");
+            const int ctPositions = (int)jMesh.get<Number>("ctPositions");
+            const int ctUVs = (int)jMesh.get<Number>("ctUVs");
+            const int ctNormals = (int)jMesh.get<Number>("ctNormals");
+            const int ctTangents = (int)jMesh.get<Number>("ctTangents");
+            const int ctBitangents = (int)jMesh.get<Number>("ctBitangents");
+            const int ctIndices = (int)jMesh.get<Number>("ctIndices");
 
             const string meshFileName = jMesh.get<String>("file");
 
@@ -264,8 +269,8 @@ namespace engine
         {
             const Object &object = objects.get<Object>(i);
 
-            const int meshIdx = object.get<Number>("meshIdx");
-            scene.mObjects3D.push_back(Object3D(meshIdx, object.get<Number>("materialIdx")));
+            const int meshIdx = (int)object.get<Number>("meshIdx");
+            scene.mObjects3D.push_back(Object3D(meshIdx, (int)object.get<Number>("materialIdx")));
             Object3D &object3D = scene.mObjects3D.back();
             object3D.SetMeshAABB(&scene.mTriMeshes[meshIdx].GetAABB());
 
@@ -276,7 +281,7 @@ namespace engine
             const Array &t = object.get<Array>("transform");
             for(int j = 0; j < 4; ++j)
                 for(int k = 0; k < 4; ++k)
-                    transform[j][k] = t.get<Number>(j * 4 + k);
+                    transform[j][k] = float(t.get<Number>(j * 4 + k));
             object3D.SetTransform(transform);
         }
 
@@ -289,7 +294,7 @@ namespace engine
         const mat4 transform = (*(mat4*)&m);
 
         // Add all objects in this node to scene
-        for(int i = 0; i < aiNode->mNumMeshes; ++i)
+        for(unsigned int i = 0; i < aiNode->mNumMeshes; ++i)
         {
             const int meshIdx = aiNode->mMeshes[i];
             const aiMesh *mesh = aiScene->mMeshes[aiNode->mMeshes[i]];
@@ -302,7 +307,7 @@ namespace engine
         }
 
         // Do the same for children
-        for(int i = 0; i < aiNode->mNumChildren; ++i) {
+        for(unsigned int i = 0; i < aiNode->mNumChildren; ++i) {
             RecursiveLoadSceneAssimp(aiScene, aiNode->mChildren[i], scene);
         }
     }
@@ -323,7 +328,7 @@ namespace engine
         LOG(INFO) << "Loaded file: " + fullPath;
         
         // Load meshes
-        for(int i = 0; i < aiScene->mNumMeshes; ++i)
+        for(unsigned int i = 0; i < aiScene->mNumMeshes; ++i)
         {
             scene.mTriMeshes.push_back(TriangleMesh(GL_TRIANGLES));
             TriangleMesh &mesh = scene.mTriMeshes[i];
@@ -332,7 +337,7 @@ namespace engine
             const aiMaterial *aimaterial = aiScene->mMaterials[aimesh->mMaterialIndex];
 
             mesh.mIndices.reserve(aimesh->mNumFaces * 3);
-            for(int j = 0; j < aimesh->mNumFaces; ++j)
+            for(unsigned int j = 0; j < aimesh->mNumFaces; ++j)
                 mesh.mIndices.insert(mesh.mIndices.end(), aimesh->mFaces[j].mIndices, aimesh->mFaces[j].mIndices+3);
 
             const bool hasNormalMap = aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0 || aimaterial->GetTextureCount(aiTextureType_HEIGHT) > 0;
@@ -346,7 +351,7 @@ namespace engine
                 mesh.mUVs.reserve(aimesh->mNumVertices);
             }
 
-            for(int j = 0; j < aimesh->mNumVertices; ++j)
+            for(unsigned int j = 0; j < aimesh->mNumVertices; ++j)
             {
                 mesh.mPositions.push_back(*(vec3*)(&aimesh->mVertices[j]));
                 mesh.mNormals.push_back(*(vec3*)(&aimesh->mNormals[j]));
@@ -364,7 +369,7 @@ namespace engine
         }
 
         // Load materials
-        for(int i = 0; i < aiScene->mNumMaterials; ++i)
+        for(unsigned int i = 0; i < aiScene->mNumMaterials; ++i)
         {
             scene.mMaterials.push_back(Material());
             Material &material = scene.mMaterials[i];

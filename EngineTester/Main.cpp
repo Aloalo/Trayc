@@ -7,6 +7,7 @@
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Engine/Light.h>
 #include <Engine/Core/Defines.h>
+#include <Engine/Utils/Setting.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -38,10 +39,10 @@ int main(int argc, char *argv[])
 {
     InitLogging(argc, argv);
 
-    const ivec2 SSize(1280, 720);
+    const ivec2 SSize(Setting<int>("screenWidth"), Setting<int>("screenHeight"));
     const float timeStep = 1.0f / 60.0f;
     //Init Camera handler
-    DefaultCameraHandler camHandler(ConstructCameraHandler(SSize, 60.0f, 50.0f));
+    DefaultCameraHandler camHandler(ConstructCameraHandler(SSize, Setting<float>("FOV"), 50.0f));
 
     //Init Game
     Game game(timeStep);

@@ -17,6 +17,8 @@ Deferred renderer:
     -Transparancy
         -Renderbuffer
         -BlitFramebuffer
+    -MSAA
+    -PBR
     -Skybox
     -Shadows
     -Reflections
@@ -24,25 +26,27 @@ Deferred renderer:
     -Screen space reflections
     
 Misc:
-    +Custom Scene file format (won't do)
-        +Project for assimp -> own format conversion
-        +.dds texture loading
+    +Custom Scene file format
+    +Assimp -> own format conversion
+    -.dds texture loading
     -Editor
     +Kill unneeded code (classes, files)
     +DEBUG/PRODUCTION/DEPLOY flags
     +Logging system
     +Fork to new repo (won't do)
+    -GUI
     -Old code refactor:
         +UniformBuffer
         +BSpline
-        -Settings
+        +Settings
         +GeometryMeshes
         -VertexArrayInstanced
     +Shader include
     
 Post Process Effects:
     -FXAA
-    -SSAA
+    -DNAA
+    +SSAA (won't do, MSAA frambuffer is supported)
     -SSAO
     -DOF
     -Camera motion blur
@@ -60,6 +64,7 @@ Optimizations:
     -Reduce min mipmap level
     -Mesh optimizer
     +Scene binary file cache
+    -Global light (ambient + directional)
     -Optimize shaders
     
 Bugs:

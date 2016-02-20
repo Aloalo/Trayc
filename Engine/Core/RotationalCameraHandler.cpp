@@ -64,10 +64,8 @@ namespace engine
 
     void RotationalCameraHandler::WindowEvent(const SDL_WindowEvent &e)
     {
-        if(e.event == SDL_WINDOWEVENT_RESIZED)
-        {
+        if(e.event == SDL_WINDOWEVENT_RESIZED) {
             mCamera.mAspectRatio = static_cast<float>(e.data1) / static_cast<float>(e.data2);
-            glViewport(0, 0, e.data1, e.data2);
         }
     }
 

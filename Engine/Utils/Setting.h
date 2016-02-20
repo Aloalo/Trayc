@@ -1,6 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
 
 #ifndef EN_SETTING_H
 #define EN_SETTING_H
@@ -17,7 +14,7 @@ namespace engine
         Setting(const std::string &name) :
             mName(name)
         {
-            mValue = InitialSettings::Get().GetSettingValue<T>(mName);
+            mValue = InitialSettings::Get().GetSetting<T>(mName);
         }
 
         operator T&()

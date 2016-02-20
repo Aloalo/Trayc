@@ -22,7 +22,7 @@ namespace engine
     };
 
     FrameBuffer::FrameBuffer(void)
-        : mID(0), mRBID(0), mWidth(0), mHeight(0)
+        : mID(0), mRBID(0), mRBDepth(GL_DEPTH_COMPONENT32), mWidth(0), mHeight(0)
     {
     }
 
@@ -63,7 +63,7 @@ namespace engine
             // Init RBO
             glGenRenderbuffers(1, &mRBID);
             glBindRenderbuffer(GL_RENDERBUFFER, mRBID);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, mWidth, mHeight);
+            glRenderbufferStorage(GL_RENDERBUFFER, mRBDepth, mWidth, mHeight);
             glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
             // Attach RBO
@@ -98,7 +98,7 @@ namespace engine
         {
             // Resize render buffer
             glBindRenderbuffer(GL_RENDERBUFFER, mRBID);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+            glRenderbufferStorage(GL_RENDERBUFFER, mRBDepth, width, height);
             glBindRenderbuffer(GL_RENDERBUFFER, 0);
         }
     }

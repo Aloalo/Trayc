@@ -9,24 +9,36 @@
 #include <string>
 #include <map>
 #include <Engine/Utils/Singleton.h>
+#include <jsonxx/jsonxx.h>
 
 namespace engine
 {
-    //Only used when starting the game
+    // Only used when starting the game
     struct InitialSettings : public Singleton<InitialSettings>
     {
         template<class T>
-        T GetSettingValue(const std::string &variableName)
+        const T& GetSetting(const std::string &name) const
         {
-            return *(T*)&mValues[variableName];
+            return mSettings.get<T>(name);
+        }
+
+        template<>
+        const int& GetSetting(const std::string &name) const
+        {
+            return (int)mSettings.get<jsonxx::Number>(name);
+        }
+
+        template<>
+        const float& GetSetting(const std::string &name) const
+        {
+            return (float)mSettings.get<jsonxx::Number>(name);
         }
 
     private:
         friend engine::Singleton<InitialSettings>;
-
         InitialSettings(void);
 
-        std::map<std::string, void*> mValues;
+        jsonxx::Object mSettings;
         std::map<std::string, unsigned int> mFormat;
     };
 }

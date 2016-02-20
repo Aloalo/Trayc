@@ -54,6 +54,7 @@ namespace engine
         mInputHandler.AddEventListener(this);
 
         mRenderer.InitRendering(mCameraHandler);
+        mRenderer.SetScreenSize(screenWidth, screenHeight);
 
         mProfiler.AddProfileTarget("rendering", mFrameCap);
         mProfiler.AddProfileTarget("events", mFrameCap);

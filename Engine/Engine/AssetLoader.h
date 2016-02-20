@@ -16,6 +16,8 @@ namespace engine
         std::string ShaderPath(const std::string &name) const;
         std::string ModelPath(const std::string &name) const;
         std::string GUIPath(const std::string &name) const;
+        // From root resources folder
+        std::string ResourcePath(const std::string &name) const;
 
         Scene LoadScene(const std::string &path, const std::string &name) const;
 

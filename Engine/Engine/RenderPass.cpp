@@ -35,10 +35,10 @@ namespace engine
     {
         if(mDstFB.Exists()) {
             mDstFB.Resize(width, height);
+            mDstFB.Bind();
+            glViewport(0, 0, width, height);
+            FrameBuffer::UnBind();
         }
-        mDstFB.Bind();
-        glViewport(0, 0, width, height);
-        FrameBuffer::UnBind();
     }
 
     const RenderPass *RenderPass::GetRenderPass(const vector<RenderPass*>& renderPasses, const string &name)
