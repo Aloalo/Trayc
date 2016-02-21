@@ -16,10 +16,11 @@ namespace engine
         {
             AMBIENT = 0,
             DIRECTIONAL = 1,
-            POINT = 2,
-            SPOT = 3,
+            GLOBAL_LIGHT = 2,
+            POINT = 3,
+            SPOT = 4,
 
-            CT_LIGHT_TYPES
+            CT_LIGHT_TYPES = 5
         };
 
         Light(const glm::vec3 &intensity, bool isActive, Type type);
@@ -60,6 +61,21 @@ namespace engine
         const glm::vec3& GetDirection() const;
 
     private:
+        glm::vec3 mDirection;
+    };
+
+    //---------- GlobalLight ----------// AMBIENT + DIRECTIONAL
+    struct GlobalLight : public Light
+    {
+        GlobalLight(const glm::vec3 &ambientIntensity, const glm::vec3 &directionalIntensity, bool isActive, const glm::vec3 &direction);
+
+        virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const override;
+
+        void SetDirection(const glm::vec3 &direction);
+        const glm::vec3& GetDirection() const;
+
+    private:
+        glm::vec3 mDirectionalIntensity;
         glm::vec3 mDirection;
     };
 

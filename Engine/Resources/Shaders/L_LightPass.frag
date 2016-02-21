@@ -20,6 +20,10 @@ uniform sampler2D gAlbedo;
     #include "DirectionalLight.glsl"
 #endif
 
+#ifdef GLOBAL_LIGHT
+    #include "GlobalLight.glsl"
+#endif
+
 #ifdef POINT_LIGHT
     #include "PointLight.glsl"
 #endif
@@ -61,7 +65,12 @@ void main()
         specular = lightIntensity * specularGloss.rgb * pow(dER, specularGloss.a * 255.0);
     }
     
-    fragColor = vec4(diffuse + specular, 1.0);
+    #ifdef GLOBAL_LIGHT
+        vec3 ambient = light.aIntensity * albedo;
+        fragColor = vec4(ambient + diffuse + specular, 1.0);
+    #else
+        fragColor = vec4(diffuse + specular, 1.0);
+    #endif
 #else
     // Ambient light
     fragColor = vec4(texture(gAlbedo, UV).rgb * light.intensity, 1.0);

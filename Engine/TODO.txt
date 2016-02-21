@@ -63,7 +63,7 @@ Optimizations:
     -Reduce min mipmap level
     -Mesh optimizer
     +Scene binary file cache
-    -Global light (ambient + directional)
+    +Global light (ambient + directional)
     -Optimize shaders
     
 Bugs:

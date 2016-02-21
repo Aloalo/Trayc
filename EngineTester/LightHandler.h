@@ -20,8 +20,7 @@ public:
     virtual void Update(float dt) override;
 
 private:
-    engine::AmbientLight mALight;
-    engine::DirectionalLight mDLight;
+    engine::GlobalLight mGLight;
 
     engine::PointLight mPLight;
     engine::CubicBSpline mBSpline;

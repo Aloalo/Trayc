@@ -66,6 +66,30 @@ namespace engine
         return mDirection;
     }
 
+    //---------- GlobalLight ----------//
+    GlobalLight::GlobalLight(const vec3 &ambientIntensity, const vec3 &directionalIntensity, bool isActive, const vec3 &direction)
+        : Light(ambientIntensity, isActive, Type::GLOBAL_LIGHT), mDirectionalIntensity(directionalIntensity), mDirection(normalize(direction))
+    {
+    }
+
+    void GlobalLight::ApplyToProgram(const Program *prog, const mat4 &V) const
+    {
+        prog->SetUniform("light.aIntensity", mIntensity);
+        prog->SetUniform("light.intensity", mDirectionalIntensity);
+        prog->SetUniform("light.direction", vec3(V * vec4(mDirection, 0.0f)));
+    }
+
+    void GlobalLight::SetDirection(const vec3 &direction)
+    {
+        mHasChanged = true;
+        mDirection = direction;
+    }
+
+    const vec3& GlobalLight::GetDirection() const
+    {
+        return mDirection;
+    }
+
 
     //---------- PointLight ----------//
     PointLight::PointLight(const vec3 &intensity, bool isActive, const vec3 &attenuation, const vec3 &position)

@@ -20,6 +20,7 @@ namespace engine
         {
             "AMBIENT_LIGHT",
             "DIRECTIONAL_LIGHT",
+            "GLOBAL_LIGHT",
             "POINT_LIGHT",
             "SPOT_LIGHT"
         };
