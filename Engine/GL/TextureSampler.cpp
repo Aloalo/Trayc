@@ -1,5 +1,6 @@
 
 #include <Engine/GL/TextureSampler.h>
+#include <Engine/Utils/Setting.h>
 
 
 namespace engine
@@ -44,7 +45,7 @@ namespace engine
         glSamplerParameteri(mID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glSamplerParameteri(mID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glSamplerParameteri(mID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glSamplerParameterf(mID, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+        glSamplerParameterf(mID, GL_TEXTURE_MAX_ANISOTROPY_EXT, Setting<float>("anisotropicFiltering"));
     }
 
     void TextureSampler::InitForDataTexture()

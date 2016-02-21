@@ -3,4 +3,6 @@
   "screenWidth": 1280,
   "screenHeight": 720,
   "resolutionScale": 2,
+  "anisotropicFiltering": 16,
+  "maxMipmapLevelMod": 3,
 }

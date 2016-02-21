@@ -60,7 +60,7 @@ Optimizations:
     +Reduce number of GL state changes (sort by material/geometry)
     -Frustum culling
     -Half float for normals/tangents/bitangents
-    -Reduce min mipmap level
+    +Reduce max mipmap level
     -Mesh optimizer
     +Scene binary file cache
     +Global light (ambient + directional)
