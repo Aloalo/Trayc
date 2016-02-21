@@ -11,7 +11,7 @@ using namespace glm;
 using namespace std;
 
 LightHandler::LightHandler(engine::Scene *scene) :
-    mALight(vec3(0.20f), true),
+    mALight(vec3(0.05f), true),
     mDLight(vec3(0.9f), true, vec3(1.0f)),
     mPLight(vec3(0.8f), true, vec3(1.0f, 0.3f, 0.01f), vec3(0.0f, 2.0f, 0.0f)),
     mSLight(vec3(0.8f), true, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 5.5f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 15.0f, 200.0f)

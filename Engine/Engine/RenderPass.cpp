@@ -18,6 +18,7 @@ namespace engine
     void RenderPass::BeginRender() const
     {
         mDstFB.Bind();
+        glViewport(0, 0, mDstFB.Width(), mDstFB.Height());
         glClear(mClearMask);
     }
 
@@ -33,12 +34,7 @@ namespace engine
 
     void RenderPass::ResizeDstBuffer(int width, int height)
     {
-        if(mDstFB.Exists()) {
-            mDstFB.Resize(width, height);
-            mDstFB.Bind();
-            glViewport(0, 0, width, height);
-            FrameBuffer::UnBind();
-        }
+        mDstFB.Resize(width, height);
     }
 
     const RenderPass *RenderPass::GetRenderPass(const vector<RenderPass*>& renderPasses, const string &name)

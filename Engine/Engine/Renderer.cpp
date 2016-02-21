@@ -73,11 +73,13 @@ namespace engine
         const float aspect = float(width) / float(height);
         mViewRayDataUB.aspectTanHalfFovy(aspect * tanf(radians(mCamera->GetCamera().mFoV) * 0.5f));
 
-        for(RenderPass *rPass : mRenderPasses) {
-            rPass->ResizeDstBuffer(width, height);
-        }
-        FrameBuffer::UnBind();
-        glViewport(0, 0, width, height);
+        const float resolutionScale = Setting<float>("resolutionScale");
+        const int scaledWidth = int(float(width) * resolutionScale);
+        const int scaledHeight = int(float(height) * resolutionScale);
+
+        GetRenderPass("gPass")->ResizeDstBuffer(scaledWidth, scaledHeight);
+        GetRenderPass("lPass")->ResizeDstBuffer(scaledWidth, scaledHeight);
+        GetRenderPass("bbPass")->ResizeDstBuffer(width, height);
     }
 
     const RenderPass* Renderer::GetRenderPass(const string &name) const
@@ -108,6 +110,7 @@ namespace engine
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glDisable(GL_SCISSOR_TEST);
 
         // Init render passes
         mRenderPasses.push_back(new GeometryRenderPass());

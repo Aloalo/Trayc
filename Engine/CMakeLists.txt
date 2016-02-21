@@ -68,8 +68,6 @@ set(Engine_GL
     GL/VertexArray.h
     GL/VertexAttributeDef.cpp
     GL/VertexAttributeDef.h
-    GL/VertexArrayInstanced.cpp
-    GL/VertexArrayInstanced.h
     GL/UniformBuffer.cpp
     GL/UniformBuffer.h
     GL/Texture.cpp

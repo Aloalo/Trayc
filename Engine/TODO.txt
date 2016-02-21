@@ -17,7 +17,6 @@ Deferred renderer:
     -Transparancy
         -Renderbuffer
         -BlitFramebuffer
-    -MSAA
     -PBR
     -Skybox
     -Shadows
@@ -35,18 +34,18 @@ Misc:
     +Logging system
     +Fork to new repo (won't do)
     -GUI
-    -Old code refactor:
+    +Old code refactor:
         +UniformBuffer
         +BSpline
         +Settings
         +GeometryMeshes
-        -VertexArrayInstanced
+        +VertexArrayInstanced
     +Shader include
     
 Post Process Effects:
     -FXAA
     -DNAA
-    +SSAA (won't do, MSAA frambuffer is supported)
+    +SSAA
     -SSAO
     -DOF
     -Camera motion blur
