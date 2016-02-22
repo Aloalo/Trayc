@@ -110,6 +110,7 @@ namespace engine
             material << "Ks" << Ks;
 
             material << "gloss" << mat.mGloss;
+            material << "hasAlphaMask" << mat.mHasAlphaMask;
 
             Array matTexMaps;
             for(const Material::TextureInfo &texInfo : mat.mTextureMaps)
@@ -211,6 +212,7 @@ namespace engine
             const Array &Ks = jMat.get<Array>("Ks");
             mat.mKs = vec3(Ks.get<Number>(0), Ks.get<Number>(1), Ks.get<Number>(2));
             mat.mGloss = float(jMat.get<Number>("gloss"));
+            mat.mHasAlphaMask = jMat.get<Boolean>("hasAlphaMask");
 
             const Array &matTexMaps = jMat.get<Array>("textureMaps");
             const int ctTexMaps = matTexMaps.size();
@@ -397,6 +399,10 @@ namespace engine
             {
                 aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texName, nullptr, nullptr, nullptr, nullptr, nullptr);
                 material.mTextureMaps.push_back(Material::TextureInfo(path + string(texName.C_Str()), TextureType::DIFFUSE_MAP));
+            }
+            if(aimaterial->GetTextureCount(aiTextureType_OPACITY) != 0)
+            {
+                material.mHasAlphaMask = true;
             }
             if(aimaterial->GetTextureCount(aiTextureType_SPECULAR) != 0)
             {

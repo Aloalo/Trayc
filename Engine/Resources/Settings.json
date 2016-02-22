@@ -5,4 +5,5 @@
   "resolutionScale": 2,
   "anisotropicFiltering": 16,
   "maxMipmapLevelMod": 3,
+  "gamma": 2.2
 }

@@ -2,8 +2,10 @@
 #include "DebugView.h"
 #include <Engine/Engine/Renderer.h>
 #include <Engine/Engine/DebugDraw.h>
+#include <Engine/Utils/Setting.h>
 
 using namespace engine;
+using namespace glm;
 
 DebugView::DebugView(const engine::Renderer *renderer, float nearDist, float farDist)
     : mRenderer(renderer), mTexType(TextureType::G_ALBEDO_TEXTURE), mNearDist(nearDist), mFarDist(farDist), mDrawGloss(false)
@@ -64,14 +66,14 @@ void DebugView::Draw(const engine::RenderingContext &rContext) const
         DebugDraw::Get().DrawNormal(tex);
         break;
     case TextureType::G_ALBEDO_TEXTURE:
-        DebugDraw::Get().DrawTexture(tex);
+        DebugDraw::Get().DrawTexture(tex, vec3(Setting<float>("gamma")));
         break;
     case TextureType::G_SPEC_GLOSS_TEXTURE:
         if(mDrawGloss) {
             DebugDraw::Get().DrawGloss(tex);
         }
         else {
-            DebugDraw::Get().DrawTexture(tex);
+            DebugDraw::Get().DrawTexture(tex, vec3(1.0f));
         }
         break;
     default:

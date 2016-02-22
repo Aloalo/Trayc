@@ -62,7 +62,7 @@ void main()
         vec3 E = normalize(fragPos);
         vec3 R = reflect(lightDir, normal);
         float dER = max(0.0, dot(E, R));
-        specular = lightIntensity * specularGloss.rgb * pow(dER, specularGloss.a * 255.0);
+        specular = lightIntensity * specularGloss.rgb * pow(dER, specularGloss.a * 512.0);
     }
     
     #ifdef GLOBAL_LIGHT

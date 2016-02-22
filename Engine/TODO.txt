@@ -14,9 +14,7 @@ Deferred renderer:
     +Lighting pass
     +GAMMA!
     +Anisotropic filtering
-    -Transparancy
-        -Renderbuffer
-        -BlitFramebuffer
+    +Transparancy
     -PBR
     -Skybox
     -Shadows

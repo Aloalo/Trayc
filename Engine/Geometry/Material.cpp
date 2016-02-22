@@ -9,7 +9,7 @@ using namespace std;
 namespace engine
 {
     Material::Material(void)
-        : mKd(1.0f), mKs(1.0f), mGloss(1.0f)
+        : mKd(1.0f), mKs(1.0f), mGloss(1.0f), mHasAlphaMask(false)
     {
     }
 

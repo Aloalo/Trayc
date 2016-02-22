@@ -11,10 +11,10 @@ namespace engine
         using uint = unsigned int;
     public:
         Texture2D(void);
-        Texture2D(const char *file);
+        Texture2D(const char *file, bool mipmaps);
 
         // From file
-        void Init(const char *name);
+        void Init(const char *file, bool mipmaps);
         // Empty tex
         void Init(uint internalFormat, glm::ivec2 size, uint format, uint type);
 
@@ -36,7 +36,7 @@ namespace engine
 
         struct ImageLoader;
 
-        void init(const ImageLoader &imgl, const char *name);
+        void init(const ImageLoader &imgl, const char *file, bool mipmaps);
 
         struct ImageLoader
         {

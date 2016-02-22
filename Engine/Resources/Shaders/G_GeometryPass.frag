@@ -33,7 +33,10 @@ uniform vec4 specularGloss;
 vec3 GetColor()
 {
 #ifdef DIFFUSE_MAP
-    return diffuseColor * texture(diffuseMap, fs_in.uv).rgb;
+    vec4 albedo = texture(diffuseMap, fs_in.uv);
+    if(albedo.a == 0.0)
+        discard;
+    return diffuseColor * albedo.rgb;
 #else
     return diffuseColor;
 #endif
@@ -68,8 +71,8 @@ layout(location = 3) out vec3 albedo;
 
 void main()
 {
+    albedo = GetColor();
     depth = fs_in.depth;
     normal = GetNormal();
     specGloss = GetSpecGloss();
-    albedo = GetColor();
 }

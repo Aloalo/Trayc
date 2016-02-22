@@ -19,10 +19,11 @@ namespace engine
         Program::Unbind();
     }
 
-    void DebugDraw::DrawTexture(const Texture2D &tex) const
+    void DebugDraw::DrawTexture(const Texture2D &tex, const vec3 &gamma) const
     {
         TextureCombiner::SetTexture(TextureType::DEBUG_SLOT, tex);
         mDrawTex.Prog().Use();
+        mDrawTex.Prog().SetUniform("invGammaExp", 1.0f / gamma);
         mDrawTex.Draw();
         Program::Unbind();
     }

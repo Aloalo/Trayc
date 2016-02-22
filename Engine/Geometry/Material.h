@@ -21,6 +21,7 @@ namespace engine
         glm::vec3 mKd;
         glm::vec3 mKs;
         float mGloss;
+        bool mHasAlphaMask;
 
         struct TextureInfo
         {

@@ -18,9 +18,9 @@ namespace engine
 {
     unsigned int Texture2D::mBoundTextures[TextureType::CT_TEX_SLOTS] = {0};
 
-    Texture2D::Texture2D(const char *file)
+    Texture2D::Texture2D(const char *file, bool mipmaps)
     {
-        init(FileImageLoader(file), file);
+        init(FileImageLoader(file), file, mipmaps);
     }
 
     Texture2D::Texture2D(void)
@@ -28,18 +28,18 @@ namespace engine
     {
     }
 
-    void Texture2D::init(const ImageLoader &imgl, const char *name)
+    void Texture2D::init(const ImageLoader &imgl, const char *file, bool mipmaps)
     {
         unsigned int imgid;
         ilGenImages(1, &imgid);
         ilBindImage(imgid);
         if(!imgl.load()) {
-            LOG(ERROR) << "Failed to load texture: " << name;
+            LOG(ERROR) << "Failed to load texture: " << file;
             ilDeleteImages(1, &imgid);
             return;
         }
         if(!ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE)) {
-            LOG(ERROR) << "Failed to convert texture: " << name;
+            LOG(ERROR) << "Failed to convert texture: " << file;
             ilDeleteImages(1, &imgid);
             return;
         }
@@ -50,7 +50,7 @@ namespace engine
             iluFlipImage();
         }
 
-        LOG(INFO) << "Loaded Texture: " << name;
+        LOG(INFO) << "Loaded Texture: " << file;
 
         glGenTextures(1, &mID);
         mSize = ivec2(ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
@@ -67,7 +67,7 @@ namespace engine
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             const int maxMipLevel = int(std::log2(max(mSize.x, mSize.y))) - Setting<int>("maxMipmapLevelMod");
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, maxMipLevel);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipmaps ? maxMipLevel : 0);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
         }
         UnBindFromSlot(0);
@@ -91,9 +91,9 @@ namespace engine
         mBoundTextures[texSlot] = 0;
     }
 
-    void Texture2D::Init(const char *name)
+    void Texture2D::Init(const char *file, bool mipmaps)
     {
-        init(FileImageLoader(name), name);
+        init(FileImageLoader(file), file, mipmaps);
     }
 
     void Texture2D::Init(uint internalFormat, ivec2 size, uint format, uint type)

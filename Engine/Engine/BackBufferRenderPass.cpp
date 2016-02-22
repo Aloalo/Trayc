@@ -1,8 +1,10 @@
 
 #include <Engine/Engine/BackBufferRenderPass.h>
 #include <Engine/Engine/AssetLoader.h>
+#include <Engine/Utils/Setting.h>
 
 using namespace std;
+using namespace glm;
 
 namespace engine
 {
@@ -17,6 +19,7 @@ namespace engine
         const Program &prog = mTexCombiner.Prog();
         prog.Use();
         prog.SetUniform("tex", TextureType::LIGHT_ACCUM_TEXTURE);
+        prog.SetUniform("invGammaExp", 1.0f / vec3(Setting<float>("gamma")));
         Program::Unbind();
     }
 
