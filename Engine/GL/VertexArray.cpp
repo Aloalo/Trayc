@@ -1,5 +1,6 @@
 #include <Engine/GL/VertexArray.h>
 #include <Engine/Utils/Utilities.h>
+#include <Engine/Geometry/TriangleMesh.h>
 #include <assert.h>
 
 namespace engine
@@ -103,6 +104,24 @@ namespace engine
         const GLsizeiptr arraySize = mVertexSize * mCapacity;
 
         mVBO.SetData(arraySize);
+    }
+
+    void VertexArray::Init(const TriangleMesh *mesh)
+    {
+        const int ctVertices = mesh->mPositions.size();
+        const int ctIndices = mesh->mIndices.size();
+
+        AddAttributes(mesh->GetVertexAttribDefs());
+        Init(ctVertices, ctVertices);
+
+        SetVertices(static_cast<const GLvoid*>(mesh->GetVertexArray().data()), 0, ctVertices);
+
+        if(ctIndices > 0)
+        {
+            void *indices = mesh->GetIndices();
+            SetIndices(indices, ctIndices, mesh->GetIndexType());
+            delete[] indices;
+        }
     }
 
     void VertexArray::Destroy()

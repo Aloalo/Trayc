@@ -6,52 +6,39 @@
 
 namespace engine
 {
-    class Texture2D
+    class Texture
     {
         using uint = unsigned int;
     public:
-        Texture2D(void);
-        Texture2D(const char *file, bool mipmaps);
+        Texture(uint target);
 
-        // From file
-        void Init(const char *file, bool mipmaps);
         // Empty tex
-        void Init(uint internalFormat, glm::ivec2 size, uint format, uint type);
+        void Init();
 
-        void Resize(glm::ivec2 size);
+        virtual void Resize(glm::ivec2 size) = 0;
 
         void BindToSlot(int texSlot) const;
         static void UnBindFromSlot(int texSlot);
         void Destroy();
 
-        uint ID() const;
         glm::ivec2 Size() const;
+        uint ID() const;
+        uint Target() const;
 
-    private:
-        unsigned int mID;
+    protected:
         glm::ivec2 mSize;
         uint mInternalFormat;
         uint mFormat;
         uint mType;
 
-        struct ImageLoader;
+        void InitFromFile(uint target, const char *file, bool mipmaps);
+        void InitEmpty(uint target, uint internalFormat, glm::ivec2 size, uint format, uint type);
 
-        void init(const ImageLoader &imgl, const char *file, bool mipmaps);
+    private:
+        uint mID;
+        uint mTarget;
 
-        struct ImageLoader
-        {
-            virtual bool load() const = 0;
-        };
-
-        struct FileImageLoader :
-            public ImageLoader
-        {
-            const char *file;
-            FileImageLoader(const char *file);
-            bool load() const;
-        };
-
-        static unsigned int mBoundTextures[TextureType::CT_TEX_SLOTS];
+        static uint mBoundTextures[TextureType::CT_TEX_SLOTS];
     };
 }
 

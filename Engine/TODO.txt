@@ -20,7 +20,7 @@ Deferred renderer:
     -Shadows
     -Reflections
     -Parallax mapping
-    -Screen space reflections
+    +Screen space reflections (won't do)
     
 Misc:
     +Custom Scene file format
@@ -42,7 +42,6 @@ Misc:
     
 Post Process Effects:
     -FXAA
-    -DNAA
     +SSAA
     -SSAO
     -DOF

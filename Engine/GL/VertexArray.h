@@ -11,6 +11,8 @@
 
 namespace engine
 {
+    class TriangleMesh;
+
     class VertexArray
     {
         using VertexAttribs = std::vector<VertexAttribDef>;
@@ -22,6 +24,7 @@ namespace engine
         void AddAttribute(const VertexAttribDef &attrib);
         void AddAttributes(const VertexAttribs &attribs);
         void Init(int ctVertices, int capacity);
+        void Init(const TriangleMesh *mesh);
         void Destroy();
 
         void SetIndices(const void *indices, int ctIndices, GLenum type);

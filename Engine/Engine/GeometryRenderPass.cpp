@@ -147,21 +147,7 @@ namespace engine
         {
             mVertexArrays.push_back(VertexArray(GL_STATIC_DRAW));
             VertexArray &VA = mVertexArrays.back();
-
-            const int ctVertices = mesh.mPositions.size();
-            const int ctIndices = mesh.mIndices.size();
-
-            VA.AddAttributes(mesh.GetVertexAttribDefs());
-            VA.Init(ctVertices, ctVertices);
-
-            VA.SetVertices(static_cast<const GLvoid*>(mesh.GetVertexArray().data()), 0, ctVertices);
-
-            if(ctIndices > 0)
-            {
-                void *indices = mesh.GetIndices();
-                VA.SetIndices(indices, ctIndices, mesh.GetIndexType());
-                delete[] indices;
-            }
+            VA.Init(&mesh);
         }
         LOG(INFO) << "Loaded meshes to GPU.";
         // Load textures to memory

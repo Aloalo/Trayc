@@ -5,7 +5,7 @@
 #ifndef EN_FRAME_BUFFER_H
 #define EN_FRAME_BUFFER_H
 
-#include <Engine/GL/Texture.h>
+#include <Engine/GL/Texture2D.h>
 #include <GL/glew.h>
 #include <vector>
 

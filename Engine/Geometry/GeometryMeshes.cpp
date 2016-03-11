@@ -105,7 +105,7 @@ namespace engine
         vec3(-1.0f, -1.0f, -1.0f),
     };
     
-    TriangleMesh GetCubeMeshSolid(bool indexed)
+    TriangleMesh GetCubeMeshSolid(bool indexed, bool normals)
     {
         const int ctIndices = 36;
         const GLuint indices[ctIndices] =
@@ -120,13 +120,24 @@ namespace engine
 
         TriangleMesh ret(GL_TRIANGLES);
 
-        for(int i = 0; i < ctIndices; ++i)
-            ret.mPositions.push_back(positionsCube[indices[i]]);
-
-        CalculateNormals(ret);
-        if(indexed) {
-            IndexMesh(ret);
+        if(normals)
+        {
+            for(int i = 0; i < ctIndices; ++i) {
+                ret.mPositions.push_back(positionsCube[indices[i]]);
+            }
+            CalculateNormals(ret);
+            if(indexed) {
+                IndexMesh(ret);
+            }
         }
+        else
+        {
+            ret.mPositions.insert(ret.mPositions.begin(), positionsCube, positionsCube+8);
+            if(indexed) {
+                ret.mIndices.insert(ret.mIndices.begin(), indices, indices+36);
+            }
+        }
+
         ret.CalcAABB();
         return ret;
     }

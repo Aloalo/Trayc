@@ -72,6 +72,10 @@ set(Engine_GL
     GL/UniformBuffer.h
     GL/Texture.cpp
     GL/Texture.h
+    GL/Texture2D.cpp
+    GL/Texture2D.h
+    GL/CubemapTexture.cpp
+    GL/CubemapTexture.h
     GL/TextureSampler.cpp
     GL/TextureSampler.h
 )
@@ -121,6 +125,8 @@ set(Engine_Engine
     Engine/AssetLoader.cpp
     Engine/DebugDraw.h
     Engine/DebugDraw.cpp
+    Engine/Skybox.h
+    Engine/Skybox.cpp
 )
 
 set(Engine_LIBS

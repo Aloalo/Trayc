@@ -17,21 +17,21 @@ namespace engine
     struct InitialSettings : public Singleton<InitialSettings>
     {
         template<class T>
-        const T& GetSetting(const std::string &name) const
+        T GetSetting(const std::string &name) const
         {
             return mSettings.get<T>(name);
         }
 
         template<>
-        const int& GetSetting(const std::string &name) const
+        int GetSetting(const std::string &name) const
         {
-            return (int)mSettings.get<jsonxx::Number>(name);
+            return static_cast<int>(mSettings.get<jsonxx::Number>(name));
         }
 
         template<>
-        const float& GetSetting(const std::string &name) const
+        float GetSetting(const std::string &name) const
         {
-            return (float)mSettings.get<jsonxx::Number>(name);
+            return static_cast<float>(mSettings.get<jsonxx::Number>(name));
         }
 
     private:
@@ -39,7 +39,6 @@ namespace engine
         InitialSettings(void);
 
         jsonxx::Object mSettings;
-        std::map<std::string, unsigned int> mFormat;
     };
 }
 
