@@ -11,7 +11,7 @@ using namespace glm;
 using namespace std;
 
 LightHandler::LightHandler(engine::Scene *scene) :
-    mGLight(vec3(0.1f), vec3(0.988f, 0.83f, 0.251f), true, vec3(1.0f)),
+    mGLight(vec3(0.05f), vec3(0.988f, 0.83f, 0.251f), true, vec3(1.0f)),
     mPLight(vec3(0.8f), true, vec3(1.0f, 0.3f, 0.05f), vec3(0.0f, 2.0f, 0.0f)),
     mSLight(vec3(1.8f), true, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 5.5f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 15.0f, 200.0f)
 {
@@ -38,6 +38,7 @@ LightHandler::LightHandler(engine::Scene *scene) :
     lightMat.mGloss = 1.0f;
     lightMat.mKs = vec3(1.0f);
     lightMat.mKd = vec3(1.0f);
+    lightMat.mNeedsForwardRender = true;
     scene->mMaterials.push_back(lightMat);
     const int lightMatIdx = scene->mMaterials.size() - 1;
     

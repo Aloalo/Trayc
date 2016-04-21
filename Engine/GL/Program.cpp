@@ -72,7 +72,7 @@ namespace engine
             GLchar *strInfoLog = new GLchar[infoLogLength + 1];
             glGetProgramInfoLog(mID, infoLogLength, nullptr, strInfoLog);
 
-            LOG(ERROR) << "Linking failure in program " << name << ":" << endl << strInfoLog;
+            LOG(ERROR) << "[Program::LinkProgram] Linking failure in program " << name << ":" << endl << strInfoLog;
             delete[] strInfoLog;
         }
     }

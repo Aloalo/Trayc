@@ -8,13 +8,14 @@ Deferred renderer prep:
     +Enums instead of strings for g pass materials
     +Better g pass material handling
     +Texture sampler/slot handling
-    +Non deferred renderer (won't do)
+    -Forward renderer
 
 Deferred renderer:
     +Lighting pass
     +GAMMA!
     +Anisotropic filtering
     +Transparancy
+    -Light probes
     -PBR
     -Skybox
     -Shadows
@@ -47,6 +48,7 @@ Post Process Effects:
     -DOF
     -Camera motion blur
     -Bloom
+    -Volumetric light scattering
     
 Physics:
     -Rigid body physics

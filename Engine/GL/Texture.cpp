@@ -7,6 +7,9 @@
 
 #include <easylogging++.h>
 
+#include <cmath>
+
+
 using namespace glm;
 
 namespace engine
@@ -61,19 +64,48 @@ namespace engine
         return mTarget;
     }
 
-    void Texture::InitFromFile(uint target, const char * file, bool mipmaps)
+    void Texture::TextureParam(uint pname, uint param) const
+    {
+        glTexParameteri(mTarget, pname, param);
+    }
+
+    void Texture::InitFromFile(uint target, const char *file, bool mipmaps)
+    {
+        LoadFromFile(target, file);
+
+        BindToSlot(EMPTY_SLOT);
+        {
+            if(mipmaps) {
+                glGenerateMipmap(target);
+                glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            }
+            else {
+                glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            }
+            glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_REPEAT);
+            const int maxMipLevel = int(std::log2(fmax(mSize.x, mSize.y))) - Setting<int>("maxMipmapLevelMod");
+            glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, mipmaps ? maxMipLevel : 0);
+            glTexParameteri(target, GL_TEXTURE_BASE_LEVEL, 0);
+        }
+        UnBindFromSlot(EMPTY_SLOT);
+    }
+
+    void Texture::LoadFromFile(uint target, const char * file)
     {
         unsigned int imgid;
         ilGenImages(1, &imgid);
         ilBindImage(imgid);
 
         if(ilLoadImage((const ILstring)file) == 0) {
-            LOG(ERROR) << "Failed to load texture: " << file;
+            LOG(ERROR) << "[Texture::InitFromFile] Failed to load texture: " << file;
             ilDeleteImages(1, &imgid);
             return;
         }
         if(!ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE)) {
-            LOG(ERROR) << "Failed to convert texture: " << file;
+            LOG(ERROR) << "[Texture::InitFromFile] Failed to convert texture: " << file;
             ilDeleteImages(1, &imgid);
             return;
         }
@@ -84,7 +116,7 @@ namespace engine
             iluFlipImage();
         }
 
-        LOG(INFO) << "Loaded Texture: " << file;
+        LOG(INFO) << "[Texture::LoadFromFile] Loaded Texture: " << file;
 
         Init();
         mSize = ivec2(ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
@@ -92,23 +124,12 @@ namespace engine
         mFormat = GL_RGBA;
         mType = GL_UNSIGNED_BYTE;
 
-        BindToSlot(0);
-        {
-            glTexImage2D(target, 0, mInternalFormat, mSize.x, mSize.y, 0, mFormat, mType, ilGetData());
-            if(mipmaps) {
-                glGenerateMipmap(target);
-            }
-            glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            const int maxMipLevel = int(std::log2(max(mSize.x, mSize.y))) - Setting<int>("maxMipmapLevelMod");
-            glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, mipmaps ? maxMipLevel : 0);
-            glTexParameteri(target, GL_TEXTURE_BASE_LEVEL, 0);
-        }
-        UnBindFromSlot(0);
+        BindToSlot(EMPTY_SLOT);
+        glTexImage2D(target, 0, mInternalFormat, mSize.x, mSize.y, 0, mFormat, mType, ilGetData());
+        UnBindFromSlot(EMPTY_SLOT);
 
         ilDeleteImages(1, &imgid);
+
     }
 
     void Texture::InitEmpty(uint target, uint internalFormat, ivec2 size, uint format, uint type)

@@ -1,36 +1,32 @@
 
 #include <Engine/Engine/BackBufferRenderPass.h>
-#include <Engine/Engine/AssetLoader.h>
-#include <Engine/Utils/Setting.h>
-
-using namespace std;
-using namespace glm;
+#include <Engine/Engine/Renderer.h>
 
 namespace engine
 {
     BackBufferRenderPass::BackBufferRenderPass(void)
-        : RenderPass("bbPass", GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        : RenderPass("bbPass", GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT), mFinalFB(nullptr)
     {
     }
 
     void BackBufferRenderPass::Init()
     {
-        mTexCombiner.Init(AssetLoader::Get().ShaderPath("C_TexToScreen").c_str(), vector<string>());
-        const Program &prog = mTexCombiner.Prog();
-        prog.Use();
-        prog.SetUniform("tex", TextureType::LIGHT_ACCUM_TEXTURE);
-        prog.SetUniform("invGammaExp", 1.0f / vec3(Setting<float>("gamma")));
-        Program::Unbind();
+        const auto& renderPasses = mRenderer->GetRenderPasses();
+        // BackBufferRenderPass is actually the last pass 
+        const RenderPass* lastPass = renderPasses[renderPasses.size() - 2];
+        mFinalFB = &lastPass->GetDstBuffer();
     }
 
     void BackBufferRenderPass::Destroy()
     {
-        mTexCombiner.Destroy();
     }
 
     void BackBufferRenderPass::Render(const RenderingContext &rContext) const
     {
-        mTexCombiner.Draw();
+        mFinalFB->BindRead();
+        FrameBuffer::BackBuffer().BindDraw();
+        glBlitFramebuffer(0, 0, mFinalFB->Width(), mFinalFB->Height(), 0, 0, mDstFB.Width(), mDstFB.Height(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        FrameBuffer::UnBind();
     }
 
 }

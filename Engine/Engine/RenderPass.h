@@ -7,12 +7,14 @@
 
 namespace engine
 {
+    class Renderer;
+
     // Represents a render pass
     // e.g. geometry pass, lighting pass ...
     class RenderPass
     {
     public:
-        RenderPass(const std::string &name, GLbitfield clearMask);
+        RenderPass(const std::string &name, GLbitfield clearMask, bool clearBuffer = true);
         virtual ~RenderPass(void);
 
         // renderPasses are so far initialized render passes
@@ -24,18 +26,22 @@ namespace engine
         // RenderPass extracts all data it needs to render from renderPasses and rContext
         virtual void Render(const RenderingContext &rContext) const = 0;
 
+        void SetRenderer(Renderer *renderer);
+
         const std::string& GetName() const;
         const FrameBuffer& GetDstBuffer() const;
 
         void ResizeDstBuffer(int width, int height);
 
     protected:
-        static const RenderPass* GetRenderPass(const std::vector<RenderPass*> &renderPasses, const std::string &name);
+        const Renderer *mRenderer;
         FrameBuffer mDstFB;
 
     private:
         std::string mName;
         GLbitfield mClearMask;
+        // Should the buffer be cleard in BeginRender()
+        bool mClearBuffer;
     };
 }
 

@@ -111,35 +111,35 @@ namespace engine
         if(status == GL_FRAMEBUFFER_COMPLETE)
             return;
 
-        LOG(ERROR) << "FrameBuffer completeness error: ";
+        LOG(ERROR) << "[FrameBuffer::Check] FrameBuffer completeness error: ";
         switch(status)
         {
         case GL_FRAMEBUFFER_UNDEFINED:
-            LOG(ERROR) << "GL_FRAMEBUFFER_UNDEFINED";
+            LOG(ERROR) << "[FrameBuffer::Check] GL_FRAMEBUFFER_UNDEFINED";
             break;
         case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-            LOG(ERROR) << "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
+            LOG(ERROR) << "[FrameBuffer::Check] GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
             break;
         case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-            LOG(ERROR) << "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
+            LOG(ERROR) << "[FrameBuffer::Check] GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
             break;
         case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-            LOG(ERROR) << "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
+            LOG(ERROR) << "[FrameBuffer::Check] GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
             break;
         case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-            LOG(ERROR) << "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
+            LOG(ERROR) << "[FrameBuffer::Check] GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
             break;
         case GL_FRAMEBUFFER_UNSUPPORTED:
-            LOG(ERROR) << "GL_FRAMEBUFFER_UNSUPPORTED";
+            LOG(ERROR) << "[FrameBuffer::Check] GL_FRAMEBUFFER_UNSUPPORTED";
             break;
         case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-            LOG(ERROR) << "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE";
+            LOG(ERROR) << "[FrameBuffer::Check] GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE";
             break;
         case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
-            LOG(ERROR) << "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS";
+            LOG(ERROR) << "[FrameBuffer::Check] GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS";
             break;
         default:
-            LOG(ERROR) << "Unknown framebuffer error";
+            LOG(ERROR) << "[FrameBuffer::Check] Unknown framebuffer error";
             break;
         }
     }
@@ -155,6 +155,16 @@ namespace engine
             mBoundFBO = mID;
             glBindFramebuffer(GL_FRAMEBUFFER, mID);
         }
+    }
+
+    void FrameBuffer::BindRead() const
+    {
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, mID);
+    }
+
+    void FrameBuffer::BindDraw() const
+    {
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mID);
     }
 
     void FrameBuffer::UnBind()

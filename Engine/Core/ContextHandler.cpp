@@ -39,25 +39,27 @@ namespace engine
 
     void ContextHandler::PrintSoftwareVersions() const
     {
-        LOG(INFO) << "GLEW version: " << glewGetString(GLEW_VERSION) << endl;
+        LOG(INFO) << "[ContextHandler::PrintSoftwareVersions] GLEW version: " << glewGetString(GLEW_VERSION) << endl;
 
-        LOG(INFO) << "Compiled against SDL version "  << static_cast<int>(mCompiled.major) << "." <<
+        LOG(INFO) << "ContextHandler::PrintSoftwareVersions] Compiled against SDL version "  << 
+                                                     static_cast<int>(mCompiled.major) << "." <<
                                                      static_cast<int>(mCompiled.minor)  << "." <<
                                                      static_cast<int>(mCompiled.patch);
-        LOG(INFO) << "Linked against SDL version "  << static_cast<int>(mLinked.major) << "." <<
-                                                   static_cast<int>(mLinked.minor)  << "." <<
-                                                   static_cast<int>(mLinked.patch) << endl;
+        LOG(INFO) << "ContextHandler::PrintSoftwareVersions] Linked against SDL version "  << 
+                                                    static_cast<int>(mLinked.major) << "." <<
+                                                    static_cast<int>(mLinked.minor)  << "." <<
+                                                    static_cast<int>(mLinked.patch) << endl;
 
-        LOG(INFO) << "OpenGL vendor: " << glGetString(GL_VENDOR);
-        LOG(INFO) << "OpenGL renderer: " << glGetString(GL_RENDERER);
-        LOG(INFO) << "OpenGL version: " << glGetString(GL_VERSION);
-        LOG(INFO) << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
+        LOG(INFO) << "ContextHandler::PrintSoftwareVersions] OpenGL vendor: " << glGetString(GL_VENDOR);
+        LOG(INFO) << "ContextHandler::PrintSoftwareVersions] OpenGL renderer: " << glGetString(GL_RENDERER);
+        LOG(INFO) << "ContextHandler::PrintSoftwareVersions] OpenGL version: " << glGetString(GL_VERSION);
+        LOG(INFO) << "ContextHandler::PrintSoftwareVersions] GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
 
-        LOG(INFO) << "IL version: " << IL_VERSION;
-        LOG(INFO) << "ILU version: " << ILU_VERSION;
-        LOG(INFO) << "ILUT version: " << ILUT_VERSION << endl;
+        LOG(INFO) << "ContextHandler::PrintSoftwareVersions] IL version: " << IL_VERSION;
+        LOG(INFO) << "ContextHandler::PrintSoftwareVersions] ILU version: " << ILU_VERSION;
+        LOG(INFO) << "ContextHandler::PrintSoftwareVersions] ILUT version: " << ILUT_VERSION << endl;
 
-        LOG(INFO) << "GLM version: " << GLM_VERSION_MAJOR << "." << GLM_VERSION_MINOR << "." << GLM_VERSION_PATCH << endl;
+        LOG(INFO) << "ContextHandler::PrintSoftwareVersions] GLM version: " << GLM_VERSION_MAJOR << "." << GLM_VERSION_MINOR << "." << GLM_VERSION_PATCH << endl;
     }
 
     void ContextHandler::CreateGLWindow(const char *title, int x, int y, int w, int h, Uint32 flags)

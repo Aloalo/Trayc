@@ -14,13 +14,13 @@ namespace engine
     #define SDLErrCheck(x) \
         if(PRINT_SDL_ERRORS && x != 0) \
         { \
-            LOG(ERROR) << "SDL Error: " << SDL_GetError(); \
+            LOG(ERROR) << "[SDLErrCheck] SDL Error: " << SDL_GetError(); \
         } \
 
     #define GLEWErrCheck(x) \
         if (PRINT_GLEW_ERRORS && x != GLEW_OK) \
         { \
-            LOG(ERROR) << "GLEW Error: " << glewGetErrorString(x); \
+            LOG(ERROR) << "[GLEWErrCheck] GLEW Error: " << glewGetErrorString(x); \
         } \
 
     void CheckOpenGLError(const char *file, int line);

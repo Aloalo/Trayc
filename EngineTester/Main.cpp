@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     //Init Game
     Game game(timeStep);
     game.Init(&camHandler, argv[0], "EngineTester", SSize.x, SSize.y);
-    game.mContextHandler.VsyncMode(1);
+    game.mContextHandler.VsyncMode(Setting<int>("vsync"));
 
 #if PRODUCTION
     //Init DebugView

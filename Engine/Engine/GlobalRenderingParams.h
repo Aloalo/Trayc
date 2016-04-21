@@ -25,6 +25,7 @@ namespace engine
         // Light pass texture
         LIGHT_ACCUM_TEXTURE = 8,
 
+        EMPTY_SLOT = 30,
         DEBUG_SLOT = 31,
 
         CT_TEX_SLOTS = 32

@@ -1,3 +1,4 @@
+
 /*
 * Copyright (c) 2014 Jure Ratkovic
 */
@@ -44,8 +45,8 @@ namespace engine
         mDstFB.AddAttachment(GL_R32F, GL_RED, GL_FLOAT); //Linear Depth
         mDstFB.AddAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); //Normal view space / x
         mDstFB.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Specular / Gloss
-        //smDstFB.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
-        mDstFB.AddAttachment(GL_SRGB8_ALPHA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
+        mDstFB.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
+                                                                   //mDstFB.AddAttachment(GL_SRGB8_ALPHA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
 
         mDstFB.AttachRBO(); // For depth testing
         mDstFB.Compile();
@@ -107,33 +108,36 @@ namespace engine
     {
         for(const Object3D &obj : mScene->mObjects3D)
         {
-            const int meshIdx = obj.GetMeshIdx();
-            const VertexArray &VA = mVertexArrays[obj.GetMeshIdx()];
             const Material &mat = mScene->mMaterials[obj.GetMaterialIdx()];
-            const int renderFlags = mat.GetRenderFlags();
-            const Program &prog = mGPrograms[renderFlags];
+            if(mat.mNeedsForwardRender == false)
+            {
+                const int meshIdx = obj.GetMeshIdx();
+                const VertexArray &VA = mVertexArrays[obj.GetMeshIdx()];
+                const int renderFlags = mat.GetRenderFlags();
+                const Program &prog = mGPrograms[renderFlags];
 
-            prog.Use();
+                prog.Use();
 
-            // Mesh uniforms
-            prog.SetUniform("MVP", rContext.mVP * obj.GetTransform());
-            prog.SetUniform("MV", rContext.mV * obj.GetTransform());
+                // Mesh uniforms
+                prog.SetUniform("MVP", rContext.mVP * obj.GetTransform());
+                prog.SetUniform("MV", rContext.mV * obj.GetTransform());
 
-            // Material uniforms
-            prog.SetUniform("diffuseColor", mat.mKd);
-            prog.SetUniform("specularGloss", vec4(mat.mKs, mat.mGloss));
+                // Material uniforms
+                prog.SetUniform("diffuseColor", mat.mKd);
+                prog.SetUniform("specularGloss", vec4(mat.mKs, mat.mGloss));
 
-            // Textures
-            for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
-                mNameToTex.at(texInfo.name).BindToSlot(texInfo.type);
-            }
+                // Textures
+                for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
+                    mNameToTex.at(texInfo.name).BindToSlot(texInfo.type);
+                }
 
-            if(mat.mHasAlphaMask) {
-                glDisable(GL_CULL_FACE);
-            }
-            VA.Render(mScene->mTriMeshes[meshIdx].GetDrawMode());
-            if(mat.mHasAlphaMask) {
-                glEnable(GL_CULL_FACE);
+                if(mat.mHasAlphaMask) {
+                    glDisable(GL_CULL_FACE);
+                }
+                VA.Render(mScene->mTriMeshes[meshIdx].GetDrawMode());
+                if(mat.mHasAlphaMask) {
+                    glEnable(GL_CULL_FACE);
+                }
             }
         }
     }
@@ -149,7 +153,7 @@ namespace engine
             VertexArray &VA = mVertexArrays.back();
             VA.Init(&mesh);
         }
-        LOG(INFO) << "Loaded meshes to GPU.";
+        LOG(INFO) << "[GeometryRenderPass::InitScene] Loaded meshes to GPU.";
         // Load textures to memory
         for(const Material &mat : scene->mMaterials) {
             for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
@@ -158,7 +162,7 @@ namespace engine
                 }
             }
         }
-        LOG(INFO) << "Loaded textures to GPU.";
+        LOG(INFO) << "[GeometryRenderPass::InitScene] Loaded textures to GPU.";
     }
 
     void GeometryRenderPass::ClearVertexArrays()

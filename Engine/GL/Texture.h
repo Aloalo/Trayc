@@ -12,7 +12,7 @@ namespace engine
     public:
         Texture(uint target);
 
-        // Empty tex
+        // Generate texture
         void Init();
 
         virtual void Resize(glm::ivec2 size) = 0;
@@ -25,13 +25,18 @@ namespace engine
         uint ID() const;
         uint Target() const;
 
+        void TextureParam(uint pname, uint param) const;
+
     protected:
         glm::ivec2 mSize;
         uint mInternalFormat;
         uint mFormat;
         uint mType;
 
+        // Initialises texture params
         void InitFromFile(uint target, const char *file, bool mipmaps);
+        // Doesn't initialise texture params
+        void LoadFromFile(uint target, const char *file);
         void InitEmpty(uint target, uint internalFormat, glm::ivec2 size, uint format, uint type);
 
     private:

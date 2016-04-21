@@ -98,6 +98,16 @@ namespace engine
         });
     }
 
+    const RenderPass* Renderer::GetRenderPass(int idx) const
+    {
+        return mRenderPasses[idx];
+    }
+
+    const Renderer::RenderPasses& Renderer::GetRenderPasses() const
+    {
+        return mRenderPasses;
+    }
+
     void Renderer::InitRendering(const CameraHandler *camera)
     {
         if(mCamera) {
@@ -117,8 +127,10 @@ namespace engine
         mRenderPasses.push_back(new LightRenderPass());
         mRenderPasses.push_back(new BackBufferRenderPass());
 
-        for(RenderPass *rPass : mRenderPasses)
+        for(RenderPass *rPass : mRenderPasses) {
+            rPass->SetRenderer(this);
             rPass->Init();
+        }
 
         // Init Texture Samplers
         mLinearSampler.InitForDataTexture();

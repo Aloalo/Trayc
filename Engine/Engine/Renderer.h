@@ -22,6 +22,8 @@ namespace engine
     class Renderer
     {
     public:
+        using RenderPasses = std::vector<RenderPass*>;
+
         Renderer();
         ~Renderer(void);
 
@@ -34,6 +36,8 @@ namespace engine
         void SetScreenSize(int width, int height);
 
         const RenderPass* GetRenderPass(const std::string &name) const;
+        const RenderPass* GetRenderPass(int idx) const;
+        const RenderPasses& GetRenderPasses() const;
 
     private:
         RenderPass* GetRenderPass(const std::string &name);

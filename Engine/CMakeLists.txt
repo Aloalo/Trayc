@@ -119,6 +119,8 @@ set(Engine_Engine
     Engine/LightRenderPass.cpp
     Engine/GeometryRenderPass.h
     Engine/GeometryRenderPass.cpp
+    Engine/ForwardRenderPass.h
+    Engine/ForwardRenderPass.cpp
     Engine/TextureCombiner.h
     Engine/TextureCombiner.cpp
     Engine/AssetLoader.h

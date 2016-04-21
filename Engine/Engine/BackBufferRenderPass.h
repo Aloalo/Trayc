@@ -17,9 +17,8 @@ namespace engine
         virtual void Destroy() override;
 
         virtual void Render(const RenderingContext &rContext) const override;
-
     private:
-        TextureCombiner mTexCombiner;
+        const FrameBuffer *mFinalFB;
     };
 }
 

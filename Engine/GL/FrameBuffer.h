@@ -27,6 +27,8 @@ namespace engine
 
         void BindTexture(int idx) const;
         void Bind() const;
+        void BindRead() const;
+        void BindDraw() const;
         static void UnBind();
 
         int Width() const;

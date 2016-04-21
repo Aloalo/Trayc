@@ -43,7 +43,7 @@ namespace engine
                 string sfile(file);
                 StringReplace(sfile, "\\", "/");
                 const string fname = sfile.substr(sfile.find_last_of("/")+1);
-                LOG(ERROR) << "GL_" << error << " - " << fname << ":" << line;
+                LOG(ERROR) << "[CheckOpenGLError] GL_" << error << " - " << fname << ":" << line;
             }
 
             err = glGetError();

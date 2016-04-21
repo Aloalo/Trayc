@@ -111,6 +111,7 @@ namespace engine
 
             material << "gloss" << mat.mGloss;
             material << "hasAlphaMask" << mat.mHasAlphaMask;
+            material << "needsForwardRender" << mat.mNeedsForwardRender;
 
             Array matTexMaps;
             for(const Material::TextureInfo &texInfo : mat.mTextureMaps)
@@ -213,6 +214,7 @@ namespace engine
             mat.mKs = vec3(Ks.get<Number>(0), Ks.get<Number>(1), Ks.get<Number>(2));
             mat.mGloss = float(jMat.get<Number>("gloss"));
             mat.mHasAlphaMask = jMat.get<Boolean>("hasAlphaMask");
+            mat.mNeedsForwardRender = jMat.get<Boolean>("needsForwardRender");
 
             const Array &matTexMaps = jMat.get<Array>("textureMaps");
             const int ctTexMaps = matTexMaps.size();
@@ -324,10 +326,10 @@ namespace engine
         const aiScene *aiScene = importer.ReadFile(fullPath, aiProcessPreset_TargetRealtime_MaxQuality);
         if(!aiScene)
         {
-            LOG(ERROR) << importer.GetErrorString();
+            LOG(ERROR) << "[AssetLoader::LoadSceneAssimp] " << importer.GetErrorString();
             return scene;
         }
-        LOG(INFO) << "Loaded file: " + fullPath;
+        LOG(INFO) << "[AssetLoader::LoadSceneAssimp] Loaded file: " + fullPath;
         
         // Load meshes
         for(unsigned int i = 0; i < aiScene->mNumMeshes; ++i)

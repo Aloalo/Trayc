@@ -38,12 +38,10 @@ namespace engine
             const string path = sn.substr(0, sn.find_last_of("/") + 1);
             ExpandIncludes(path, source);
 
-            //LOG(INFO) << source;
-
             Init2(source.c_str(), name);
         }
         else {
-            LOG(ERROR) << "No shader file found: " << sn;
+            LOG(ERROR) << "[Shader::Init] No shader file found: " << sn;
         }
         in.close();
     }
@@ -67,7 +65,7 @@ namespace engine
             GLchar *strInfoLog = new GLchar[infoLogLength+1];
             glGetShaderInfoLog(mID, infoLogLength, nullptr, strInfoLog);
 
-            LOG(ERROR) << "Compile failure in " << GetTypeString() << " shader " << name << endl << strInfoLog;
+            LOG(ERROR) << "[Shader::Init2] Compile failure in " << GetTypeString() << " shader " << name << endl << strInfoLog;
             delete[] strInfoLog;
         }
     }
@@ -94,7 +92,7 @@ namespace engine
             source.erase(source.find_last_of('}') + 1, source.length());
             return source;
         }
-        LOG(ERROR) << "No include file found: " << fname;
+        LOG(ERROR) << "[FileToString] No include file found: " << fname;
         return string();
     }
 
