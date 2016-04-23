@@ -41,13 +41,13 @@ namespace engine
         const Sphere& GetBSphere() const;
         void CalcBoundingVolumes();
 
-
         unsigned int GetDrawMode() const;
 
     private:
-        unsigned int mDrawMode;
+        friend class AssetLoader;
+        void SetBoundingVolumes(const AABB &box, const Sphere &bSphere);
 
-        friend class Scene;
+        unsigned int mDrawMode;
         AABB mAABB;
         Sphere mBSphere;
     };

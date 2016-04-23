@@ -12,8 +12,8 @@ using namespace std;
 
 LightHandler::LightHandler(engine::Scene *scene) :
     mGLight(vec3(0.05f), vec3(0.988f, 0.83f, 0.251f), true, vec3(1.0f)),
-    mPLight(vec3(0.8f), true, vec3(1.0f, 0.3f, 0.05f), vec3(0.0f, 2.0f, 0.0f)),
-    mSLight(vec3(1.8f), true, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 5.5f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 15.0f, 200.0f)
+    mPLight(vec3(20.0f), true, vec3(1.0f, 0.0f, 0.001f), vec3(0.0f, 200.0f, 0.0f)),
+    mSLight(vec3(1.8f), true, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 500.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 15.0f, 200.0f)
 {
     // Init Lights
     scene->mLights.push_back(&mGLight);
@@ -22,15 +22,16 @@ LightHandler::LightHandler(engine::Scene *scene) :
 
     // Init BSpline
     const vec3 &lPos = mPLight.GetPosition();
+    const float offs = 300.0f;
     vector<vec3> controlPoints;
     controlPoints.push_back(lPos + vec3(0.0f, 0.0f, 0.0f));
-    controlPoints.push_back(lPos + vec3(3.0f, 0.0f, 0.0f));
-    controlPoints.push_back(lPos + vec3(0.0f, 3.0f, 0.0f));
-    controlPoints.push_back(lPos + vec3(0.0f, 0.0f, 2.0f));
+    controlPoints.push_back(lPos + vec3(offs, 0.0f, 0.0f));
+    controlPoints.push_back(lPos + vec3(0.0f, offs, 0.0f));
+    controlPoints.push_back(lPos + vec3(0.0f, 0.0f, 200.0f));
 
     controlPoints.push_back(lPos + vec3(0.0f, 0.0f, 0.0f));
-    controlPoints.push_back(lPos + vec3(3.0f, 0.0f, 0.0f));
-    controlPoints.push_back(lPos + vec3(0.0f, 3.0f, 0.0f));
+    controlPoints.push_back(lPos + vec3(offs, 0.0f, 0.0f));
+    controlPoints.push_back(lPos + vec3(0.0f, offs, 0.0f));
     mBSpline.SetControlPoints(controlPoints);
 
     // Init Light Rendering

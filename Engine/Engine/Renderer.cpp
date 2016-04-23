@@ -74,6 +74,10 @@ namespace engine
         const float aspect = float(width) / float(height);
         mViewRayDataUB.aspectTanHalfFovy(aspect * tanf(radians(mCamera->GetCamera().mFoV) * 0.5f));
 
+        const mat4 P = mCamera->GetProjectionMatrix();
+        mMatricesUB.P(P);
+        mMatricesUB.invP(inverse(P));
+
         const float resolutionScale = Setting<float>("resolutionScale");
         const int scaledWidth = int(float(width) * resolutionScale);
         const int scaledHeight = int(float(height) * resolutionScale);
@@ -166,10 +170,8 @@ namespace engine
         rContext.mCamera = &mCamera->mCamera;
 
         mMatricesUB.V(rContext.mV);
-        mMatricesUB.P(rContext.mP);
         mMatricesUB.VP(rContext.mVP);
         mMatricesUB.invV(inverse(rContext.mV));
-        mMatricesUB.invP(inverse(rContext.mVP));
         mMatricesUB.invVP(inverse(rContext.mVP));
 
         // -------------------------- Deferred render -------------------------- //

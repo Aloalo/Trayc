@@ -21,7 +21,7 @@ Deferred renderer:
     -Shadows
     -Reflections
     -Parallax mapping
-    +Screen space reflections (won't do)
+    +Screen space reflections (WON'T DO)
     
 Misc:
     +Custom Scene file format
@@ -31,7 +31,7 @@ Misc:
     +Kill unneeded code (classes, files)
     +DEBUG/PRODUCTION/DEPLOY flags
     +Logging system
-    +Fork to new repo (won't do)
+    +Fork to new repo (WON'T DO)
     -GUI
     +Old code refactor:
         +UniformBuffer
@@ -57,8 +57,8 @@ Physics:
 
 Optimizations:
     +Reduce number of GL state changes (sort by material/geometry)
-    -Frustum culling
-    -Half float for normals/tangents/bitangents
+    +Frustum culling
+    +Half float for normals/tangents/bitangents (WON'T DO)
     +Reduce max mipmap level
     -Mesh optimizer
     +Scene binary file cache

@@ -213,4 +213,10 @@ namespace engine
     {
         return mDrawMode;
     }
+
+    void TriangleMesh::SetBoundingVolumes(const AABB & box, const Sphere & bSphere)
+    {
+        mAABB = box;
+        mBSphere = bSphere;
+    }
 }

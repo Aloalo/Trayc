@@ -145,6 +145,18 @@ namespace engine
             jMesh << "ctIndices" << eMesh.mIndices.size();
             jMesh << "file" << meshFileName;
 
+            const vec3 mi = eMesh.GetAABB().mMinv;
+            const vec3 ma = eMesh.GetAABB().mMaxv;
+            Array aabb;
+            aabb << mi.x << mi.y << mi.z << ma.x << ma.y << ma.z;
+            jMesh << "AABB" << aabb;
+
+            const vec3 c = eMesh.GetBSphere().mCenter;
+            const float r = eMesh.GetBSphere().mRadius;
+            Array sphere;
+            sphere << c.x << c.y << c.z << r;
+            jMesh << "BSphere" << sphere;
+
             std::ofstream meshFile(meshFileName, std::ios::out | std::ofstream::binary);
             meshFile.write(reinterpret_cast<const char*>(eMesh.mPositions.data()), eMesh.mPositions.size() * sizeof(vec3));
             meshFile.write(reinterpret_cast<const char*>(eMesh.mUVs.data()), eMesh.mUVs.size() * sizeof(vec2));
@@ -232,6 +244,7 @@ namespace engine
         {
             const Object &jMesh = meshes.get<Object>(i);
 
+            // Load geometry data
             scene.mTriMeshes.push_back(TriangleMesh((unsigned int)jMesh.get<Number>("drawMode")));
             TriangleMesh &eMesh = scene.mTriMeshes.back();
 
@@ -263,7 +276,15 @@ namespace engine
             if(ctIndices)
                 meshFile.read(reinterpret_cast<char*>(eMesh.mIndices.data()), ctIndices * sizeof(unsigned int));
 
-            eMesh.CalcBoundingVolumes();
+            // Load bounding volumes
+            const Array &b = jMesh.get<Array>("AABB");
+            const vec3 mi(b.get<Number>(0), b.get<Number>(1), b.get<Number>(2));
+            const vec3 ma(b.get<Number>(3), b.get<Number>(4), b.get<Number>(5));
+
+            const Array &s = jMesh.get<Array>("BSphere");
+            const vec3 c(s.get<Number>(0), s.get<Number>(1), s.get<Number>(2));
+
+            eMesh.SetBoundingVolumes(AABB(mi, ma), Sphere(c, float(s.get<Number>(3))));
         }
 
         // Load objects
