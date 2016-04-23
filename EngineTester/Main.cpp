@@ -25,10 +25,10 @@ using namespace glm;
 DefaultCameraHandler ConstructCameraHandler(ivec2 ss, float FOV, float farDist)
 {
     const float nearDist = 0.1f;
-    const vec3 cameraPos(0.0f, 2.0f, 0.0f);
+    const vec3 cameraPos(0.0f, 200.0f, 0.0f);
     const Camera camera(cameraPos, float(ss.x) / float(ss.y), FOV, nearDist, farDist);
 
-    const float moveSpeed = 6.0f;
+    const float moveSpeed = 600.0f;
     const float rotationSpeed = 0.0015f;
     const float springiness = 20.0f;
 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     const ivec2 SSize(Setting<int>("screenWidth"), Setting<int>("screenHeight"));
     const float timeStep = 1.0f / 60.0f;
     //Init Camera handler
-    DefaultCameraHandler camHandler(ConstructCameraHandler(SSize, Setting<float>("FOV"), 50.0f));
+    DefaultCameraHandler camHandler(ConstructCameraHandler(SSize, Setting<float>("FOV"), 5000.0f));
 
     //Init Game
     Game game(timeStep);
@@ -63,10 +63,6 @@ int main(int argc, char *argv[])
 
     // Init scene
     Scene scene = AssetLoader::Get().LoadScene(AssetLoader::Get().ModelPath("crytek-sponza/"), "sponza.obj");
-    // Scale down
-    const mat4 transform = scale(mat4(1.0f), vec3(0.01f));
-    for(Object3D &obj : scene.mObjects3D)
-        obj.SetTransform(transform* obj.GetTransform());
 
     // Init Light
     LightHandler lHandler(&scene);

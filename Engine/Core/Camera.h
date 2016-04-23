@@ -6,6 +6,7 @@
 #define EN_CAMERA_H
 
 #include <glm/glm.hpp>
+#include <Engine/Geometry/Frustum.h>
 
 namespace engine
 {
@@ -27,6 +28,8 @@ namespace engine
         glm::vec3 GetDirection() const;
         glm::vec3 GetRight() const;
         glm::vec3 GetUp() const;
+
+        Frustum GetFrustum() const;
 
         glm::vec3 mPosition;
         float mAspectRatio;

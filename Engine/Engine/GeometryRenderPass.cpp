@@ -106,38 +106,36 @@ namespace engine
 
     void GeometryRenderPass::Render(const RenderingContext &rContext) const
     {
-        for(const Object3D &obj : mScene->mObjects3D)
+        const auto objects = mScene->GetObjects(rContext.mCamera, false);
+        for(const Object3D *obj : objects)
         {
-            const Material &mat = mScene->mMaterials[obj.GetMaterialIdx()];
-            if(mat.mNeedsForwardRender == false)
-            {
-                const int meshIdx = obj.GetMeshIdx();
-                const VertexArray &VA = mVertexArrays[obj.GetMeshIdx()];
-                const int renderFlags = mat.GetRenderFlags();
-                const Program &prog = mGPrograms[renderFlags];
+            const int meshIdx = obj->GetMeshIdx();
+            const VertexArray &VA = mVertexArrays[obj->GetMeshIdx()];
+            const Material &mat = mScene->mMaterials[obj->GetMaterialIdx()];
+            const int renderFlags = mat.GetRenderFlags();
+            const Program &prog = mGPrograms[renderFlags];
 
-                prog.Use();
+            prog.Use();
 
-                // Mesh uniforms
-                prog.SetUniform("MVP", rContext.mVP * obj.GetTransform());
-                prog.SetUniform("MV", rContext.mV * obj.GetTransform());
+            // Mesh uniforms
+            prog.SetUniform("MVP", rContext.mVP * obj->GetTransform());
+            prog.SetUniform("MV", rContext.mV * obj->GetTransform());
 
-                // Material uniforms
-                prog.SetUniform("diffuseColor", mat.mKd);
-                prog.SetUniform("specularGloss", vec4(mat.mKs, mat.mGloss));
+            // Material uniforms
+            prog.SetUniform("diffuseColor", mat.mKd);
+            prog.SetUniform("specularGloss", vec4(mat.mKs, mat.mGloss));
 
-                // Textures
-                for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
-                    mNameToTex.at(texInfo.name).BindToSlot(texInfo.type);
-                }
+            // Textures
+            for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
+                mNameToTex.at(texInfo.name).BindToSlot(texInfo.type);
+            }
 
-                if(mat.mHasAlphaMask) {
-                    glDisable(GL_CULL_FACE);
-                }
-                VA.Render(mScene->mTriMeshes[meshIdx].GetDrawMode());
-                if(mat.mHasAlphaMask) {
-                    glEnable(GL_CULL_FACE);
-                }
+            if(mat.mHasAlphaMask) {
+                glDisable(GL_CULL_FACE);
+            }
+            VA.Render(mScene->mTriMeshes[meshIdx].GetDrawMode());
+            if(mat.mHasAlphaMask) {
+                glEnable(GL_CULL_FACE);
             }
         }
     }

@@ -1,4 +1,5 @@
 #include <Engine/Geometry/TriangleMesh.h>
+#include <glm/gtx/norm.hpp>
 
 using namespace glm;
 using namespace std;
@@ -177,12 +178,35 @@ namespace engine
         return mAABB;
     }
 
-    void TriangleMesh::CalcAABB()
+    const Sphere& TriangleMesh::GetBSphere() const
+    {
+        return mBSphere;
+    }
+
+    void TriangleMesh::CalcBoundingVolumes()
     {
         AABB newAABB;
         for(const vec3 &p : mPositions)
             newAABB |= p;
         mAABB = newAABB;
+
+        const int ctPos = mPositions.size();
+        vec3 a, b;
+        float maxDistSq = -1.0f;
+        for(int i = 0; i < ctPos; ++i) {
+            const vec3 p = mPositions[i];
+            for(int j = i + 1; j < ctPos; ++j) {
+                const float distSq = distance2(p, mPositions[j]);
+                if(distSq > maxDistSq) {
+                    a = p;
+                    b = mPositions[j];
+                    maxDistSq = distSq;
+                }
+            }
+        }
+
+        mBSphere.mCenter = (a + b) * 0.5f;
+        mBSphere.mRadius = sqrtf(maxDistSq) * 0.5f;
     }
 
     unsigned int TriangleMesh::GetDrawMode() const

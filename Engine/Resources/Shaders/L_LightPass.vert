@@ -5,12 +5,8 @@ layout(location = 0) in vec4 position;
 out vec2 UV;
 
 #ifndef AMBIENT_LIGHT
-    out vec3 viewRay;
-    layout(std140) uniform ViewRayData
-    {
-        float tanHalfFovy; // tan(fovy / 2)
-        float aspectTanHalfFovy; // aspectRatio * tan(fovy / 2)
-    };
+out vec3 viewRay;
+#include "UB_ViewRayData.glsl"
 #endif
 
 void main()

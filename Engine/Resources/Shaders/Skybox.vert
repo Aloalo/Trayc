@@ -1,14 +1,13 @@
 #version 330 core
 
-layout(location = 0) in vec3 position;
+layout(location = 0) in vec4 position;
 
-uniform mat4 VP;
-uniform float scale = 500.0;
+#include "UB_Matrices.glsl"
 
 out vec3 texcoords;
 
 void main()
 {
-    texcoords = position;
-    gl_Position = VP * vec4(scale * position, 1.0);
+    texcoords = position.xyz;
+    gl_Position = VP * position;
 }

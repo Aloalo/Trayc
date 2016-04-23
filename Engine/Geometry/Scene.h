@@ -12,15 +12,23 @@
 
 namespace engine
 {
+    class Camera;
+
     class Scene
     {
     public:
         Scene(void);
 
-        AABB GetAABB() const;
+        void AddObject(const Object3D &obj);
 
-        std::vector<const Light*> mLights;
+        int GetNumObjects() const;
+        const Object3D& GetObject(int idx) const;
+        Object3D& GetObject(int idx);
+        AABB GetAABB() const;
+        std::vector<const Object3D*> GetObjects(const Camera *camera, bool forForwardPipeline) const;
+
         std::vector<Object3D> mObjects3D;
+        std::vector<const Light*> mLights;
         std::vector<TriangleMesh> mTriMeshes;
         std::vector<Material> mMaterials;
     };

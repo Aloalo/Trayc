@@ -43,6 +43,7 @@ namespace engine
         mLinearMipMapSampler.Destroy();
         mLinearSampler.Destroy();
         mViewRayDataUB.Destroy();
+        mMatricesUB.Destroy();
 
 #if PRODUCTION
         DebugDraw::Get().Destroy();
@@ -152,6 +153,8 @@ namespace engine
         const float aspectTanHalfFovy = cam.mAspectRatio * tanHalfFovy;
         mViewRayDataUB.tanHalfFovy(tanHalfFovy);
         mViewRayDataUB.aspectTanHalfFovy(aspectTanHalfFovy);
+
+        mMatricesUB.Init(6 * sizeof(glm::mat4));
     }
 
     void Renderer::Render() const
@@ -161,6 +164,13 @@ namespace engine
         rContext.mP = mCamera->GetProjectionMatrix();
         rContext.mVP = rContext.mP * rContext.mV;
         rContext.mCamera = &mCamera->mCamera;
+
+        mMatricesUB.V(rContext.mV);
+        mMatricesUB.P(rContext.mP);
+        mMatricesUB.VP(rContext.mVP);
+        mMatricesUB.invV(inverse(rContext.mV));
+        mMatricesUB.invP(inverse(rContext.mVP));
+        mMatricesUB.invVP(inverse(rContext.mVP));
 
         // -------------------------- Deferred render -------------------------- //
 

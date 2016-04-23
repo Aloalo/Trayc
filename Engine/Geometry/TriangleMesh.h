@@ -6,6 +6,7 @@
 #define EN_TRIANGLEMESH_H
 
 #include <Engine/Geometry/AABB.h>
+#include <Engine/Geometry/Sphere.h>
 #include <Engine/GL/VertexAttributeDef.h>
 #include <glm/glm.hpp>
 #include <vector>
@@ -37,7 +38,10 @@ namespace engine
         int GetVertexSizeInBytes() const;
 
         const AABB& GetAABB() const;
-        void CalcAABB();
+        const Sphere& GetBSphere() const;
+        void CalcBoundingVolumes();
+
+
         unsigned int GetDrawMode() const;
 
     private:
@@ -45,6 +49,7 @@ namespace engine
 
         friend class Scene;
         AABB mAABB;
+        Sphere mBSphere;
     };
 }
 

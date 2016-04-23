@@ -47,6 +47,12 @@ set(Engine_Geometry
     Geometry/Object3D.cpp
     Geometry/Scene.h
     Geometry/Scene.cpp
+    Geometry/Frustum.h
+    Geometry/Frustum.cpp
+    Geometry/Plane.h
+    Geometry/Plane.cpp
+    Geometry/Sphere.h
+    Geometry/Sphere.cpp
 )
 
 set(Engine_GL
@@ -94,8 +100,8 @@ set(Engine_Utils
     Utils/Utilities.cpp
     Utils/ErrorCheck.cpp
     Utils/BSpline.cpp
-    Utils/ViewRayDataUB.h
-    Utils/ViewRayDataUB.cpp
+    Utils/UniformBuffers.h
+    Utils/UniformBuffers.cpp
 )
 
 set(Engine_Engine

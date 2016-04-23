@@ -138,7 +138,7 @@ namespace engine
             }
         }
 
-        ret.CalcAABB();
+        ret.CalcBoundingVolumes();
         return ret;
     }
 
@@ -166,7 +166,7 @@ namespace engine
             }
         }
 
-        ret.CalcAABB();
+        ret.CalcBoundingVolumes();
         return ret;
     }
 
@@ -224,7 +224,7 @@ namespace engine
             IndexMesh(sphere);
         }
 
-        sphere.CalcAABB();
+        sphere.CalcBoundingVolumes();
         return sphere;
     }
 

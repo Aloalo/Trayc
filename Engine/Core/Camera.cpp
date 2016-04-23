@@ -62,6 +62,12 @@ namespace engine
         return cross(GetRight(), GetDirection());
     }
 
+    Frustum Camera::GetFrustum() const
+    {
+        const vec3 center = mPosition + GetDirection() * mFarDistance * 0.5f;
+        return Frustum(mPosition, center, GetUp(), mFoV, mAspectRatio, mNearDistance, mFarDistance);
+    }
+
     void Camera::SetDirection(const glm::vec3 &direction)
     {
         const vec3 dir(normalize(direction));

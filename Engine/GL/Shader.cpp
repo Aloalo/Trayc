@@ -66,6 +66,7 @@ namespace engine
             glGetShaderInfoLog(mID, infoLogLength, nullptr, strInfoLog);
 
             LOG(ERROR) << "[Shader::Init2] Compile failure in " << GetTypeString() << " shader " << name << endl << strInfoLog;
+            LOG(ERROR) << "[Shader::Init2] " << endl << src;
             delete[] strInfoLog;
         }
     }
@@ -89,7 +90,9 @@ namespace engine
             stringstream strStream;
             strStream << in.rdbuf();
             string source(strStream.str());
-            source.erase(source.find_last_of('}') + 1, source.length());
+            auto pos = source.find_last_of('}');
+            pos += (source[pos + 1] == ';');
+            source.erase(pos + 1, source.length());
             return source;
         }
         LOG(ERROR) << "[FileToString] No include file found: " << fname;

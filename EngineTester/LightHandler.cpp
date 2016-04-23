@@ -47,8 +47,8 @@ LightHandler::LightHandler(engine::Scene *scene) :
     scene->mTriMeshes.push_back(lightMesh);
     const int lightMeshIdx = scene->mTriMeshes.size() - 1;
 
-    scene->mObjects3D.push_back(Object3D(lightMeshIdx, lightMatIdx));
-    mPLightObj = &scene->mObjects3D.back();
+    scene->AddObject(Object3D(lightMeshIdx, lightMatIdx));
+    mPLightObj = &scene->GetObject(scene->GetNumObjects() - 1);
     mPLightObj->mShadowCaster = false;
 }
 

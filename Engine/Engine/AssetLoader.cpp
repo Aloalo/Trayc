@@ -263,7 +263,7 @@ namespace engine
             if(ctIndices)
                 meshFile.read(reinterpret_cast<char*>(eMesh.mIndices.data()), ctIndices * sizeof(unsigned int));
 
-            eMesh.CalcAABB();
+            eMesh.CalcBoundingVolumes();
         }
 
         // Load objects
@@ -276,7 +276,7 @@ namespace engine
             const int meshIdx = (int)object.get<Number>("meshIdx");
             scene.mObjects3D.push_back(Object3D(meshIdx, (int)object.get<Number>("materialIdx")));
             Object3D &object3D = scene.mObjects3D.back();
-            object3D.SetMeshAABB(&scene.mTriMeshes[meshIdx].GetAABB());
+            object3D.SetBoundingVolumes(&scene.mTriMeshes[meshIdx].GetAABB(), &scene.mTriMeshes[meshIdx].GetBSphere());
 
             object3D.mDynamicGeometry = object.get<Boolean>("dynamicGeometry");
             object3D.mShadowCaster = object.get<Boolean>("shadowCaster");
@@ -307,7 +307,7 @@ namespace engine
             scene.mObjects3D.push_back(Object3D(meshIdx, matIdx));
             Object3D &obj = scene.mObjects3D.back();
             obj.SetTransform(transform);
-            obj.SetMeshAABB(&scene.mTriMeshes[meshIdx].GetAABB());
+            obj.SetBoundingVolumes(&scene.mTriMeshes[meshIdx].GetAABB(), &scene.mTriMeshes[meshIdx].GetBSphere());
         }
 
         // Do the same for children
@@ -369,7 +369,7 @@ namespace engine
                     mesh.mUVs.push_back(vec2(aimesh->mTextureCoords[0][j].x, aimesh->mTextureCoords[0][j].y));
             }
 
-            mesh.CalcAABB();
+            mesh.CalcBoundingVolumes();
         }
 
         // Load materials

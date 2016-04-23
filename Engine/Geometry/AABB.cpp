@@ -56,6 +56,11 @@ namespace engine
         return vertices;
     }
 
+    vec3 AABB::GetPositiveVertex(const vec3 &n) const
+    {
+        return mMinv + step(vec3(0.0f), n) * Size();
+    }
+
     AABB operator|(const AABB &box, const glm::vec3 &p)
     {
         return AABB(box) |= p;

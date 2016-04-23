@@ -16,6 +16,7 @@ namespace engine
         int GetMeshIdx() const;
         int GetMaterialIdx() const;
         AABB GetAABB() const;
+        Sphere GetBSphere() const;
         const glm::mat4& GetTransform() const;
 
         bool mDynamicGeometry;
@@ -23,12 +24,13 @@ namespace engine
 
     private:
         friend class AssetLoader;
-        void SetMeshAABB(const AABB *meshAABB);
+        void SetBoundingVolumes(const AABB *meshAABB, const Sphere *meshBSphere);
 
         int mMeshIdx;
         int mMatIdx;
 
         const AABB *mMeshAABB;
+        const Sphere *mMeshBSphere;
         glm::mat4 mTransform;
     };
 }

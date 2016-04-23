@@ -8,7 +8,7 @@
 #include <Engine/Engine/Renderable.h>
 #include <Engine/Engine/RenderPass.h>
 #include <Engine/GL/TextureSampler.h>
-#include <Engine/Utils/ViewRayDataUB.h>
+#include <Engine/Utils/UniformBuffers.h>
 
 namespace engine
 {
@@ -53,7 +53,10 @@ namespace engine
 
         TextureSampler mLinearMipMapSampler;
         TextureSampler mLinearSampler;
+
+        // UNiform buffers
         ViewRayDataUB mViewRayDataUB;
+        MatricesUB mMatricesUB;
     };
 }
 

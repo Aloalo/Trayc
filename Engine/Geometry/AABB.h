@@ -31,6 +31,7 @@ namespace engine
 
         glm::vec3 Size() const;
         std::array<glm::vec3, 8> Vertices() const;
+        glm::vec3 GetPositiveVertex(const glm::vec3 &n) const;
 
         glm::vec3 mMinv;
         glm::vec3 mMaxv;
