@@ -2,6 +2,8 @@
 #include <Engine/Engine/LightRenderPass.h>
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Utils/StlExtensions.hpp>
+#include <Engine/Engine/GeometryRenderPass.h>
+#include <Engine/Engine/Renderer.h>
 
 using namespace glm;
 using namespace std;
@@ -31,6 +33,11 @@ namespace engine
         // Init L buffer
         mDstFB.Init(width, height);
         mDstFB.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Lighting out / x
+                             // Bind geometry pass depth renderbuffer
+        const GeometryRenderPass *gPass = static_cast<const GeometryRenderPass*>(mRenderer->GetRenderPass("gPass"));
+        const FrameBuffer &gFB = gPass->GetDstBuffer();
+        mDstFB.AttachRBO(gFB.GetRBOID());
+
         mDstFB.Compile();
 
         // Init light programs
@@ -69,6 +76,7 @@ namespace engine
 
     void LightRenderPass::Render(const RenderingContext &rContext) const
     {
+        glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
 
@@ -84,5 +92,6 @@ namespace engine
         }
 
         glDisable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
     }
 }

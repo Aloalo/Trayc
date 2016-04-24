@@ -73,6 +73,19 @@ namespace engine
         }
     }
 
+    void FrameBuffer::AttachRBO(GLuint RB)
+    {
+        mRBID = RB;
+        Bind();
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRBID);
+        UnBind();
+    }
+
+    GLuint FrameBuffer::GetRBOID() const
+    {
+        return mRBID;
+    }
+
     void FrameBuffer::Compile() const
     {
         Bind();

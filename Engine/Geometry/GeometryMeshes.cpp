@@ -194,7 +194,7 @@ namespace engine
         SphereSubdivide(ab, bc, ca, depth - 1, out);
     }
 
-    TriangleMesh GetSphereMeshSolid(bool indexed, int quality)
+    TriangleMesh GetSphereMeshSolid(bool indexed, int quality, float radius)
     {
         TriangleMesh sphere(GL_TRIANGLES);
 
@@ -218,6 +218,10 @@ namespace engine
 
         for(int i = 0; i < 20; i++) {
             SphereSubdivide(positions[indices[i][0]], positions[indices[i][1]], positions[indices[i][2]], quality, sphere);
+        }
+
+        for(vec3 &p : sphere.mPositions) {
+            p *= radius;
         }
 
         if(indexed) {

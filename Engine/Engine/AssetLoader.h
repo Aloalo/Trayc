@@ -20,6 +20,7 @@ namespace engine
         std::string ResourcePath(const std::string &name) const;
 
         Scene LoadScene(const std::string &path, const std::string &name) const;
+        Object3D CreateObject(const Scene *scene, int meshIdx, int materialIdx) const;
 
     private:
         void CacheScene(const std::string &path, const std::string &name, const Scene &scene) const;

@@ -14,6 +14,52 @@ using namespace stdext;
 
 namespace engine
 {
+
+    ////////////////////////////// SceneGPUData //////////////////////////////
+    SceneGPUData::SceneGPUData(void)
+        : mScene(nullptr)
+    {
+    }
+
+    void SceneGPUData::Init(const Scene * scene)
+    {
+        mScene = scene;
+
+        // Load mesh to memory
+        for(const TriangleMesh &mesh : scene->mTriMeshes)
+        {
+            mVertexArrays.push_back(VertexArray(GL_STATIC_DRAW));
+            VertexArray &VA = mVertexArrays.back();
+            VA.Init(&mesh);
+        }
+        LOG(INFO) << "[SceneGPUData::Init] Loaded meshes to GPU.";
+        // Load textures to memory
+        for(const Material &mat : scene->mMaterials) {
+            for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
+                if(mNameToTex.find(texInfo.name) == mNameToTex.end()) {
+                    mNameToTex[texInfo.name] = Texture2D(texInfo.name.c_str(), true);
+                }
+            }
+        }
+        LOG(INFO) << "[SceneGPUData::Init] Loaded textures to GPU.";
+    }
+
+    void SceneGPUData::Destroy()
+    {
+        ClearVertexArrays();
+        for(auto &pst : mNameToTex)
+            pst.second.Destroy();
+    }
+
+    void SceneGPUData::ClearVertexArrays()
+    {
+        for(auto &VA : mVertexArrays)
+            VA.Destroy();
+
+        mVertexArrays.clear();
+    }
+
+    ////////////////////////////// GeometryRenderPass //////////////////////////////
     GeometryRenderPass::GeometryRenderPass(void)
         : RenderPass("gPass", GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     {
@@ -96,22 +142,20 @@ namespace engine
     void GeometryRenderPass::Destroy()
     {
         mDstFB.Destroy();
-        ClearVertexArrays();
+        mSceneData.Destroy();
         for(Program &p : mGPrograms)
             p.Destroy();
-
-        for(auto &pst : mNameToTex)
-            pst.second.Destroy();
     }
 
     void GeometryRenderPass::Render(const RenderingContext &rContext) const
     {
-        const auto objects = mScene->GetObjects(rContext.mCamera, false);
+        const Scene *scene = mSceneData.mScene;
+        const auto objects = scene->GetObjects(rContext.mCamera, false);
         for(const Object3D *obj : objects)
         {
             const int meshIdx = obj->GetMeshIdx();
-            const VertexArray &VA = mVertexArrays[obj->GetMeshIdx()];
-            const Material &mat = mScene->mMaterials[obj->GetMaterialIdx()];
+            const VertexArray &VA = mSceneData.mVertexArrays[obj->GetMeshIdx()];
+            const Material &mat = scene->mMaterials[obj->GetMaterialIdx()];
             const int renderFlags = mat.GetRenderFlags();
             const Program &prog = mGPrograms[renderFlags];
 
@@ -127,47 +171,26 @@ namespace engine
 
             // Textures
             for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
-                mNameToTex.at(texInfo.name).BindToSlot(texInfo.type);
+                mSceneData.mNameToTex.at(texInfo.name).BindToSlot(texInfo.type);
             }
 
             if(mat.mHasAlphaMask) {
                 glDisable(GL_CULL_FACE);
             }
-            VA.Render(mScene->mTriMeshes[meshIdx].GetDrawMode());
+            VA.Render(scene->mTriMeshes[meshIdx].GetDrawMode());
             if(mat.mHasAlphaMask) {
                 glEnable(GL_CULL_FACE);
             }
         }
     }
 
-    void GeometryRenderPass::InitScene(const Scene *scene)
+    void GeometryRenderPass::Init(const Scene *scene)
     {
-        mScene = scene;
-
-        // Load mesh to memory
-        for(const TriangleMesh &mesh : scene->mTriMeshes)
-        {
-            mVertexArrays.push_back(VertexArray(GL_STATIC_DRAW));
-            VertexArray &VA = mVertexArrays.back();
-            VA.Init(&mesh);
-        }
-        LOG(INFO) << "[GeometryRenderPass::InitScene] Loaded meshes to GPU.";
-        // Load textures to memory
-        for(const Material &mat : scene->mMaterials) {
-            for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
-                if(mNameToTex.find(texInfo.name) == mNameToTex.end()) {
-                    mNameToTex[texInfo.name] = Texture2D(texInfo.name.c_str(), true);
-                }
-            }
-        }
-        LOG(INFO) << "[GeometryRenderPass::InitScene] Loaded textures to GPU.";
+        mSceneData.Init(scene);
     }
 
-    void GeometryRenderPass::ClearVertexArrays()
+    const SceneGPUData* GeometryRenderPass::GetGPUSceneData() const
     {
-        for(auto &VA : mVertexArrays)
-            VA.Destroy();
-
-        mVertexArrays.clear();
+        return &mSceneData;
     }
 }

@@ -4,6 +4,7 @@
 #include <Engine/Engine/Renderer.h>
 #include <Engine/Engine/GeometryRenderPass.h>
 #include <Engine/Engine/LightRenderPass.h>
+#include <Engine/Engine/ForwardRenderPass.h>
 #include <Engine/Engine/BackBufferRenderPass.h>
 
 #include <Engine/Utils/StlExtensions.hpp>
@@ -53,7 +54,7 @@ namespace engine
     void Renderer::SetScene(const Scene *scene)
     {
         GeometryRenderPass *gPass = static_cast<GeometryRenderPass*>(GetRenderPass("gPass"));
-        gPass->InitScene(scene);
+        gPass->Init(scene);
 
         LightRenderPass *lPass = static_cast<LightRenderPass*>(GetRenderPass("lPass"));
         lPass->SetLights(scene->mLights);
@@ -130,6 +131,7 @@ namespace engine
         // Init render passes
         mRenderPasses.push_back(new GeometryRenderPass());
         mRenderPasses.push_back(new LightRenderPass());
+        mRenderPasses.push_back(new ForwardRenderPass());
         mRenderPasses.push_back(new BackBufferRenderPass());
 
         for(RenderPass *rPass : mRenderPasses) {

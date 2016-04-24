@@ -7,10 +7,9 @@
 namespace engine
 {
     //Base object for deferred rendering
+    //Constructed from AssetLoader
     struct Object3D
     {
-        Object3D(int meshIdx, int matIdx);
-
         void SetTransform(const glm::mat4 &transform);
 
         int GetMeshIdx() const;
@@ -24,6 +23,8 @@ namespace engine
 
     private:
         friend class AssetLoader;
+
+        Object3D(int meshIdx, int matIdx);
         void SetBoundingVolumes(const AABB *meshAABB, const Sphere *meshBSphere);
 
         int mMeshIdx;

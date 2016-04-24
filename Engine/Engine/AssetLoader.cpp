@@ -82,6 +82,14 @@ namespace engine
         return scene;
     }
 
+    Object3D AssetLoader::CreateObject(const Scene *scene, int meshIdx, int materialIdx) const
+    {
+        Object3D ret(meshIdx, materialIdx);
+
+        ret.SetBoundingVolumes(&scene->mTriMeshes[meshIdx].GetAABB(), &scene->mTriMeshes[meshIdx].GetBSphere());
+        return ret;
+    }
+
     void AssetLoader::CacheScene(const string &path, const string &name, const Scene &scene) const
     {
         // Prepare

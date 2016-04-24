@@ -20,7 +20,11 @@ namespace engine
         void Destroy();
 
         void AddAttachment(GLenum internalFormat, GLenum format, GLenum type);
+        // Creates and attaches a renderbuffer
         void AttachRBO();
+        // Attaches a renderbuffer
+        void AttachRBO(GLuint RB);
+        GLuint GetRBOID() const;
         void Compile() const;
         void Resize(int width, int height);
         void Check() const;

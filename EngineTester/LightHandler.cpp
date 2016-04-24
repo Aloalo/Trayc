@@ -1,5 +1,6 @@
 
 #include "LightHandler.h"
+#include <Engine/Engine/AssetLoader.h>
 #include <Engine/Geometry/Scene.h>
 #include <Engine/Geometry/GeometryMeshes.h>
 #include <Engine/Geometry/Material.h>
@@ -43,12 +44,12 @@ LightHandler::LightHandler(engine::Scene *scene) :
     scene->mMaterials.push_back(lightMat);
     const int lightMatIdx = scene->mMaterials.size() - 1;
     
-    TriangleMesh lightMesh = GetSphereMeshSolid(true, 1);
+    TriangleMesh lightMesh = GetSphereMeshSolid(false, 1, 5.0f);
     lightMesh.FlipNormals();
     scene->mTriMeshes.push_back(lightMesh);
     const int lightMeshIdx = scene->mTriMeshes.size() - 1;
 
-    scene->AddObject(Object3D(lightMeshIdx, lightMatIdx));
+    scene->AddObject(AssetLoader::Get().CreateObject(scene, lightMeshIdx, lightMatIdx));
     mPLightObj = &scene->GetObject(scene->GetNumObjects() - 1);
     mPLightObj->mShadowCaster = false;
 }
@@ -64,7 +65,7 @@ void LightHandler::Update(float dt)
     }
     const vec3 newPLightPos = mBSpline[accumBSplineDT];
     mPLight.SetPosition(newPLightPos);
-    mPLightObj->SetTransform(scale(translate(mat4(1.0f), newPLightPos), vec3(0.05f)));
+    mPLightObj->SetTransform(translate(mat4(1.0f), newPLightPos));
 
     static float accumSLight = 0.0f;
     accumSLight += dt;

@@ -58,7 +58,7 @@ Physics:
 Optimizations:
     +Reduce number of GL state changes (sort by material/geometry)
     +Frustum culling
-    +Half float for normals/tangents/bitangents (WON'T DO)
+    -Smaller data types for positions/normals/tangents/bitangents/uv
     +Reduce max mipmap level
     -Mesh optimizer
     +Scene binary file cache

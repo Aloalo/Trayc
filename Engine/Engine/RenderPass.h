@@ -21,7 +21,7 @@ namespace engine
         virtual void Init() = 0;
         virtual void Destroy() = 0;
 
-        void BeginRender() const;
+        virtual void BeginRender() const;
 
         // RenderPass extracts all data it needs to render from renderPasses and rContext
         virtual void Render(const RenderingContext &rContext) const = 0;
@@ -29,7 +29,7 @@ namespace engine
         void SetRenderer(Renderer *renderer);
 
         const std::string& GetName() const;
-        const FrameBuffer& GetDstBuffer() const;
+        virtual const FrameBuffer& GetDstBuffer() const;
 
         void ResizeDstBuffer(int width, int height);
 

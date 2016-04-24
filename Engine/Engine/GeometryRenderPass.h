@@ -11,6 +11,21 @@ namespace engine
 {
     class Scene;
 
+    struct SceneGPUData
+    {
+        SceneGPUData(void);
+
+        void Init(const Scene *scene);
+
+        void Destroy();
+        void ClearVertexArrays();
+
+        std::map<std::string, Texture2D> mNameToTex;
+        // At index i is VA for mesh i
+        std::vector<VertexArray> mVertexArrays;
+        const Scene *mScene;
+    };
+
     class GeometryRenderPass : public RenderPass
     {
     public:
@@ -21,17 +36,12 @@ namespace engine
 
         virtual void Render(const RenderingContext &rContext) const override;
 
-        void InitScene(const Scene *scene);
+        void Init(const Scene *scene);
+        const SceneGPUData* GetGPUSceneData() const;
 
     private:
-        void ClearVertexArrays();
-
-        const Scene *mScene;
-
         Program mGPrograms[1 << TextureType::CT_MAT_TEXTURE_TYPES];
-        std::map<std::string, Texture2D> mNameToTex;
-        // At index i is VA for mesh i
-        std::vector<VertexArray> mVertexArrays;
+        SceneGPUData mSceneData;
     };
 }
 
