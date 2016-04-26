@@ -7,6 +7,7 @@
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Engine/Renderer.h>
 #include <Engine/Core/Camera.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace glm;
 using namespace std;
@@ -37,7 +38,10 @@ namespace engine
         mSkyboxCubemap.Init(sideNames);
         mSkyboxCubemap.BindToSlot(TextureType::SKYBOX_SLOT);
 
-        TriangleMesh cube = GetCubeMeshSolid(true, false, renderer->GetCamera()->mFarDistance * mFarPlaneMod - 1.0f);
+        const float sideHalfSize = renderer->GetCamera()->mFarDistance * mFarPlaneMod * 0.5f;
+        mSkyboxTransform = scale(mat4(1.0f), vec3(sideHalfSize));
+        mSkyboxTransform = rotate(mSkyboxTransform, radians(180.0f), vec3(0.0f, 0.0f, 1.0f));
+        TriangleMesh cube = GetCubeMeshSolid(true, false);
         cube.FlipWinding();
         mSkyboxVA.Init(&cube);
     }
@@ -57,7 +61,7 @@ namespace engine
 
         glDepthRange(1.0, 1.0);
         mSkyboxProg.Use();
-        mSkyboxProg.SetUniform("VP", VP);
+        mSkyboxProg.SetUniform("MVP", VP * mSkyboxTransform);
         mSkyboxVA.Render(GL_TRIANGLES);
         glDepthRange(0.0, 1.0);
     }

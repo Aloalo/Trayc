@@ -105,7 +105,7 @@ namespace engine
         vec3(-1.0f, -1.0f, -1.0f)
     };
     
-    TriangleMesh GetCubeMeshSolid(bool indexed, bool normals, float sideLength)
+    TriangleMesh GetCubeMeshSolid(bool indexed, bool normals, const glm::mat4 &transform)
     {
         const int ctIndices = 36;
         const GLuint indices[ctIndices] =
@@ -138,9 +138,8 @@ namespace engine
             }
         }
 
-        sideLength *= 0.5f;
         for(vec3 &p : ret.mPositions) {
-            p *= sideLength;
+            p = vec3(transform * vec4(p, 1.0f));
         }
 
         ret.CalcBoundingVolumes();

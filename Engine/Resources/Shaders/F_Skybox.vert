@@ -2,14 +2,12 @@
 
 layout(location = 0) in vec4 position;
 
-uniform mat4 VP;
+uniform mat4 MVP;
 
 out vec3 texcoords;
 
 void main()
 {
-    gl_Position = VP * position;
+    gl_Position = MVP * position;
     texcoords = position.xyz;
-    texcoords.y = -texcoords.y;
-    texcoords.x = -texcoords.x;
 }

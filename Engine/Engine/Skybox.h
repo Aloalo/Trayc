@@ -26,6 +26,7 @@ namespace engine
         Program mSkyboxProg;
         CubemapTexture mSkyboxCubemap;
         VertexArray mSkyboxVA;
+        glm::mat4 mSkyboxTransform;
         float mFarPlaneMod;
     };
 }
