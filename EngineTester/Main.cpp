@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     const ivec2 SSize(Setting<int>("screenWidth"), Setting<int>("screenHeight"));
     const float timeStep = 1.0f / 60.0f;
     //Init Camera handler
-    DefaultCameraHandler camHandler(ConstructCameraHandler(SSize, Setting<float>("FOV"), 5000.0f));
+    DefaultCameraHandler camHandler(ConstructCameraHandler(SSize, Setting<float>("FOV"), 8000.0f));
 
     //Init Game
     Game game(timeStep);

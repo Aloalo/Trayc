@@ -1,6 +1,7 @@
 
 #include "DebugView.h"
 #include <Engine/Engine/Renderer.h>
+#include <Engine/Engine/RenderPass.h>
 #include <Engine/Engine/DebugDraw.h>
 #include <Engine/Utils/Setting.h>
 

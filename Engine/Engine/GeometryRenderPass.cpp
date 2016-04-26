@@ -21,7 +21,7 @@ namespace engine
     {
     }
 
-    void SceneGPUData::Init(const Scene * scene)
+    void SceneGPUData::Init(const Scene *scene)
     {
         mScene = scene;
 

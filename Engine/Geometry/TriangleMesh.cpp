@@ -28,6 +28,13 @@ namespace engine
             n = -n;
     }
 
+    void TriangleMesh::FlipWinding()
+    {
+        const int ctIndices = mIndices.size();
+        for(int i = 0; i < ctIndices; i += 3)
+            swap(mIndices[i + 1], mIndices[i + 2]);
+    }
+
     vector<VertexAttribDef> TriangleMesh::GetVertexAttribDefs() const
     {
         vector<VertexAttribDef> ret;

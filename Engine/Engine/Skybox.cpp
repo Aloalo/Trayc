@@ -1,69 +1,63 @@
+/*
+* Copyright (c) 2014 Jure Ratkovic
+*/
 
 #include <Engine/Engine/Skybox.h>
 #include <Engine/Geometry/GeometryMeshes.h>
+#include <Engine/Engine/AssetLoader.h>
+#include <Engine/Engine/Renderer.h>
+#include <Engine/Core/Camera.h>
 
-using namespace std;
 using namespace glm;
+using namespace std;
 
 namespace engine
 {
     Skybox::Skybox(void)
-        //: cubemap(GL_TEXTURE_CUBE_MAP)
+        : mSkyboxVA(GL_STATIC_DRAW), mFarPlaneMod(30.0f)
     {
     }
 
-    void Skybox::Load(const string &path, const string &name, const string &extension)
+    void Skybox::Init(const Renderer *renderer)
     {
-        // Init geometry
-        const TriangleMesh cube = GetCubeMeshSolid(true, true);
-        mVAO.Init(&cube);
+        mSkyboxProg.Init(AssetLoader::Get().ShaderPath("F_Skybox").data());
+        mSkyboxProg.Use();
+        mSkyboxProg.SetUniform("skybox", TextureType::SKYBOX_SLOT);
+        Program::Unbind();
 
-        const string side_names[] = {
-            "front",
-            "back",
-            "bottom",
-            "top",
-            "left",
-            "right"
+        // Load skybox
+        const string sideNames[6] = {
+            AssetLoader::Get().TexturePath("skybox/front.jpg"),
+            AssetLoader::Get().TexturePath("skybox/back.jpg"),
+            AssetLoader::Get().TexturePath("skybox/top.jpg"),
+            AssetLoader::Get().TexturePath("skybox/bottom.jpg"),
+            AssetLoader::Get().TexturePath("skybox/left.jpg"),
+            AssetLoader::Get().TexturePath("skybox/right.jpg")
         };
+        mSkyboxCubemap.Init(sideNames);
+        mSkyboxCubemap.BindToSlot(TextureType::SKYBOX_SLOT);
 
-        const GLenum sides[] = {
-            GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
-            GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
-            GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-            GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-            GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-            GL_TEXTURE_CUBE_MAP_POSITIVE_X
-        };
-
-        //glActiveTexture(GL_TEXTURE2);
-        //for(int i = 0; i < 6; ++i)
-        //{
-        //    const string filename = path + name + side_names[i] + extension;
-        //    cubemap.LoadFromFile(filename.c_str(), sides[i], false);
-        //}
-        //cubemap.TexParami(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        //cubemap.TexParami(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        //cubemap.TexParami(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-        //cubemap.TexParami(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        //cubemap.TexParami(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        //cubemap.TexParami(GL_TEXTURE_BASE_LEVEL, 0);
-        //cubemap.TexParami(GL_TEXTURE_MAX_LEVEL, 0);
-
-        //p.SetUniform("cube_map", 2);
+        TriangleMesh cube = GetCubeMeshSolid(true, false, renderer->GetCamera()->mFarDistance * mFarPlaneMod - 1.0f);
+        mSkyboxVA.Init(&cube);
     }
 
     void Skybox::Destroy()
     {
-        mVAO.Destroy();
-        mProgram.Destroy();
-        //cubemap.Destroy();
+        mSkyboxProg.Destroy();
+        mSkyboxCubemap.Destroy();
+        mSkyboxVA.Destroy();
     }
 
-    void Skybox::Draw(const RenderingContext &rContext) const
+    void Skybox::Draw(const Camera *camera) const
     {
-        mProgram.Use();
-        mProgram.SetUniform("VP", rContext.mVP);
-        mVAO.Render(GL_TRIANGLES);
+        Camera skyBoxCam(*camera);
+        skyBoxCam.mFarDistance *= mFarPlaneMod;
+        const mat4 VP = skyBoxCam.GetProjectionMatrix() * skyBoxCam.GetViewMatrix();
+
+        glDepthRange(1.0, 1.0);
+        mSkyboxProg.Use();
+        mSkyboxProg.SetUniform("VP", VP);
+        mSkyboxVA.Render(GL_TRIANGLES);
+        glDepthRange(0.0, 1.0);
     }
 }

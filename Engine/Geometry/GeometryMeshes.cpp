@@ -95,17 +95,17 @@ namespace engine
 
     static const vec3 positionsCube[] =
     {
-        vec3(1.0f, 1.0f, 1.0f),
-        vec3(1.0f, 1.0f, -1.0f),
         vec3(1.0f, -1.0f, 1.0f),
         vec3(1.0f, -1.0f, -1.0f),
-        vec3(-1.0f, 1.0f, 1.0f),
-        vec3(-1.0f, 1.0f, -1.0f),
+        vec3(1.0f, 1.0f, 1.0f),
+        vec3(1.0f, 1.0f, -1.0f),
         vec3(-1.0f, -1.0f, 1.0f),
         vec3(-1.0f, -1.0f, -1.0f),
+        vec3(-1.0f, 1.0f, 1.0f),
+        vec3(-1.0f, 1.0f, -1.0f)
     };
     
-    TriangleMesh GetCubeMeshSolid(bool indexed, bool normals)
+    TriangleMesh GetCubeMeshSolid(bool indexed, bool normals, float sideLength)
     {
         const int ctIndices = 36;
         const GLuint indices[ctIndices] =
@@ -136,6 +136,11 @@ namespace engine
             if(indexed) {
                 ret.mIndices.insert(ret.mIndices.begin(), indices, indices+36);
             }
+        }
+
+        sideLength *= 0.5f;
+        for(vec3 &p : ret.mPositions) {
+            p *= sideLength;
         }
 
         ret.CalcBoundingVolumes();

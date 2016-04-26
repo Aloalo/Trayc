@@ -6,8 +6,8 @@ namespace engine
     unsigned int UniformBuffer::mBoundBuffer = 0;
     unsigned int UniformBuffer::mCurrentBlockBinding = 0;
 
-    UniformBuffer::UniformBuffer(unsigned int usage) :
-        mID(0), mUsage(usage)
+    UniformBuffer::UniformBuffer(unsigned int usage, const char *name) :
+        mID(0), mName(name), mUsage(usage)
     {
         mBlockBinding = mCurrentBlockBinding;
         ++mCurrentBlockBinding;
@@ -67,5 +67,10 @@ namespace engine
     unsigned int UniformBuffer::GetBlockBinding() const
     {
         return mBlockBinding;
+    }
+
+    const char* UniformBuffer::GetName() const
+    {
+        return mName;
     }
 }

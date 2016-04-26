@@ -5,12 +5,12 @@
 namespace engine
 {
     ViewRayDataUB::ViewRayDataUB(void)
-        : UniformBuffer(GL_DYNAMIC_DRAW)
+        : UniformBuffer(GL_DYNAMIC_DRAW, "ViewRayData")
     {
     }
 
     MatricesUB::MatricesUB(void)
-        : UniformBuffer(GL_DYNAMIC_DRAW)
+        : UniformBuffer(GL_DYNAMIC_DRAW, "Matrices")
     {
     }
 }

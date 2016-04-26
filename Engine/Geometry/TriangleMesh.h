@@ -27,6 +27,7 @@ namespace engine
 
         void Clear();
         void FlipNormals();
+        void FlipWinding();
 
         std::vector<VertexAttribDef> GetVertexAttribDefs() const;
         GLenum GetIndexType() const;

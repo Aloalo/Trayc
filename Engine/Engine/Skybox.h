@@ -1,29 +1,32 @@
+
 #ifndef EN_SKYBOX_H
 #define EN_SKYBOX_H
 
-#include <GL/glew.h>
-#include <Engine/Engine/Renderable.h>
-#include <Engine/GL/Texture2D.h>
 #include <Engine/GL/Program.h>
+#include <Engine/GL/CubemapTexture.h>
 #include <Engine/GL/VertexArray.h>
-#include <string>
+#include <Engine/Engine/Renderable.h>
 
 namespace engine
 {
-    class Skybox : public Renderable
+    class Renderer;
+    class Camera;
+
+    class Skybox
     {
     public:
         Skybox(void);
 
-        //" left", "right", "top", "bottom", "far" and "near" are added to name for each side
-        void Load(const std::string &path, const std::string &name, const std::string &extension);
+        void Init(const Renderer *renderer);
         void Destroy();
-        void Draw(const RenderingContext &rContext) const override;
+
+        void Draw(const Camera *camera) const;
 
     private:
-        //Texture cubemap;
-        Program mProgram;
-        VertexArray mVAO;
+        Program mSkyboxProg;
+        CubemapTexture mSkyboxCubemap;
+        VertexArray mSkyboxVA;
+        float mFarPlaneMod;
     };
 }
 

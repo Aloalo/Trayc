@@ -3,7 +3,10 @@
 #define EN_FORWARD_RENDER_PASS_H
 
 #include <Engine/Engine/RenderPass.h>
+#include <Engine/Engine/Skybox.h>
 #include <Engine/GL/Program.h>
+#include <Engine/GL/CubemapTexture.h>
+#include <Engine/GL/VertexArray.h>
 
 namespace engine
 {
@@ -25,6 +28,7 @@ namespace engine
 
     private:
         Program mForwardProg;
+        Skybox mSkybox;
     };
 }
 

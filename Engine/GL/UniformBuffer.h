@@ -15,7 +15,7 @@ namespace engine
     class UniformBuffer
     {
     public:
-        UniformBuffer(unsigned int usage);
+        UniformBuffer(unsigned int usage, const char *name);
         virtual ~UniformBuffer(void);
 
         void Init();
@@ -31,10 +31,14 @@ namespace engine
 
         unsigned int GetBlockBinding() const;
 
+        const char* GetName() const;
+
     protected:
         unsigned int mID;
 
     private:
+        const char *mName;
+
         unsigned int mUsage;
         unsigned int mBlockBinding;
 

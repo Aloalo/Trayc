@@ -22,11 +22,13 @@ namespace engine
     void ForwardRenderPass::Init()
     {
         mForwardProg.Init(AssetLoader::Get().ShaderPath("F_ForwardUnlit").data());
+        mSkybox.Init(mRenderer);
     }
 
     void ForwardRenderPass::Destroy()
     {
         mForwardProg.Destroy();
+        mSkybox.Destroy();
     }
 
     void ForwardRenderPass::BeginRender() const
@@ -56,6 +58,8 @@ namespace engine
 
             VA.Render(scene->mTriMeshes[meshIdx].GetDrawMode());
         }
+
+        mSkybox.Draw(rContext.mCamera);
     }
 
     const FrameBuffer& ForwardRenderPass::GetDstBuffer() const

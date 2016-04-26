@@ -34,8 +34,7 @@ namespace engine
 
     Renderer::~Renderer(void)
     {
-        for(RenderPass *rPass : mRenderPasses)
-        {
+        for(RenderPass *rPass : mRenderPasses) {
             rPass->Destroy();
             delete rPass;
         }
@@ -114,6 +113,21 @@ namespace engine
         return mRenderPasses;
     }
 
+    const ViewRayDataUB& Renderer::GetViewRayDataUB() const
+    {
+        return mViewRayDataUB;
+    }
+
+    const MatricesUB& Renderer::GetMatricesUB() const
+    {
+        return mMatricesUB;
+    }
+
+    const Camera* Renderer::GetCamera() const
+    {
+        return &mCamera->GetCamera();
+    }
+
     void Renderer::InitRendering(const CameraHandler *camera)
     {
         if(mCamera) {
@@ -153,6 +167,7 @@ namespace engine
         mLinearMipMapSampler.BindToSlot(TextureType::SPECULAR_MAP);
         mLinearMipMapSampler.BindToSlot(TextureType::HEIGHT_MAP);
 
+        // Init uniform buffers
         const Camera &cam = mCamera->GetCamera();
         mViewRayDataUB.Init(8);
         const float tanHalfFovy = tanf(radians(cam.mFoV) * 0.5f);

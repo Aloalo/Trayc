@@ -5,16 +5,16 @@
 #ifndef EN_RENDERER_H
 #define EN_RENDERER_H
 
-#include <Engine/Engine/Renderable.h>
-#include <Engine/Engine/RenderPass.h>
 #include <Engine/GL/TextureSampler.h>
 #include <Engine/Utils/UniformBuffers.h>
+#include <vector>
 
 namespace engine
 {
     class Game;
     class Scene;
     class CameraHandler;
+    class Camera;
     class Renderable;
     class RenderPass;
     struct Light;
@@ -39,6 +39,11 @@ namespace engine
         const RenderPass* GetRenderPass(int idx) const;
         const RenderPasses& GetRenderPasses() const;
 
+        const ViewRayDataUB& GetViewRayDataUB() const;
+        const MatricesUB& GetMatricesUB() const;
+
+        const Camera* GetCamera() const;
+
     private:
         RenderPass* GetRenderPass(const std::string &name);
         friend class Game;
@@ -51,10 +56,11 @@ namespace engine
         std::vector<Renderable*> mRenderables;
         std::vector<RenderPass*> mRenderPasses;
 
+        // Samplers
         TextureSampler mLinearMipMapSampler;
         TextureSampler mLinearSampler;
 
-        // UNiform buffers
+        // Uniform buffers
         ViewRayDataUB mViewRayDataUB;
         MatricesUB mMatricesUB;
     };

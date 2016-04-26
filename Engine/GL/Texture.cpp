@@ -129,7 +129,6 @@ namespace engine
         UnBindFromSlot(EMPTY_SLOT);
 
         ilDeleteImages(1, &imgid);
-
     }
 
     void Texture::InitEmpty(uint target, uint internalFormat, ivec2 size, uint format, uint type)

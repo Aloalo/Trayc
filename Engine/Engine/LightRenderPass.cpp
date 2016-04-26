@@ -52,7 +52,9 @@ namespace engine
                 prog.SetUniform("gDepth", TextureType::G_DEPTH_TEXTURE);
                 prog.SetUniform("gNormal", TextureType::G_NORMAL_TEXTURE);
                 prog.SetUniform("gSpecGloss", TextureType::G_SPEC_GLOSS_TEXTURE);
-                prog.SetUniformBlockBinding("ViewRayData", 0);
+
+                const auto &viewRayDataUB = mRenderer->GetViewRayDataUB();
+                prog.SetUniformBlockBinding(viewRayDataUB.GetName(), viewRayDataUB.GetBlockBinding());
             }
             prog.SetUniform("gAlbedo", TextureType::G_ALBEDO_TEXTURE);
             Program::Unbind();
@@ -78,6 +80,7 @@ namespace engine
     {
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
+
         glBlendFunc(GL_ONE, GL_ONE);
 
         for(const Light *light : mLights)
@@ -89,6 +92,8 @@ namespace engine
             prog.Use();
             light->ApplyToProgram(&prog, rContext.mV);
             combiner.Draw();
+
+            glBlendFunc(GL_ONE, GL_ONE);
         }
 
         glDisable(GL_BLEND);
