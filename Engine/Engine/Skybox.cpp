@@ -38,6 +38,7 @@ namespace engine
         mSkyboxCubemap.BindToSlot(TextureType::SKYBOX_SLOT);
 
         TriangleMesh cube = GetCubeMeshSolid(true, false, renderer->GetCamera()->mFarDistance * mFarPlaneMod - 1.0f);
+        cube.FlipWinding();
         mSkyboxVA.Init(&cube);
     }
 

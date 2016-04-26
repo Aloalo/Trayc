@@ -95,14 +95,14 @@ namespace engine
 
     static const vec3 positionsCube[] =
     {
-        vec3(1.0f, -1.0f, 1.0f),
-        vec3(1.0f, -1.0f, -1.0f),
         vec3(1.0f, 1.0f, 1.0f),
         vec3(1.0f, 1.0f, -1.0f),
-        vec3(-1.0f, -1.0f, 1.0f),
-        vec3(-1.0f, -1.0f, -1.0f),
+        vec3(1.0f, -1.0f, 1.0f),
+        vec3(1.0f, -1.0f, -1.0f),
         vec3(-1.0f, 1.0f, 1.0f),
-        vec3(-1.0f, 1.0f, -1.0f)
+        vec3(-1.0f, 1.0f, -1.0f),
+        vec3(-1.0f, -1.0f, 1.0f),
+        vec3(-1.0f, -1.0f, -1.0f)
     };
     
     TriangleMesh GetCubeMeshSolid(bool indexed, bool normals, float sideLength)
