@@ -8,7 +8,7 @@ Deferred renderer prep:
     +Enums instead of strings for g pass materials
     +Better g pass material handling
     +Texture sampler/slot handling
-    -Forward renderer
+    +Forward renderer
 
 Deferred renderer:
     +Lighting pass
@@ -66,3 +66,8 @@ Optimizations:
     -Optimize shaders
     
 Bugs:
+    -Fix VS2013/laptop build
+    
+    
+    
+    

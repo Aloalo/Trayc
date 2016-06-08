@@ -67,5 +67,4 @@ namespace engine
         }
         CLOG(INFO, "performance") << "NET: " << sum << endl;
     }
-
 }
