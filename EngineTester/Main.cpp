@@ -24,7 +24,7 @@ using namespace glm;
 
 DefaultCameraHandler ConstructCameraHandler(ivec2 ss, float FOV, float farDist)
 {
-    const float nearDist = 0.1f;
+    const float nearDist = 10.0f;
     const vec3 cameraPos(0.0f, 200.0f, 0.0f);
     const Camera camera(cameraPos, float(ss.x) / float(ss.y), FOV, nearDist, farDist);
 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     const ivec2 SSize(Setting<int>("screenWidth"), Setting<int>("screenHeight"));
     const float timeStep = 1.0f / 60.0f;
     //Init Camera handler
-    DefaultCameraHandler camHandler(ConstructCameraHandler(SSize, Setting<float>("FOV"), 8000.0f));
+    DefaultCameraHandler camHandler(ConstructCameraHandler(SSize, Setting<float>("FOV"), 4000.0f));
 
     //Init Game
     Game game(timeStep);

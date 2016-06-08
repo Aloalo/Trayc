@@ -17,7 +17,7 @@ Deferred renderer:
     +Transparancy
     -Light probes
     -PBR
-    -Skybox
+    +Skybox
     -Shadows
     -Reflections
     -Parallax mapping

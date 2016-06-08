@@ -182,6 +182,7 @@ namespace engine
                 glEnable(GL_CULL_FACE);
             }
         }
+        //LOG(INFO) << "[GeometryRenderPass::Render] Rendered " << objects.size() << " objects";
     }
 
     void GeometryRenderPass::Init(const Scene *scene)
