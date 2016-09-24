@@ -57,7 +57,9 @@ namespace engine
     {
         Camera skyBoxCam(*camera);
         skyBoxCam.mFarDistance *= mFarPlaneMod;
-        const mat4 VP = skyBoxCam.GetProjectionMatrix() * skyBoxCam.GetViewMatrix();
+        mat4 V = skyBoxCam.GetViewMatrix();
+        V[3][0] = V[3][1] = V[3][2] = 0.0f;
+        const mat4 VP = skyBoxCam.GetProjectionMatrix() * V;
 
         glDepthRange(1.0, 1.0);
         mSkyboxProg.Use();
