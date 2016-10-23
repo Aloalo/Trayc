@@ -114,7 +114,6 @@ namespace engine
 
         mProgram.Use();
         
-        glDisable(GL_CULL_FACE);
         const auto objects = scene->GetShadowCasters();
         for(const Object3D *obj : objects)
         {
@@ -125,7 +124,6 @@ namespace engine
             mProgram.SetUniform("depthMVP", depthVP * obj->GetTransform());
             VA.Render(scene->mTriMeshes[meshIdx].GetDrawMode());
         }
-        glEnable(GL_CULL_FACE);
     }
 
     void ShadowRenderPass::Init(const SceneGPUData *sceneData)
