@@ -146,14 +146,9 @@ namespace engine
         mIBO.SetData(ctIndices * SizeOfGLType(type), indices);
     }
 
-    void VertexArray::RegisterToGPU()
+
+    void VertexArray::EnableVertexAttributes() const
     {
-        glDeleteVertexArrays(1, &mVAO);
-        glGenVertexArrays(1, &mVAO);
-        mVBO.Init();
-
-        mVertexSize = VertexSize();
-
         Bind();
         {
             mVBO.Bind();
@@ -174,6 +169,48 @@ namespace engine
 
         }
         UnBind();
+    }
+
+    void VertexArray::DisableVertexAttributesExept(int attribIdx) const
+    {
+        Bind();
+        {
+            mVBO.Bind();
+
+            int offset = 0;
+            const int ctAttribs = int(mVertAttribs.size());
+            for(int i = 0; i < ctAttribs; ++i)
+            {
+                const auto &attrib = mVertAttribs[i];
+
+                if(i == attribIdx) {
+                    glEnableVertexAttribArray(attrib.index);
+                    glVertexAttribPointer(
+                        attrib.index,
+                        attrib.size,
+                        attrib.type,
+                        attrib.normalized,
+                        mVertexSize,
+                        (void*)offset);
+                    offset += attrib.SizeInBytes();
+                }
+                else {
+                    glDisableVertexAttribArray(attrib.index);
+                }
+            }
+
+        }
+        UnBind();
+    }
+
+    void VertexArray::RegisterToGPU()
+    {
+        glDeleteVertexArrays(1, &mVAO);
+        glGenVertexArrays(1, &mVAO);
+        mVBO.Init();
+
+        mVertexSize = VertexSize();
+        EnableVertexAttributes();
     }
 
     void VertexArray::Render(GLenum mode) const

@@ -12,7 +12,7 @@ namespace engine
 {
     //---------- Light ----------//
     Light::Light(const vec3 &intensity, bool isActive, Type type)
-        : mIntensity(intensity), mIsActive(isActive), mType(type), mHasChanged(true)
+        : mIntensity(intensity), mIsActive(isActive), mType(type), mShadowmap(nullptr)
     {
     }
 
@@ -28,6 +28,11 @@ namespace engine
     Light::Type Light::GetType() const
     {
         return mType;
+    }
+
+    const Texture * Light::GetShadowmap() const
+    {
+        return mShadowmap;
     }
 
 
@@ -58,7 +63,6 @@ namespace engine
     void DirectionalLight::SetDirection(const vec3 &direction)
     {
         mDirection = direction;
-        mHasChanged = true;
     }
 
     const vec3& DirectionalLight::GetDirection() const
@@ -81,7 +85,6 @@ namespace engine
 
     void GlobalLight::SetDirection(const vec3 &direction)
     {
-        mHasChanged = true;
         mDirection = direction;
     }
 
@@ -107,7 +110,6 @@ namespace engine
     void PointLight::SetPosition(const vec3 &position)
     {
         mPosition = position;
-        mHasChanged = true;
     }
 
     const vec3& PointLight::GetPosition() const
@@ -135,7 +137,6 @@ namespace engine
     void SpotLight::SetPosition(const vec3 &position)
     {
         mPosition = position;
-        mHasChanged = true;
     }
 
     const vec3& SpotLight::GetPosition() const
@@ -146,7 +147,6 @@ namespace engine
     void SpotLight::SetDirection(const vec3 &direction)
     {
         mSpotDirection = direction;
-        mHasChanged = true;
     }
 
     const vec3& SpotLight::GetDirection() const

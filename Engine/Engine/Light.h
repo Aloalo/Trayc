@@ -8,6 +8,7 @@
 namespace engine
 {
     class Program;
+    class Texture;
 
     //---------- Light ----------//
     struct Light
@@ -28,17 +29,18 @@ namespace engine
 
         bool operator<(const Light* other) const;
         Type GetType() const;
+        const Texture* GetShadowmap() const;
         // Params need to be transformed to view space
         virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const = 0;
 
         glm::vec3 mIntensity;
 
         bool mIsActive;
-        // For shadow rendering
-        bool mHasChanged;
 
     private:
+        friend class ShadowRenderPass;
         Type mType;
+        const Texture *mShadowmap;
     };
 
     //---------- AmbientLight ----------//

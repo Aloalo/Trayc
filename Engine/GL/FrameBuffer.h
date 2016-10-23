@@ -13,6 +13,7 @@ namespace engine
 {
     class FrameBuffer
     {
+        using Attachment = std::pair<Texture2D, GLenum>;
     public:
         FrameBuffer(void);
 
@@ -25,6 +26,7 @@ namespace engine
         // Attaches a renderbuffer
         void AttachRBO(GLuint RB);
         GLuint GetRBOID() const;
+        // drawBuffers = are the attached textures color targets
         void Compile() const;
         void Resize(int width, int height);
         void Check() const;
@@ -45,7 +47,10 @@ namespace engine
         static const FrameBuffer& BackBuffer();
 
     private:
-        std::vector<Texture2D> mAttachments;
+        int GetCtColorAttachments() const;
+        GLenum GetAttachmentType(GLenum format) const;
+
+        std::vector<Attachment> mAttachments;
 
         GLuint mID;
         GLuint mRBID;

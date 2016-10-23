@@ -27,7 +27,7 @@ namespace engine
         Renderer();
         ~Renderer(void);
 
-        void SetScene(const Scene *scene);
+        void SetScene(Scene *scene);
 
         //Renderables
         void AddRenderable(Renderable *renderable);

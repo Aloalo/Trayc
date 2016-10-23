@@ -109,6 +109,8 @@ set(Engine_Engine
     Engine/Game.cpp
     Engine/GlobalRenderingParams.h
     Engine/GlobalRenderingParams.cpp
+    Engine/ShadowRenderPass.h
+    Engine/ShadowRenderPass.cpp
     Engine/RenderingContext.h
     Engine/RenderingContext.cpp
     Engine/Renderable.h

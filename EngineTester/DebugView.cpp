@@ -1,7 +1,7 @@
 
 #include "DebugView.h"
 #include <Engine/Engine/Renderer.h>
-#include <Engine/Engine/RenderPass.h>
+#include <Engine/Engine/ShadowRenderPass.h>
 #include <Engine/Engine/DebugDraw.h>
 #include <Engine/Utils/Setting.h>
 
@@ -47,6 +47,10 @@ void DebugView::KeyPress(const SDL_KeyboardEvent &e)
         Renderable::mIsActive = true;
         mTexType = TextureType::G_ALBEDO_TEXTURE;
         break;
+    case SDLK_7:
+        Renderable::mIsActive = true;
+        mTexType = TextureType::S_SHADOWMAP;
+        break;
     default:
         break;
     }
@@ -55,6 +59,14 @@ void DebugView::KeyPress(const SDL_KeyboardEvent &e)
 
 void DebugView::Draw(const engine::RenderingContext &rContext) const
 {
+    if(mTexType == TextureType::S_SHADOWMAP) {
+        const ShadowRenderPass *shadowPass = dynamic_cast<const ShadowRenderPass*>(mRenderer->GetRenderPass("shadowPass"));
+        const Texture2D &tex = shadowPass->GetDstBuffer().GetAttachment(0);
+        DebugDraw::Get().DrawDepth(tex, 0.0f, -1.0f);
+        return;
+    }
+
+
     const RenderPass *gPass = mRenderer->GetRenderPass("gPass");
     const Texture2D &tex = gPass->GetDstBuffer().GetAttachment(GetMRTIdx(mTexType));
 

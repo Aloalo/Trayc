@@ -41,14 +41,13 @@ namespace engine
         return ret;
     }
 
-    vector<const Object3D*> Scene::GetObjects(const Camera *camera, bool forForwardPipeline) const
+    vector<const Object3D*> Scene::GetShadowCasters() const
     {
-        vector<const Object3D*> ret;
-        const Frustum frustum = camera->GetFrustum();
+        std::vector<const engine::Object3D*> ret;
+        ret.reserve(mObjects3D.size());
 
         for(const Object3D &obj : mObjects3D) {
-            const Material &mat = mMaterials[obj.GetMaterialIdx()];
-            if(mat.mNeedsForwardRender == forForwardPipeline && frustum.Intersect(obj.GetBSphere()) && frustum.Intersect(obj.GetAABB())) {
+            if(obj.mShadowCaster) {
                 ret.push_back(&obj);
             }
         }

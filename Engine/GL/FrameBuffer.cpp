@@ -9,7 +9,8 @@ namespace engine
     FrameBuffer FrameBuffer::mBackBuffer;
     GLuint FrameBuffer::mBoundFBO = 0;
 
-    static const GLenum colorAttachments[8] = 
+    static const int maxColorAttachments = 8;
+    static const GLenum colorAttachments[maxColorAttachments] =
     {
         GL_COLOR_ATTACHMENT0,
         GL_COLOR_ATTACHMENT1,
@@ -21,9 +22,34 @@ namespace engine
         GL_COLOR_ATTACHMENT7
     };
 
+    static inline bool IsColorAttachment(GLenum format) {
+        return format - GL_COLOR_ATTACHMENT0 < maxColorAttachments;
+    }
+
     FrameBuffer::FrameBuffer(void)
         : mID(0), mRBID(0), mRBDepth(GL_DEPTH_COMPONENT32), mWidth(0), mHeight(0)
     {
+    }
+
+    int FrameBuffer::GetCtColorAttachments() const
+    {
+        int ct = 0;
+        for(const auto &a : mAttachments) {
+            if(IsColorAttachment(a.second)) {
+                ++ct;
+            }
+        }
+        return ct;
+    }
+
+    GLenum FrameBuffer::GetAttachmentType(GLenum format) const
+    {
+        if(format == GL_DEPTH_COMPONENT) {
+            return GL_DEPTH_ATTACHMENT;
+        }
+
+        const int colorIdx = GetCtColorAttachments();
+        return colorAttachments[colorIdx];
     }
 
     void FrameBuffer::Init(int width, int height)
@@ -38,8 +64,8 @@ namespace engine
 
     void FrameBuffer::Destroy()
     {
-        for(Texture2D &fba : mAttachments)
-            fba.Destroy();
+        for(Attachment &a : mAttachments)
+            a.first.Destroy();
 
         glDeleteRenderbuffers(1, &mRBID);
         glDeleteFramebuffers(1, &mID);
@@ -47,12 +73,14 @@ namespace engine
 
     void FrameBuffer::AddAttachment(GLenum internalFormat, GLenum format, GLenum type)
     {
-        mAttachments.push_back(Texture2D());
-        Texture2D &attachement = mAttachments.back();
-        attachement.Init(internalFormat, ivec2(mWidth, mHeight), format, type);
+        const GLenum attachment = GetAttachmentType(format);
+
+        mAttachments.push_back(Attachment(Texture2D(), attachment));
+        Texture2D &attachementTex = mAttachments.back().first;
+        attachementTex.Init(internalFormat, ivec2(mWidth, mHeight), format, type);
 
         Bind();
-        glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[mAttachments.size() - 1], GL_TEXTURE_2D, attachement.ID(), 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, attachementTex.ID(), 0);
         UnBind();
     }
 
@@ -88,8 +116,15 @@ namespace engine
 
     void FrameBuffer::Compile() const
     {
+        const int ctColorAttachments = GetCtColorAttachments();
+
         Bind();
-        glDrawBuffers(mAttachments.size(), colorAttachments);
+        if(ctColorAttachments > 0) {
+            glDrawBuffers(mAttachments.size(), colorAttachments);
+        }
+        else {
+            glDrawBuffer(GL_NONE);
+        }
         UnBind();
 
         // Check completeness
@@ -102,8 +137,8 @@ namespace engine
         mHeight = height;
 
         // Resize color textures
-        for(Texture2D &fba : mAttachments) {
-            fba.Resize(ivec2(mWidth, mHeight));
+        for(Attachment &a : mAttachments) {
+            a.first.Resize(ivec2(mWidth, mHeight));
         }
             
 
@@ -155,11 +190,12 @@ namespace engine
             LOG(ERROR) << "[FrameBuffer::Check] Unknown framebuffer error";
             break;
         }
+        assert(status == GL_FRAMEBUFFER_COMPLETE);
     }
 
     void FrameBuffer::BindTexture(int idx) const
     {
-        glBindTexture(GL_TEXTURE_2D, mAttachments[idx].ID());
+        glBindTexture(GL_TEXTURE_2D, mAttachments[idx].first.ID());
     }
 
     void FrameBuffer::Bind() const
@@ -198,7 +234,7 @@ namespace engine
 
     const Texture2D& FrameBuffer::GetAttachment(int idx) const
     {
-        return mAttachments[idx];
+        return mAttachments[idx].first;
     }
 
     bool FrameBuffer::Exists() const

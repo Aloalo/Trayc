@@ -150,7 +150,7 @@ namespace engine
     void GeometryRenderPass::Render(const RenderingContext &rContext) const
     {
         const Scene *scene = mSceneData.mScene;
-        const auto objects = scene->GetObjects(rContext.mCamera, false);
+        const auto objects = scene->GetObjects<false>(rContext.mCamera->GetFrustum());
         for(const Object3D *obj : objects)
         {
             const int meshIdx = obj->GetMeshIdx();

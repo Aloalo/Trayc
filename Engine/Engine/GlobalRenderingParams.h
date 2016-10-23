@@ -25,6 +25,10 @@ namespace engine
         // Light pass texture
         LIGHT_ACCUM_TEXTURE = 8,
 
+        // Shadowmap
+
+        S_SHADOWMAP = 15,
+
         SKYBOX_SLOT = 29,
         EMPTY_SLOT = 30,
         DEBUG_SLOT = 31,

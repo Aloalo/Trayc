@@ -38,7 +38,7 @@ namespace engine
 
         void Init(const Scene *scene);
         const SceneGPUData* GetGPUSceneData() const;
-
+        
     private:
         Program mGPrograms[1 << TextureType::CT_MAT_TEXTURE_TYPES];
         SceneGPUData mSceneData;

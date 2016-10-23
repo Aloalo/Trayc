@@ -21,6 +21,9 @@ namespace engine
         VertexArray(GLenum VBOusage = GL_STATIC_DRAW);
         ~VertexArray(void);
 
+        void EnableVertexAttributes() const;
+        void DisableVertexAttributesExept(int attribIdx) const;
+
         void AddAttribute(const VertexAttribDef &attrib);
         void AddAttributes(const VertexAttribs &attribs);
         void Init(int ctVertices, int capacity);

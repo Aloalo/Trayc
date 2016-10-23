@@ -45,7 +45,7 @@ namespace engine
         const GeometryRenderPass *gPass = static_cast<const GeometryRenderPass*>(mRenderer->GetRenderPass("gPass"));
         const SceneGPUData *sceneData = gPass->GetGPUSceneData();
         const Scene *scene = sceneData->mScene;
-        const auto objects = scene->GetObjects(rContext.mCamera, true);
+        const auto objects = scene->GetObjects<true>(rContext.mCamera->GetFrustum());
         for(const Object3D *obj : objects)
         {
             const int meshIdx = obj->GetMeshIdx();
