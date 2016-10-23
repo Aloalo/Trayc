@@ -2,8 +2,10 @@
 #include <Engine/Engine/LightRenderPass.h>
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Utils/StlExtensions.hpp>
+#include <Engine/Engine/ShadowRenderPass.h>
 #include <Engine/Engine/GeometryRenderPass.h>
 #include <Engine/Engine/Renderer.h>
+#include <Engine/Utils/Setting.h>
 
 using namespace glm;
 using namespace std;
@@ -56,6 +58,13 @@ namespace engine
                 const auto &viewRayDataUB = mRenderer->GetViewRayDataUB();
                 prog.SetUniformBlockBinding(viewRayDataUB.GetName(), viewRayDataUB.GetBlockBinding());
             }
+            // TODO: fix for general shadows
+            if(i == Light::GLOBAL_LIGHT) {
+                prog.SetUniform("shadowMap", TextureType::S_SHADOWMAP);
+                prog.SetUniform("shadowBrightness", Setting<float>("shadowBrightness"));
+                const auto &matrices = mRenderer->GetMatricesUB();
+                prog.SetUniformBlockBinding(matrices.GetName(), matrices.GetBlockBinding());
+            }
             prog.SetUniform("gAlbedo", TextureType::G_ALBEDO_TEXTURE);
             Program::Unbind();
         }
@@ -78,6 +87,9 @@ namespace engine
 
     void LightRenderPass::Render(const RenderingContext &rContext) const
     {
+        const ShadowRenderPass *shadowPass = static_cast<const ShadowRenderPass*>(mRenderer->GetRenderPass("shadowPass"));
+        const mat4 invView = inverse(rContext.mV);
+
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
 
@@ -88,8 +100,23 @@ namespace engine
             const Light::Type type = light->GetType();
             const TextureCombiner &combiner = mLightCombiners[type];
             const Program &prog = combiner.Prog();
-
+            const Texture *shadowMap = shadowPass->GetShadowmap(light);
+            
             prog.Use();
+
+            switch(light->GetType())
+            {
+            case Light::GLOBAL_LIGHT:
+            {
+                shadowMap->BindToSlot(TextureType::S_SHADOWMAP);
+                const GlobalLight *gl = static_cast<const GlobalLight*>(light);
+                prog.SetUniform("shadowDepthBiasVP", shadowPass->GetDepthBiasVP(-gl->GetDirection()));
+                break;
+            }
+            default:
+                break;
+            }
+
             light->ApplyToProgram(&prog, rContext.mV);
             combiner.Draw();
 
