@@ -7,5 +7,6 @@
   "maxMipmapLevelMod": 3,
   "gamma": 1,
   "vsync": 1,
-  "shadowResolution": 2048
+  "shadowResolution": 2048,
+  "shadowBrightness": 0.2
 }

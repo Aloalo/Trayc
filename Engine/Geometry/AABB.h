@@ -29,6 +29,7 @@ namespace engine
             return *this;
         }
 
+        glm::vec3 Center() const;
         glm::vec3 Size() const;
         std::array<glm::vec3, 8> Vertices() const;
         glm::vec3 GetPositiveVertex(const glm::vec3 &n) const;

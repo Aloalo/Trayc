@@ -38,3 +38,8 @@ float GetLightAttenuation(in vec3 fragPos)
     
     return step(light.cosSpotCutoff, dLS) * atten * pow(dLS, light.spotExp);
 }
+
+float GetShadowFactor(in vec3 fragPos, in float dotNL)
+{
+    return 1.0;
+}

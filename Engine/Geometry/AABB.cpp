@@ -34,6 +34,11 @@ namespace engine
         return *this;
     }
 
+    glm::vec3 AABB::Center() const
+    {
+        return 0.5f * (mMaxv + mMinv);
+    }
+
     vec3 AABB::Size() const
     {
         return mMaxv - mMinv;

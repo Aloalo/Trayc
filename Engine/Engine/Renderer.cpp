@@ -43,6 +43,7 @@ namespace engine
         TextureCombiner::DestroyVAO();
         mLinearMipMapSampler.Destroy();
         mLinearSampler.Destroy();
+        mShadowmapSampler.Destroy();
         mViewRayDataUB.Destroy();
         mMatricesUB.Destroy();
 
@@ -171,6 +172,9 @@ namespace engine
         mLinearMipMapSampler.BindToSlot(TextureType::NORMAL_MAP);
         mLinearMipMapSampler.BindToSlot(TextureType::SPECULAR_MAP);
         mLinearMipMapSampler.BindToSlot(TextureType::HEIGHT_MAP);
+
+        mShadowmapSampler.InitForShadowmapTexture();
+        mShadowmapSampler.BindToSlot(TextureType::S_SHADOWMAP);
 
         // Init uniform buffers
         const Camera &cam = mCamera->GetCamera();

@@ -54,6 +54,8 @@ void main()
     float dNL = max(0.0, dot(normal, lightDir));
     vec3 diffuse = dNL * albedo * lightIntensity;
     
+    float shadow = GetShadowFactor(fragPos, dNL);
+    
     // Specular
     vec3 specular = vec3(0.0);
     if(dNL > 0.0)
@@ -65,11 +67,13 @@ void main()
         specular = lightIntensity * specularGloss.rgb * pow(dER, specularGloss.a * 512.0);
     }
     
+    vec3 color = shadow * (diffuse + specular);
+    
     #ifdef GLOBAL_LIGHT
         vec3 ambient = light.aIntensity * albedo;
-        fragColor = vec4(ambient + diffuse + specular, 1.0);
+        fragColor = vec4(ambient + color, 1.0);
     #else
-        fragColor = vec4(diffuse + specular, 1.0);
+        fragColor = vec4(color, 1.0);
     #endif
 #else
     // Ambient light

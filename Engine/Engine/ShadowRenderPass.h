@@ -24,7 +24,9 @@ namespace engine
 
         // Sets shadowmaps to lights
         void Init(const SceneGPUData *sceneData);
-        glm::mat4 GetDepthBiasMV(const Camera *camera, const glm::vec3 &lightInvDir) const;
+
+        const Texture* GetShadowmap(const Light *light) const;
+        glm::mat4 GetDepthBiasVP(const glm::vec3 &viewDir) const;
 
     private:
         Program mProgram;

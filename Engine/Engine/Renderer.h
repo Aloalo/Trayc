@@ -59,6 +59,7 @@ namespace engine
         // Samplers
         TextureSampler mLinearMipMapSampler;
         TextureSampler mLinearSampler;
+        TextureSampler mShadowmapSampler;
 
         // Uniform buffers
         ViewRayDataUB mViewRayDataUB;

@@ -2,6 +2,7 @@
 #define ET_LIGHT_HANDLER_H
 
 #include <Engine/Core/Updateable.h>
+#include <Engine/Core/InputObserver.h>
 #include <Engine/Engine/Light.h>
 #include <Engine/Utils/BSpline.h>
 
@@ -12,14 +13,17 @@ namespace engine
 }
 
 class LightHandler 
-    : public engine::Updateable
+    : public engine::Updateable, public engine::InputObserver
 {
 public:
     LightHandler(engine::Scene *scene);
 
     virtual void Update(float dt) override;
+    virtual void KeyPress(const SDL_KeyboardEvent &e) override;
 
 private:
+    bool mPause;
+
     engine::GlobalLight mGLight;
 
     engine::PointLight mPLight;

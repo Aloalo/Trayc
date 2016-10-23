@@ -20,3 +20,8 @@ float GetLightAttenuation(in vec3 fragPos)
                 distance * distance * light.attenuation.z;
     return 1.0f / atten;
 }
+
+float GetShadowFactor(in vec3 fragPos, in float dotNL)
+{
+    return 1.0;
+}

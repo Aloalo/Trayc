@@ -21,6 +21,7 @@ namespace engine
         mDstFB.Bind();
         glViewport(0, 0, mDstFB.Width(), mDstFB.Height());
         if(mClearBuffer) {
+            glClearDepth(1.0);
             glClear(mClearMask);
         }
     }

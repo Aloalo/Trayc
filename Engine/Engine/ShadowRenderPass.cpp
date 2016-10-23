@@ -28,7 +28,7 @@ namespace engine
 
         // Init Depth buffer
         mDstFB.Init(res, res);
-        mDstFB.AddAttachment(GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_FLOAT); //Depth
+        mDstFB.AddAttachment(GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_FLOAT); //Depth
         mDstFB.Compile();
 
         // Init program
@@ -69,16 +69,22 @@ namespace engine
         return ortho(minimum.x, maximum.x, minimum.y, maximum.y, minimum.z, maximum.z);
     }
 
-    static inline mat4 CalcShadowVP(const Scene *scene, const Camera *camera, const vec3 &lightInvDir)
+    static inline mat4 CalcShadowVP(const Scene *scene, const vec3 &viewDir)
     {
+        static const vec3 up = vec3(0.0f, 1.0f, 0.0f);
         const AABB sceneAABB = scene->GetAABB();
-        const mat4 V = camera->GetViewMatrix();
-        const mat4 depthProjectionMatrix = CalcShadowProjection(sceneAABB, V);
-        const mat4 depthViewMatrix = lookAt(lightInvDir, vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
+        const vec3 pos = sceneAABB.Center();
+        const mat4 depthViewMatrix = lookAt(pos, pos + viewDir, up);
+        const mat4 depthProjectionMatrix = CalcShadowProjection(sceneAABB, depthViewMatrix);
         return depthProjectionMatrix * depthViewMatrix;
     }
 
-    mat4 ShadowRenderPass::GetDepthBiasMV(const Camera *camera, const vec3 &lightInvDir) const
+    const Texture* ShadowRenderPass::GetShadowmap(const Light *light) const
+    {
+        return mLightToShadowmap.at(light);
+    }
+
+    mat4 ShadowRenderPass::GetDepthBiasVP(const vec3 &viewDir) const
     {
         static const mat4 biasMatrix(
             0.5, 0.0, 0.0, 0.0,
@@ -87,7 +93,7 @@ namespace engine
             0.5, 0.5, 0.5, 1.0
         );
 
-        return biasMatrix * CalcShadowVP(mSceneData->mScene, camera, lightInvDir);
+        return biasMatrix * CalcShadowVP(mSceneData->mScene, viewDir);
     }
 
     void ShadowRenderPass::Render(const RenderingContext &rContext) const
@@ -98,36 +104,28 @@ namespace engine
         vec3 lightInvDir;
         for(const Light *l : scene->mLights) {
             if(l->GetType() == Light::GLOBAL_LIGHT) {
-                lightInvDir = -dynamic_cast<const GlobalLight*>(l)->GetDirection();
+                lightInvDir = -static_cast<const GlobalLight*>(l)->GetDirection();
                 break;
             }
         }
 
         // Compute the MVP matrix from the light's point of view
-        const mat4 depthVP = CalcShadowVP(scene, rContext.mCamera, lightInvDir);
+        const mat4 depthVP = CalcShadowVP(scene, lightInvDir);
 
         mProgram.Use();
         
-        glCullFace(GL_FRONT);
+        glDisable(GL_CULL_FACE);
         const auto objects = scene->GetShadowCasters();
         for(const Object3D *obj : objects)
         {
             const int meshIdx = obj->GetMeshIdx();
             const VertexArray &VA = mSceneData->mVertexArrays[obj->GetMeshIdx()];
-            const Material &mat = scene->mMaterials[obj->GetMaterialIdx()];
 
             // Mesh uniforms
             mProgram.SetUniform("depthMVP", depthVP * obj->GetTransform());
-
-            if(mat.mHasAlphaMask) {
-                glDisable(GL_CULL_FACE);
-            }
             VA.Render(scene->mTriMeshes[meshIdx].GetDrawMode());
-            if(mat.mHasAlphaMask) {
-                glEnable(GL_CULL_FACE);
-            }
         }
-        glCullFace(GL_BACK);
+        glEnable(GL_CULL_FACE);
     }
 
     void ShadowRenderPass::Init(const SceneGPUData *sceneData)

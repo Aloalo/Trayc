@@ -26,6 +26,8 @@ namespace engine
         // Linear mag filter, Linear min filter, wrap clamp
         void InitForDataTexture();
 
+        void InitForShadowmapTexture();
+
     private:
         GLuint mID;
     };

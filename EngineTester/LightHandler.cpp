@@ -12,6 +12,7 @@ using namespace glm;
 using namespace std;
 
 LightHandler::LightHandler(engine::Scene *scene) :
+    mPause(false),
     mGLight(vec3(0.05f), vec3(0.988f, 0.83f, 0.251f), true, vec3(1.0f)),
     mPLight(vec3(20.0f), true, vec3(1.0f, 0.0f, 0.001f), vec3(0.0f, 200.0f, 0.0f)),
     mSLight(vec3(1.8f), true, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 500.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 15.0f, 200.0f)
@@ -56,6 +57,10 @@ LightHandler::LightHandler(engine::Scene *scene) :
 
 void LightHandler::Update(float dt)
 {
+    if(mPause) {
+        return;
+    }
+
     static float accumBSplineDT = 0.0f;
     accumBSplineDT += dt;
 
@@ -71,4 +76,19 @@ void LightHandler::Update(float dt)
     accumSLight += dt;
 
     mSLight.SetDirection(vec3(cosf(accumSLight), 0.0f, sinf(accumSLight)));
+
+    vec3 d = mGLight.GetDirection();
+    d = vec3(0.0f, abs(sinf(accumSLight / 5.0f)), cosf(accumSLight / 5.0f)) / 3.0f;
+    mGLight.SetDirection(normalize(d));
+}
+
+void LightHandler::KeyPress(const SDL_KeyboardEvent & e)
+{
+    if(e.repeat) {
+        return;
+    }
+
+    if(e.keysym.sym == SDLK_p && e.type == SDL_KEYDOWN) {
+        mPause = !mPause;
+    }
 }

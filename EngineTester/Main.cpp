@@ -35,7 +35,7 @@ DefaultCameraHandler ConstructCameraHandler(ivec2 ss, float FOV, float farDist)
     return DefaultCameraHandler(camera, moveSpeed, rotationSpeed, springiness);
 }
 
-int main(int argc, char *argv[])
+void Start(int argc, char *argv[])
 {
     InitLogging(argc, argv);
 
@@ -68,7 +68,13 @@ int main(int argc, char *argv[])
     LightHandler lHandler(&scene);
     game.mRenderer.SetScene(&scene);
     game.mUpdateableMenager.AddUpdateable(&lHandler);
-    
+    game.mInputHandler.AddEventListener(&lHandler);
+
     game.GameLoop();
+}
+
+int main(int argc, char *argv[])
+{
+    Start(argc, argv);
     return 0;
 }
