@@ -35,7 +35,7 @@ namespace engine
             AssetLoader::Get().TexturePath("skybox/left.jpg"),
             AssetLoader::Get().TexturePath("skybox/right.jpg")
         };
-        mSkyboxCubemap.Init(sideNames);
+        mSkyboxCubemap.Init(sideNames, TextureType::DIFFUSE_MAP);
         mSkyboxCubemap.BindToSlot(TextureType::SKYBOX_SLOT);
 
         const float sideHalfSize = renderer->GetCamera()->mFarDistance * mFarPlaneMod * 0.5f;

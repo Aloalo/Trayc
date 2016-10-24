@@ -24,7 +24,7 @@ vec3 LightingPhysical(in vec3 N, in vec3 L, in vec3 P, in vec3 lightIntensity, i
     vec3 fresnelTerm = fresnelSchlick(specularColor, L, H);
     vec3 specular = fresnelTerm * ((specularPower + 2.0) / 8.0) * pow(saturate(dot(N, H)), specularPower) * dotNL;
 
-    return shadow * (albedo * diffuse + specular);
+    return shadow * (albedo * diffuse + specular) * 0.0001 + specular;
 }
 
 

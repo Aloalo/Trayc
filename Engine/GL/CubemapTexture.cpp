@@ -26,10 +26,10 @@ namespace engine
     {
     }
 
-    void CubemapTexture::Init(const string files[6])
+    void CubemapTexture::Init(const string files[6], TextureType type)
     {
         for(int i = 0; i < 6; ++i) {
-            LoadFromFile(mCubeSides[i], files[i].c_str(), TextureType::CT_TEX_SLOTS);
+            LoadFromFile(mCubeSides[i], files[i].c_str(), type);
         }
         TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR);

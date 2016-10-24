@@ -13,7 +13,7 @@ namespace engine
         virtual void Resize(glm::ivec2 size) override;
 
         // From file
-        void Init(const std::string files[6]);
+        void Init(const std::string files[6], TextureType type);
 
     private:
         static uint mCubeSides[6];

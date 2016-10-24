@@ -110,7 +110,9 @@ namespace engine
             return;
         }
 
-        iluGammaCorrect(Setting<float>("gamma"));
+        if(type == TextureType::DIFFUSE_MAP) {
+            iluGammaCorrect(Setting<float>("gamma"));
+        }
 
         ILinfo ImageInfo;
         iluGetImageInfo(&ImageInfo);
