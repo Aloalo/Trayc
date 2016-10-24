@@ -20,6 +20,8 @@ namespace engine
     public:
         Scene(void);
 
+        void Scale(float scale);
+
         void AddObject(const Object3D &obj);
 
         int GetNumObjects() const;

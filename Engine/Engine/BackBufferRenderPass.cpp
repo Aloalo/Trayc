@@ -1,11 +1,17 @@
 
 #include <Engine/Engine/BackBufferRenderPass.h>
 #include <Engine/Engine/Renderer.h>
+#include <Engine/Engine/DebugDraw.h>
+#include <Engine/Utils/Setting.h>
+#include <Engine/Engine/AssetLoader.h>
+
+using namespace glm;
+using namespace std;
 
 namespace engine
 {
     BackBufferRenderPass::BackBufferRenderPass(void)
-        : RenderPass("bbPass", GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT), mFinalFB(nullptr)
+        : RenderPass("bbPass", GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT), mFinalTex(nullptr)
     {
     }
 
@@ -14,19 +20,22 @@ namespace engine
         const auto& renderPasses = mRenderer->GetRenderPasses();
         // BackBufferRenderPass is actually the last pass 
         const RenderPass* lastPass = renderPasses[renderPasses.size() - 2];
-        mFinalFB = &lastPass->GetDstBuffer();
+        mFinalTex = &lastPass->GetDstBuffer().GetAttachment(0);
+
+        mDraw.Init(AssetLoader::Get().ShaderPath("C_TexToScreen").data(), vector<string>());
+        mDraw.Prog().Use();
+        mDraw.Prog().SetUniform("tex", TextureType::FINAL_SLOT);
+        mDraw.Prog().SetUniform("gamma", vec3(Setting<float>("gamma")));
     }
 
     void BackBufferRenderPass::Destroy()
     {
+        mDraw.Destroy();
     }
 
     void BackBufferRenderPass::Render(const RenderingContext &rContext) const
     {
-        mFinalFB->BindRead();
-        FrameBuffer::BackBuffer().BindDraw();
-        glBlitFramebuffer(0, 0, mFinalFB->Width(), mFinalFB->Height(), 0, 0, mDstFB.Width(), mDstFB.Height(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
-        FrameBuffer::UnBind();
+        mDraw.Draw();
     }
 
 }

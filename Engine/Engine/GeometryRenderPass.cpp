@@ -37,7 +37,7 @@ namespace engine
         for(const Material &mat : scene->mMaterials) {
             for(const Material::TextureInfo &texInfo : mat.mTextureMaps) {
                 if(mNameToTex.find(texInfo.name) == mNameToTex.end()) {
-                    mNameToTex[texInfo.name] = Texture2D(texInfo.name.c_str(), true);
+                    mNameToTex[texInfo.name] = Texture2D(texInfo.name.c_str(), true, TextureType(texInfo.type));
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace engine
         mDstFB.AddAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); //Normal view space / x
         mDstFB.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Specular / Gloss
         mDstFB.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
-                                                                   //mDstFB.AddAttachment(GL_SRGB8_ALPHA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
+        //mDstFB.AddAttachment(GL_SRGB8_ALPHA8, GL_RGBA, GL_UNSIGNED_BYTE); //Albedo / x
 
         mDstFB.AttachRBO(); // For depth testing
         mDstFB.Compile();

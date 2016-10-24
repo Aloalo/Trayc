@@ -4,13 +4,24 @@
 
 #include <Engine/Geometry/Scene.h>
 #include <Engine/Core/Camera.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace std;
+using namespace glm;
 
 namespace engine
 {
     Scene::Scene(void)
     {
+    }
+
+    void Scene::Scale(float scale)
+    {
+        const mat4 m = glm::scale(mat4(1.0f), vec3(scale));
+
+        for(Object3D &o : mObjects3D) {
+            o.SetTransform(o.GetTransform() * m);
+        }
     }
 
     void Scene::AddObject(const Object3D & obj)

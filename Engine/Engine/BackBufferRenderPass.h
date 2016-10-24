@@ -18,7 +18,8 @@ namespace engine
 
         virtual void Render(const RenderingContext &rContext) const override;
     private:
-        const FrameBuffer *mFinalFB;
+        const Texture2D *mFinalTex;
+        TextureCombiner mDraw;
     };
 }
 

@@ -146,6 +146,7 @@ namespace engine
         glDepthFunc(GL_LEQUAL);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glDisable(GL_SCISSOR_TEST);
+        glDisable(GL_FRAMEBUFFER_SRGB);
 
         // Init render passes
         mRenderPasses.push_back(new ShadowRenderPass());
@@ -166,6 +167,7 @@ namespace engine
         mLinearSampler.BindToSlot(TextureType::G_ALBEDO_TEXTURE);
         mLinearSampler.BindToSlot(TextureType::G_SPEC_GLOSS_TEXTURE);
         mLinearSampler.BindToSlot(TextureType::LIGHT_ACCUM_TEXTURE);
+        mLinearSampler.BindToSlot(TextureType::FINAL_SLOT);
 
         mLinearMipMapSampler.InitForDiffuse();
         mLinearMipMapSampler.BindToSlot(TextureType::DIFFUSE_MAP);

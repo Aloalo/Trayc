@@ -69,9 +69,9 @@ namespace engine
         glTexParameteri(mTarget, pname, param);
     }
 
-    void Texture::InitFromFile(uint target, const char *file, bool mipmaps)
+    void Texture::InitFromFile(uint target, const char *file, bool mipmaps, TextureType type)
     {
-        LoadFromFile(target, file);
+        LoadFromFile(target, file, type);
 
         BindToSlot(EMPTY_SLOT);
         {
@@ -93,7 +93,7 @@ namespace engine
         UnBindFromSlot(EMPTY_SLOT);
     }
 
-    void Texture::LoadFromFile(uint target, const char * file)
+    void Texture::LoadFromFile(uint target, const char *file, TextureType type)
     {
         unsigned int imgid;
         ilGenImages(1, &imgid);
@@ -109,6 +109,8 @@ namespace engine
             ilDeleteImages(1, &imgid);
             return;
         }
+
+        iluGammaCorrect(Setting<float>("gamma"));
 
         ILinfo ImageInfo;
         iluGetImageInfo(&ImageInfo);

@@ -50,7 +50,7 @@ vec3 GetNormal()
     normal = normalize(fs_in.TBN * normal); 
     return normal;
 #else
-    return fs_in.normal;
+    return normalize(fs_in.normal);
 #endif
 }
 

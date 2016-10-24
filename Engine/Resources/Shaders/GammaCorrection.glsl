@@ -1,6 +1,6 @@
 
-uniform vec3 invGammaExp;
+uniform vec3 gamma;
 vec3 gammaCorrect(in vec3 color)
 {
-    return pow(color, invGammaExp);
+    return pow(color, gamma);
 }

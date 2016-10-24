@@ -7,10 +7,10 @@ using namespace glm;
 
 namespace engine
 {
-    Texture2D::Texture2D(const char *file, bool mipmaps)
+    Texture2D::Texture2D(const char *file, bool mipmaps, TextureType type)
         : Texture(GL_TEXTURE_2D)
     {
-        InitFromFile(Target(), file, mipmaps);
+        InitFromFile(Target(), file, mipmaps, type);
     }
 
     Texture2D::Texture2D(void)
@@ -18,9 +18,9 @@ namespace engine
     {
     }
 
-    void Texture2D::Init(const char *file, bool mipmaps)
+    void Texture2D::Init(const char *file, bool mipmaps, TextureType type)
     {
-        InitFromFile(Target(), file, mipmaps);
+        InitFromFile(Target(), file, mipmaps, type);
     }
 
     void Texture2D::Init(uint internalFormat, ivec2 size, uint format, uint type)

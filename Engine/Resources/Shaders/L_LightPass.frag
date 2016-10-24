@@ -36,38 +36,26 @@ uniform sampler2D gAlbedo;
     #include "AmbientLight.glsl"
 #endif
 
+#ifndef AMBIENT_LIGHT
+    #include "LightingModel.glsl"
+#endif
+
 void main()
 {             
 #ifndef AMBIENT_LIGHT
     // Retrieve data from G-buffer
     vec3 fragPos = texture(gDepth, UV).r * viewRay;
-    vec3 normal = texture(gNormal, UV).rgb;
+    vec3 N = texture(gNormal, UV).rgb;
     vec3 albedo = texture(gAlbedo, UV).rgb;
+    vec4 specularGloss = texture(gSpecGloss, UV);
     
     // Get Light params
-    vec3 lightDir = GetLightDir(fragPos);
+    vec3 L = GetLightDir(fragPos);
     float atten = GetLightAttenuation(fragPos);
-    vec3 lightIntensity = atten * light.intensity;
+    vec3 lightIntensity = light.intensity;
     
-    // Calculate lighting
-    // Diffuse
-    float dNL = max(0.0, dot(normal, lightDir));
-    vec3 diffuse = dNL * albedo * lightIntensity;
-    
-    float shadow = GetShadowFactor(fragPos, dNL);
-    
-    // Specular
-    vec3 specular = vec3(0.0);
-    if(dNL > 0.0)
-    {
-        vec4 specularGloss = texture(gSpecGloss, UV);
-        vec3 E = normalize(fragPos);
-        vec3 R = reflect(lightDir, normal);
-        float dER = max(0.0, dot(E, R));
-        specular = lightIntensity * specularGloss.rgb * pow(dER, specularGloss.a * 512.0);
-    }
-    
-    vec3 color = shadow * (diffuse + specular);
+    //vec3 color = LightingPhong(N, L, fragPos, lightIntensity, albedo, specularGloss.rgb, atten, specularGloss.a);
+    vec3 color = LightingPhysical(N, L, fragPos, lightIntensity, albedo, specularGloss.rgb, atten, specularGloss.a);
     
     #ifdef GLOBAL_LIGHT
         vec3 ambient = light.aIntensity * albedo;

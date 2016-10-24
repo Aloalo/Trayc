@@ -29,6 +29,8 @@ namespace engine
 
         S_SHADOWMAP = 15,
 
+        // Where the result of all passes except bb must end up
+        FINAL_SLOT = 28,
         SKYBOX_SLOT = 29,
         EMPTY_SLOT = 30,
         DEBUG_SLOT = 31,

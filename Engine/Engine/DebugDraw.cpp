@@ -23,7 +23,7 @@ namespace engine
     {
         TextureCombiner::SetTexture(TextureType::DEBUG_SLOT, tex);
         mDrawTex.Prog().Use();
-        mDrawTex.Prog().SetUniform("invGammaExp", 1.0f / gamma);
+        mDrawTex.Prog().SetUniform("gamma", gamma);
         mDrawTex.Draw();
         Program::Unbind();
     }

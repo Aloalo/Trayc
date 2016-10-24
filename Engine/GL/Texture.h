@@ -34,9 +34,9 @@ namespace engine
         uint mType;
 
         // Initialises texture params
-        void InitFromFile(uint target, const char *file, bool mipmaps);
+        void InitFromFile(uint target, const char *file, bool mipmaps, TextureType type);
         // Doesn't initialise texture params
-        void LoadFromFile(uint target, const char *file);
+        void LoadFromFile(uint target, const char *file, TextureType type);
         void InitEmpty(uint target, uint internalFormat, glm::ivec2 size, uint format, uint type);
 
     private:

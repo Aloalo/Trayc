@@ -71,6 +71,7 @@ namespace engine
 
         // Bind own textures to appropriate slots
         mDstFB.GetAttachment(0).BindToSlot(TextureType::LIGHT_ACCUM_TEXTURE);
+        mDstFB.GetAttachment(0).BindToSlot(TextureType::FINAL_SLOT);
     }
 
     void LightRenderPass::Destroy()

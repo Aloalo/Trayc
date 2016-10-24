@@ -10,10 +10,10 @@ namespace engine
         using uint = unsigned int;
     public:
         Texture2D(void);
-        Texture2D(const char *file, bool mipmaps);
+        Texture2D(const char *file, bool mipmaps, TextureType type);
 
         // From file
-        void Init(const char *file, bool mipmaps);
+        void Init(const char *file, bool mipmaps, TextureType type);
         // Empty tex
         void Init(uint internalFormat, glm::ivec2 size, uint format, uint type);
 

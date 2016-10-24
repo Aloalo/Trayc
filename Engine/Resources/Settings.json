@@ -5,7 +5,7 @@
   "resolutionScale": 1,
   "anisotropicFiltering": 16,
   "maxMipmapLevelMod": 3,
-  "gamma": 1,
+  "gamma": 2.2,
   "vsync": 1,
   "shadowResolution": 2048,
   "shadowBrightness": 0.2

@@ -57,7 +57,7 @@ namespace engine
     void DirectionalLight::ApplyToProgram(const Program *prog, const mat4 &V) const
     {
         prog->SetUniform("light.intensity", mIntensity);
-        prog->SetUniform("light.direction", vec3(V * vec4(mDirection, 0.0f)));
+        prog->SetUniform("light.direction", normalize(vec3(V * vec4(mDirection, 0.0f))));
     }
 
     void DirectionalLight::SetDirection(const vec3 &direction)
@@ -80,7 +80,7 @@ namespace engine
     {
         prog->SetUniform("light.aIntensity", mIntensity);
         prog->SetUniform("light.intensity", mDirectionalIntensity);
-        prog->SetUniform("light.direction", vec3(V * vec4(mDirection, 0.0f)));
+        prog->SetUniform("light.direction", normalize(vec3(V * vec4(mDirection, 0.0f))));
     }
 
     void GlobalLight::SetDirection(const vec3 &direction)
@@ -129,7 +129,7 @@ namespace engine
         prog->SetUniform("light.intensity", mIntensity);
         prog->SetUniform("light.attenuation", mAttenuation);
         prog->SetUniform("light.position", vec3(V * vec4(mPosition, 1.0f)));
-        prog->SetUniform("light.spotDir", vec3(V * vec4(mSpotDirection, 0.0f)));
+        prog->SetUniform("light.spotDir", normalize(vec3(V * vec4(mSpotDirection, 0.0f))));
         prog->SetUniform("light.cosSpotCutoff", cosf(radians(mSpotCutoff)));
         prog->SetUniform("light.spotExp", mSpotExponent);
     }

@@ -29,7 +29,7 @@ namespace engine
     void CubemapTexture::Init(const string files[6])
     {
         for(int i = 0; i < 6; ++i) {
-            LoadFromFile(mCubeSides[i], files[i].c_str());
+            LoadFromFile(mCubeSides[i], files[i].c_str(), TextureType::CT_TEX_SLOTS);
         }
         TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
