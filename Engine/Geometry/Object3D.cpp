@@ -8,7 +8,8 @@ using namespace glm;
 namespace engine
 {
     Object3D::Object3D(int meshIdx, int matIdx)
-        : mDynamicGeometry(false), mShadowCaster(true), mMeshIdx(meshIdx), mMatIdx(matIdx), mMeshAABB(nullptr), mMeshBSphere(nullptr), mTransform(1.0f)
+        : mDynamicGeometry(false), mShadowCaster(true), mVisible(true), mMeshIdx(meshIdx),
+        mMatIdx(matIdx), mMeshAABB(nullptr), mMeshBSphere(nullptr), mTransform(1.0f)
     {
     }
 

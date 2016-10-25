@@ -58,7 +58,7 @@ namespace engine
         ret.reserve(mObjects3D.size());
 
         for(const Object3D &obj : mObjects3D) {
-            if(obj.mShadowCaster) {
+            if(obj.mVisible && obj.mShadowCaster) {
                 ret.push_back(&obj);
             }
         }

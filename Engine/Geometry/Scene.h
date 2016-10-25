@@ -38,9 +38,11 @@ namespace engine
             ret.reserve(mObjects3D.size());
 
             for(const Object3D &obj : mObjects3D) {
-                const Material &mat = mMaterials[obj.GetMaterialIdx()];
-                if(mat.mNeedsForwardRender == forForwardPipeline && frustum.Intersect(obj.GetBSphere()) && frustum.Intersect(obj.GetAABB())) {
-                    ret.push_back(&obj);
+                if(obj.mVisible) {
+                    const Material &mat = mMaterials[obj.GetMaterialIdx()];
+                    if(mat.mNeedsForwardRender == forForwardPipeline && frustum.Intersect(obj.GetBSphere()) && frustum.Intersect(obj.GetAABB())) {
+                        ret.push_back(&obj);
+                    }
                 }
             }
 

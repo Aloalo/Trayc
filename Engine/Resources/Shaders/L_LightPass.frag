@@ -37,7 +37,11 @@ uniform sampler2D gAlbedo;
 #endif
 
 #ifndef AMBIENT_LIGHT
-    #include "LightingModel.glsl"
+    #ifdef PBR
+        #include "LightingModelPBR.glsl"
+    #else
+        #include "LightingModelPhong.glsl"
+    #endif
 #endif
 
 void main()
@@ -54,8 +58,7 @@ void main()
     float atten = GetLightAttenuation(fragPos);
     vec3 lightIntensity = light.intensity;
     
-    vec3 color = LightingPhong(N, L, fragPos, lightIntensity, albedo, specularGloss.rgb, atten, specularGloss.a);
-    //vec3 color = LightingPhysical(N, L, fragPos, lightIntensity, albedo, specularGloss.rgb, atten, specularGloss.a);
+    vec3 color = Lighting(N, L, fragPos, lightIntensity, albedo, specularGloss.rgb, atten, specularGloss.a);
     
     #ifdef GLOBAL_LIGHT
         vec3 ambient = light.aIntensity * albedo;

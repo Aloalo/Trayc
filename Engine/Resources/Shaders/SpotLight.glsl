@@ -10,18 +10,6 @@ struct Light
 };
 uniform Light light;
 
-
-/*
-float clampedCosine = max(0.0, dot(-lightDirection, light0.spotDir));
-if (clampedCosine < cos(radians(light0.spotCutoff))) // outside of spotlight cone?
-{
-    attenuation = 0.0;
-}
-else
-{
-    attenuation = attenuation * pow(clampedCosine, light0.spotExp);   
-}
-*/
 vec3 GetLightDir(in vec3 fragPos)
 {
     return normalize(light.position - fragPos);

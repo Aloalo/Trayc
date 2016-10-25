@@ -78,7 +78,6 @@ namespace engine
         mDx -= dxr;
         mDy -= dyr;
 
-        static const vec3 up(0.0f, 1.0f, 0.0f);
         const vec3 Xaxis = mCamera.GetRight();
         static const vec3 Yaxis(0.0f, 1.0f, 0.0f);
         static const mat4 I(1.0f);

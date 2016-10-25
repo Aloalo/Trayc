@@ -14,6 +14,7 @@
 
 #include "GUIView.h"
 #include "LightHandler.h"
+#include "PBRMaterialDemo.h"
 
 #if PRODUCTION
 #include "DebugView.h"
@@ -36,7 +37,7 @@ DefaultCameraHandler ConstructDefaultCameraHandler(ivec2 ss, float FOV, float fa
     return DefaultCameraHandler(camera, moveSpeed, rotationSpeed, springiness);
 }
 
-void StartSponza(int argc, char *argv[])
+void StartSponza(const char *progName)
 {
     const ivec2 SSize(Setting<int>("screenWidth"), Setting<int>("screenHeight"));
     const float timeStep = 1.0f / 60.0f;
@@ -45,7 +46,7 @@ void StartSponza(int argc, char *argv[])
 
     //Init Game
     Game game(timeStep);
-    game.Init(&camHandler, argv[0], "EngineTester", SSize.x, SSize.y);
+    game.Init(&camHandler, progName, "EngineTester", SSize.x, SSize.y);
     game.mContextHandler.VsyncMode(Setting<int>("vsync"));
 
 #if PRODUCTION
@@ -84,8 +85,7 @@ RotationalCameraHandler ConstructRotationalCameraHandler(ivec2 ss, float FOV, fl
     return RotationalCameraHandler(camera, vec3(0.0f), rotationSpeed, 10.0f, springiness);
 }
 
-
-void StartHead(int argc, char *argv[])
+void StartHead(const char *progName)
 {
     const ivec2 SSize(Setting<int>("screenWidth"), Setting<int>("screenHeight"));
     const float timeStep = 1.0f / 60.0f;
@@ -94,7 +94,7 @@ void StartHead(int argc, char *argv[])
 
     //Init Game
     Game game(timeStep);
-    game.Init(&camHandler, argv[0], "EngineTester", SSize.x, SSize.y);
+    game.Init(&camHandler, progName, "EngineTester", SSize.x, SSize.y);
     game.mContextHandler.VsyncMode(Setting<int>("vsync"));
 
 #if PRODUCTION
@@ -121,11 +121,43 @@ void StartHead(int argc, char *argv[])
     game.GameLoop();
 }
 
+void StartPBR(const char *progName)
+{
+    const ivec2 SSize(Setting<int>("screenWidth"), Setting<int>("screenHeight"));
+    const float timeStep = 1.0f / 60.0f;
+    //Init Camera handler
+    RotationalCameraHandler camHandler(ConstructRotationalCameraHandler(SSize, Setting<float>("FOV"), 1000.0f));
+
+    //Init Game
+    Game game(timeStep);
+    game.Init(&camHandler, progName, "EngineTester", SSize.x, SSize.y);
+    game.mContextHandler.VsyncMode(Setting<int>("vsync"));
+
+#if PRODUCTION
+    //Init DebugView
+    DebugView dView(&game.mRenderer, camHandler.GetCamera().mNearDistance, camHandler.GetCamera().mFarDistance);
+    game.mInputHandler.AddEventListener(&dView);
+    game.mRenderer.AddRenderable(&dView);
+#endif
+
+    //Init GUIView
+    GUIView guiView(&game);
+    game.mInputHandler.AddEventListener(&guiView);
+    game.mRenderer.AddRenderable(&guiView);
+
+    Scene scene;
+    PBRMaterialDemo demo(game, scene);
+    game.mInputHandler.AddEventListener(&demo);
+
+    game.GameLoop();
+}
+
 
 int main(int argc, char *argv[])
 {
-    //InitLogging(argc, argv);
-    //StartHead(argc, argv);
-    StartSponza(argc, argv);
+    InitLogging(argc, argv);
+    //StartHead(argv[0]);
+    //StartSponza(argv[0]);
+    StartPBR(argv[0]);
     return 0;
 }

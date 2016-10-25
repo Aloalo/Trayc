@@ -20,6 +20,7 @@ namespace engine
 
         bool mDynamicGeometry;
         bool mShadowCaster;
+        bool mVisible;
 
     private:
         friend class AssetLoader;

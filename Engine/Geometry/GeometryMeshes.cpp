@@ -174,6 +174,20 @@ namespace engine
         return ret;
     }
 
+    static const float PI = 3.1415926f;
+    static inline vec2 UV(const vec3 &p)
+    {
+        float u = 0.5f + glm::atan(p.z, p.x) / (2.0f * PI);
+        float v = 0.5f - glm::asin(p.y) / PI;
+        return vec2(u, v);
+    }
+
+    static inline vec3 T(const vec3 &n)
+    {
+        const float iy = 1.0f / sqrtf(n.x * n.x + n.z * n.z);
+        return normalize(vec3(-n.z * iy, 0.0f, n.x * iy));
+    }
+
     static void SphereSubdivide(const vec3 &a, const vec3 &b, const vec3 &c, int depth, TriangleMesh &out)
     {
         if(depth == 0)
@@ -185,6 +199,19 @@ namespace engine
             out.mNormals.push_back(c);
             out.mNormals.push_back(b);
             out.mNormals.push_back(a);
+
+            out.mUVs.push_back(UV(c));
+            out.mUVs.push_back(UV(b));
+            out.mUVs.push_back(UV(a));
+
+            out.mTangents.push_back(T(c));
+            out.mTangents.push_back(T(b));
+            out.mTangents.push_back(T(a));
+
+            out.mBitangents.push_back(cross(c, T(c)));
+            out.mBitangents.push_back(cross(b, T(b)));
+            out.mBitangents.push_back(cross(a, T(a)));
+
             return;
         }
 
