@@ -31,13 +31,10 @@ namespace engine
         for(int i = 0; i < 6; ++i) {
             LoadFromFile(mCubeSides[i], files[i].c_str(), type);
         }
-        TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        GenerateMipmaps();
         TextureParam(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         TextureParam(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         TextureParam(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        TextureParam(GL_TEXTURE_BASE_LEVEL, 0);
-        TextureParam(GL_TEXTURE_MAX_LEVEL, 0);
     }
 
     void CubemapTexture::Resize(ivec2 size)

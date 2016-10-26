@@ -39,7 +39,7 @@ namespace engine
             );
 
         //Init OpenGL
-        mContextHandler.InitGL(3, 3, SDL_GL_CONTEXT_PROFILE_CORE);
+        mContextHandler.InitGL(4, 0, SDL_GL_CONTEXT_PROFILE_CORE);
 
         // Init DevIL
         mContextHandler.InitIL();

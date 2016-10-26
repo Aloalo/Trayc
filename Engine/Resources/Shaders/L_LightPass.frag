@@ -37,10 +37,10 @@ uniform sampler2D gAlbedo;
 #endif
 
 #ifndef AMBIENT_LIGHT
-    #ifdef PBR
+    #ifdef USE_PBR
         #include "LightingModelPBR.glsl"
     #else
-        #include "LightingModelPhong.glsl"
+        #include "LightingModelPBR.glsl"
     #endif
 #endif
 

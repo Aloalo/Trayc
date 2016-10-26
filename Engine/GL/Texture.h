@@ -39,6 +39,8 @@ namespace engine
         void LoadFromFile(uint target, const char *file, TextureType type);
         void InitEmpty(uint target, uint internalFormat, glm::ivec2 size, uint format, uint type);
 
+        void GenerateMipmaps() const;
+
     private:
         uint mID;
         uint mTarget;

@@ -6,6 +6,7 @@
 #include <Engine/Engine/GeometryRenderPass.h>
 #include <Engine/Engine/Renderer.h>
 #include <Engine/Utils/Setting.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace glm;
 using namespace std;
@@ -62,6 +63,8 @@ namespace engine
             if(i == Light::GLOBAL_LIGHT) {
                 prog.SetUniform("shadowMap", TextureType::S_SHADOWMAP);
                 prog.SetUniform("shadowBrightness", Setting<float>("shadowBrightness"));
+                prog.SetUniform("reflectionMap", TextureType::SKYBOX_SLOT);
+                prog.SetUniform("cubemapM", rotate(mat4(1.0f), radians(180.0f), vec3(0.0f, 0.0f, 1.0f)));
                 const auto &matrices = mRenderer->GetMatricesUB();
                 prog.SetUniformBlockBinding(matrices.GetName(), matrices.GetBlockBinding());
             }

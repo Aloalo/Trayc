@@ -164,4 +164,18 @@ namespace engine
         }
         UnBindFromSlot(0);
     }
+
+    void Texture::GenerateMipmaps() const
+    {
+        BindToSlot(EMPTY_SLOT);
+        {
+            glGenerateMipmap(mTarget);
+            glTexParameteri(mTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTexParameteri(mTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            const int maxMipLevel = int(std::log2(fmax(mSize.x, mSize.y))) - Setting<int>("maxMipmapLevelMod");
+            glTexParameteri(mTarget, GL_TEXTURE_MAX_LEVEL, maxMipLevel);
+            glTexParameteri(mTarget, GL_TEXTURE_BASE_LEVEL, 0);
+        }
+        UnBindFromSlot(EMPTY_SLOT);
+    }
 }

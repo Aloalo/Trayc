@@ -17,7 +17,7 @@ PBRMaterialDemo::PBRMaterialDemo(Game &game, Scene &scene)
     const string path = AssetLoader::Get().TexturePath("pbr/");
     ifstream in(path + "list.txt");
 
-    TriangleMesh sphere = GetSphereMeshSolid(false, 2, 50.0f);
+    TriangleMesh sphere = GetSphereMeshSolid(false, 4, 50.0f);
     scene.mTriMeshes.push_back(sphere);
     const int sphereMeshIdx = scene.mTriMeshes.size() - 1;
 
@@ -43,6 +43,37 @@ PBRMaterialDemo::PBRMaterialDemo(Game &game, Scene &scene)
         mObjects.back()->mShadowCaster = false;
         mObjects.back()->mVisible = false;
     }
+
+    /*for(float rough = 0.0f; rough < 1.0f; rough += 0.2f) {
+        for(float metal = 0.0f; metal < 1.0f; metal += 0.2f) {
+            Material mat;
+            mat.mGloss = rough;
+            mat.mKs = vec3(metal);
+            mat.mKd = vec3(0.5f);
+            mat.mNeedsForwardRender = false;
+            scene.mMaterials.push_back(mat);
+            const int matIdx = scene.mMaterials.size() - 1;
+            scene.AddObject(AssetLoader::Get().CreateObject(&scene, sphereMeshIdx, matIdx));
+            mObjects.push_back(&scene.mObjects3D[scene.mObjects3D.size() - 1]);
+            mObjects.back()->mShadowCaster = false;
+            mObjects.back()->mVisible = false;
+        }
+    }*/
+
+    /*for(float x = 0.0f; x <= 1.0f; x += 0.2f) {
+        Material mat;
+        mat.mGloss = 0.8;
+        mat.mKs = vec3(x);
+        mat.mKd = vec3(0.5f);
+        mat.mNeedsForwardRender = false;
+        scene.mMaterials.push_back(mat);
+        const int matIdx = scene.mMaterials.size() - 1;
+        scene.AddObject(AssetLoader::Get().CreateObject(&scene, sphereMeshIdx, matIdx));
+        mObjects.push_back(&scene.mObjects3D[scene.mObjects3D.size() - 1]);
+        mObjects.back()->mShadowCaster = false;
+        mObjects.back()->mVisible = false;
+    }*/
+
 
     mObjects[mCurrObjIdx]->mVisible = true;
 
