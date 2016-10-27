@@ -16,7 +16,7 @@ Deferred renderer:
     +Anisotropic filtering
     +Transparancy
     -Light probes
-    -PBR
+    +PBR
     +Skybox
     -Shadows
     -Reflections

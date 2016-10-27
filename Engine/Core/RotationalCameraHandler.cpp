@@ -14,7 +14,7 @@ namespace engine
 {
     RotationalCameraHandler::RotationalCameraHandler(const Camera &cam, const vec3 &lookAtPoint, float rotationSpeed, float zoomSpeed, float springiness) :
         CameraHandler(cam), mMouseDown(false), mObserveMouse(true), mZoomSpeed(zoomSpeed), mRotationSpeed(rotationSpeed),
-        mRadius(length(cam.mPosition - lookAtPoint)), mLookAtPoint(lookAtPoint),
+        mLookAtPoint(lookAtPoint),
         mSpringiness(springiness), mDx(0.0f), mDy(0.0f)
     {
         mCamera.SetDirection(mLookAtPoint - mCamera.mPosition);
@@ -73,7 +73,7 @@ namespace engine
     {
         const float cf = 1.0f - expf(-mSpringiness * deltaTime);
         const float dxr = cf * mDx;
-        float dyr = cf * mDy;
+        const float dyr = cf * mDy;
         mCamera.Rotate(-dxr, -dyr);
         mDx -= dxr;
         mDy -= dyr;
@@ -96,5 +96,10 @@ namespace engine
     mat4 RotationalCameraHandler::GetViewMatrix() const
     {
         return mCamera.GetViewMatrix();
+    }
+
+    void RotationalCameraHandler::SetLookAtPoint(const vec3 &lookAtPoint)
+    {
+        mLookAtPoint = lookAtPoint;
     }
 }

@@ -26,6 +26,7 @@ namespace engine
         virtual glm::mat4 GetProjectionMatrix() const override;
         virtual glm::mat4 GetViewMatrix() const override;
 
+        void SetLookAtPoint(const glm::vec3 &lookAtPoint);
 
     private:
         bool mMouseDown;
@@ -33,7 +34,6 @@ namespace engine
 
         float mZoomSpeed;
         float mRotationSpeed;
-        float mRadius;
         glm::vec3 mLookAtPoint;
         float mSpringiness;
         float mDx, mDy;

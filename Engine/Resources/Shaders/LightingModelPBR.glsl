@@ -22,6 +22,8 @@ float G1(in float dotNX, in float a)
     float c2 = c * c;
     float G = (3.535 * c + 2.181 * c2) / (1.0 + 2.276 * c + 2.577 * c2);
     return mix(G, 1.0, step(1.6, c));
+#else
+    return 1.0;
 #endif
 }
 
