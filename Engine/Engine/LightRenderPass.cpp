@@ -30,13 +30,12 @@ namespace engine
             "SPOT_LIGHT"
         };
 
-        const int width = 1280;
-        const int height = 720;
+        const int width = Setting<int>("screenWidth");
+        const int height = Setting<int>("screenHeight");
 
         // Init L buffer
         mDstFB.Init(width, height);
         mDstFB.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Lighting out / x
-                             // Bind geometry pass depth renderbuffer
         const GeometryRenderPass *gPass = static_cast<const GeometryRenderPass*>(mRenderer->GetRenderPass("gPass"));
         const FrameBuffer &gFB = gPass->GetDstBuffer();
         mDstFB.AttachRBO(gFB.GetRBOID());
@@ -92,7 +91,6 @@ namespace engine
     void LightRenderPass::Render(const RenderingContext &rContext) const
     {
         const ShadowRenderPass *shadowPass = static_cast<const ShadowRenderPass*>(mRenderer->GetRenderPass("shadowPass"));
-        const mat4 invView = inverse(rContext.mV);
 
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);

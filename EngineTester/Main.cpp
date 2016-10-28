@@ -114,7 +114,7 @@ void StartHead(const char *progName)
     game.mRenderer.AddRenderable(&guiView);
 
     // Init Light
-    GlobalLight gl(vec3(0.4f), vec3(2.0f), true, vec3(0.0f, 1.0f, 1.0f));
+    GlobalLight gl(vec3(0.4f), vec3(1.5f), true, vec3(0.0f, 1.0f, 1.0f));
     scene.mLights.push_back(&gl);
     game.mRenderer.SetScene(&scene);
 
@@ -156,8 +156,8 @@ void StartPBR(const char *progName)
 int main(int argc, char *argv[])
 {
     InitLogging(argc, argv);
-    //StartHead(argv[0]);
-    StartSponza(argv[0]);
+    StartHead(argv[0]);
+    //StartSponza(argv[0]);
     //StartPBR(argv[0]);
     return 0;
 }

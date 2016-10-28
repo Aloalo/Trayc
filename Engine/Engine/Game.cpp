@@ -94,6 +94,7 @@ namespace engine
     void Game::WindowEvent(const SDL_WindowEvent &e)
     {
         if(e.event == SDL_WINDOWEVENT_RESIZED) {
+            mCameraHandler->SetAspectRatio(float(e.data1) / float(e.data2));
             mRenderer.SetScreenSize(e.data1, e.data2);
         }
     }

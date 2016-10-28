@@ -27,4 +27,9 @@ namespace engine
         return mCamera;
     }
 
+    void CameraHandler::SetAspectRatio(float aspect)
+    {
+        mCamera.mAspectRatio = aspect;
+    }
+
 }

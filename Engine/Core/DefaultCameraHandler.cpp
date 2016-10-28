@@ -64,13 +64,6 @@ namespace engine
         mSpeed *= (e.y > 0 ? 2.0f : 0.5f);
     }
 
-    void DefaultCameraHandler::WindowEvent(const SDL_WindowEvent &e)
-    {
-        if(e.event == SDL_WINDOWEVENT_RESIZED) {
-            mCamera.mAspectRatio = static_cast<float>(e.data1) / static_cast<float>(e.data2);
-        }
-    }
-
     void DefaultCameraHandler::Update(float deltaTime)
     {
         const float cf = 1 - expf(-mSpringiness * deltaTime);

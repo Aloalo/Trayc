@@ -22,6 +22,7 @@ namespace engine
         virtual glm::mat4 GetViewMatrix() const = 0;
         const glm::vec3& GetPosition() const;
         const Camera& GetCamera() const;
+        void SetAspectRatio(float aspect);
 
     protected:
         friend class Renderer;

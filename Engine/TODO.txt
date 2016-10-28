@@ -10,24 +10,26 @@ Deferred renderer prep:
     +Texture sampler/slot handling
     +Forward renderer
 
-Deferred renderer:
+Rendering:
     +Lighting pass
     +GAMMA!
     +Anisotropic filtering
     +Transparancy
-    -Light probes
     +PBR
+        -Light probes
+        -HDR
+        -Tonemapping
+        -SSS
     +Skybox
     -Shadows
     -Reflections
     -Parallax mapping
-    +Screen space reflections (WON'T DO)
+    -Screen space reflections
     
 Misc:
     +Custom Scene file format
     +Assimp -> own format conversion
-    -.dds texture loading
-    -Editor
+    +.dds texture loading (won't do)
     +Kill unneeded code (classes, files)
     +DEBUG/PRODUCTION/DEPLOY flags
     +Logging system
@@ -58,7 +60,7 @@ Physics:
 Optimizations:
     +Reduce number of GL state changes (sort by material/geometry)
     +Frustum culling
-    -Smaller data types for positions/normals/tangents/bitangents/uv
+    Smaller data types for positions/normals/tangents/bitangents/uv
     +Reduce max mipmap level
     -Mesh optimizer
     +Scene binary file cache

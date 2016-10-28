@@ -18,7 +18,6 @@ namespace engine
 
         virtual void KeyPress(const SDL_KeyboardEvent &e) override;
         virtual void MouseMotion(const SDL_MouseMotionEvent &e) override;
-        virtual void WindowEvent(const SDL_WindowEvent &e) override;
         virtual void MouseWheel(const SDL_MouseWheelEvent &e) override;
 
         virtual void Update(float dt) override;

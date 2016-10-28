@@ -15,10 +15,8 @@ namespace engine
         RotationalCameraHandler(const Camera &cam, const glm::vec3 &lookAtPoint, float rotationSpeed, float zoomSpeed, float springiness);
         ~RotationalCameraHandler(void);
 
-        virtual void KeyPress(const SDL_KeyboardEvent &e) override;
         virtual void MouseMotion(const SDL_MouseMotionEvent &e) override;
         virtual void MouseButton(const SDL_MouseButtonEvent &e) override;
-        virtual void WindowEvent(const SDL_WindowEvent &e) override;
         virtual void MouseWheel(const SDL_MouseWheelEvent &e) override;
 
         virtual void Update(float dt) override;
@@ -30,7 +28,6 @@ namespace engine
 
     private:
         bool mMouseDown;
-        bool mObserveMouse;
 
         float mZoomSpeed;
         float mRotationSpeed;

@@ -5,7 +5,7 @@
 
 #include <Engine/Engine/GeometryRenderPass.h>
 #include <Engine/Engine/AssetLoader.h>
-
+#include <Engine/Utils/Setting.h>
 #include <easylogging++.h>
 
 using namespace glm;
@@ -83,8 +83,8 @@ namespace engine
             "heightMap"
         };
 
-        const int width = 1280;
-        const int height = 720;
+        const int width = Setting<int>("screenWidth");
+        const int height = Setting<int>("screenHeight");
 
         // Init G buffer
         mDstFB.Init(width, height);

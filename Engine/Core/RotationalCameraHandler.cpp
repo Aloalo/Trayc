@@ -13,9 +13,8 @@ using namespace glm;
 namespace engine
 {
     RotationalCameraHandler::RotationalCameraHandler(const Camera &cam, const vec3 &lookAtPoint, float rotationSpeed, float zoomSpeed, float springiness) :
-        CameraHandler(cam), mMouseDown(false), mObserveMouse(true), mZoomSpeed(zoomSpeed), mRotationSpeed(rotationSpeed),
-        mLookAtPoint(lookAtPoint),
-        mSpringiness(springiness), mDx(0.0f), mDy(0.0f)
+        CameraHandler(cam), mMouseDown(false), mZoomSpeed(zoomSpeed), mRotationSpeed(rotationSpeed),
+        mLookAtPoint(lookAtPoint), mSpringiness(springiness), mDx(0.0f), mDy(0.0f)
     {
         mCamera.SetDirection(mLookAtPoint - mCamera.mPosition);
     }
@@ -24,28 +23,16 @@ namespace engine
     {
     }
 
-    void RotationalCameraHandler::KeyPress(const SDL_KeyboardEvent &e)
-    {
-        if(e.repeat)
-            return;
-
-        if(e.keysym.sym == SDLK_LSHIFT && e.type == SDL_KEYDOWN)
-            mObserveMouse = !mObserveMouse;
-    }
-
-
     void RotationalCameraHandler::MouseButton(const SDL_MouseButtonEvent &e)
     {
-        if(mObserveMouse && e.button == SDL_BUTTON_LEFT)
-        {
+        if(e.button == SDL_BUTTON_LEFT) {
             mMouseDown = (e.state == SDL_PRESSED);
         }
     }
 
     void RotationalCameraHandler::MouseMotion(const SDL_MouseMotionEvent &e)
     {
-        if(mObserveMouse && mMouseDown)
-        {
+        if(mMouseDown) {
             const float yaw = float(-e.xrel) * mRotationSpeed;
             const float pitch = float(-e.yrel) * mRotationSpeed;
             mDx += yaw;
@@ -60,13 +47,6 @@ namespace engine
 
         if(length(mCamera.mPosition + dP) > mZoomSpeed)
             mCamera.mPosition += normalize(mCamera.mPosition - mLookAtPoint) * dR;
-    }
-
-    void RotationalCameraHandler::WindowEvent(const SDL_WindowEvent &e)
-    {
-        if(e.event == SDL_WINDOWEVENT_RESIZED) {
-            mCamera.mAspectRatio = static_cast<float>(e.data1) / static_cast<float>(e.data2);
-        }
     }
 
     void RotationalCameraHandler::Update(float deltaTime)
