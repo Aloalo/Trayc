@@ -28,7 +28,7 @@ using namespace stdext;
 
 namespace engine
 {
-    Renderer::Renderer()
+    Renderer::Renderer(void)
         : mCamera(nullptr)
     {
     }

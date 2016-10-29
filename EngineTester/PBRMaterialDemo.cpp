@@ -10,9 +10,13 @@ using namespace engine;
 using namespace glm;
 using namespace std;
 
-PBRMaterialDemo::PBRMaterialDemo(Game &game, Scene &scene)
+PBRMaterialDemo::PBRMaterialDemo(void)
     : mMouseDown(false), mCurrObjIdx(0), mRotX(0.0f), mRotY(0.0f), 
     mLight(vec3(0.4f), vec3(1.0f), true, vec3(0.0f, 1.0f, 1.0f))
+{
+}
+
+void PBRMaterialDemo::Init(Game &game, Scene &scene)
 {
     const string path = AssetLoader::Get().TexturePath("pbr/");
     ifstream in(path + "list.txt");
@@ -39,39 +43,39 @@ PBRMaterialDemo::PBRMaterialDemo(Game &game, Scene &scene)
         const int matIdx = scene.mMaterials.size() - 1;
 
         scene.AddObject(AssetLoader::Get().CreateObject(&scene, sphereMeshIdx, matIdx));
-        mObjects.push_back(&scene.mObjects3D[scene.mObjects3D.size()-1]);
+        mObjects.push_back(&scene.mObjects3D[scene.mObjects3D.size() - 1]);
         mObjects.back()->mShadowCaster = false;
         mObjects.back()->mVisible = false;
     }
 
     /*for(float rough = 0.0f; rough < 1.0f; rough += 0.2f) {
-        for(float metal = 0.0f; metal < 1.0f; metal += 0.2f) {
-            Material mat;
-            mat.mGloss = rough;
-            mat.mKs = vec3(metal);
-            mat.mKd = vec3(0.5f);
-            mat.mNeedsForwardRender = false;
-            scene.mMaterials.push_back(mat);
-            const int matIdx = scene.mMaterials.size() - 1;
-            scene.AddObject(AssetLoader::Get().CreateObject(&scene, sphereMeshIdx, matIdx));
-            mObjects.push_back(&scene.mObjects3D[scene.mObjects3D.size() - 1]);
-            mObjects.back()->mShadowCaster = false;
-            mObjects.back()->mVisible = false;
-        }
+    for(float metal = 0.0f; metal < 1.0f; metal += 0.2f) {
+    Material mat;
+    mat.mGloss = rough;
+    mat.mKs = vec3(metal);
+    mat.mKd = vec3(0.5f);
+    mat.mNeedsForwardRender = false;
+    scene.mMaterials.push_back(mat);
+    const int matIdx = scene.mMaterials.size() - 1;
+    scene.AddObject(AssetLoader::Get().CreateObject(&scene, sphereMeshIdx, matIdx));
+    mObjects.push_back(&scene.mObjects3D[scene.mObjects3D.size() - 1]);
+    mObjects.back()->mShadowCaster = false;
+    mObjects.back()->mVisible = false;
+    }
     }*/
 
     /*for(float x = 0.0f; x <= 1.0f; x += 0.2f) {
-        Material mat;
-        mat.mGloss = 0.8;
-        mat.mKs = vec3(x);
-        mat.mKd = vec3(0.5f);
-        mat.mNeedsForwardRender = false;
-        scene.mMaterials.push_back(mat);
-        const int matIdx = scene.mMaterials.size() - 1;
-        scene.AddObject(AssetLoader::Get().CreateObject(&scene, sphereMeshIdx, matIdx));
-        mObjects.push_back(&scene.mObjects3D[scene.mObjects3D.size() - 1]);
-        mObjects.back()->mShadowCaster = false;
-        mObjects.back()->mVisible = false;
+    Material mat;
+    mat.mGloss = 0.8;
+    mat.mKs = vec3(x);
+    mat.mKd = vec3(0.5f);
+    mat.mNeedsForwardRender = false;
+    scene.mMaterials.push_back(mat);
+    const int matIdx = scene.mMaterials.size() - 1;
+    scene.AddObject(AssetLoader::Get().CreateObject(&scene, sphereMeshIdx, matIdx));
+    mObjects.push_back(&scene.mObjects3D[scene.mObjects3D.size() - 1]);
+    mObjects.back()->mShadowCaster = false;
+    mObjects.back()->mVisible = false;
     }*/
 
 
@@ -80,6 +84,7 @@ PBRMaterialDemo::PBRMaterialDemo(Game &game, Scene &scene)
     // Init Light
     scene.mLights.push_back(&mLight);
     game.mRenderer.SetScene(&scene);
+    game.mInputHandler.AddEventListener(this);
 }
 
 void PBRMaterialDemo::KeyPress(const SDL_KeyboardEvent &e)

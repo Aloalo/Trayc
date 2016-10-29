@@ -24,7 +24,7 @@ namespace engine
     public:
         using RenderPasses = std::vector<RenderPass*>;
 
-        Renderer();
+        Renderer(void);
         ~Renderer(void);
 
         void SetScene(Scene *scene);
@@ -45,6 +45,9 @@ namespace engine
         const Camera* GetCamera() const;
 
     private:
+        Renderer(const Renderer &other);
+        Renderer& operator=(const Renderer &other);
+
         RenderPass* GetRenderPass(const std::string &name);
         friend class Game;
         //Rendering

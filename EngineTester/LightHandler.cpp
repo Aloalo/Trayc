@@ -11,11 +11,15 @@ using namespace engine;
 using namespace glm;
 using namespace std;
 
-LightHandler::LightHandler(engine::Scene *scene) :
+LightHandler::LightHandler(void) :
     mPause(false),
     mGLight(vec3(0.5f), vec3(0.988f, 0.83f, 0.251f), true, vec3(1.0f)),
     mPLight(vec3(20.0f), true, vec3(1.0f, 0.1f, 0.0001f), vec3(0.0f, 200.0f, 0.0f)),
     mSLight(vec3(1.8f), true, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 500.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 15.0f, 200.0f)
+{
+}
+
+void LightHandler::Init(Scene *scene)
 {
     // Init Lights
     scene->mLights.push_back(&mGLight);
@@ -44,7 +48,7 @@ LightHandler::LightHandler(engine::Scene *scene) :
     lightMat.mNeedsForwardRender = true;
     scene->mMaterials.push_back(lightMat);
     const int lightMatIdx = scene->mMaterials.size() - 1;
-    
+
     TriangleMesh lightMesh = GetSphereMeshSolid(false, 1, 5.0f);
     lightMesh.FlipNormals();
     scene->mTriMeshes.push_back(lightMesh);

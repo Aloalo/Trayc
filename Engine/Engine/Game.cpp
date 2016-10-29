@@ -16,13 +16,13 @@ namespace engine
 
     Game::~Game(void)
     {
+        if(mCameraHandler) {
+            delete mCameraHandler;
+        }
     }
 
-    void Game::Init(CameraHandler *cameraHandler, char const *programName, const char *windowTitle, int screenWidth, int screenHeight)
+    void Game::Init(char const *programName, const char *windowTitle, int screenWidth, int screenHeight)
     {
-        assert(cameraHandler != nullptr);
-        mCameraHandler = cameraHandler;
-
         //Init SDL
         mContextHandler.Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS, programName);
 

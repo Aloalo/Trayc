@@ -16,8 +16,9 @@ class LightHandler
     : public engine::Updateable, public engine::InputObserver
 {
 public:
-    LightHandler(engine::Scene *scene);
+    LightHandler(void);
 
+    void Init(engine::Scene *scene);
     virtual void Update(float dt) override;
     virtual void KeyPress(const SDL_KeyboardEvent &e) override;
 

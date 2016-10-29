@@ -21,7 +21,14 @@ namespace engine
         Game(float timeStep);
         ~Game(void);
 
-        void Init(CameraHandler *cameraHandler, char const *programName, const char *windowTitle, int screenWidth, int screenHeight);
+        // Copies cameraHandler and manages it by itself
+        template<class CameraHandlerType>
+        void Init(const CameraHandlerType &cameraHandler, char const *programName, const char *windowTitle, int screenWidth, int screenHeight)
+        {
+            mCameraHandler = new CameraHandlerType(cameraHandler);
+            Init(programName, windowTitle, screenWidth, screenHeight);
+        }
+
         void GameLoop();
 
         virtual void WindowEvent(const SDL_WindowEvent &e) override;
@@ -38,9 +45,13 @@ namespace engine
         Renderer mRenderer;
 
     private:
+        Game(const Game &other);
+        Game& operator=(const Game &other);
+
         void GameLoopStep();
         float GetAverageFrameLength() const;
 
+        void Init(char const *programName, const char *windowTitle, int screenWidth, int screenHeight);
         CameraHandler *mCameraHandler;
 
         Profiler mProfiler;

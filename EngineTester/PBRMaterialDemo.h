@@ -11,8 +11,9 @@ class PBRMaterialDemo
     : public engine::InputObserver
 {
 public:
-    PBRMaterialDemo(engine::Game &game, engine::Scene &scene);
+    PBRMaterialDemo(void);
 
+    void Init(engine::Game &game, engine::Scene &scene);
     virtual void KeyPress(const SDL_KeyboardEvent &e) override;
     virtual void MouseMotion(const SDL_MouseMotionEvent &e) override;
     virtual void MouseButton(const SDL_MouseButtonEvent &e) override;
