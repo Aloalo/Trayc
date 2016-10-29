@@ -29,7 +29,7 @@ using namespace stdext;
 namespace engine
 {
     Renderer::Renderer(void)
-        : mCamera(nullptr)
+        : mCamera(nullptr), mUsePBR(true)
     {
     }
 
@@ -50,6 +50,11 @@ namespace engine
 #if PRODUCTION
         DebugDraw::Get().Destroy();
 #endif
+    }
+
+    void Renderer::SetUsePBR(bool usePBR)
+    {
+        mUsePBR = usePBR;
     }
 
     void Renderer::SetScene(Scene *scene)
@@ -131,6 +136,11 @@ namespace engine
     const Camera* Renderer::GetCamera() const
     {
         return &mCamera->GetCamera();
+    }
+
+    bool Renderer::UsePBR() const
+    {
+        return mUsePBR;
     }
 
     void Renderer::InitRendering(const CameraHandler *camera)

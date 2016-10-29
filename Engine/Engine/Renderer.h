@@ -27,6 +27,7 @@ namespace engine
         Renderer(void);
         ~Renderer(void);
 
+        void SetUsePBR(bool usePBR);
         void SetScene(Scene *scene);
 
         //Renderables
@@ -43,6 +44,7 @@ namespace engine
         const MatricesUB& GetMatricesUB() const;
 
         const Camera* GetCamera() const;
+        bool UsePBR() const;
 
     private:
         Renderer(const Renderer &other);
@@ -55,6 +57,8 @@ namespace engine
         void Render() const;
 
         const CameraHandler *mCamera;
+
+        bool mUsePBR;
 
         std::vector<Renderable*> mRenderables;
         std::vector<RenderPass*> mRenderPasses;

@@ -55,6 +55,7 @@ void InitSponza(Game &game, Scene &scene, const char *progName, ivec2 SSize)
     DefaultCameraHandler camHandler(ConstructDefaultCameraHandler(SSize, Setting<float>("FOV"), 4000.0f));
 
     //Init Game
+    game.mRenderer.SetUsePBR(false);
     game.Init(camHandler, progName, "Crytek Sponza Demo", SSize.x, SSize.y);
 
     // Init scene
@@ -107,11 +108,12 @@ int main(int argc, char *argv[])
     const float timeStep = 1.0f / 60.0f;
 
     Game game(timeStep);
+    //game.mRenderer.SetUsePBR(false);
     Scene scene;
 
-    //InitHead(game, scene, argv[0], SSize);
+    InitHead(game, scene, argv[0], SSize);
     //InitSponza(game, scene, argv[0], SSize);
-    InitPBR(game, scene, argv[0], SSize);
+    //InitPBR(game, scene, argv[0], SSize);
 
     game.mContextHandler.VsyncMode(Setting<int>("vsync"));
 

@@ -6,6 +6,7 @@
 #include <Engine/Engine/GeometryRenderPass.h>
 #include <Engine/Engine/Renderer.h>
 #include <Engine/Utils/Setting.h>
+#include <Engine/Utils/Utilities.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 using namespace glm;
@@ -21,13 +22,14 @@ namespace engine
 
     void LightRenderPass::Init()
     {
-        const string LIGHT_PROG_DEFINES[Light::Type::CT_LIGHT_TYPES] =
+        static const vector<string> USE_PBR(1, "USE_PBR");
+        static const vector<string> LIGHT_PROG_DEFINES[Light::Type::CT_LIGHT_TYPES] =
         {
-            "AMBIENT_LIGHT",
-            "DIRECTIONAL_LIGHT",
-            "GLOBAL_LIGHT",
-            "POINT_LIGHT",
-            "SPOT_LIGHT"
+            vector<string>(1, "AMBIENT_LIGHT"),
+            vector<string>(1, "DIRECTIONAL_LIGHT"),
+            vector<string>(1, "GLOBAL_LIGHT"),
+            vector<string>(1, "POINT_LIGHT"),
+            vector<string>(1, "SPOT_LIGHT"),
         };
 
         const int width = Setting<int>("screenWidth");
@@ -42,11 +44,13 @@ namespace engine
 
         mDstFB.Compile();
 
+        const bool usePBR = mRenderer->UsePBR();
         // Init light programs
         for(int i = 0; i < Light::Type::CT_LIGHT_TYPES; ++i)
         {
             TextureCombiner &combiner = mLightCombiners[i];
-            combiner.Init(AssetLoader::Get().ShaderPath("L_LightPass").c_str(), vector<string>(1, LIGHT_PROG_DEFINES[i]));
+            const auto defines = usePBR ? LIGHT_PROG_DEFINES[i] + USE_PBR : LIGHT_PROG_DEFINES[i];
+            combiner.Init(AssetLoader::Get().ShaderPath("L_LightPass").c_str(), defines);
 
             const Program &prog = combiner.Prog();
             prog.Use();
@@ -58,15 +62,20 @@ namespace engine
                 const auto &viewRayDataUB = mRenderer->GetViewRayDataUB();
                 prog.SetUniformBlockBinding(viewRayDataUB.GetName(), viewRayDataUB.GetBlockBinding());
             }
+
+            if(i == Light::GLOBAL_LIGHT && mRenderer->UsePBR()) {
+                prog.SetUniform("reflectionMap", TextureType::SKYBOX_SLOT);
+                prog.SetUniform("cubemapM", rotate(mat4(1.0f), radians(180.0f), vec3(0.0f, 0.0f, 1.0f)));
+            }
+
             // TODO: fix for general shadows
             if(i == Light::GLOBAL_LIGHT) {
                 prog.SetUniform("shadowMap", TextureType::S_SHADOWMAP);
                 prog.SetUniform("shadowBrightness", Setting<float>("shadowBrightness"));
-                prog.SetUniform("reflectionMap", TextureType::SKYBOX_SLOT);
-                prog.SetUniform("cubemapM", rotate(mat4(1.0f), radians(180.0f), vec3(0.0f, 0.0f, 1.0f)));
                 const auto &matrices = mRenderer->GetMatricesUB();
                 prog.SetUniformBlockBinding(matrices.GetName(), matrices.GetBlockBinding());
             }
+
             prog.SetUniform("gAlbedo", TextureType::G_ALBEDO_TEXTURE);
             Program::Unbind();
         }

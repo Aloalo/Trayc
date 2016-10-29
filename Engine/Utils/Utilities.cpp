@@ -39,6 +39,19 @@ namespace engine
         }
     }
 
+    vector<string> operator+(const vector<string> &a, const vector<std::string> &b)
+    {
+        vector<string> ret;
+        ret.reserve(a.size() + b.size());
+        for(const string &x : a) {
+            ret.push_back(x);
+        }
+        for(const string &x : b) {
+            ret.push_back(x);
+        }
+        return ret;
+    }
+
     void StringReplace(string &str, const string &a, const string &b)
     {
         size_t index = 0;
