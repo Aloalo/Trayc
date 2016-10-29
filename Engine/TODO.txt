@@ -17,11 +17,16 @@ Rendering:
     +Transparancy
     +PBR
         -Light probes
-        -HDR
-        -Tonemapping
+        +Cubemap reflections
+        +HDR
+        +Tonemapping
         -SSS
     +Skybox
     -Shadows
+        +Directional shadows
+        -Point shadows
+        -Spot shadows
+        -Soft shadows
     -Reflections
     -Parallax mapping
     -Screen space reflections

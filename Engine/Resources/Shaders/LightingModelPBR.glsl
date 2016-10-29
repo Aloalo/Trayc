@@ -62,7 +62,8 @@ float NDF(in vec3 N, in vec3 H, in float a)
         float lod = log2(float(textureSize(reflectionMap, 0).x));
         vec3 R = reflect(-V, N);
         R = (cubemapM * (invV * vec4(R, 0.0))).xyz;
-        return textureLod(reflectionMap, R, lod * (1.0 - sqrt(roughness))).rgb;
+        float lodMod = 1.0 * (1.0 -  roughness);
+        return textureLod(reflectionMap, R, lod * (1.0 - roughness)).rgb;
     }
 #endif
 

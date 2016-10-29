@@ -1,6 +1,7 @@
 #version 330 core
 
 #include "GammaCorrection.glsl"
+#include "Tonemap.glsl"
 
 in vec2 uv;
 
@@ -10,5 +11,9 @@ layout(location = 0) out vec4 outColor;
 
 void main()
 {
-    outColor = vec4(gammaCorrect(texture(tex, uv).rgb), 1.0);
+    vec3 color = texture(tex, uv).rgb;
+#ifdef TONEMAPPING
+    color = Tonemap(color);
+#endif
+    outColor = vec4(linearTosRGB(color), 1.0);
 }

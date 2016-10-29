@@ -22,7 +22,7 @@ namespace engine
         const RenderPass* lastPass = renderPasses[renderPasses.size() - 2];
         mFinalTex = &lastPass->GetDstBuffer().GetAttachment(0);
 
-        mDraw.Init(AssetLoader::Get().ShaderPath("C_TexToScreen").data(), vector<string>());
+        mDraw.Init(AssetLoader::Get().ShaderPath("C_TexToScreen").data(), vector<string>(1, "TONEMAPPING"));
         mDraw.Prog().Use();
         mDraw.Prog().SetUniform("tex", TextureType::FINAL_SLOT);
         mDraw.Prog().SetUniform("gamma", vec3(Setting<float>("gamma")));
@@ -35,6 +35,8 @@ namespace engine
 
     void BackBufferRenderPass::Render(const RenderingContext &rContext) const
     {
+        mDraw.Prog().Use();
+        mDraw.Prog().SetUniform("exposure", Setting<float>("exposure"));
         mDraw.Draw();
     }
 

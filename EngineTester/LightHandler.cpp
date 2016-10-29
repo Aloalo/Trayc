@@ -13,9 +13,9 @@ using namespace std;
 
 LightHandler::LightHandler(void) :
     mPause(false),
-    mGLight(vec3(0.5f), vec3(0.988f, 0.83f, 0.251f), true, vec3(1.0f)),
-    mPLight(vec3(20.0f), true, vec3(1.0f, 0.1f, 0.0001f), vec3(0.0f, 200.0f, 0.0f)),
-    mSLight(vec3(1.8f), true, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 500.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 15.0f, 200.0f)
+    mGLight(vec3(0.001f), 5.0f * vec3(0.988f, 0.83f, 0.251f), true, vec3(1.0f)),
+    mPLight(vec3(20.0f), true, vec3(1.0f, 0.1f, 0.01f), vec3(0.0f, 200.0f, 0.0f)),
+    mSLight(vec3(1.0f), true, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 500.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 15.0f, 200.0f)
 {
 }
 

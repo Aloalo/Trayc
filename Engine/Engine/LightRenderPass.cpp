@@ -37,7 +37,7 @@ namespace engine
 
         // Init L buffer
         mDstFB.Init(width, height);
-        mDstFB.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE); //Lighting out / x
+        mDstFB.AddAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); //Lighting out / x
         const GeometryRenderPass *gPass = static_cast<const GeometryRenderPass*>(mRenderer->GetRenderPass("gPass"));
         const FrameBuffer &gFB = gPass->GetDstBuffer();
         mDstFB.AttachRBO(gFB.GetRBOID());

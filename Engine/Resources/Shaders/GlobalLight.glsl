@@ -23,7 +23,7 @@ float GetLightAttenuation(in vec3 fragPos)
     return 1.0;
 }
 
-const float maxBias = 0.005;
+const float maxBias = 0.01;
 float GetShadowFactor(in vec3 fragPos, in float dotNL)
 {
     vec4 posWorldSpace = invV * vec4(fragPos, 1.0);
