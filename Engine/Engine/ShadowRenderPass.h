@@ -22,16 +22,16 @@ namespace engine
 
         virtual void Render(const RenderingContext &rContext) const override;
 
-        // Sets shadowmaps to lights
+        // Inits shadow framebufferss
         void Init(const SceneGPUData *sceneData);
+        glm::mat4 GetDepthBiasVP(const Light *light) const;
 
-        const Texture* GetShadowmap(const Light *light) const;
-        glm::mat4 GetDepthBiasVP(const glm::vec3 &viewDir) const;
+
 
     private:
         Program mProgram;
         const SceneGPUData *mSceneData;
-        std::map<const Light*, const Texture*> mLightToShadowmap;
+        std::vector<FrameBuffer> mShadowFBs;
     };
 }
 

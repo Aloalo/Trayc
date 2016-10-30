@@ -32,20 +32,11 @@ Rendering:
     -Screen space reflections
     
 Misc:
-    +Custom Scene file format
-    +Assimp -> own format conversion
+    +Asset caching
     +.dds texture loading (won't do)
-    +Kill unneeded code (classes, files)
     +DEBUG/PRODUCTION/DEPLOY flags
     +Logging system
-    +Fork to new repo (WON'T DO)
     -GUI
-    +Old code refactor:
-        +UniformBuffer
-        +BSpline
-        +Settings
-        +GeometryMeshes
-        +VertexArrayInstanced
     +Shader include
     
 Post Process Effects:
@@ -65,12 +56,10 @@ Physics:
 Optimizations:
     +Reduce number of GL state changes (sort by material/geometry)
     +Frustum culling
-    Smaller data types for positions/normals/tangents/bitangents/uv
+    -Smaller data types for positions/normals/tangents/bitangents/uv
     +Reduce max mipmap level
     -Mesh optimizer
-    +Scene binary file cache
     +Global light (ambient + directional)
-    -Optimize shaders
     
 Bugs:
     -Fix VS2013/laptop build

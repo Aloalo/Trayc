@@ -18,10 +18,10 @@ namespace engine
 
         virtual void Render(const RenderingContext &rContext) const override;
 
-        void SetLights(const std::vector<const Light*> &lights);
+        void SetLights(const std::vector<Light*> &lights);
 
     private:
-        std::vector<const Light*> mLights;
+        std::vector<Light*> mLights;
         TextureCombiner mLightCombiners[Light::Type::CT_LIGHT_TYPES];
     };
 }

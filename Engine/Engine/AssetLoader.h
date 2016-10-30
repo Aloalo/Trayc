@@ -30,7 +30,7 @@ namespace engine
         void RecursiveLoadSceneAssimp(const aiScene *aiScene, const aiNode *aiNode, Scene &scene) const;
 
         // TODO: merge identical meshes with different transforms
-        // Sort objects bt material renderflags and meshes
+        // Sort objects by materials, renderflags and meshes
         void OptimizeScene(Scene &scene) const;
 
         friend struct Singleton<AssetLoader>;

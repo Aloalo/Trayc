@@ -50,7 +50,7 @@ namespace engine
         }
 
         std::vector<Object3D> mObjects3D;
-        std::vector<const Light*> mLights;
+        std::vector<Light*> mLights;
         std::vector<TriangleMesh> mTriMeshes;
         std::vector<Material> mMaterials;
     };

@@ -36,12 +36,12 @@ namespace engine
     protected:
         const Renderer *mRenderer;
         FrameBuffer mDstFB;
-
-    private:
-        std::string mName;
         GLbitfield mClearMask;
         // Should the buffer be cleard in BeginRender()
         bool mClearBuffer;
+
+    private:
+        std::string mName;
     };
 }
 

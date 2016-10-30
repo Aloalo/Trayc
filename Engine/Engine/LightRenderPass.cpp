@@ -65,6 +65,7 @@ namespace engine
 
             if(i == Light::GLOBAL_LIGHT && mRenderer->UsePBR()) {
                 prog.SetUniform("reflectionMap", TextureType::SKYBOX_SLOT);
+                // TODO: Get skybox rotation from ForwardRenderPass
                 prog.SetUniform("cubemapM", rotate(mat4(1.0f), radians(180.0f), vec3(0.0f, 0.0f, 1.0f)));
             }
 
@@ -92,7 +93,7 @@ namespace engine
             combiner.Destroy();
     }
 
-    void LightRenderPass::SetLights(const std::vector<const Light*> &lights)
+    void LightRenderPass::SetLights(const std::vector<Light*> &lights)
     {
         mLights = lights;
     }
@@ -111,21 +112,14 @@ namespace engine
             const Light::Type type = light->GetType();
             const TextureCombiner &combiner = mLightCombiners[type];
             const Program &prog = combiner.Prog();
-            const Texture *shadowMap = shadowPass->GetShadowmap(light);
+            const Texture *shadowMap = light->GetShadowmap();
             
             prog.Use();
 
-            switch(light->GetType())
-            {
-            case Light::GLOBAL_LIGHT:
-            {
+            // TODO: fix for general lights
+            if(light->GetType() == Light::GLOBAL_LIGHT || light->GetType() == Light::DIRECTIONAL) {
                 shadowMap->BindToSlot(TextureType::S_SHADOWMAP);
-                const GlobalLight *gl = static_cast<const GlobalLight*>(light);
-                prog.SetUniform("shadowDepthBiasVP", shadowPass->GetDepthBiasVP(-gl->GetDirection()));
-                break;
-            }
-            default:
-                break;
+                prog.SetUniform("shadowDepthBiasVP", shadowPass->GetDepthBiasVP(light));
             }
 
             light->ApplyToProgram(&prog, rContext.mV);
