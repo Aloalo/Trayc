@@ -1,6 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
 
 #ifndef EN_SCENE_H
 #define EN_SCENE_H

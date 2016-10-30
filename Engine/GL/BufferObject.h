@@ -1,6 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
 
 #ifndef EN_BUFFER_OBJECT_H
 #define EN_BUFFER_OBJECT_H

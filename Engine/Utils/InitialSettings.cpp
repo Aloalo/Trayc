@@ -1,6 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
 
 #include <Engine/Utils/InitialSettings.h>
 #include <Engine/Engine/AssetLoader.h>

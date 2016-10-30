@@ -1,6 +1,4 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
+
 #include <Engine/Geometry/Object3D.h>
 
 using namespace glm;

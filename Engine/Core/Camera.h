@@ -1,7 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
-
 #ifndef EN_CAMERA_H
 #define EN_CAMERA_H
 

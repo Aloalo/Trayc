@@ -1,6 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
 
 #ifndef EN_TRIANGLEMESH_H
 #define EN_TRIANGLEMESH_H

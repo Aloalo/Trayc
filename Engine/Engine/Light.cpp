@@ -1,6 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
 
 #include <Engine/Engine/Light.h>
 #include <Engine/GL/Program.h>

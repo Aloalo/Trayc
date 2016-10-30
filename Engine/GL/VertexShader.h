@@ -1,6 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
 
 #ifndef EN_VERTEXSHADER_H
 #define EN_VERTEXSHADER_H

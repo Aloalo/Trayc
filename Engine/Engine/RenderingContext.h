@@ -1,6 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
 
 #ifndef EN_RENDERING_CONTEXT_H
 #define EN_RENDERING_CONTEXT_H

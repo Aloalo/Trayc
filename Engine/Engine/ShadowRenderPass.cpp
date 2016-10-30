@@ -1,8 +1,4 @@
 
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
-
 #include <Engine/Engine/ShadowRenderPass.h>
 #include <Engine/Engine/GeometryRenderPass.h>
 #include <Engine/Geometry/Scene.h>

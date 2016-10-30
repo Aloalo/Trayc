@@ -1,7 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
-
 #include <Engine/Engine/ForwardRenderPass.h>
 #include <Engine/Engine/GeometryRenderPass.h>
 #include <Engine/Engine/LightRenderPass.h>

@@ -24,7 +24,7 @@ Rendering:
     +Skybox
     -Shadows
         +Directional shadows
-        -Point shadows
+        +Point shadows
         -Spot shadows
         -Soft shadows
     -Reflections

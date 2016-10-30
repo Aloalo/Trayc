@@ -1,7 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
-
 #include <Engine/Core/UpdateableHandler.h>
 #include <Engine/Utils/StlExtensions.hpp>
 #include <ctime>

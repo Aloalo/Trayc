@@ -1,6 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
 
 #include <Engine/Engine/Skybox.h>
 #include <Engine/Geometry/GeometryMeshes.h>

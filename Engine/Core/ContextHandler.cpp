@@ -1,7 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
-
 #include <Engine/Core/ContextHandler.h>
 #include <Engine/Utils/ErrorCheck.h>
 

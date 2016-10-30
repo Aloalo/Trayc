@@ -1,6 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
 
 #include <Engine/Geometry/GeometryMeshes.h>
 #include <GL/glew.h>

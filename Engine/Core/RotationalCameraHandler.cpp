@@ -1,7 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
-
 #include <Engine/Core/RotationalCameraHandler.h>
 #include <Engine/Core/ContextHandler.h>
 #include <Engine/Core/InputHandler.h>

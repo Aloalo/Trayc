@@ -1,6 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
 
 #ifndef EN_CUBICBSPLINE_H
 #define EN_CUBICBSPLINE_H

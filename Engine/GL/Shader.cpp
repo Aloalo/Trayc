@@ -1,6 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
 
 #include <Engine/GL/Shader.h>
 #include <Engine/Utils/Utilities.h>

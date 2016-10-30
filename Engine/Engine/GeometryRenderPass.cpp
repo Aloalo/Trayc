@@ -1,8 +1,4 @@
 
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
-
 #include <Engine/Engine/GeometryRenderPass.h>
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Utils/Setting.h>

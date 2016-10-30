@@ -1,6 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
 
 #ifndef EN_VERTEX_ARRAY_H
 #define EN_VERTEX_ARRAY_H

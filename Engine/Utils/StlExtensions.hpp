@@ -1,6 +1,3 @@
-/*
-* Author: Jure Ratkovic
-*/
 
 #ifndef STLEXTENSIONS_H
 #define STLEXTENSIONS_H

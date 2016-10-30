@@ -1,7 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
-
 #include <Engine/Core/Camera.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <cstdio>

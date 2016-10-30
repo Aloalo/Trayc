@@ -1,6 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
 
 #include <Engine/Utils/BSpline.h>
 #include <glm/gtc/matrix_transform.hpp>

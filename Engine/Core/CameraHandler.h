@@ -1,7 +1,3 @@
-/*
-* Copyright (c) 2014 Jure Ratkovic
-*/
-
 #ifndef EN_CAMERAHANDLER_H
 #define EN_CAMERAHANDLER_H
 
