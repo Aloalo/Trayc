@@ -5,6 +5,10 @@ using namespace glm;
 
 namespace engine
 {
+    Frustum::Frustum(void)
+    {
+    }
+
     Frustum::Frustum(const vec3 &p, const vec3 &l, const vec3 &u, float fov, float ar, float near, float far)
     {
         Set(p, l, u, fov, ar, near, far);

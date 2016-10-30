@@ -15,7 +15,7 @@ using namespace std;
 namespace engine
 {
     Skybox::Skybox(void)
-        : mSkyboxVA(GL_STATIC_DRAW), mFarPlaneMod(30.0f)
+        : mSkyboxVA(GL_STATIC_DRAW), mFarPlaneMod(3.0f)
     {
     }
 
@@ -39,8 +39,8 @@ namespace engine
         mSkyboxCubemap.BindToSlot(TextureType::SKYBOX_SLOT);
 
         const float sideHalfSize = renderer->GetCamera()->mFarDistance * mFarPlaneMod * 0.5f;
-        mSkyboxTransform = scale(mat4(1.0f), vec3(sideHalfSize));
-        mSkyboxTransform = rotate(mSkyboxTransform, radians(180.0f), vec3(0.0f, 0.0f, 1.0f));
+        mSkyboxScale = scale(mat4(1.0f), vec3(sideHalfSize));
+        mSkyboxTransform = rotate(mat4(1.0f), radians(180.0f), vec3(0.0f, 0.0f, 1.0f));
         TriangleMesh cube = GetCubeMeshSolid(true, false);
         cube.FlipWinding();
         mSkyboxVA.Init(&cube);
@@ -63,8 +63,13 @@ namespace engine
 
         glDepthRange(1.0, 1.0);
         mSkyboxProg.Use();
-        mSkyboxProg.SetUniform("MVP", VP * mSkyboxTransform);
+        mSkyboxProg.SetUniform("MVP", VP * mSkyboxTransform * mSkyboxScale);
         mSkyboxVA.Render(GL_TRIANGLES);
         glDepthRange(0.0, 1.0);
+    }
+
+    const mat4& Skybox::GetTransform() const
+    {
+        return mSkyboxTransform;
     }
 }

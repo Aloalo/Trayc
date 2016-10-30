@@ -67,4 +67,9 @@ namespace engine
         const LightRenderPass *lPass = static_cast<const LightRenderPass*>(mRenderer->GetRenderPass("lPass"));
         return lPass->GetDstBuffer();
     }
+
+    const mat4& ForwardRenderPass::GetSkyboxM() const
+    {
+        return mSkybox.GetTransform();
+    }
 }

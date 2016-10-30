@@ -4,6 +4,7 @@
 #include <Engine/Utils/StlExtensions.hpp>
 #include <Engine/Engine/ShadowRenderPass.h>
 #include <Engine/Engine/GeometryRenderPass.h>
+#include <Engine/Engine/ForwardRenderPass.h>
 #include <Engine/Engine/Renderer.h>
 #include <Engine/Utils/Setting.h>
 #include <Engine/Utils/Utilities.h>
@@ -61,20 +62,18 @@ namespace engine
 
                 const auto &viewRayDataUB = mRenderer->GetViewRayDataUB();
                 prog.SetUniformBlockBinding(viewRayDataUB.GetName(), viewRayDataUB.GetBlockBinding());
+
+                // TODO: fix for general shadows
+                if(i != Light::POINT) {
+                    prog.SetUniform("shadowMap", TextureType::S_SHADOWMAP);
+                    prog.SetUniform("shadowBrightness", Setting<float>("shadowBrightness"));
+                    const auto &matrices = mRenderer->GetMatricesUB();
+                    prog.SetUniformBlockBinding(matrices.GetName(), matrices.GetBlockBinding());
+                }
             }
 
             if(i == Light::GLOBAL_LIGHT && mRenderer->UsePBR()) {
                 prog.SetUniform("reflectionMap", TextureType::SKYBOX_SLOT);
-                // TODO: Get skybox rotation from ForwardRenderPass
-                prog.SetUniform("cubemapM", rotate(mat4(1.0f), radians(180.0f), vec3(0.0f, 0.0f, 1.0f)));
-            }
-
-            // TODO: fix for general shadows
-            if(i == Light::GLOBAL_LIGHT) {
-                prog.SetUniform("shadowMap", TextureType::S_SHADOWMAP);
-                prog.SetUniform("shadowBrightness", Setting<float>("shadowBrightness"));
-                const auto &matrices = mRenderer->GetMatricesUB();
-                prog.SetUniformBlockBinding(matrices.GetName(), matrices.GetBlockBinding());
             }
 
             prog.SetUniform("gAlbedo", TextureType::G_ALBEDO_TEXTURE);
@@ -100,26 +99,31 @@ namespace engine
 
     void LightRenderPass::Render(const RenderingContext &rContext) const
     {
-        const ShadowRenderPass *shadowPass = static_cast<const ShadowRenderPass*>(mRenderer->GetRenderPass("shadowPass"));
-
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
 
         glBlendFunc(GL_ONE, GL_ONE);
+
+        const AABB sceneAABB = mRenderer->GetSceneAABB();
 
         for(const Light *light : mLights)
         {
             const Light::Type type = light->GetType();
             const TextureCombiner &combiner = mLightCombiners[type];
             const Program &prog = combiner.Prog();
-            const Texture *shadowMap = light->GetShadowmap();
             
             prog.Use();
 
+            if(light->GetType() == Light::GLOBAL_LIGHT) {
+                const ForwardRenderPass *fPass = static_cast<const ForwardRenderPass*>(mRenderer->GetRenderPass("forwardPass"));
+                prog.SetUniform("cubemapM", fPass->GetSkyboxM());
+            }
+
             // TODO: fix for general lights
-            if(light->GetType() == Light::GLOBAL_LIGHT || light->GetType() == Light::DIRECTIONAL) {
+            if(light->GetType() != Light::AMBIENT && light->GetType() != Light::POINT) {
+                const Texture *shadowMap = light->GetShadowmap();
                 shadowMap->BindToSlot(TextureType::S_SHADOWMAP);
-                prog.SetUniform("shadowDepthBiasVP", shadowPass->GetDepthBiasVP(light));
+                prog.SetUniform("shadowDepthBiasVP", light->GetDepthBiasVP(sceneAABB));
             }
 
             light->ApplyToProgram(&prog, rContext.mV);

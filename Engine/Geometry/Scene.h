@@ -29,7 +29,7 @@ namespace engine
         Object3D& GetObject(int idx);
         AABB GetAABB() const;
 
-        std::vector<const Object3D*> GetShadowCasters() const;
+        std::vector<const Object3D*> GetShadowCasters(const Light *light) const;
 
         template<bool forForwardPipeline>
         std::vector<const Object3D*> GetObjects(const Frustum &frustum) const

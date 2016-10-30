@@ -143,6 +143,12 @@ namespace engine
         return mUsePBR;
     }
 
+    AABB Renderer::GetSceneAABB() const
+    {
+        const GeometryRenderPass *gPass = static_cast<const GeometryRenderPass*>(GetRenderPass("gPass"));
+        return gPass->GetGPUSceneData()->mScene->GetAABB();
+    }
+
     void Renderer::InitRendering(const CameraHandler *camera)
     {
         if(mCamera) {

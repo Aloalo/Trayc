@@ -22,11 +22,9 @@ namespace engine
 
         virtual void Render(const RenderingContext &rContext) const override;
 
-        // Inits shadow framebufferss
+        // Inits shadow framebuffers
         void Init(const SceneGPUData *sceneData);
-        glm::mat4 GetDepthBiasVP(const Light *light) const;
-
-
+        const Texture2D& GetShadowmap(int idx) const;
 
     private:
         Program mProgram;

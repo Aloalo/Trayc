@@ -68,7 +68,7 @@ void InitSponza(Game &game, Scene &scene, const char *progName, ivec2 SSize)
     game.mInputHandler.AddEventListener(&lHandler);
 }
 
-GlobalLight GL(vec3(0.01f), vec3(1.5f), true, vec3(0.0f, 1.0f, 1.0f));
+GlobalLight GL(vec3(0.01f), vec3(1.2f), true, vec3(0.0f, 1.0f, 1.0f));
 void InitHead(Game &game, Scene &scene, const char *progName, ivec2 SSize)
 {
     // Init scene
@@ -112,10 +112,11 @@ int main(int argc, char *argv[])
     Scene scene;
 
     //InitHead(game, scene, argv[0], SSize);
-    //InitSponza(game, scene, argv[0], SSize);
-    InitPBR(game, scene, argv[0], SSize);
+    InitSponza(game, scene, argv[0], SSize);
+    //InitPBR(game, scene, argv[0], SSize);
 
     game.mContextHandler.VsyncMode(Setting<int>("vsync"));
+    //game.mContextHandler.VsyncMode(0);
 
 #if PRODUCTION
     //Init DebugView

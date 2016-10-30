@@ -17,49 +17,6 @@ using namespace std;
 
 namespace engine
 {
-    // MATRIX GETTERS //
-    static inline mat4 CalcDirectionalShadowP(const AABB &sceneAABB, const mat4 &V)
-    {
-        vec3 minimum = sceneAABB.mMinv;
-        vec3 maximum = sceneAABB.mMaxv;
-        const float width = maximum.x - minimum.x;
-        const float depth = maximum.z - minimum.z;
-
-        array<vec3, 8> vert;
-        vert[0] = minimum;
-        vert[1] = vec3(minimum.x + width, minimum.y, minimum.z);
-        vert[2] = vec3(minimum.x + width, minimum.y, minimum.z + depth);
-        vert[3] = vec3(minimum.x, minimum.y, minimum.z + depth);
-        vert[4] = vec3(maximum.x - width, maximum.y, maximum.z - depth);
-        vert[5] = vec3(maximum.x, maximum.y, maximum.z - depth);
-        vert[6] = maximum;
-        vert[7] = vec3(maximum.x - width, maximum.y, maximum.z);
-
-        AABB orthographicAABB;
-        for(const vec3 &v : vert) {
-            orthographicAABB |= vec3((V * vec4(v, 1.0f)));
-        }
-
-        minimum = orthographicAABB.mMinv;
-        maximum = orthographicAABB.mMaxv;
-        return ortho(minimum.x, maximum.x, minimum.y, maximum.y, minimum.z, maximum.z);
-    }
-
-    static inline mat4 CalcDirectionalShadowV(const AABB &sceneAABB, const vec3 &viewDir)
-    {
-        static const vec3 up = vec3(0.0f, 1.0f, 0.0f);
-        const vec3 pos = sceneAABB.Center();
-        return lookAt(pos, pos + viewDir, up);
-    }
-
-    static inline mat4 CalcDirectionalShadowVP(const AABB &sceneAABB, const vec3 &viewDir)
-    {
-        const mat4 depthViewMatrix = CalcDirectionalShadowV(sceneAABB, viewDir);
-        const mat4 depthProjectionMatrix = CalcDirectionalShadowP(sceneAABB, depthViewMatrix);
-        return depthProjectionMatrix * depthViewMatrix;
-    }
-
-
 
     // ShadowRenderPass //
     ShadowRenderPass::ShadowRenderPass(void)
@@ -84,46 +41,20 @@ namespace engine
         mProgram.Destroy();
     }
 
-    static inline mat4 CalcShadowVP(const Scene *scene, const Light *light)
-    {
-        switch(light->GetType())
-        {
-        case Light::GLOBAL_LIGHT:
-        {
-            const GlobalLight *l = static_cast<const GlobalLight*>(light);
-            return CalcDirectionalShadowVP(scene->GetAABB(), -l->GetDirection());
-        }
-        case Light::DIRECTIONAL:
-        {
-            const DirectionalLight *l = static_cast<const DirectionalLight*>(light);
-            return CalcDirectionalShadowVP(scene->GetAABB(), -l->GetDirection());
-        }
-        default:
-            LOG(ERROR) << "[CalcShadowVP] Incorrect light type: " << light->GetType();
-            return mat4(1.0f);
-        }
-    }
-
-    mat4 ShadowRenderPass::GetDepthBiasVP(const Light *light) const
-    {
-        static const mat4 biasMatrix(
-            0.5, 0.0, 0.0, 0.0,
-            0.0, 0.5, 0.0, 0.0,
-            0.0, 0.0, 0.5, 0.0,
-            0.5, 0.5, 0.5, 1.0
-        );
-
-        return biasMatrix * CalcShadowVP(mSceneData->mScene, light);
-    }
-
     void ShadowRenderPass::Render(const RenderingContext &rContext) const
     {
         const Scene *scene = mSceneData->mScene;
+        const AABB sceneAABB = scene->GetAABB();
         mProgram.Use();
         
         int ctFBs = mShadowFBs.size();
         for(int i = 0; i < ctFBs; ++i)
         {
+            // TODO: fix for general light shadows
+            if(scene->mLights[i]->GetType() == Light::POINT) {
+                continue;
+            }
+
             const FrameBuffer &fb = mShadowFBs[i];
 
             fb.Bind();
@@ -135,9 +66,9 @@ namespace engine
             const Light *l = scene->mLights[i];
 
             // Compute the MVP matrix from the light's point of view
-            const mat4 depthVP = CalcShadowVP(scene, l);
+            const mat4 depthVP = l->GetDepthVP(sceneAABB);
 
-            const auto objects = scene->GetShadowCasters();
+            const auto objects = scene->GetShadowCasters(l);
             for(const Object3D *obj : objects)
             {
                 const int meshIdx = obj->GetMeshIdx();
@@ -147,9 +78,7 @@ namespace engine
                 mProgram.SetUniform("depthMVP", depthVP * obj->GetTransform());
                 VA.Render(scene->mTriMeshes[meshIdx].GetDrawMode());
             }
-
-            // TODO: fix for general light shadows
-            break;
+            //LOG(INFO) << "Lights[" << i << "] rendered " << objects.size() << " objects";
         }
     }
 
@@ -169,5 +98,10 @@ namespace engine
             fb.Compile();
             l->mShadowmap = &fb.GetAttachment(0);
         }
+    }
+
+    const Texture2D& ShadowRenderPass::GetShadowmap(int idx) const
+    {
+        return mShadowFBs[idx].GetAttachment(0);
     }
 }

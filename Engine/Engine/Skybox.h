@@ -21,12 +21,14 @@ namespace engine
         void Destroy();
 
         void Draw(const Camera *camera) const;
+        const glm::mat4& GetTransform() const;
 
     private:
         Program mSkyboxProg;
         CubemapTexture mSkyboxCubemap;
         VertexArray mSkyboxVA;
         glm::mat4 mSkyboxTransform;
+        glm::mat4 mSkyboxScale;
         float mFarPlaneMod;
     };
 }

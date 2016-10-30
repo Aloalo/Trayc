@@ -52,13 +52,13 @@ namespace engine
         return ret;
     }
 
-    vector<const Object3D*> Scene::GetShadowCasters() const
+    vector<const Object3D*> Scene::GetShadowCasters(const Light *light) const
     {
         std::vector<const engine::Object3D*> ret;
         ret.reserve(mObjects3D.size());
 
         for(const Object3D &obj : mObjects3D) {
-            if(obj.mVisible && obj.mShadowCaster) {
+            if(obj.mVisible && obj.mShadowCaster && light->Affects(&obj)) {
                 ret.push_back(&obj);
             }
         }

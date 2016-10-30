@@ -26,6 +26,8 @@ namespace engine
 
         virtual const FrameBuffer& GetDstBuffer() const override;
 
+        const glm::mat4& GetSkyboxM() const;
+
     private:
         Program mForwardProg;
         Skybox mSkybox;

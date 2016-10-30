@@ -7,6 +7,7 @@
 
 #include <Engine/GL/TextureSampler.h>
 #include <Engine/Utils/UniformBuffers.h>
+#include <Engine/Geometry/AABB.h>
 #include <vector>
 
 namespace engine
@@ -45,6 +46,7 @@ namespace engine
 
         const Camera* GetCamera() const;
         bool UsePBR() const;
+        AABB GetSceneAABB() const;
 
     private:
         Renderer(const Renderer &other);

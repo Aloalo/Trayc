@@ -61,7 +61,7 @@ void DebugView::Draw(const engine::RenderingContext &rContext) const
 {
     if(mTexType == TextureType::S_SHADOWMAP) {
         const ShadowRenderPass *shadowPass = dynamic_cast<const ShadowRenderPass*>(mRenderer->GetRenderPass("shadowPass"));
-        const Texture2D &tex = shadowPass->GetDstBuffer().GetAttachment(0);
+        const Texture2D &tex = shadowPass->GetShadowmap(2);
         DebugDraw::Get().DrawDepth(tex, 0.0f, -1.0f);
         return;
     }

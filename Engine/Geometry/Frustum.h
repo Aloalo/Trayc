@@ -10,6 +10,8 @@ namespace engine
     class Frustum
     {
     public:
+        Frustum(void);
+
         // Sets perspective frustum, fov is in degrees
         Frustum(const glm::vec3 &p, const glm::vec3 &l, const glm::vec3 &u, float fov, float ar, float near, float far);
 
