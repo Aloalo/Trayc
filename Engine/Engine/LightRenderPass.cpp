@@ -114,7 +114,7 @@ namespace engine
             
             prog.Use();
 
-            if(light->GetType() == Light::GLOBAL_LIGHT) {
+            if(light->GetType() == Light::GLOBAL_LIGHT && mRenderer->UsePBR()) {
                 const ForwardRenderPass *fPass = static_cast<const ForwardRenderPass*>(mRenderer->GetRenderPass("forwardPass"));
                 prog.SetUniform("cubemapM", fPass->GetSkyboxM());
             }
