@@ -3,7 +3,7 @@
   "exposure": 1.5,
   "screenWidth": 1280,
   "screenHeight": 720,
-  "resolutionScale": 2,
+  "resolutionScale": 1,
   "anisotropicFiltering": 16,
   "maxMipmapLevelMod": 3,
   "gamma": 2.2,
