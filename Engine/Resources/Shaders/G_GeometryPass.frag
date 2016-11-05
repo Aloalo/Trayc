@@ -1,4 +1,3 @@
-#version 330 core
 
 // Input
 in VS_OUT

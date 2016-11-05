@@ -28,6 +28,8 @@ namespace engine
     private:
         static void InsertDefines(std::string &source, const Defines &defines);
         static void ExpandIncludes(const std::string &path, std::string &source);
+        static const std::string mHeader;
+        static void AddHeader(std::string &source);
     };
 }
 

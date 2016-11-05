@@ -1,4 +1,3 @@
-#version 330 core
 
 #include "GammaCorrection.glsl"
 #include "Tonemap.glsl"

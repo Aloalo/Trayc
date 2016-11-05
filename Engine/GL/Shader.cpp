@@ -12,6 +12,8 @@ using namespace std;
 
 namespace engine
 {
+    const std::string Shader::mHeader = "#version 330 core\nprecision highp float;\n";
+
     Shader::~Shader(void)
     {
         glDeleteShader(mID);
@@ -34,6 +36,7 @@ namespace engine
 
             const string path = sn.substr(0, sn.find_last_of("/") + 1);
             ExpandIncludes(path, source);
+            AddHeader(source);
 
             Init2(source.c_str(), name);
         }
@@ -111,5 +114,10 @@ namespace engine
 
             pos = source.find("#include");
         }
+    }
+
+    void Shader::AddHeader(std::string &source)
+    {
+        source = mHeader + source;
     }
 }
