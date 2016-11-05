@@ -65,7 +65,7 @@ void InitSponza(Game &game, Scene &scene, const char *progName, ivec2 SSize)
     game.mInputHandler.AddEventListener(&lHandler);
 }
 
-GlobalLight GL(vec3(0.1f), vec3(1.2f), true, vec3(0.0f, 1.0f, 1.0f));
+GlobalLight GL(vec3(0.01f), vec3(2.0f), true, vec3(0.0f, 1.0f, 1.0f));
 void InitHead(Game &game, Scene &scene, const char *progName, ivec2 SSize)
 {
     // Init scene

@@ -4,6 +4,9 @@ uniform mat4 shadowDepthBiasVP;
 uniform sampler2DShadow shadowMap;
 uniform float shadowBrightness;
 
+#define SOFT_SHADOWS
+
+
 const float maxBias = 0.005;
 const float minBias = 0.0005;
 float GetVisibilityFactor(in vec3 fragPos, in float dotNL)
@@ -15,7 +18,21 @@ float GetVisibilityFactor(in vec3 fragPos, in float dotNL)
     
     shadowCoord.z -= bias;
     
-    float visibility = (1.0 - shadowBrightness) * textureProj(shadowMap, shadowCoord);
+    #ifdef SOFT_SHADOWS
+        float sum = 0.0;
+        vec2 pix = 1.0 / vec2(textureSize(shadowMap, 0));
+        for (float y = -0.5 ; y <= 0.5 ; y += 1.0) {
+            for (float x = -0.5 ; x <= 0.5 ; x += 1.0) {
+                vec4 coord = shadowCoord;
+                coord.xy += vec2(x, y) * pix;
+                sum += textureProj(shadowMap, coord);
+            }
+        }
+        
+        float sampleBrightness = (1.0 - shadowBrightness) / 16.0;
+        return shadowBrightness + sum * sampleBrightness;
+    #else
+        return shadowBrightness + (1.0 - shadowBrightness) * textureProj(shadowMap, shadowCoord);
+    #endif
     
-    return visibility;
 }
