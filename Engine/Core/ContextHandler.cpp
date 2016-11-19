@@ -1,4 +1,5 @@
 #include <Engine/Core/ContextHandler.h>
+#include <Engine/Core/Defines.h>
 #include <Engine/Utils/ErrorCheck.h>
 
 #include <easylogging++.h>
@@ -71,7 +72,13 @@ namespace engine
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, profile));
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32));
 
+        // When debugging turn off vsync and disable buffering 
+        //SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0));
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1));
+
+             SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG));
+        #endif // 0
+
 
         // create the opengl context
         mOpenglContext = SDL_GL_CreateContext(mWindow);
