@@ -12,7 +12,7 @@ using namespace std;
 
 namespace engine
 {
-    const std::string Shader::mHeader = "#version 330 core\nprecision highp float;\n";
+    const std::string Shader::mHeader = "#version 400 core\nprecision highp float;\n";
 
     Shader::~Shader(void)
     {
