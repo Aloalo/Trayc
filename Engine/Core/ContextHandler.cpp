@@ -76,6 +76,7 @@ namespace engine
         //SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0));
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1));
 
+        #ifdef _DEBUG
              SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG));
         #endif // 0
 
