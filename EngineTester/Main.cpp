@@ -65,7 +65,7 @@ void InitSponza(Game &game, Scene &scene, const char *progName, ivec2 SSize)
     game.mInputHandler.AddEventListener(&lHandler);
 }
 
-GlobalLight GL(vec3(0.01f), vec3(2.0f), true, vec3(0.0f, 1.0f, 1.0f));
+GlobalLight GL(vec3(0.09f), vec3(2.0f), true, vec3(0.0f, 1.0f, 1.0f));
 void InitHead(Game &game, Scene &scene, const char *progName, ivec2 SSize)
 {
     // Init scene
@@ -97,6 +97,12 @@ void InitPBR(Game &game, Scene &scene, const char *progName, ivec2 SSize)
     PBRDemo.Init(game, scene);
 }
 
+void PrintHelp()
+{
+    cout << "Load sponza demo: \"-sponza\"" << endl;
+    cout << "Load head demo: \"-head\"" << endl;
+    cout << "Load pbr demo: \"-pbr\"" << endl;
+}
 
 int main(int argc, char *argv[])
 {
@@ -108,9 +114,23 @@ int main(int argc, char *argv[])
     //game.mRenderer.SetUsePBR(false);
     Scene scene;
 
-    InitHead(game, scene, argv[0], SSize);
-    //InitSponza(game, scene, argv[0], SSize);
-    //InitPBR(game, scene, argv[0], SSize);
+    if(argc == 1) {
+        PrintHelp();
+        InitSponza(game, scene, argv[0], SSize);
+    }
+    else if(string(argv[1]) == "-head") {
+        InitHead(game, scene, argv[0], SSize);
+    }
+    else if(string(argv[1]) == "-sponza") {
+        InitSponza(game, scene, argv[0], SSize);
+    }
+    else if(string(argv[1]) == "-pbr") {
+        InitPBR(game, scene, argv[0], SSize);
+    }
+    else {
+        PrintHelp();
+        InitSponza(game, scene, argv[0], SSize);
+    }
 
     game.mContextHandler.VsyncMode(Setting<int>("vsync"));
     //game.mContextHandler.VsyncMode(0);

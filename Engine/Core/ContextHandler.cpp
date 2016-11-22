@@ -73,7 +73,6 @@ namespace engine
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32));
 
         // When debugging turn off vsync and disable buffering 
-        //SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0));
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1));
 
         #ifdef _DEBUG

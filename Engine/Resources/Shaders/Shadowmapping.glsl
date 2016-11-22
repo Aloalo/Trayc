@@ -7,7 +7,7 @@ uniform float shadowBrightness;
 #define SOFT_SHADOWS
 
 
-const float maxBias = 0.005;
+const float maxBias = 0.01;
 const float minBias = 0.0005;
 float GetVisibilityFactor(in vec3 fragPos, in float dotNL)
 {
@@ -29,7 +29,7 @@ float GetVisibilityFactor(in vec3 fragPos, in float dotNL)
             }
         }
         
-        float sampleBrightness = (1.0 - shadowBrightness) / 16.0;
+        float sampleBrightness = (1.0 - shadowBrightness) / 4.0;
         return shadowBrightness + sum * sampleBrightness;
     #else
         return shadowBrightness + (1.0 - shadowBrightness) * textureProj(shadowMap, shadowCoord);
