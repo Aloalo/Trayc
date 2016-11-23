@@ -13,6 +13,7 @@ namespace engine
     public:
         LightRenderPass(void);
 
+        void CompileShaders();
         virtual void Init() override;
         virtual void Destroy() override;
 
@@ -21,6 +22,7 @@ namespace engine
         void SetLights(const std::vector<Light*> &lights);
 
     private:
+
         std::vector<Light*> mLights;
         TextureCombiner mLightCombiners[Light::Type::CT_LIGHT_TYPES];
     };

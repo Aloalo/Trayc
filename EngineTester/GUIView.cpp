@@ -49,6 +49,10 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
 
         mGame->mInputHandler.SetCursorFree(!mGame->mInputHandler.IsCursorFree());
     }
+
+    if(e.keysym.sym == SDLK_o && e.type == SDL_KEYDOWN) {
+        mGame->mRenderer.SetUsePBR(!mGame->mRenderer.UsePBR());
+    }
 }
 
 void GUIView::Draw(const engine::RenderingContext &rContext) const

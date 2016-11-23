@@ -52,8 +52,8 @@ void InitSponza(Game &game, Scene &scene, const char *progName, ivec2 SSize)
     DefaultCameraHandler camHandler(ConstructDefaultCameraHandler(SSize, Setting<float>("FOV"), 4000.0f));
 
     //Init Game
-    game.mRenderer.SetUsePBR(false);
     game.Init(camHandler, progName, "Crytek Sponza Demo", SSize.x, SSize.y);
+    game.mRenderer.SetUsePBR(false);
 
     // Init scene
     scene = AssetLoader::Get().LoadScene(AssetLoader::Get().ModelPath("crytek-sponza/"), "sponza.obj");
@@ -99,9 +99,16 @@ void InitPBR(Game &game, Scene &scene, const char *progName, ivec2 SSize)
 
 void PrintHelp()
 {
+    cout << "o - toggle pbr" << endl;
+
     cout << "Load sponza demo: \"-sponza\"" << endl;
+    cout << "   p - pause lights" << endl;
     cout << "Load head demo: \"-head\"" << endl;
     cout << "Load pbr demo: \"-pbr\"" << endl;
+    cout << "   arrows - toggle materials" << endl;
+    cout << "   right click - rotate ball" << endl;
+
+    cout << endl << endl;
 }
 
 int main(int argc, char *argv[])
@@ -114,8 +121,8 @@ int main(int argc, char *argv[])
     //game.mRenderer.SetUsePBR(false);
     Scene scene;
 
+    PrintHelp();
     if(argc == 1) {
-        PrintHelp();
         InitSponza(game, scene, argv[0], SSize);
     }
     else if(string(argv[1]) == "-head") {
@@ -128,7 +135,6 @@ int main(int argc, char *argv[])
         InitPBR(game, scene, argv[0], SSize);
     }
     else {
-        PrintHelp();
         InitSponza(game, scene, argv[0], SSize);
     }
 

@@ -62,8 +62,7 @@ float NDF(in vec3 N, in vec3 H, in float a)
         float lod = log2(float(textureSize(reflectionMap, 0).x));
         vec3 R = reflect(-V, N);
         R = (cubemapM * (invV * vec4(R, 0.0))).xyz;
-        float lodMod = 1.0 * (1.0 -  roughness);
-        return textureLod(reflectionMap, R, lod * (1.0 - roughness)).rgb;
+        return textureLod(reflectionMap, R, lod * (1.0 - roughness) * 6.0).rgb;
     }
 #endif
 
@@ -90,7 +89,8 @@ vec3 Lighting(in vec3 N, in vec3 L, in vec3 P, in vec3 lightIntensity, in vec3 a
     
 #ifdef GLOBAL_LIGHT
     vec3 reflection = Reflection(V, N, roughness) * Fdiff;
-    return shadow * atten * lightIntensity * dotNL * (diffuse + reflection + specular);
+    return shadow * (dotNL * (atten * lightIntensity * diffuse + specular) + reflection);
+    //return shadow * atten * lightIntensity * dotNL * (diffuse + reflection + specular);
 #else
     return shadow * atten * lightIntensity * dotNL * (diffuse + specular);
 #endif

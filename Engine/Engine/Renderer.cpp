@@ -53,6 +53,8 @@ namespace engine
     void Renderer::SetUsePBR(bool usePBR)
     {
         mUsePBR = usePBR;
+        LightRenderPass *lPass = static_cast<LightRenderPass*>(GetRenderPass("lPass"));
+        lPass->CompileShaders();
     }
 
     void Renderer::SetScene(Scene *scene)

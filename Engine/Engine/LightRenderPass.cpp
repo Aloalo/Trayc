@@ -21,7 +21,7 @@ namespace engine
     {
     }
 
-    void LightRenderPass::Init()
+    void LightRenderPass::CompileShaders()
     {
         static const vector<string> USE_PBR(1, "USE_PBR");
         static const vector<string> LIGHT_PROG_DEFINES[Light::Type::CT_LIGHT_TYPES] =
@@ -33,24 +33,13 @@ namespace engine
             vector<string>(1, "SPOT_LIGHT"),
         };
 
-        const int width = Setting<int>("screenWidth");
-        const int height = Setting<int>("screenHeight");
-
-        // Init L buffer
-        mDstFB.Init(width, height);
-        mDstFB.AddAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); //Lighting out / x
-        const GeometryRenderPass *gPass = static_cast<const GeometryRenderPass*>(mRenderer->GetRenderPass("gPass"));
-        const FrameBuffer &gFB = gPass->GetDstBuffer();
-        mDstFB.AttachRBO(gFB.GetRBOID());
-
-        mDstFB.Compile();
-
         const bool usePBR = mRenderer->UsePBR();
         // Init light programs
         for(int i = 0; i < Light::Type::CT_LIGHT_TYPES; ++i)
         {
             TextureCombiner &combiner = mLightCombiners[i];
             const auto defines = usePBR ? LIGHT_PROG_DEFINES[i] + USE_PBR : LIGHT_PROG_DEFINES[i];
+            combiner.Destroy();
             combiner.Init(AssetLoader::Get().ShaderPath("L_LightPass").c_str(), defines);
 
             const Program &prog = combiner.Prog();
@@ -72,13 +61,30 @@ namespace engine
                 }
             }
 
-            if(i == Light::GLOBAL_LIGHT && mRenderer->UsePBR()) {
+            if(i == Light::GLOBAL_LIGHT && usePBR) {
                 prog.SetUniform("reflectionMap", TextureType::SKYBOX_SLOT);
             }
 
             prog.SetUniform("gAlbedo", TextureType::G_ALBEDO_TEXTURE);
             Program::Unbind();
         }
+    }
+
+    void LightRenderPass::Init()
+    {
+        const int width = Setting<int>("screenWidth");
+        const int height = Setting<int>("screenHeight");
+
+        // Init L buffer
+        mDstFB.Init(width, height);
+        mDstFB.AddAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); //Lighting out / x
+        const GeometryRenderPass *gPass = static_cast<const GeometryRenderPass*>(mRenderer->GetRenderPass("gPass"));
+        const FrameBuffer &gFB = gPass->GetDstBuffer();
+        mDstFB.AttachRBO(gFB.GetRBOID());
+
+        mDstFB.Compile();
+
+        CompileShaders();
 
         // Bind own textures to appropriate slots
         mDstFB.GetAttachment(0).BindToSlot(TextureType::LIGHT_ACCUM_TEXTURE);
