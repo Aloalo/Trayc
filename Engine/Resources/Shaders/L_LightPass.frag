@@ -8,9 +8,7 @@ in vec2 UV;
 layout(location = 0) out vec4 fragColor;
 
 #ifndef AMBIENT_LIGHT
-    #ifndef POINT_LIGHT
-        uniform sampler2D sShadowBuffer;
-    #endif
+    uniform sampler2D sShadowBuffer;
     uniform sampler2D gDepth;
     uniform sampler2D gNormal;
     uniform sampler2D gSpecGloss;
@@ -54,11 +52,7 @@ void main()
     vec3 N = normalize(texture(gNormal, UV).xyz);
     vec3 albedo = texture(gAlbedo, UV).rgb;
     vec4 specularGloss = texture(gSpecGloss, UV);
-    #ifdef POINT_LIGHT
-        float shadow = 1.0;
-    #else
-        float shadow = texture(sShadowBuffer, UV).r;
-    #endif
+    float shadow = texture(sShadowBuffer, UV).r;
     
     // Get Light params
     vec3 L = GetLightDir(fragPos);

@@ -48,16 +48,15 @@ namespace engine
         int ctFBs = mShadowFBs.size();
         for(int i = 0; i < ctFBs; ++i)
         {
-            // TODO: fix for general light shadows
-            if(scene->mLights[i]->GetType() == Light::POINT) {
-                continue;
-            }
-
             const FrameBuffer &fb = mShadowFBs[i];
-
             fb.Bind();
             glViewport(0, 0, fb.Width(), fb.Height());
             glClear(mClearMask);
+
+            // TODO: fix for point light shadows
+            if(scene->mLights[i]->GetType() == Light::POINT) {
+                continue;
+            }
 
             const Light *l = scene->mLights[i];
 

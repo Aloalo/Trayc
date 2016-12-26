@@ -71,6 +71,11 @@ namespace engine
         return mShadowmap;
     }
 
+    const Texture* Light::GetProjectedShadow() const
+    {
+        return mProjectedShadow;
+    }
+
     void Light::ApplyToShadowProgram(const Program * prog, const glm::mat4 & V) const
     {
         LOG(WARNING) << "[Light::ApplyToShadowProgram] Calling unimplemented function.";

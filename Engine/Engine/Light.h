@@ -32,6 +32,7 @@ namespace engine
         bool operator<(const Light* other) const;
         Type GetType() const;
         const Texture* GetShadowmap() const;
+        const Texture* GetProjectedShadow() const;
         // Params need to be transformed to view space
         virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const = 0;
         virtual void ApplyToShadowProgram(const Program *prog, const glm::mat4 &V) const;
@@ -48,8 +49,10 @@ namespace engine
 
     private:
         friend class ShadowRenderPass;
+        friend class ShadowProjectionRenderPass;
         Type mType;
         const Texture *mShadowmap;
+        const Texture *mProjectedShadow;
     };
 
     //---------- AmbientLight ----------//

@@ -29,6 +29,7 @@ namespace engine
     private:
         TextureCombiner mShadowProjectionCombiners[Light::CT_LIGHT_TYPES];
         const SceneGPUData *mSceneData;
+        std::vector<FrameBuffer> mProjectedShadowFBs;
     };
 }
 

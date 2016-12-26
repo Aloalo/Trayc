@@ -51,15 +51,6 @@ namespace engine
             }
         }
         Program::Unbind();
-
-        // Init shadow projection buffer
-        const int screenWidth = Setting<int>("screenWidth");
-        const int screenHeight = Setting<int>("screenHeight");
-        mDstFB.Init(screenWidth, screenHeight);
-        mDstFB.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
-        mDstFB.Compile();
-
-        mDstFB.GetAttachment(0).BindToSlot(TextureType::S_SHADOWPROJECTION);
     }
 
     void ShadowProjectionRenderPass::Destroy()
@@ -67,6 +58,10 @@ namespace engine
         mDstFB.Destroy();
         for(TextureCombiner &c : mShadowProjectionCombiners) {
             c.Destroy();
+        }
+
+        for(FrameBuffer &fb : mProjectedShadowFBs) {
+            fb.Destroy();
         }
     }
 
@@ -76,13 +71,19 @@ namespace engine
         const AABB sceneAABB = scene->GetAABB();
 
         // Project shadowmaps to shadow projection buffer
+        const int ctLights = scene->mLights.size();
         glDisable(GL_DEPTH_TEST);
-        for(const Light *light : scene->mLights)
+        for(int i = 0; i < ctLights; ++i)
         {
+            const Light *light = scene->mLights[i];
             const Light::Type type = light->GetType();
 
-            // TODO: fix for general lights
-            if(type != Light::AMBIENT && type != Light::POINT) {
+            if(type != Light::AMBIENT) {
+                const FrameBuffer &fb = mProjectedShadowFBs[i];
+                fb.Bind();
+                glViewport(0, 0, fb.Width(), fb.Height());
+                glClear(mClearMask);
+
                 const TextureCombiner &combiner = mShadowProjectionCombiners[type];
                 const Program &p = combiner.Prog();
                 p.Use();
@@ -101,5 +102,20 @@ namespace engine
     void ShadowProjectionRenderPass::Init(const SceneGPUData *sceneData)
     {
         mSceneData = sceneData;
+
+        // Init shadow projection buffers
+        const int screenWidth = Setting<int>("screenWidth");
+        const int screenHeight = Setting<int>("screenHeight");
+        auto &lights = mSceneData->mScene->mLights;
+
+        // Init Shadow FrameBuffers
+        for(Light *l : lights) {
+            mProjectedShadowFBs.push_back(FrameBuffer());
+            FrameBuffer &fb = mProjectedShadowFBs.back();
+            fb.Init(screenWidth, screenHeight);
+            fb.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
+            fb.Compile();
+            l->mProjectedShadow = &fb.GetAttachment(0);
+        }
     }
 }

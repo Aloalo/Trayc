@@ -52,8 +52,7 @@ namespace engine
                 const auto &viewRayDataUB = mRenderer->GetViewRayDataUB();
                 prog.SetUniformBlockBinding(viewRayDataUB.GetName(), viewRayDataUB.GetBlockBinding());
 
-                // TODO: fix for general shadows
-                if(i != Light::AMBIENT && i != Light::POINT) {
+                if(i != Light::AMBIENT) {
                     prog.SetUniform("sShadowBuffer", TextureType::S_SHADOWPROJECTION);
                 }
             }
@@ -112,16 +111,16 @@ namespace engine
         for(const Light *light : mLights)
         {
             const Light::Type type = light->GetType();
+            light->GetProjectedShadow()->BindToSlot(TextureType::S_SHADOWPROJECTION);
             const TextureCombiner &combiner = mLightCombiners[type];
             const Program &prog = combiner.Prog();
-            
+
             prog.Use();
 
             if(light->GetType() == Light::GLOBAL_LIGHT && mRenderer->UsePBR()) {
                 const ForwardRenderPass *fPass = static_cast<const ForwardRenderPass*>(mRenderer->GetRenderPass("forwardPass"));
                 prog.SetUniform("cubemapM", fPass->GetSkyboxM());
             }
-
             
             light->ApplyToProgram(&prog, rContext.mV);
             combiner.Draw();
