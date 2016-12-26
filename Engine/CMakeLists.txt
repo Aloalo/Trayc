@@ -111,6 +111,8 @@ set(Engine_Engine
     Engine/GlobalRenderingParams.cpp
     Engine/ShadowRenderPass.h
     Engine/ShadowRenderPass.cpp
+    Engine/ShadowProjectionRenderPass.h
+    Engine/ShadowProjectionRenderPass.cpp
     Engine/RenderingContext.h
     Engine/RenderingContext.cpp
     Engine/Renderable.h

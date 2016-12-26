@@ -4,11 +4,12 @@
 #include <algorithm>
 
 using namespace std;
+using namespace glm;
 
 namespace engine
 {
-    RenderPass::RenderPass(const string &name, GLbitfield clearMask, bool clearBuffer)
-        : mName(name), mClearMask(clearMask), mClearBuffer(clearBuffer)
+    RenderPass::RenderPass(const string &name, GLbitfield clearMask, const vec4 &clearColor, bool clearBuffer)
+        : mName(name), mClearMask(clearMask), mClearColor(clearColor), mClearBuffer(clearBuffer)
     {
     }
 
@@ -21,6 +22,7 @@ namespace engine
         mDstFB.Bind();
         glViewport(0, 0, mDstFB.Width(), mDstFB.Height());
         if(mClearBuffer) {
+            glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a);
             glClear(mClearMask);
         }
     }

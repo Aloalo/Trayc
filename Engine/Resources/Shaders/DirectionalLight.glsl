@@ -1,6 +1,4 @@
 
-#include "Shadowmapping.glsl"
-
 struct Light
 {
     vec3 intensity;
@@ -16,9 +14,4 @@ vec3 GetLightDir(in vec3 fragPos)
 float GetLightAttenuation(in vec3 fragPos)
 {
     return 1.0;
-}
-
-float GetShadowFactor(in vec3 fragPos, in float dotNL)
-{
-    return GetVisibilityFactor(fragPos, dotNL);
 }

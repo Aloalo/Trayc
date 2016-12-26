@@ -21,6 +21,7 @@ Rendering:
         +HDR
         +Tonemapping
         -SSS
+        -IBL
     +Skybox
     -Shadows
         +Directional shadows

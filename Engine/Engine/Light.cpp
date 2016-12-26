@@ -3,6 +3,7 @@
 #include <Engine/GL/Program.h>
 #include <Engine/Core/Camera.h>
 #include <Engine/Geometry/Object3D.h>
+#include <easylogging++.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <cmath>
 
@@ -70,6 +71,11 @@ namespace engine
         return mShadowmap;
     }
 
+    void Light::ApplyToShadowProgram(const Program * prog, const glm::mat4 & V) const
+    {
+        LOG(WARNING) << "[Light::ApplyToShadowProgram] Calling unimplemented function.";
+    }
+
     mat4 Light::GetDepthBiasVP(const AABB &aabb) const
     {
         static const mat4 biasMatrix(
@@ -116,6 +122,11 @@ namespace engine
         prog->SetUniform("light.direction", normalize(vec3(V * vec4(mDirection, 0.0f))));
     }
 
+    void DirectionalLight::ApplyToShadowProgram(const Program * prog, const mat4 &V) const
+    {
+        prog->SetUniform("light.direction", normalize(vec3(V * vec4(mDirection, 0.0f))));
+    }
+
     mat4 DirectionalLight::GetDepthVP(const AABB &aabb) const
     {
         return CalcDirectionalShadowVP(aabb, -mDirection);
@@ -141,6 +152,11 @@ namespace engine
     {
         prog->SetUniform("light.aIntensity", mIntensity);
         prog->SetUniform("light.intensity", mDirectionalIntensity);
+        prog->SetUniform("light.direction", normalize(vec3(V * vec4(mDirection, 0.0f))));
+    }
+
+    void GlobalLight::ApplyToShadowProgram(const Program * prog, const glm::mat4 & V) const
+    {
         prog->SetUniform("light.direction", normalize(vec3(V * vec4(mDirection, 0.0f))));
     }
 
@@ -208,10 +224,15 @@ namespace engine
         prog->SetUniform("light.spotExp", mSpotExponent);
     }
 
+    void SpotLight::ApplyToShadowProgram(const Program * prog, const glm::mat4 & V) const
+    {
+        prog->SetUniform("light.position", vec3(V * vec4(mPosition, 1.0f)));
+    }
+
     mat4 SpotLight::GetDepthVP(const AABB &aabb) const
     {
         const vec3 sceneSize = aabb.Size();
-        const float farDist = glm::max(sceneSize.x, glm::max(sceneSize.y, sceneSize.z)) + 0.001f;
+        const float farDist = max(sceneSize.x, max(sceneSize.y, sceneSize.z)) + 0.001f;
 
         Camera cam(GetPosition(), 1.0f, 2.0f * GetSpotCutoff(), 10.0f, farDist);
         cam.SetDirection(GetDirection());

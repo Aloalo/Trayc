@@ -5,6 +5,7 @@
 #include <Engine/Engine/ForwardRenderPass.h>
 #include <Engine/Engine/BackBufferRenderPass.h>
 #include <Engine/Engine/ShadowRenderPass.h>
+#include <Engine/Engine/ShadowProjectionRenderPass.h>
 
 #include <Engine/Utils/StlExtensions.hpp>
 #include <Engine/Utils/Setting.h>
@@ -65,6 +66,9 @@ namespace engine
         ShadowRenderPass *shadowPass = static_cast<ShadowRenderPass*>(GetRenderPass("shadowPass"));
         shadowPass->Init(gPass->GetGPUSceneData());
 
+        ShadowProjectionRenderPass *shadowProjectionPass = static_cast<ShadowProjectionRenderPass*>(GetRenderPass("shadowProjectionPass"));
+        shadowProjectionPass->Init(gPass->GetGPUSceneData());
+
         LightRenderPass *lPass = static_cast<LightRenderPass*>(GetRenderPass("lPass"));
         lPass->SetLights(scene->mLights);
     }
@@ -95,6 +99,7 @@ namespace engine
         GetRenderPass("gPass")->ResizeDstBuffer(scaledWidth, scaledHeight);
         GetRenderPass("lPass")->ResizeDstBuffer(scaledWidth, scaledHeight);
         GetRenderPass("bbPass")->ResizeDstBuffer(width, height);
+        GetRenderPass("shadowProjectionPass")->ResizeDstBuffer(width, height);
     }
 
     const RenderPass* Renderer::GetRenderPass(const string &name) const
@@ -161,13 +166,13 @@ namespace engine
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         glDepthFunc(GL_LEQUAL);
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glDisable(GL_SCISSOR_TEST);
         glDisable(GL_FRAMEBUFFER_SRGB);
 
         // Init render passes
         mRenderPasses.push_back(new ShadowRenderPass());
         mRenderPasses.push_back(new GeometryRenderPass());
+        mRenderPasses.push_back(new ShadowProjectionRenderPass());
         mRenderPasses.push_back(new LightRenderPass());
         mRenderPasses.push_back(new ForwardRenderPass());
         mRenderPasses.push_back(new BackBufferRenderPass());
@@ -184,6 +189,7 @@ namespace engine
         mLinearSampler.BindToSlot(TextureType::G_ALBEDO_TEXTURE);
         mLinearSampler.BindToSlot(TextureType::G_SPEC_GLOSS_TEXTURE);
         mLinearSampler.BindToSlot(TextureType::LIGHT_ACCUM_TEXTURE);
+        mLinearSampler.BindToSlot(TextureType::S_SHADOWPROJECTION);
         mLinearSampler.BindToSlot(TextureType::FINAL_SLOT);
 
         mLinearMipMapSampler.InitForDiffuse();

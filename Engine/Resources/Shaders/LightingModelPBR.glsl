@@ -1,6 +1,8 @@
 #define TERM_BECKMANN 0
 #define TERM_GGX 1
 
+#include "UB_Matrices.glsl"
+
 uniform samplerCube reflectionMap;
 uniform mat4 cubemapM;
 
@@ -66,13 +68,10 @@ float NDF(in vec3 N, in vec3 H, in float a)
     }
 #endif
 
-vec3 Lighting(in vec3 N, in vec3 L, in vec3 P, in vec3 lightIntensity, in vec3 albedo, in vec3 specularColor, in float atten, in float roughness)
+vec3 Lighting(in vec3 N, in vec3 L, in vec3 P, in vec3 lightIntensity, in vec3 albedo, in vec3 specularColor, in float atten, in float roughness, in float shadow)
 {
     vec3 V = -normalize(P);
-    
-    // calculate shadow
     float dotNL = saturate(dot(N, L));
-    float shadow = GetShadowFactor(P, dotNL);
     
     // calculate diffuse term
     vec3 Fdiff = fresnel(specularColor, V, N);

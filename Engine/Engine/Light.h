@@ -34,6 +34,7 @@ namespace engine
         const Texture* GetShadowmap() const;
         // Params need to be transformed to view space
         virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const = 0;
+        virtual void ApplyToShadowProgram(const Program *prog, const glm::mat4 &V) const;
 
         // Shadowmapping transforms
         virtual glm::mat4 GetDepthVP(const AABB &aabb) const = 0;
@@ -67,6 +68,7 @@ namespace engine
         DirectionalLight(const glm::vec3 &intensity, bool isActive, const glm::vec3 &direction);
 
         virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const override;
+        virtual void ApplyToShadowProgram(const Program *prog, const glm::mat4 &V) const override;
         virtual glm::mat4 GetDepthVP(const AABB &aabb) const override;
 
         void SetDirection(const glm::vec3 &direction);
@@ -82,6 +84,7 @@ namespace engine
         GlobalLight(const glm::vec3 &ambientIntensity, const glm::vec3 &directionalIntensity, bool isActive, const glm::vec3 &direction);
 
         virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const override;
+        virtual void ApplyToShadowProgram(const Program *prog, const glm::mat4 &V) const override;
         virtual glm::mat4 GetDepthVP(const AABB &aabb) const override;
 
         void SetDirection(const glm::vec3 &direction);
@@ -127,6 +130,7 @@ namespace engine
             float spotExp);
 
         virtual void ApplyToProgram(const Program *prog, const glm::mat4 &V) const override;
+        virtual void ApplyToShadowProgram(const Program *prog, const glm::mat4 &V) const override;
         virtual glm::mat4 GetDepthVP(const AABB &aabb) const override;
         virtual bool Affects(const Object3D *obj) const override;
 

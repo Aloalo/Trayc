@@ -11,7 +11,7 @@ using namespace std;
 namespace engine
 {
     ForwardRenderPass::ForwardRenderPass(void)
-        : RenderPass("forwardPass", GL_COLOR_BUFFER_BIT, false)
+        : RenderPass("forwardPass", GL_COLOR_BUFFER_BIT, vec4(0.0f), false)
     {
     }
 

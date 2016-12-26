@@ -53,11 +53,8 @@ namespace engine
                 prog.SetUniformBlockBinding(viewRayDataUB.GetName(), viewRayDataUB.GetBlockBinding());
 
                 // TODO: fix for general shadows
-                if(i != Light::POINT) {
-                    prog.SetUniform("shadowMap", TextureType::S_SHADOWMAP);
-                    prog.SetUniform("shadowBrightness", Setting<float>("shadowBrightness"));
-                    const auto &matrices = mRenderer->GetMatricesUB();
-                    prog.SetUniformBlockBinding(matrices.GetName(), matrices.GetBlockBinding());
+                if(i != Light::AMBIENT && i != Light::POINT) {
+                    prog.SetUniform("sShadowBuffer", TextureType::S_SHADOWPROJECTION);
                 }
             }
 
@@ -125,17 +122,9 @@ namespace engine
                 prog.SetUniform("cubemapM", fPass->GetSkyboxM());
             }
 
-            // TODO: fix for general lights
-            if(light->GetType() != Light::AMBIENT && light->GetType() != Light::POINT) {
-                const Texture *shadowMap = light->GetShadowmap();
-                shadowMap->BindToSlot(TextureType::S_SHADOWMAP);
-                prog.SetUniform("shadowDepthBiasVP", light->GetDepthBiasVP(sceneAABB));
-            }
-
+            
             light->ApplyToProgram(&prog, rContext.mV);
             combiner.Draw();
-
-            glBlendFunc(GL_ONE, GL_ONE);
         }
 
         glDisable(GL_BLEND);

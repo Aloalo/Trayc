@@ -1,11 +1,9 @@
 
-vec3 Lighting(in vec3 N, in vec3 L, in vec3 P, in vec3 lightIntensity, in vec3 albedo, in vec3 specularColor, in float atten, in float gloss)
+vec3 Lighting(in vec3 N, in vec3 L, in vec3 P, in vec3 lightIntensity, in vec3 albedo, in vec3 specularColor, in float atten, in float gloss, in float shadow)
 {
     // Diffuse
     float dNL = max(0.0, dot(N, L));
     vec3 diffuse = dNL * albedo;
-    
-    float shadow = GetShadowFactor(P, dNL);
     
     // Specular
     vec3 specular = vec3(0.0);

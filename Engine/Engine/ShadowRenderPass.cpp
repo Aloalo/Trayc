@@ -1,4 +1,5 @@
 
+#include <Engine/Engine/Renderer.h>
 #include <Engine/Engine/ShadowRenderPass.h>
 #include <Engine/Engine/GeometryRenderPass.h>
 #include <Engine/Geometry/Scene.h>
@@ -16,14 +17,14 @@ namespace engine
 
     // ShadowRenderPass //
     ShadowRenderPass::ShadowRenderPass(void)
-        : RenderPass("shadowPass", GL_DEPTH_BUFFER_BIT), mSceneData(nullptr)
+        : RenderPass("shadowPass", GL_DEPTH_BUFFER_BIT, vec4(0.0f), false), mSceneData(nullptr)
     {
     }
 
     void ShadowRenderPass::Init()
     {
         // Init program
-        mProgram.Init(AssetLoader::Get().ShaderPath("S_shadow").data());
+        mShadowMappingProgram.Init(AssetLoader::Get().ShaderPath("S_shadow").data());
         Program::Unbind();
     }
 
@@ -34,15 +35,16 @@ namespace engine
         }
 
         mDstFB.Destroy();
-        mProgram.Destroy();
+        mShadowMappingProgram.Destroy();
     }
 
     void ShadowRenderPass::Render(const RenderingContext &rContext) const
     {
         const Scene *scene = mSceneData->mScene;
         const AABB sceneAABB = scene->GetAABB();
-        mProgram.Use();
+        mShadowMappingProgram.Use();
         
+        // Render shadowmaps
         int ctFBs = mShadowFBs.size();
         for(int i = 0; i < ctFBs; ++i)
         {
@@ -55,9 +57,7 @@ namespace engine
 
             fb.Bind();
             glViewport(0, 0, fb.Width(), fb.Height());
-            if(mClearBuffer) {
-                glClear(mClearMask);
-            }
+            glClear(mClearMask);
 
             const Light *l = scene->mLights[i];
 
@@ -71,7 +71,7 @@ namespace engine
                 const VertexArray &VA = mSceneData->mVertexArrays[obj->GetMeshIdx()];
 
                 // Mesh uniforms
-                mProgram.SetUniform("depthMVP", depthVP * obj->GetTransform());
+                mShadowMappingProgram.SetUniform("depthMVP", depthVP * obj->GetTransform());
                 VA.Render(scene->mTriMeshes[meshIdx].GetDrawMode());
             }
             //LOG(INFO) << "Lights[" << i << "] rendered " << objects.size() << " objects";

@@ -1,6 +1,7 @@
 
 #include "DebugView.h"
 #include <Engine/Engine/Renderer.h>
+#include <Engine/Engine/ShadowProjectionRenderPass.h>
 #include <Engine/Engine/ShadowRenderPass.h>
 #include <Engine/Engine/DebugDraw.h>
 #include <Engine/Utils/Setting.h>
@@ -60,9 +61,13 @@ void DebugView::KeyPress(const SDL_KeyboardEvent &e)
 void DebugView::Draw(const engine::RenderingContext &rContext) const
 {
     if(mTexType == TextureType::S_SHADOWMAP) {
-        const ShadowRenderPass *shadowPass = dynamic_cast<const ShadowRenderPass*>(mRenderer->GetRenderPass("shadowPass"));
-        const Texture2D &tex = shadowPass->GetShadowmap(2);
-        DebugDraw::Get().DrawDepth(tex, 0.0f, -1.0f);
+        /*const ShadowRenderPass *shadowPass = dynamic_cast<const ShadowRenderPass*>(mRenderer->GetRenderPass("shadowPass"));
+        const Texture2D &tex = shadowPass->GetShadowmap(1);
+        DebugDraw::Get().DrawDepth(tex, 0.0f, -1.0f);*/
+
+        const ShadowProjectionRenderPass *shadowPass = dynamic_cast<const ShadowProjectionRenderPass*>(mRenderer->GetRenderPass("shadowProjectionPass"));
+        const Texture2D &tex = shadowPass->GetDstBuffer().GetAttachment(0);
+        DebugDraw::Get().DrawTexture(tex, vec3(1.0f));
         return;
     }
 

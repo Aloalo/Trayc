@@ -1,10 +1,10 @@
 
-#ifndef EN_SHADOW_RENDER_PASS_H
-#define EN_SHADOW_RENDER_PASS_H
+#ifndef EN_SHADOW_PROJECTION_RENDER_PASS_H
+#define EN_SHADOW_PROJECTION_RENDER_PASS_H
 
 #include <Engine/Engine/RenderPass.h>
+#include <Engine/Engine/TextureCombiner.h>
 #include <Engine/Engine/Light.h>
-#include <Engine/GL/Program.h>
 #include <Engine/GL/VertexArray.h>
 #include <Engine/Engine/GlobalRenderingParams.h>
 
@@ -13,10 +13,10 @@ namespace engine
     struct SceneGPUData;
     class scene;
 
-    class ShadowRenderPass : public RenderPass
+    class ShadowProjectionRenderPass : public RenderPass
     {
     public:
-        ShadowRenderPass(void);
+        ShadowProjectionRenderPass(void);
 
         virtual void Init() override;
         virtual void Destroy() override;
@@ -25,12 +25,10 @@ namespace engine
 
         // Inits shadow framebuffers
         void Init(const SceneGPUData *sceneData);
-        const Texture2D& GetShadowmap(int idx) const;
 
     private:
-        Program mShadowMappingProgram;
+        TextureCombiner mShadowProjectionCombiners[Light::CT_LIGHT_TYPES];
         const SceneGPUData *mSceneData;
-        std::vector<FrameBuffer> mShadowFBs;
     };
 }
 

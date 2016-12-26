@@ -26,8 +26,8 @@ namespace engine
         LIGHT_ACCUM_TEXTURE = 8,
 
         // Shadowmap
-
         S_SHADOWMAP = 15,
+        S_SHADOWPROJECTION = 16,
 
         // Where the result of all passes except bb must end up
         FINAL_SLOT = 28,

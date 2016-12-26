@@ -8,6 +8,9 @@ in vec2 UV;
 layout(location = 0) out vec4 fragColor;
 
 #ifndef AMBIENT_LIGHT
+    #ifndef POINT_LIGHT
+        uniform sampler2D sShadowBuffer;
+    #endif
     uniform sampler2D gDepth;
     uniform sampler2D gNormal;
     uniform sampler2D gSpecGloss;
@@ -48,16 +51,21 @@ void main()
 #ifndef AMBIENT_LIGHT
     // Retrieve data from G-buffer
     vec3 fragPos = texture(gDepth, UV).r * viewRay;
-    vec3 N = texture(gNormal, UV).rgb;
+    vec3 N = normalize(texture(gNormal, UV).xyz);
     vec3 albedo = texture(gAlbedo, UV).rgb;
     vec4 specularGloss = texture(gSpecGloss, UV);
+    #ifdef POINT_LIGHT
+        float shadow = 1.0;
+    #else
+        float shadow = texture(sShadowBuffer, UV).r;
+    #endif
     
     // Get Light params
     vec3 L = GetLightDir(fragPos);
     float atten = GetLightAttenuation(fragPos);
     vec3 lightIntensity = light.intensity;
     
-    vec3 color = Lighting(N, L, fragPos, lightIntensity, albedo, specularGloss.rgb, atten, specularGloss.a);
+    vec3 color = Lighting(N, L, fragPos, lightIntensity, albedo, specularGloss.rgb, atten, specularGloss.a, shadow);
     
     #ifdef GLOBAL_LIGHT
         vec3 ambient = light.aIntensity * albedo;

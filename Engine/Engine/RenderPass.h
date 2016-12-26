@@ -14,7 +14,7 @@ namespace engine
     class RenderPass
     {
     public:
-        RenderPass(const std::string &name, GLbitfield clearMask, bool clearBuffer = true);
+        RenderPass(const std::string &name, GLbitfield clearMask, const glm::vec4 &clearColor = glm::vec4(0.0f), bool clearBuffer = true);
         virtual ~RenderPass(void);
 
         // renderPasses are so far initialized render passes
@@ -34,6 +34,7 @@ namespace engine
         void ResizeDstBuffer(int width, int height);
 
     protected:
+        glm::vec4 mClearColor;
         const Renderer *mRenderer;
         FrameBuffer mDstFB;
         GLbitfield mClearMask;
