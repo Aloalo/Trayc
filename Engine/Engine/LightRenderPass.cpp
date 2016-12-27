@@ -105,13 +105,12 @@ namespace engine
         glEnable(GL_BLEND);
 
         glBlendFunc(GL_ONE, GL_ONE);
-
-        const AABB sceneAABB = mRenderer->GetSceneAABB();
-
         for(const Light *light : mLights)
         {
             const Light::Type type = light->GetType();
-            light->GetProjectedShadow()->BindToSlot(TextureType::S_SHADOWPROJECTION);
+            if(light->GetType() != Light::AMBIENT) {
+                light->GetProjectedShadow()->BindToSlot(TextureType::S_SHADOWPROJECTION);
+            }
             const TextureCombiner &combiner = mLightCombiners[type];
             const Program &prog = combiner.Prog();
 

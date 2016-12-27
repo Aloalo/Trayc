@@ -34,6 +34,7 @@ namespace engine
             fb.Destroy();
         }
 
+        mShadowFBs.clear();
         mDstFB.Destroy();
         mShadowMappingProgram.Destroy();
     }
@@ -41,7 +42,7 @@ namespace engine
     void ShadowRenderPass::Render(const RenderingContext &rContext) const
     {
         const Scene *scene = mSceneData->mScene;
-        const AABB sceneAABB = scene->GetAABB();
+        const AABB sceneAABB = scene->GetShadowCastersAABB();
         mShadowMappingProgram.Use();
         
         // Render shadowmaps
@@ -59,6 +60,10 @@ namespace engine
             }
 
             const Light *l = scene->mLights[i];
+
+            if(l->GetType() == Light::AMBIENT) {
+                continue;
+            }
 
             // Compute the MVP matrix from the light's point of view
             const mat4 depthVP = l->GetDepthVP(sceneAABB);
@@ -87,6 +92,11 @@ namespace engine
         // Init Shadow FrameBuffers
         for(Light *l : lights) {
             mShadowFBs.push_back(FrameBuffer());
+
+            if(l->GetType() == Light::AMBIENT) {
+                continue;
+            }
+
             FrameBuffer &fb = mShadowFBs.back();
             fb.Init(res, res);
             fb.AddAttachment(GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_FLOAT); //Depth

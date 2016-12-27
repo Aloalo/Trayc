@@ -13,6 +13,7 @@
 #include "SponzaDemo.h"
 #include "PBRMaterialDemo.h"
 #include "HeadDemo.h"
+#include "ShadowsDemo.h"
 
 #if PRODUCTION
 #include "DebugView.h"
@@ -97,16 +98,36 @@ void InitPBR(Game &game, Scene &scene, const char *progName, ivec2 SSize)
     PBRDemo.Init(game, scene);
 }
 
+ShadowsDemo shadowsDemo;
+void InitShadows(Game &game, const char *progName, ivec2 SSize)
+{
+    //Init Camera handler
+    RotationalCameraHandler camHandler(ConstructRotationalCameraHandler(SSize, Setting<float>("FOV"), 1000.0f, vec3(0.0f, 50.0f, 100.0f), vec3(0.0f)));
+
+    //Init Game
+    game.Init(camHandler, progName, "Shadows demo", SSize.x, SSize.y);
+
+    // Init demo
+    shadowsDemo.Init(game);
+}
+
 void PrintHelp()
 {
     cout << "o - toggle pbr" << endl;
 
     cout << "Load sponza demo: \"-sponza\"" << endl;
     cout << "   p - pause lights" << endl;
+
     cout << "Load head demo: \"-head\"" << endl;
+    cout << "   right click - rotate head" << endl;
+
     cout << "Load pbr demo: \"-pbr\"" << endl;
     cout << "   arrows - toggle materials" << endl;
     cout << "   right click - rotate ball" << endl;
+
+    cout << "Load shadows demo: \"-shadows\"" << endl;
+    cout << "   arrows - toggle objects" << endl;
+    cout << "   right click - rotate light" << endl;
 
     cout << endl << endl;
 }
@@ -132,6 +153,9 @@ int main(int argc, char *argv[])
     }
     else if(string(argv[1]) == "-pbr") {
         InitPBR(game, scene, argv[0], SSize);
+    }
+    else if(string(argv[1]) == "-shadows") {
+        InitShadows(game, argv[0], SSize);
     }
     else {
         InitSponza(game, scene, argv[0], SSize);

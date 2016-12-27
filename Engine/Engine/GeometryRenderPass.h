@@ -37,6 +37,7 @@ namespace engine
         virtual void Render(const RenderingContext &rContext) const override;
 
         void Init(const Scene *scene);
+        void CleanupGPUData();
         const SceneGPUData* GetGPUSceneData() const;
         
     private:

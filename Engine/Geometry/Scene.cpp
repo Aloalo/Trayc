@@ -49,6 +49,18 @@ namespace engine
         return ret;
     }
 
+    AABB Scene::GetShadowCastersAABB() const
+    {
+        AABB ret;
+        for(const auto &obj : mObjects3D) {
+            if(obj.mShadowCaster) {
+                ret |= obj.GetAABB();
+            }
+        }
+            
+        return ret;
+    }
+
     vector<const Object3D*> Scene::GetShadowCasters(const Light *light) const
     {
         std::vector<const engine::Object3D*> ret;

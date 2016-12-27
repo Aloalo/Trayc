@@ -45,6 +45,8 @@ namespace engine
         ClearVertexArrays();
         for(auto &pst : mNameToTex)
             pst.second.Destroy();
+
+        mNameToTex.clear();
     }
 
     void SceneGPUData::ClearVertexArrays()
@@ -183,6 +185,11 @@ namespace engine
     void GeometryRenderPass::Init(const Scene *scene)
     {
         mSceneData.Init(scene);
+    }
+
+    void GeometryRenderPass::CleanupGPUData()
+    {
+        mSceneData.Destroy();
     }
 
     const SceneGPUData* GeometryRenderPass::GetGPUSceneData() const

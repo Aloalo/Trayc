@@ -25,6 +25,7 @@ namespace engine
         const Object3D& GetObject(int idx) const;
         Object3D& GetObject(int idx);
         AABB GetAABB() const;
+        AABB GetShadowCastersAABB() const;
 
         std::vector<const Object3D*> GetShadowCasters(const Light *light) const;
 

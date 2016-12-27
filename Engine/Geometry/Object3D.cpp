@@ -7,7 +7,7 @@ namespace engine
 {
     Object3D::Object3D(int meshIdx, int matIdx)
         : mDynamicGeometry(false), mShadowCaster(true), mVisible(true), mMeshIdx(meshIdx),
-        mMatIdx(matIdx), mMeshAABB(nullptr), mMeshBSphere(nullptr), mTransform(1.0f)
+        mMatIdx(matIdx), mTransform(1.0f)
     {
     }
 
@@ -28,7 +28,7 @@ namespace engine
 
     AABB Object3D::GetAABB() const
     {
-        auto vertices = mMeshAABB->Vertices();
+        auto vertices = mMeshAABB.Vertices();
 
         const int ctVertices = vertices.size();
         for(int i = 0; i < ctVertices; ++i)
@@ -42,7 +42,7 @@ namespace engine
 
     Sphere Object3D::GetBSphere() const
     {
-        return Sphere(vec3(mTransform * vec4(mMeshBSphere->mCenter, 1.0f)), mMeshBSphere->mRadius);
+        return Sphere(vec3(mTransform * vec4(mMeshBSphere.mCenter, 1.0f)), mMeshBSphere.mRadius);
     }
 
     const mat4& Object3D::GetTransform() const
@@ -50,7 +50,7 @@ namespace engine
         return mTransform;
     }
 
-    void Object3D::SetBoundingVolumes(const AABB *meshAABB, const Sphere *meshBSphere)
+    void Object3D::SetBoundingVolumes(const AABB &meshAABB, const Sphere &meshBSphere)
     {
         mMeshAABB = meshAABB;
         mMeshBSphere = meshBSphere;

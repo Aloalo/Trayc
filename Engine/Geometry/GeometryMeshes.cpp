@@ -260,4 +260,31 @@ namespace engine
         return sphere;
     }
 
+    TriangleMesh GetPlane(float size, float height)
+    {
+        TriangleMesh ret(GL_TRIANGLES);
+
+        ret.mPositions = {
+            vec3(size, height, size),
+            vec3(size, height, -size),
+            vec3(-size, height, size),
+            vec3(-size, height, size),
+            vec3(size, height, -size),
+            vec3(-size, height, -size)
+        };
+
+        ret.mNormals = {
+            vec3(0.0f, 1.0f, 0.0f),
+            vec3(0.0f, 1.0f, 0.0f),
+            vec3(0.0f, 1.0f, 0.0f),
+            vec3(0.0f, 1.0f, 0.0f),
+            vec3(0.0f, 1.0f, 0.0f),
+            vec3(0.0f, 1.0f, 0.0f)
+        };
+
+        ret.CalcBoundingVolumes();
+
+        return ret;
+    }
+
 }

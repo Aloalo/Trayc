@@ -26,13 +26,13 @@ namespace engine
         friend class AssetLoader;
 
         Object3D(int meshIdx, int matIdx);
-        void SetBoundingVolumes(const AABB *meshAABB, const Sphere *meshBSphere);
+        void SetBoundingVolumes(const AABB &meshAABB, const Sphere &meshBSphere);
 
         int mMeshIdx;
         int mMatIdx;
 
-        const AABB *mMeshAABB;
-        const Sphere *mMeshBSphere;
+        AABB mMeshAABB;
+        Sphere mMeshBSphere;
         glm::mat4 mTransform;
     };
 }

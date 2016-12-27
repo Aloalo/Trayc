@@ -2,8 +2,7 @@
 #include <Engine/Geometry/GeometryMeshes.h>
 #include <Engine/Engine/AssetLoader.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include <fstream>
-#include <sstream>
+#include <iostream>
 
 
 using namespace engine;
@@ -11,49 +10,63 @@ using namespace glm;
 using namespace std;
 
 ShadowsDemo::ShadowsDemo(void)
-    : mMouseDown(false), mCurrObjIdx(0), mRotX(0.0f), mRotY(0.0f), 
-    mLight(vec3(0.01f), vec3(1.0f), true, vec3(0.0f, 1.0f, 1.0f))
+    : mLightLookAt(0.0f), mLightStartPos(100.0f), mRotX(0.0f), mCurrSceneIdx(0), mMouseDown(false),
+    mLight(vec3(1.0f), true, vec3(1.0f, 0.005f, 0.0f), vec3(mLightStartPos), vec3(0.0f), 20.0f, 90.0f),
+    mAmbientLight(vec3(0.05f), true)
 {
+    mLight.SetDirection(normalize(mLightLookAt - mLight.GetPosition()));
 }
 
-void ShadowsDemo::Init(Game &game, Scene &scene)
+void ShadowsDemo::Init(Game &game)
 {
-    const string path = AssetLoader::Get().TexturePath("pbr/");
-    ifstream in(path + "list.txt");
+    const string scenes[1] = { "buddha" };
 
-    TriangleMesh sphere = GetSphereMeshSolid(false, 4, 50.0f);
-    scene.mTriMeshes.push_back(sphere);
-    const int sphereMeshIdx = scene.mTriMeshes.size() - 1;
+    for(const string &s : scenes) {
+        mScenes.push_back(Scene());
+        Scene &scene = mScenes.back();
+        scene = AssetLoader::Get().LoadScene(AssetLoader::Get().ModelPath(s + "/"), s + ".obj");
+        scene.Scale(80.0f);
+        const float planeHeight = scene.GetAABB().mMinv.y;
 
-    scene.mObjects3D.reserve(50);
-    string line;
-    while(getline(in, line))
-    {
+        // init plane
+        const TriangleMesh plane = GetPlane(1000.0f, planeHeight);
         Material mat;
-        mat.mGloss = 1.0f;
-        mat.mKs = vec3(1.0f);
         mat.mKd = vec3(1.0f);
-        mat.mNeedsForwardRender = false;
-        string texPath = path + line + "/" + line;
-        mat.mTextureMaps.push_back(Material::TextureInfo(texPath + "-albedo.png", TextureType::DIFFUSE_MAP));
-        mat.mTextureMaps.push_back(Material::TextureInfo(texPath + "-normal.png", TextureType::NORMAL_MAP));
-        mat.mTextureMaps.push_back(Material::TextureInfo(texPath + "-metal-rough.png", TextureType::SPECULAR_MAP));
+        mat.mKs = vec3(0.1f);
+        mat.mGloss = 0.0f;
 
         scene.mMaterials.push_back(mat);
-        const int matIdx = scene.mMaterials.size() - 1;
+        scene.mTriMeshes.push_back(plane);
+        scene.AddObject(AssetLoader::Get().CreateObject(&scene, scene.mTriMeshes.size() - 1, scene.mMaterials.size() - 1));
+        scene.mObjects3D.back().mShadowCaster = false;
 
-        scene.AddObject(AssetLoader::Get().CreateObject(&scene, sphereMeshIdx, matIdx));
-        mObjects.push_back(&scene.mObjects3D[scene.mObjects3D.size() - 1]);
-        mObjects.back()->mShadowCaster = false;
-        mObjects.back()->mVisible = false;
+        // Init light object
+        Material lightMat;
+        lightMat.mGloss = 1.0f;
+        lightMat.mKs = vec3(1.0f);
+        lightMat.mKd = vec3(1.0f);
+        lightMat.mNeedsForwardRender = true;
+        scene.mMaterials.push_back(lightMat);
+        const int lightMatIdx = scene.mMaterials.size() - 1;
+
+        TriangleMesh lightMesh = GetSphereMeshSolid(false, 1, 5.0f);
+        lightMesh.FlipNormals();
+        scene.mTriMeshes.push_back(lightMesh);
+        const int lightMeshIdx = scene.mTriMeshes.size() - 1;
+
+        scene.AddObject(AssetLoader::Get().CreateObject(&scene, lightMeshIdx, lightMatIdx));
+        mPLightObj = &scene.GetObject(scene.GetNumObjects() - 1);
+        mPLightObj->mShadowCaster = false;
+        mPLightObj->SetTransform(translate(mat4(1.0f), mLight.GetPosition()));
+
+        scene.mLights.push_back(&mAmbientLight);
+        scene.mLights.push_back(&mLight);
     }
 
-    mObjects[mCurrObjIdx]->mVisible = true;
-
-    // Init Light
-    scene.mLights.push_back(&mLight);
-    game.mRenderer.SetScene(&scene);
+    game.mRenderer.SetScene(&mScenes[0]);
     game.mInputHandler.AddEventListener(this);
+
+    mGame = &game;
 }
 
 void ShadowsDemo::KeyPress(const SDL_KeyboardEvent &e)
@@ -62,15 +75,13 @@ void ShadowsDemo::KeyPress(const SDL_KeyboardEvent &e)
         return;
 
     if(e.keysym.sym == SDLK_LEFT) {
-        mObjects[mCurrObjIdx]->mVisible = false;
-        mCurrObjIdx = mCurrObjIdx == 0 ? mObjects.size() - 1 : mCurrObjIdx - 1;
+        mCurrSceneIdx = mCurrSceneIdx == 0 ? mScenes.size() - 1 : mCurrSceneIdx - 1;
     }
     else if(e.keysym.sym == SDLK_RIGHT) {
-        mObjects[mCurrObjIdx]->mVisible = false;
-        mCurrObjIdx = (mCurrObjIdx + 1) % mObjects.size();
+        mCurrSceneIdx = (mCurrSceneIdx + 1) % mScenes.size();
     }
 
-    mObjects[mCurrObjIdx]->mVisible = true;
+    //mGame->mRenderer.SetScene(&mScenes[mCurrSceneIdx]);
 }
 
 void ShadowsDemo::MouseButton(const SDL_MouseButtonEvent &e)
@@ -84,11 +95,11 @@ void ShadowsDemo::MouseMotion(const SDL_MouseMotionEvent &e)
 {
     if(mMouseDown) {
         static const mat4 I(1.0f);
-        mRotX += float(e.xrel) / 80.0f;
-        mRotY += float(e.yrel) / 80.0f;
-        for(Object3D *obj : mObjects) {
-            obj->SetTransform(rotate(I, mRotX, vec3(0.0f, 1.0f, 0.0f)));
-            obj->SetTransform(obj->GetTransform() * rotate(I, mRotY, vec3(1.0f, 0.0f, 0.0f)));
-        }
+        mRotX += float(e.xrel) / 400.0f;
+        const mat3 R(rotate(I, mRotX, vec3(0.0f, 1.0f, 0.0f)));
+
+        mLight.SetPosition((mLightStartPos - mLightLookAt) * R + mLightLookAt);
+        mPLightObj->SetTransform(translate(I, mLight.GetPosition()));
+        mLight.SetDirection(normalize(mLightLookAt - mLight.GetPosition()));
     }
 }

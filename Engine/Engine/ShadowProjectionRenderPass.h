@@ -23,6 +23,8 @@ namespace engine
 
         virtual void Render(const RenderingContext &rContext) const override;
 
+        const Texture2D& GetProjectedShadowmap(int idx) const;
+
         // Inits shadow framebuffers
         void Init(const SceneGPUData *sceneData);
 

@@ -4,11 +4,11 @@ uniform mat4 shadowDepthBiasVP;
 uniform sampler2DShadow shadowMap;
 uniform float shadowBrightness;
 
-//#define SOFT_SHADOWS
+#define SOFT_SHADOWS
 
 
-const float maxBias = 0.01;
-const float minBias = 0.0005;
+const float maxBias = 0.03;
+const float minBias = 0.005;
 float GetVisibilityFactor(in vec3 fragPos, in float dotNL)
 {
     vec4 posWorldSpace = invV * vec4(fragPos, 1.0);

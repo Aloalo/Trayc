@@ -237,7 +237,8 @@ namespace engine
     mat4 SpotLight::GetDepthVP(const AABB &aabb) const
     {
         const vec3 sceneSize = aabb.Size();
-        const float farDist = max(sceneSize.x, max(sceneSize.y, sceneSize.z)) + 0.001f;
+        const float maxSceneSize = max(sceneSize.x, max(sceneSize.y, sceneSize.z)) + 0.001f;
+        const float farDist = maxSceneSize + distance(aabb.Center(), mPosition);
 
         Camera cam(GetPosition(), 1.0f, 2.0f * GetSpotCutoff(), 10.0f, farDist);
         cam.SetDirection(GetDirection());

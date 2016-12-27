@@ -58,17 +58,20 @@ namespace engine
         mDstFB.Destroy();
         for(TextureCombiner &c : mShadowProjectionCombiners) {
             c.Destroy();
+            c = TextureCombiner();
         }
 
         for(FrameBuffer &fb : mProjectedShadowFBs) {
             fb.Destroy();
         }
+
+        mProjectedShadowFBs.clear();
     }
 
     void ShadowProjectionRenderPass::Render(const RenderingContext &rContext) const
     {
         const Scene *scene = mSceneData->mScene;
-        const AABB sceneAABB = scene->GetAABB();
+        const AABB sceneAABB = scene->GetShadowCastersAABB();
 
         // Project shadowmaps to shadow projection buffer
         const int ctLights = scene->mLights.size();
@@ -98,6 +101,11 @@ namespace engine
         }
         glEnable(GL_DEPTH_TEST);
     }
+    
+    const Texture2D& ShadowProjectionRenderPass::GetProjectedShadowmap(int idx) const
+    {
+        return mProjectedShadowFBs[idx].GetAttachment(0);
+    }
 
     void ShadowProjectionRenderPass::Init(const SceneGPUData *sceneData)
     {
@@ -111,6 +119,11 @@ namespace engine
         // Init Shadow FrameBuffers
         for(Light *l : lights) {
             mProjectedShadowFBs.push_back(FrameBuffer());
+
+            if(l->GetType() == Light::AMBIENT) {
+                continue;
+            }
+
             FrameBuffer &fb = mProjectedShadowFBs.back();
             fb.Init(screenWidth, screenHeight);
             fb.AddAttachment(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);

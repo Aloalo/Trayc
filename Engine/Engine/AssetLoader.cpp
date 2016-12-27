@@ -86,7 +86,7 @@ namespace engine
     {
         Object3D ret(meshIdx, materialIdx);
 
-        ret.SetBoundingVolumes(&scene->mTriMeshes[meshIdx].GetAABB(), &scene->mTriMeshes[meshIdx].GetBSphere());
+        ret.SetBoundingVolumes(scene->mTriMeshes[meshIdx].GetAABB(), scene->mTriMeshes[meshIdx].GetBSphere());
         return ret;
     }
 
@@ -305,7 +305,7 @@ namespace engine
             const int meshIdx = (int)object.get<Number>("meshIdx");
             scene.mObjects3D.push_back(Object3D(meshIdx, (int)object.get<Number>("materialIdx")));
             Object3D &object3D = scene.mObjects3D.back();
-            object3D.SetBoundingVolumes(&scene.mTriMeshes[meshIdx].GetAABB(), &scene.mTriMeshes[meshIdx].GetBSphere());
+            object3D.SetBoundingVolumes(scene.mTriMeshes[meshIdx].GetAABB(), scene.mTriMeshes[meshIdx].GetBSphere());
 
             object3D.mDynamicGeometry = object.get<Boolean>("dynamicGeometry");
             object3D.mShadowCaster = object.get<Boolean>("shadowCaster");
@@ -336,7 +336,7 @@ namespace engine
             scene.mObjects3D.push_back(Object3D(meshIdx, matIdx));
             Object3D &obj = scene.mObjects3D.back();
             obj.SetTransform(transform);
-            obj.SetBoundingVolumes(&scene.mTriMeshes[meshIdx].GetAABB(), &scene.mTriMeshes[meshIdx].GetBSphere());
+            obj.SetBoundingVolumes(scene.mTriMeshes[meshIdx].GetAABB(), scene.mTriMeshes[meshIdx].GetBSphere());
         }
 
         // Do the same for children

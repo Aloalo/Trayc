@@ -52,6 +52,10 @@ void DebugView::KeyPress(const SDL_KeyboardEvent &e)
         Renderable::mIsActive = true;
         mTexType = TextureType::S_SHADOWMAP;
         break;
+    case SDLK_8:
+        Renderable::mIsActive = true;
+        mTexType = TextureType::S_SHADOWPROJECTION;
+        break;
     default:
         break;
     }
@@ -61,15 +65,21 @@ void DebugView::KeyPress(const SDL_KeyboardEvent &e)
 void DebugView::Draw(const engine::RenderingContext &rContext) const
 {
     if(mTexType == TextureType::S_SHADOWMAP) {
-        /*const ShadowRenderPass *shadowPass = dynamic_cast<const ShadowRenderPass*>(mRenderer->GetRenderPass("shadowPass"));
+        
+        const ShadowRenderPass *shadowPass = dynamic_cast<const ShadowRenderPass*>(mRenderer->GetRenderPass("shadowPass"));
         const Texture2D &tex = shadowPass->GetShadowmap(1);
-        DebugDraw::Get().DrawDepth(tex, 0.0f, -1.0f);*/
+        DebugDraw::Get().DrawDepth(tex, 0.0f, -1.0f);
+        return;
+    }
 
+    if(mTexType == TextureType::S_SHADOWPROJECTION) {
         const ShadowProjectionRenderPass *shadowPass = dynamic_cast<const ShadowProjectionRenderPass*>(mRenderer->GetRenderPass("shadowProjectionPass"));
-        const Texture2D &tex = shadowPass->GetDstBuffer().GetAttachment(0);
+        const Texture2D &tex = shadowPass->GetProjectedShadowmap(1);
         DebugDraw::Get().DrawTexture(tex, vec3(1.0f));
         return;
     }
+
+
 
 
     const RenderPass *gPass = mRenderer->GetRenderPass("gPass");

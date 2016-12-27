@@ -12,5 +12,7 @@ namespace engine
     // quality in [0, 3]
     TriangleMesh GetSphereMeshSolid(bool indexed, int quality, float radius);
 
+    TriangleMesh GetPlane(float size, float height);
+
 }
 #endif
