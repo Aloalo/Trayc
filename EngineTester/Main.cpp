@@ -10,8 +10,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "GUIView.h"
-#include "LightHandler.h"
+#include "SponzaDemo.h"
 #include "PBRMaterialDemo.h"
+#include "HeadDemo.h"
 
 #if PRODUCTION
 #include "DebugView.h"
@@ -45,7 +46,7 @@ RotationalCameraHandler ConstructRotationalCameraHandler(ivec2 ss, float FOV, fl
     return RotationalCameraHandler(camera, lookAtPoint, rotationSpeed, 10.0f, springiness);
 }
 
-LightHandler lHandler;
+SponzaDemo sponzaDemo;
 void InitSponza(Game &game, Scene &scene, const char *progName, ivec2 SSize)
 {
     //Init Camera handler
@@ -59,18 +60,19 @@ void InitSponza(Game &game, Scene &scene, const char *progName, ivec2 SSize)
     scene = AssetLoader::Get().LoadScene(AssetLoader::Get().ModelPath("crytek-sponza/"), "sponza.obj");
 
     // Init Light
-    lHandler.Init(&scene);
+    sponzaDemo.Init(&scene);
     game.mRenderer.SetScene(&scene);
-    game.mUpdateableMenager.AddUpdateable(&lHandler);
-    game.mInputHandler.AddEventListener(&lHandler);
+    game.mUpdateableMenager.AddUpdateable(&sponzaDemo);
+    game.mInputHandler.AddEventListener(&sponzaDemo);
 }
 
-GlobalLight GL(vec3(0.09f), vec3(2.0f), true, vec3(0.0f, 1.0f, 1.0f));
+const float headScale = 80.0f;
+HeadDemo headDemo(headScale);
 void InitHead(Game &game, Scene &scene, const char *progName, ivec2 SSize)
 {
     // Init scene
     scene = AssetLoader::Get().LoadScene(AssetLoader::Get().ModelPath("Head/"), "Head.obj");
-    scene.Scale(80.0f);
+    scene.Scale(headScale);
     const vec3 X = scene.GetAABB().Center();
 
     //Init Camera handler
@@ -79,9 +81,7 @@ void InitHead(Game &game, Scene &scene, const char *progName, ivec2 SSize)
     //Init Game
     game.Init(camHandler, progName, "Head Demo", SSize.x, SSize.y);
 
-    // Init Light
-    scene.mLights.push_back(&GL);
-    game.mRenderer.SetScene(&scene);
+    headDemo.Init(game, scene);
 }
 
 PBRMaterialDemo PBRDemo;
@@ -118,7 +118,6 @@ int main(int argc, char *argv[])
     const float timeStep = 1.0f / 60.0f;
 
     Game game(timeStep);
-    //game.mRenderer.SetUsePBR(false);
     Scene scene;
 
     PrintHelp();

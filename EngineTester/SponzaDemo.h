@@ -1,5 +1,5 @@
-#ifndef ET_LIGHT_HANDLER_H
-#define ET_LIGHT_HANDLER_H
+#ifndef ET_SPONZA_DEMO_H
+#define ET_SPONZA_DEMO_H
 
 #include <Engine/Core/Updateable.h>
 #include <Engine/Core/InputObserver.h>
@@ -12,11 +12,11 @@ namespace engine
     struct Object3D;
 }
 
-class LightHandler 
+class SponzaDemo 
     : public engine::Updateable, public engine::InputObserver
 {
 public:
-    LightHandler(void);
+    SponzaDemo(void);
 
     void Init(engine::Scene *scene);
     virtual void Update(float dt) override;

@@ -5,8 +5,12 @@ set(EngineTester_SRCS_HDRS
     Main.cpp
     DebugView.h
     DebugView.cpp
-    LightHandler.h
-    LightHandler.cpp
+    SponzaDemo.h
+    SponzaDemo.cpp
+    HeadDemo.h
+    HeadDemo.cpp
+    ShadowsDemo.h
+    ShadowsDemo.cpp
     GUIView.h
     GUIView.cpp
     PBRMaterialDemo.cpp

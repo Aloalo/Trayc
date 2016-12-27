@@ -1,5 +1,5 @@
 
-#include "LightHandler.h"
+#include "SponzaDemo.h"
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Geometry/Scene.h>
 #include <Engine/Geometry/GeometryMeshes.h>
@@ -11,7 +11,7 @@ using namespace engine;
 using namespace glm;
 using namespace std;
 
-LightHandler::LightHandler(void) :
+SponzaDemo::SponzaDemo(void) :
     mPause(false),
     mGLight(vec3(0.001f), 5.0f * vec3(0.988f, 0.83f, 0.251f), true, vec3(1.0f)),
     mPLight(vec3(20.0f), true, vec3(1.0f, 0.1f, 0.01f), vec3(0.0f, 200.0f, 0.0f)),
@@ -19,7 +19,7 @@ LightHandler::LightHandler(void) :
 {
 }
 
-void LightHandler::Init(Scene *scene)
+void SponzaDemo::Init(Scene *scene)
 {
     // Init Lights
     scene->mLights.push_back(&mGLight);
@@ -59,7 +59,7 @@ void LightHandler::Init(Scene *scene)
     mPLightObj->mShadowCaster = false;
 }
 
-void LightHandler::Update(float dt)
+void SponzaDemo::Update(float dt)
 {
     if(mPause) {
         return;
@@ -86,7 +86,7 @@ void LightHandler::Update(float dt)
     mGLight.SetDirection(normalize(d));
 }
 
-void LightHandler::KeyPress(const SDL_KeyboardEvent & e)
+void SponzaDemo::KeyPress(const SDL_KeyboardEvent & e)
 {
     if(e.repeat) {
         return;
