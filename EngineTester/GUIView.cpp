@@ -2,6 +2,7 @@
 #include "GUIView.h"
 #include <Engine/Engine/Game.h>
 #include <Engine/Engine/AssetLoader.h>
+#include <easylogging++.h>
 
 using namespace engine;
 using namespace glm;
@@ -52,6 +53,7 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
 
     if(e.keysym.sym == SDLK_o && e.type == SDL_KEYDOWN) {
         mGame->mRenderer.SetUsePBR(!mGame->mRenderer.UsePBR());
+        LOG(INFO) << "[GUIView::KeyPress] PBR: " << mGame->mRenderer.UsePBR();
     }
 }
 

@@ -13,8 +13,7 @@ class ShadowsDemo
 public:
     ShadowsDemo(void);
 
-    void Init(engine::Game &game);
-    virtual void KeyPress(const SDL_KeyboardEvent &e) override;
+    void Init(engine::Game &game, engine::Scene &scene, const std::string &model);
     virtual void MouseMotion(const SDL_MouseMotionEvent &e) override;
     virtual void MouseButton(const SDL_MouseButtonEvent &e) override;
 
@@ -27,7 +26,6 @@ private:
 
     engine::Game *mGame;
     engine::Object3D *mPLightObj;
-    std::vector<engine::Scene> mScenes;
     engine::SpotLight mLight;
     engine::AmbientLight mAmbientLight;
 };

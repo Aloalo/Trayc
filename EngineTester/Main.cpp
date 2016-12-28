@@ -99,7 +99,7 @@ void InitPBR(Game &game, Scene &scene, const char *progName, ivec2 SSize)
 }
 
 ShadowsDemo shadowsDemo;
-void InitShadows(Game &game, const char *progName, ivec2 SSize)
+void InitShadows(Game &game, Scene &scene, const string &model, const char *progName, ivec2 SSize)
 {
     //Init Camera handler
     RotationalCameraHandler camHandler(ConstructRotationalCameraHandler(SSize, Setting<float>("FOV"), 1000.0f, vec3(0.0f, 50.0f, 100.0f), vec3(0.0f)));
@@ -108,7 +108,7 @@ void InitShadows(Game &game, const char *progName, ivec2 SSize)
     game.Init(camHandler, progName, "Shadows demo", SSize.x, SSize.y);
 
     // Init demo
-    shadowsDemo.Init(game);
+    shadowsDemo.Init(game, scene, model);
 }
 
 void PrintHelp()
@@ -126,6 +126,7 @@ void PrintHelp()
     cout << "   right click - rotate ball" << endl;
 
     cout << "Load shadows demo: \"-shadows\"" << endl;
+    cout << "   -buddha or -dragon" << endl;
     cout << "   arrows - toggle objects" << endl;
     cout << "   right click - rotate light" << endl;
 
@@ -155,7 +156,12 @@ int main(int argc, char *argv[])
         InitPBR(game, scene, argv[0], SSize);
     }
     else if(string(argv[1]) == "-shadows") {
-        InitShadows(game, argv[0], SSize);
+        if(argc > 2) {
+            InitShadows(game, scene, string(argv[2]+1), argv[0], SSize);
+        }
+        else {
+            InitShadows(game, scene, "dragon", argv[0], SSize);
+        }
     }
     else {
         InitSponza(game, scene, argv[0], SSize);

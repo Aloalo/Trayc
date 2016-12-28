@@ -91,7 +91,7 @@ vec3 Lighting(in vec3 N, in vec3 L, in vec3 P, in vec3 lightIntensity, in vec3 a
     return shadow * (dotNL * (atten * lightIntensity * diffuse + specular) + reflection);
     //return shadow * atten * lightIntensity * dotNL * (diffuse + reflection + specular);
 #else
-    return shadow * atten * lightIntensity * dotNL * (diffuse + specular);
+    return shadow * dotNL * (atten * lightIntensity * diffuse + specular);
 #endif
 }
 
