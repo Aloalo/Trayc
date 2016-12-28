@@ -14,7 +14,7 @@ using namespace std;
 SponzaDemo::SponzaDemo(void) :
     mPause(false),
     mGLight(vec3(0.001f), 5.0f * vec3(0.988f, 0.83f, 0.251f), true, vec3(1.0f)),
-    mPLight(vec3(20.0f), true, vec3(1.0f, 0.1f, 0.01f), vec3(0.0f, 200.0f, 0.0f)),
+    mPLight(vec3(20.0f), true, vec3(1.0f, 0.1f, 0.01f), vec3(0.0f, 200.0f, 0.0f)), mPLightObj(nullptr),
     mSLight(vec3(1.0f), true, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 600.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 15.0f, 200.0f)
 {
 }
@@ -81,8 +81,7 @@ void SponzaDemo::Update(float dt)
 
     mSLight.SetDirection(vec3(cosf(accumSLight), 0.0f, sinf(accumSLight)));
 
-    vec3 d = mGLight.GetDirection();
-    d = vec3(0.0f, abs(sinf(accumSLight / 5.0f)), cosf(accumSLight / 5.0f)) / 3.0f;
+    const vec3 d = vec3(0.0f, abs(sinf(accumSLight / 5.0f)), cosf(accumSLight / 5.0f)) / 3.0f;
     mGLight.SetDirection(normalize(d));
 }
 

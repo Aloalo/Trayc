@@ -30,8 +30,8 @@ namespace engine
 
 #if DEPLOY
         defaultConf.set(el::Level::Info, el::ConfigurationType::ToStandardOutput, "false");
-        defaultConf.set(el::Level::Error, el::ConfigurationType::ToStandardOutput, "false");
-        defaultConf.set(el::Level::Warning, el::ConfigurationType::ToStandardOutput, "false");
+        defaultConf.set(el::Level::Error, el::ConfigurationType::ToStandardOutput, "true");
+        defaultConf.set(el::Level::Warning, el::ConfigurationType::ToStandardOutput, "true");
 #endif
 
         el::Loggers::reconfigureLogger("default", defaultConf);
@@ -47,8 +47,8 @@ namespace engine
 
 #if DEPLOY
         performanceConf.set(el::Level::Info, el::ConfigurationType::ToStandardOutput, "false");
-        performanceConf.set(el::Level::Error, el::ConfigurationType::ToStandardOutput, "false");
-        performanceConf.set(el::Level::Warning, el::ConfigurationType::ToStandardOutput, "false");
+        performanceConf.set(el::Level::Error, el::ConfigurationType::ToStandardOutput, "true");
+        performanceConf.set(el::Level::Warning, el::ConfigurationType::ToStandardOutput, "true");
 #endif
 
         el::Loggers::reconfigureLogger("performance", performanceConf);

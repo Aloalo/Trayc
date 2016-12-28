@@ -15,9 +15,7 @@
 #include "HeadDemo.h"
 #include "ShadowsDemo.h"
 
-#if PRODUCTION
 #include "DebugView.h"
-#endif
 
 using namespace engine;
 using namespace std;
@@ -113,21 +111,20 @@ void InitShadows(Game &game, Scene &scene, const string &model, const char *prog
 
 void PrintHelp()
 {
-    cout << "o - toggle pbr" << endl;
+    cout << "o - toggle pbr" << endl << endl;
 
     cout << "Load sponza demo: \"-sponza\"" << endl;
-    cout << "   p - pause lights" << endl;
+    cout << "   p - pause lights" << endl << endl;
 
     cout << "Load head demo: \"-head\"" << endl;
-    cout << "   right click - rotate head" << endl;
+    cout << "   right click - rotate head" << endl << endl;
 
     cout << "Load pbr demo: \"-pbr\"" << endl;
     cout << "   arrows - toggle materials" << endl;
-    cout << "   right click - rotate ball" << endl;
+    cout << "   right click - rotate ball" << endl << endl;
 
     cout << "Load shadows demo: \"-shadows\"" << endl;
     cout << "   -buddha or -dragon" << endl;
-    cout << "   arrows - toggle objects" << endl;
     cout << "   right click - rotate light" << endl;
 
     cout << endl << endl;
@@ -170,13 +167,11 @@ int main(int argc, char *argv[])
     game.mContextHandler.VsyncMode(Setting<int>("vsync"));
     //game.mContextHandler.VsyncMode(0);
 
-#if PRODUCTION
     //Init DebugView
     CameraHandler *camHandler = game.GetCameraHandler();
     DebugView dView(&game.mRenderer, camHandler->GetCamera().mNearDistance, camHandler->GetCamera().mFarDistance);
     game.mInputHandler.AddEventListener(&dView);
     game.mRenderer.AddRenderable(&dView);
-#endif
 
     //Init GUIView
     GUIView guiView(&game);

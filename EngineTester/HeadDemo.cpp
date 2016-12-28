@@ -11,7 +11,7 @@ using namespace glm;
 using namespace std;
 
 HeadDemo::HeadDemo(float scale)
-    : mMouseDown(false), mRotY(0.0f), mScale(scale),
+    : mMouseDown(false), mRotY(0.0f), mScale(scale), mHead(nullptr),
     mLight(vec3(0.09f), vec3(2.0f), true, vec3(0.0f, 1.0f, 1.0f))
 {
 }

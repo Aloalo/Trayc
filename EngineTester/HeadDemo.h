@@ -11,7 +11,7 @@ class HeadDemo
     : public engine::InputObserver
 {
 public:
-    HeadDemo(float scale);
+    explicit HeadDemo(float scale);
 
     void Init(engine::Game &game, engine::Scene &scene);
     virtual void MouseMotion(const SDL_MouseMotionEvent &e) override;

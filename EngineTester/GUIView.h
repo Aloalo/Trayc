@@ -15,7 +15,7 @@ class GUIView
     : public engine::Renderable, public engine::InputObserver
 {
 public:
-    GUIView(engine::Game *game);
+    explicit GUIView(engine::Game *game);
     ~GUIView(void);
 
     virtual void KeyPress(const SDL_KeyboardEvent &e) override;

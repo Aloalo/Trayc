@@ -8,9 +8,19 @@
 namespace engine
 {
     // Final render pass to backbuffer
-    class BackBufferRenderPass : public RenderPass
+    __declspec(align(16)) class BackBufferRenderPass : public RenderPass
     {
     public:
+        void* operator new(size_t i)
+        {
+            return _mm_malloc(i, 16);
+        }
+
+        void operator delete(void* p)
+        {
+            _mm_free(p);
+        }
+
         BackBufferRenderPass(void);
 
         virtual void Init() override;

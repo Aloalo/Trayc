@@ -10,8 +10,8 @@ using namespace glm;
 using namespace std;
 
 ShadowsDemo::ShadowsDemo(void)
-    : mLightLookAt(0.0f), mLightStartPos(100.0f), mRotX(0.0f), mCurrSceneIdx(0), mMouseDown(false),
-    mLight(vec3(1.0f), true, vec3(1.0f, 0.005f, 0.0f), vec3(mLightStartPos), vec3(0.0f), 20.0f, 90.0f),
+    : mLightLookAt(0.0f), mLightStartPos(100.0f), mRotX(0.0f), mCurrSceneIdx(0), mMouseDown(false), mGame(nullptr),
+    mPLightObj(nullptr), mLight(vec3(1.0f), true, vec3(1.0f, 0.005f, 0.0f), vec3(mLightStartPos), vec3(0.0f), 20.0f, 90.0f),
     mAmbientLight(vec3(0.075f), true)
 {
     mLight.SetDirection(normalize(mLightLookAt - mLight.GetPosition()));

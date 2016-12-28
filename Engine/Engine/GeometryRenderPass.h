@@ -26,9 +26,19 @@ namespace engine
         const Scene *mScene;
     };
 
-    class GeometryRenderPass : public RenderPass
+    __declspec(align(16)) class GeometryRenderPass : public RenderPass
     {
     public:
+        void* operator new(size_t i)
+        {
+            return _mm_malloc(i, 16);
+        }
+
+        void operator delete(void* p)
+        {
+            _mm_free(p);
+        }
+
         GeometryRenderPass(void);
 
         virtual void Init() override;
