@@ -5,7 +5,7 @@ layout(location = 0) out vec4 fragColor;
 
 uniform sampler2D inTex1;
 
-const float blurWidth = 7.0;
+const float blurWidth = 2.0;
 const float invBlurSize = 1.0 / (2.0 * blurWidth + 1.0);
 
 #ifdef HORIZONTAL
@@ -18,7 +18,7 @@ void main()
 {             
     vec2 pixel = p / vec2(textureSize(inTex1, 0));
 
-    vec3 sum = vec3(0.0);
+    vec3 sum = texture(inTex1, uv).rgb;
     for(float i = -blurWidth; i < blurWidth; i += 1.0)
     {
         sum += texture(inTex1, uv + i * pixel).rgb;
