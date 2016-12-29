@@ -5,6 +5,7 @@
 #include <Engine/Geometry/Scene.h>
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Utils/Setting.h>
+#include <Engine/Utils/TextureEffects.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <array>
 #include <easylogging++.h>
@@ -100,6 +101,17 @@ namespace engine
             }
         }
         glEnable(GL_DEPTH_TEST);
+
+        // Blur shadowmaps
+        for(int i = 0; i < ctLights; ++i)
+        {
+            const Light::Type type = scene->mLights[i]->GetType();
+
+            if(type != Light::AMBIENT) {
+                const FrameBuffer &fb = mProjectedShadowFBs[i];
+                TextureEffects::Get().Blur(fb.GetAttachment(0));
+            }
+        }
     }
     
     const Texture2D& ShadowProjectionRenderPass::GetProjectedShadowmap(int idx) const

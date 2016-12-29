@@ -16,9 +16,10 @@ namespace engine
     public:
         Program(void);
 
-        void Init(const VertexShader &vs, const GeometryShader &gs, const FragmentShader &fs, const char *name = nullptr);
-        void Init(const VertexShader &vs, const FragmentShader &fs, const char *name = nullptr);
+        void Init(const VertexShader &vs, const GeometryShader &gs, const FragmentShader &fs, const char *name = "PROGRAM NOT NAMED");
+        void Init(const VertexShader &vs, const FragmentShader &fs, const char *name = "PROGRAM NOT NAMED");
         void Init(const char *name, const Shader::Defines &defines = Shader::Defines()); //init from filename
+        void Init(const std::string &vsName, const std::string &fsName, const Shader::Defines &defines = Shader::Defines()); //init from filename
 
         void Destroy();
 

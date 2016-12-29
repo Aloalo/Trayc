@@ -6,6 +6,20 @@
 
 namespace engine
 {
+    struct TextureDescription
+    {
+        using uint = unsigned int;
+    public:
+        TextureDescription(const glm::ivec2 &size, uint internalFormat, uint format, uint type);
+
+        const int operator<(const TextureDescription &other);
+
+        glm::ivec2 size;
+        uint internalFormat;
+        uint format;
+        uint type;
+    };
+
     class Texture
     {
         using uint = unsigned int;
@@ -25,7 +39,10 @@ namespace engine
         uint ID() const;
         uint Target() const;
 
+        TextureDescription GetTextureDescription() const;
+
         void TextureParam(uint pname, uint param) const;
+
 
     protected:
         glm::ivec2 mSize;

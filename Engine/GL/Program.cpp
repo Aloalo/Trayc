@@ -105,6 +105,11 @@ namespace engine
         f.close();
     }
 
+    void Program::Init(const string &vsName, const string &fsName, const Shader::Defines &defines)
+    {
+        Init(VertexShader(vsName.c_str(), defines), FragmentShader(fsName.c_str(), defines));
+    }
+
     void Program::Use() const
     {
         if(mID != mBoundProgram) {

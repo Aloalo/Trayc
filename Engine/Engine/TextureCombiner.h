@@ -17,6 +17,7 @@ namespace engine
 
         void Init(const char *progName, const Shader::Defines &defines);
         void Init(const char *vsName, const char *fsName, const Shader::Defines &defines);
+        void Init(const std::string &vsName, const std::string &fsName, const Shader::Defines &defines);
         void Destroy();
 
         // Get program

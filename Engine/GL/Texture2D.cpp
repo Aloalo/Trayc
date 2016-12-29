@@ -28,6 +28,11 @@ namespace engine
         InitEmpty(Target(), internalFormat, size, format, type);
     }
 
+    void Texture2D::Init(const TextureDescription &desc)
+    {
+        InitEmpty(Target(), desc.internalFormat, desc.size, desc.format, desc.type);
+    }
+
     void Texture2D::Resize(ivec2 size)
     {
         mSize = size;

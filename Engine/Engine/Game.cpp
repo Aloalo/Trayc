@@ -1,5 +1,6 @@
 
 #include <Engine/Engine/Game.h>
+#include <Engine/Utils/TextureEffects.h>
 #include <assert.h>
 
 using namespace std;
@@ -16,6 +17,8 @@ namespace engine
         if(mCameraHandler) {
             delete mCameraHandler;
         }
+
+        TextureEffects::Get().Destroy();
     }
 
     void Game::Init(char const *programName, const char *windowTitle, int screenWidth, int screenHeight)
@@ -52,6 +55,9 @@ namespace engine
 
         mRenderer.InitRendering(mCameraHandler);
         mRenderer.SetScreenSize(screenWidth, screenHeight);
+
+        // Init effects
+        TextureEffects::Get().Init();
 
         mProfiler.AddProfileTarget("rendering", mFrameCap);
         mProfiler.AddProfileTarget("events", mFrameCap);

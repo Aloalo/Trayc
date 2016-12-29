@@ -102,6 +102,8 @@ set(Engine_Utils
     Utils/BSpline.cpp
     Utils/UniformBuffers.h
     Utils/UniformBuffers.cpp
+    Utils/TextureEffects.h
+    Utils/TextureEffects.cpp
 )
 
 set(Engine_Engine

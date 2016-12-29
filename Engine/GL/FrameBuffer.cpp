@@ -62,6 +62,13 @@ namespace engine
         }
     }
 
+    void FrameBuffer::Init()
+    {
+        if(mID == 0) {
+            glGenFramebuffers(1, &mID);
+        }
+    }
+
     void FrameBuffer::Destroy()
     {
         for(Attachment &a : mAttachments)
@@ -69,6 +76,16 @@ namespace engine
 
         glDeleteRenderbuffers(1, &mRBID);
         glDeleteFramebuffers(1, &mID);
+    }
+
+    void FrameBuffer::AddColorAttachment(const Texture2D &tex)
+    {
+        const GLenum attachment = GetAttachmentType(tex.GetTextureDescription().format);
+        mAttachments.push_back(Attachment(tex, attachment));
+
+        Bind();
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex.ID(), 0);
+        UnBind();
     }
 
     void FrameBuffer::AddAttachment(GLenum internalFormat, GLenum format, GLenum type)
@@ -112,6 +129,11 @@ namespace engine
     GLuint FrameBuffer::GetRBOID() const
     {
         return mRBID;
+    }
+
+    void FrameBuffer::Clear()
+    {
+        mAttachments.clear();
     }
 
     void FrameBuffer::Compile() const
@@ -191,11 +213,6 @@ namespace engine
             break;
         }
         assert(status == GL_FRAMEBUFFER_COMPLETE);
-    }
-
-    void FrameBuffer::BindTexture(int idx) const
-    {
-        glBindTexture(GL_TEXTURE_2D, mAttachments[idx].first.ID());
     }
 
     void FrameBuffer::Bind() const

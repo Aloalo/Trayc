@@ -29,6 +29,11 @@ namespace engine
         S_SHADOWMAP = 15,
         S_SHADOWPROJECTION = 16,
 
+        // Effects
+        E_EFFECT1 = 17,
+        E_EFFECT2 = 18,
+        E_EFFECT3 = 19,
+
         // Where the result of all passes except bb must end up
         FINAL_SLOT = 28,
         SKYBOX_SLOT = 29,

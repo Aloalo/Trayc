@@ -14,8 +14,17 @@ using namespace glm;
 
 namespace engine
 {
-    unsigned int Texture::mBoundTextures[TextureType::CT_TEX_SLOTS] = {0};
+    TextureDescription::TextureDescription(const ivec2 &size, uint internalFormat, uint format, uint type)
+        : size(size), internalFormat(internalFormat), format(format), type(type)
+    {
+    }
 
+    const int TextureDescription::operator<(const TextureDescription &other)
+    {
+        return memcmp(static_cast<const void*>(this), static_cast<const void*>(&other), sizeof(TextureDescription));
+    }
+
+    unsigned int Texture::mBoundTextures[TextureType::CT_TEX_SLOTS] = {0};
 
     Texture::Texture(uint target)
         : mSize(0), mInternalFormat(0), mFormat(0), mType(0), mID(0), mTarget(target)
@@ -62,6 +71,11 @@ namespace engine
     uint Texture::Target() const
     {
         return mTarget;
+    }
+
+    TextureDescription Texture::GetTextureDescription() const
+    {
+        return TextureDescription(mSize, mInternalFormat, mFormat, mType);
     }
 
     void Texture::TextureParam(uint pname, uint param) const

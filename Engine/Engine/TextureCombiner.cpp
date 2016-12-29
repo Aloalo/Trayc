@@ -28,6 +28,12 @@ namespace engine
         Init();
     }
 
+    void TextureCombiner::Init(const string &vsName, const string &fsName, const Shader::Defines &defines)
+    {
+        mProgram.Init(VertexShader(vsName.c_str(), defines), FragmentShader(fsName.c_str(), defines));
+        Init();
+    }
+
     void TextureCombiner::Destroy()
     {
         mProgram.Destroy();
