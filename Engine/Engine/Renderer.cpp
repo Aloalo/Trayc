@@ -40,11 +40,10 @@ namespace engine
         }
 
         TextureCombiner::DestroyVAO();
+        UniformBuffers::Get().Destroy();
         mLinearMipMapSampler.Destroy();
         mLinearSampler.Destroy();
         mShadowmapSampler.Destroy();
-        mViewRayDataUB.Destroy();
-        mMatricesUB.Destroy();
 
 #if PRODUCTION
         DebugDraw::Get().Destroy();
@@ -85,12 +84,14 @@ namespace engine
 
     void Renderer::SetScreenSize(int width, int height)
     {
+        const auto &viewRayData = UniformBuffers::Get().ViewRayData();
         const float aspect = float(width) / float(height);
-        mViewRayDataUB.aspectTanHalfFovy(aspect * tanf(radians(mCamera->GetCamera().mFoV) * 0.5f));
+        viewRayData.aspectTanHalfFovy(aspect * tanf(radians(mCamera->GetCamera().mFoV) * 0.5f));
 
+        const auto &matrices = UniformBuffers::Get().Matrices();
         const mat4 P = mCamera->GetProjectionMatrix();
-        mMatricesUB.P(P);
-        mMatricesUB.invP(inverse(P));
+        matrices.P(P);
+        matrices.invP(inverse(P));
 
         const float resolutionScale = Setting<float>("resolutionScale");
         const int scaledWidth = int(float(width) * resolutionScale);
@@ -126,16 +127,6 @@ namespace engine
     const Renderer::RenderPasses& Renderer::GetRenderPasses() const
     {
         return mRenderPasses;
-    }
-
-    const ViewRayDataUB& Renderer::GetViewRayDataUB() const
-    {
-        return mViewRayDataUB;
-    }
-
-    const MatricesUB& Renderer::GetMatricesUB() const
-    {
-        return mMatricesUB;
     }
 
     const Camera* Renderer::GetCamera() const
@@ -203,13 +194,11 @@ namespace engine
 
         // Init uniform buffers
         const Camera &cam = mCamera->GetCamera();
-        mViewRayDataUB.Init(8);
+        const auto &viewRayData = UniformBuffers::Get().ViewRayData();
         const float tanHalfFovy = tanf(radians(cam.mFoV) * 0.5f);
         const float aspectTanHalfFovy = cam.mAspectRatio * tanHalfFovy;
-        mViewRayDataUB.tanHalfFovy(tanHalfFovy);
-        mViewRayDataUB.aspectTanHalfFovy(aspectTanHalfFovy);
-
-        mMatricesUB.Init(6 * sizeof(glm::mat4));
+        viewRayData.tanHalfFovy(tanHalfFovy);
+        viewRayData.aspectTanHalfFovy(aspectTanHalfFovy);
     }
 
     void Renderer::Render() const
@@ -220,10 +209,11 @@ namespace engine
         rContext.mVP = rContext.mP * rContext.mV;
         rContext.mCamera = &mCamera->mCamera;
 
-        mMatricesUB.V(rContext.mV);
-        mMatricesUB.VP(rContext.mVP);
-        mMatricesUB.invV(inverse(rContext.mV));
-        mMatricesUB.invVP(inverse(rContext.mVP));
+        const auto &matrices = UniformBuffers::Get().Matrices();
+        matrices.V(rContext.mV);
+        matrices.VP(rContext.mVP);
+        matrices.invV(inverse(rContext.mV));
+        matrices.invVP(inverse(rContext.mVP));
 
         // -------------------------- Deferred render -------------------------- //
 

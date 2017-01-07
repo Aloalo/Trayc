@@ -59,7 +59,7 @@ Optimizations:
     +Frustum culling
     -Smaller data types for positions/normals/tangents/bitangents/uv
     +Reduce max mipmap level
-    -Mesh optimizer
+    +Mesh optimizer (won't do)
     +Global light (ambient + directional)
     
 Bugs:

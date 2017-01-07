@@ -12,7 +12,7 @@ namespace engine
     public:
         TextureDescription(const glm::ivec2 &size, uint internalFormat, uint format, uint type);
 
-        const int operator<(const TextureDescription &other);
+        bool operator<(const TextureDescription &other);
 
         glm::ivec2 size;
         uint internalFormat;

@@ -49,9 +49,6 @@ namespace engine
                 prog.SetUniform("gNormal", TextureType::G_NORMAL_TEXTURE);
                 prog.SetUniform("gSpecGloss", TextureType::G_SPEC_GLOSS_TEXTURE);
 
-                const auto &viewRayDataUB = mRenderer->GetViewRayDataUB();
-                prog.SetUniformBlockBinding(viewRayDataUB.GetName(), viewRayDataUB.GetBlockBinding());
-
                 if(i != Light::AMBIENT) {
                     prog.SetUniform("sShadowBuffer", TextureType::S_SHADOWPROJECTION);
                 }

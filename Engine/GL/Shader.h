@@ -18,6 +18,8 @@ namespace engine
         virtual const char* GetTypeString() const = 0;
         virtual GLenum GetGlType() const = 0;
 
+        const std::vector<std::string>& GetUniformBlockNames() const;
+
     protected:
         friend class Program;
 
@@ -26,6 +28,8 @@ namespace engine
         void Init2(const GLchar *src, const char *name, GLint len = 0);
 
     private:
+        std::vector<std::string> mUniformBlocks;
+        void FindUniformBlocks(const std::string &source);
         static void InsertDefines(std::string &source, const Defines &defines);
         static void ExpandIncludes(const std::string &path, std::string &source);
         static const std::string mHeader;

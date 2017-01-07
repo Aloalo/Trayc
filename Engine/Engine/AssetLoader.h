@@ -29,7 +29,6 @@ namespace engine
         Scene LoadSceneAssimp(const std::string &path, const std::string &name) const;
         void RecursiveLoadSceneAssimp(const aiScene *aiScene, const aiNode *aiNode, Scene &scene) const;
 
-        // TODO: merge identical meshes with different transforms
         // Sort objects by materials, renderflags and meshes
         void OptimizeScene(Scene &scene) const;
 

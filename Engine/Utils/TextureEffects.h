@@ -27,7 +27,7 @@ namespace engine
 
         struct TexCompare
         {
-            int operator()(const Texture2D &l, const Texture2D &r) const
+            bool operator()(const Texture2D &l, const Texture2D &r) const
             {
                 return l.GetTextureDescription() < r.GetTextureDescription();
             }

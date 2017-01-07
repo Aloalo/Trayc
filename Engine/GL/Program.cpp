@@ -1,8 +1,11 @@
 
 #include <Engine/GL/Program.h>
 #include <Engine/Utils/ErrorCheck.h>
+#include <Engine/Utils/UniformBuffers.h>
 #include <easylogging++.h>
 #include <fstream>
+#include <set>
+#include <iterator>
 
 using namespace glm;
 using namespace std;
@@ -38,6 +41,10 @@ namespace engine
         Detach(fs);
 
         CacheUniforms();
+        set<string> ubNames(vs.GetUniformBlockNames().begin(), vs.GetUniformBlockNames().end());
+        std::copy(gs.GetUniformBlockNames().begin(), gs.GetUniformBlockNames().end(), std::inserter(ubNames, ubNames.end()));
+        std::copy(fs.GetUniformBlockNames().begin(), fs.GetUniformBlockNames().end(), std::inserter(ubNames, ubNames.end()));
+        BindUniformBuffers(ubNames);
     }
 
     void Program::Init(const VertexShader &vs, const FragmentShader &fs, const char *name)
@@ -54,6 +61,9 @@ namespace engine
         Detach(fs);
 
         CacheUniforms();
+        set<string> ubNames(vs.GetUniformBlockNames().begin(), vs.GetUniformBlockNames().end());
+        std::copy(fs.GetUniformBlockNames().begin(), fs.GetUniformBlockNames().end(), std::inserter(ubNames, ubNames.end()));
+        BindUniformBuffers(ubNames);
     }
 
     void Program::LinkProgram(const char *name)
@@ -88,6 +98,15 @@ namespace engine
             GLenum type;
             glGetActiveUniform(mID, i, bufferSize, &length, &size, &type, uniformName);
             mUniformLocations[string(uniformName)] = glGetUniformLocation(mID, uniformName);
+        }
+    }
+
+    void Program::BindUniformBuffers(const std::set<std::string> &ubNames) const
+    {
+        // TODO: This will generate GL errors because shader can find uniform blocks that are in non active #ifdef blocks
+        for(const string &ubName : ubNames) {
+            const UniformBuffer *buffer = UniformBuffers::Get().GetUniformBuffer(ubName);
+            SetUniformBlockBinding(ubName.c_str(), buffer->GetBlockBinding());
         }
     }
 
@@ -131,7 +150,8 @@ namespace engine
 
     void Program::SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint) const
     {
-        glUniformBlockBinding(mID, GetUniformBlockLocation(name), bindingPoint);
+        const GLuint blockIndex = GetUniformBlockLocation(name);
+        glUniformBlockBinding(mID, blockIndex, bindingPoint);
     }
 
     GLint Program::GetUniformi(const GLchar *name) const

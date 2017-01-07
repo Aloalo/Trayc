@@ -2,7 +2,9 @@
 #define EN_VIEW_RAY_DATA_UB_H
 
 #include <Engine/GL/UniformBuffer.h>
+#include <Engine/Utils/Singleton.h>
 #include <glm/glm.hpp>
+#include <string>
 
 namespace engine
 {
@@ -26,6 +28,22 @@ namespace engine
         UNIFORM_MACRO(glm::mat4, invV, 3 * sizeof(glm::mat4));
         UNIFORM_MACRO(glm::mat4, invP, 4 * sizeof(glm::mat4));
         UNIFORM_MACRO(glm::mat4, invVP, 5 * sizeof(glm::mat4));
+    };
+
+    class UniformBuffers : public Singleton<UniformBuffers>
+    {
+    public:
+        void Destroy();
+        const ViewRayDataUB& ViewRayData() const;
+        const MatricesUB& Matrices() const;
+        const UniformBuffer* GetUniformBuffer(const std::string &name) const;
+
+    private:
+        friend struct Singleton<UniformBuffers>;
+        UniformBuffers(void);
+
+        ViewRayDataUB mViewRayData;
+        MatricesUB mMatrices;
     };
 }
 

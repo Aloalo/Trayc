@@ -7,6 +7,7 @@
 #include <Engine/GL/FragmentShader.h>
 #include <glm/glm.hpp>
 #include <map>
+#include <set>
 #include <vector>
 
 namespace engine
@@ -52,6 +53,7 @@ namespace engine
         void Detach(const Shader &sh) const;
 
         void CacheUniforms();
+        void BindUniformBuffers(const std::set<std::string> &ubNames) const;
         void LinkProgram(const char *name);
 
         GLuint mID;

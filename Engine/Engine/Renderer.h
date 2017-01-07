@@ -38,9 +38,6 @@ namespace engine
         const RenderPass* GetRenderPass(int idx) const;
         const RenderPasses& GetRenderPasses() const;
 
-        const ViewRayDataUB& GetViewRayDataUB() const;
-        const MatricesUB& GetMatricesUB() const;
-
         const Camera* GetCamera() const;
         bool UsePBR() const;
         AABB GetSceneAABB() const;
@@ -66,10 +63,6 @@ namespace engine
         TextureSampler mLinearMipMapSampler;
         TextureSampler mLinearSampler;
         TextureSampler mShadowmapSampler;
-
-        // Uniform buffers
-        ViewRayDataUB mViewRayDataUB;
-        MatricesUB mMatricesUB;
     };
 }
 

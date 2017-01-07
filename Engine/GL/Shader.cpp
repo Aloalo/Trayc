@@ -19,6 +19,11 @@ namespace engine
         glDeleteShader(mID);
     }
 
+    const std::vector<std::string>& Shader::GetUniformBlockNames() const
+    {
+        return  mUniformBlocks;
+    }
+
     void Shader::Init(const char *name, const Defines &defines)
     {
         string sn(name);
@@ -36,6 +41,7 @@ namespace engine
 
             const string path = sn.substr(0, sn.find_last_of("/") + 1);
             ExpandIncludes(path, source);
+            FindUniformBlocks(source);
             AddHeader(source);
 
             Init2(source.c_str(), name);
@@ -68,6 +74,22 @@ namespace engine
             LOG(ERROR) << "[Shader::Init2] Compile failure in " << GetTypeString() << " shader " << name << endl << strInfoLog;
             LOG(ERROR) << "[Shader::Init2] " << endl << src;
             delete[] strInfoLog;
+        }
+    }
+
+    void Shader::FindUniformBlocks(const string &source)
+    {
+        static const string ubTag = "layout(std140) uniform ";
+        static const int ubTagLen = ubTag.size();
+
+        size_t pos = source.find(ubTag);
+        while(pos != string::npos)
+        {
+            pos += ubTagLen;
+            const size_t nameEnd = source.find("\n", pos);
+            const size_t len = nameEnd - pos;
+            mUniformBlocks.push_back(source.substr(pos, len));
+            pos = source.find("layout(std140) uniform ", pos + 1);
         }
     }
 

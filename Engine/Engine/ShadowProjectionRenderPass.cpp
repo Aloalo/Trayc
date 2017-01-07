@@ -44,11 +44,6 @@ namespace engine
                 prog.SetUniform("gDepth", TextureType::G_DEPTH_TEXTURE);
                 prog.SetUniform("gNormal", TextureType::G_NORMAL_TEXTURE);
                 prog.SetUniform("shadowMap", TextureType::S_SHADOWMAP);
-
-                const auto &matrices = mRenderer->GetMatricesUB();
-                prog.SetUniformBlockBinding(matrices.GetName(), matrices.GetBlockBinding());
-                const auto &viewData = mRenderer->GetViewRayDataUB();
-                prog.SetUniformBlockBinding(viewData.GetName(), viewData.GetBlockBinding());
             }
         }
         Program::Unbind();

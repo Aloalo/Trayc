@@ -19,9 +19,9 @@ namespace engine
     {
     }
 
-    const int TextureDescription::operator<(const TextureDescription &other)
+    bool TextureDescription::operator<(const TextureDescription &other)
     {
-        return memcmp(static_cast<const void*>(this), static_cast<const void*>(&other), sizeof(TextureDescription));
+        return memcmp(static_cast<const void*>(this), static_cast<const void*>(&other), sizeof(TextureDescription)) > 0;
     }
 
     unsigned int Texture::mBoundTextures[TextureType::CT_TEX_SLOTS] = {0};
