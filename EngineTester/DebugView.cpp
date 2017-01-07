@@ -79,9 +79,6 @@ void DebugView::Draw(const engine::RenderingContext &rContext) const
         return;
     }
 
-
-
-
     const RenderPass *gPass = mRenderer->GetRenderPass("gPass");
     const Texture2D &tex = gPass->GetDstBuffer().GetAttachment(GetMRTIdx(mTexType));
 

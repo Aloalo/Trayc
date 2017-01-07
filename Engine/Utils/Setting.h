@@ -29,9 +29,11 @@ namespace engine
 
         T& operator=(const T &v)
         {
+            InitialSettings::Get().SetSetting<T>(mName, v);
             return mValue = v;
         }
 
+    private:
         T mValue;
         std::string mName;
     };

@@ -2,6 +2,8 @@
 #include <Engine/Utils/UniformBuffers.h>
 #include <GL/glew.h>
 
+using namespace glm;
+
 namespace engine
 {
     ViewRayDataUB::ViewRayDataUB(void)
@@ -16,8 +18,8 @@ namespace engine
 
     UniformBuffers::UniformBuffers(void)
     {
-        mViewRayData.Init(2 * sizeof(float));
-        mMatrices.Init(6 * sizeof(glm::mat4));
+        mViewRayData.Init(2 * sizeof(vec4));
+        mMatrices.Init(6 * sizeof(mat4));
     }
 
     void UniformBuffers::Destroy()

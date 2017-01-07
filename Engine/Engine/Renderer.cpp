@@ -86,7 +86,12 @@ namespace engine
     {
         const auto &viewRayData = UniformBuffers::Get().ViewRayData();
         const float aspect = float(width) / float(height);
-        viewRayData.aspectTanHalfFovy(aspect * tanf(radians(mCamera->GetCamera().mFoV) * 0.5f));
+        const float tanHalfFovy = tanf(radians(mCamera->GetCamera().mFoV) * 0.5f);
+        const float aspectTanHalfFovy = aspect * tanHalfFovy;
+        viewRayData.fovData(vec4(tanHalfFovy, aspectTanHalfFovy, 0.0f, 0.0f));
+
+        const Camera &c = mCamera->GetCamera();
+        viewRayData.cameraDist(vec4(c.mNearDistance, c.mFarDistance, c.mFarDistance - c.mNearDistance, 1.0f / (c.mFarDistance - c.mNearDistance)));
 
         const auto &matrices = UniformBuffers::Get().Matrices();
         const mat4 P = mCamera->GetProjectionMatrix();
@@ -197,8 +202,9 @@ namespace engine
         const auto &viewRayData = UniformBuffers::Get().ViewRayData();
         const float tanHalfFovy = tanf(radians(cam.mFoV) * 0.5f);
         const float aspectTanHalfFovy = cam.mAspectRatio * tanHalfFovy;
-        viewRayData.tanHalfFovy(tanHalfFovy);
-        viewRayData.aspectTanHalfFovy(aspectTanHalfFovy);
+        viewRayData.fovData(vec4(tanHalfFovy, aspectTanHalfFovy, 0.0f, 0.0f));
+        const Camera &c = mCamera->GetCamera();
+        viewRayData.cameraDist(vec4(c.mNearDistance, c.mFarDistance, c.mFarDistance - c.mNearDistance, 1.0f / (c.mFarDistance - c.mNearDistance)));
     }
 
     void Renderer::Render() const

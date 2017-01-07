@@ -17,6 +17,7 @@ namespace engine
         void Destroy();
 
         void Blur(const Texture2D &tex);
+        void ShadowBlur(const Texture2D &tex, const Texture2D &depth);
 
     private:
         friend engine::Singleton<TextureEffects>;
@@ -39,6 +40,8 @@ namespace engine
         {
             BLUR_VERTICAL = 0,
             BLUR_HORIZONTAL,
+            SHADOW_BLUR_VERTICAL,
+            SHADOW_BLUR_HORIZONTAL,
 
             CT_PROGRAMS
         };

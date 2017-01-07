@@ -12,6 +12,8 @@ namespace engine
     {
         mProgramDefinitions[BLUR_HORIZONTAL] = { "C_TexToScreen", "P_blur", "1", "HORIZONTAL" };
         mProgramDefinitions[BLUR_VERTICAL] = { "C_TexToScreen", "P_blur",  "1", "VERTICAL" };
+        mProgramDefinitions[SHADOW_BLUR_HORIZONTAL] = { "C_TexToScreen", "P_shadowBlur",  "2", "HORIZONTAL" };
+        mProgramDefinitions[SHADOW_BLUR_VERTICAL] = { "C_TexToScreen", "P_shadowBlur",  "2", "VERTICAL" };
     }
 
     const Texture2D& TextureEffects::GetTexture(const Texture2D &tex)
@@ -91,6 +93,28 @@ namespace engine
 
         SetAsRenderTarget(tex);
         blurV.SetTexture(E_EFFECT1, temp);
+        blurV.Draw();
+
+        glEnable(GL_DEPTH_TEST);
+    }
+
+    void TextureEffects::ShadowBlur(const Texture2D &tex, const Texture2D &depth)
+    {
+        const TextureCombiner &blurH = mCombiners[SHADOW_BLUR_HORIZONTAL];
+        const TextureCombiner &blurV = mCombiners[SHADOW_BLUR_VERTICAL];
+
+        const Texture2D &temp = GetTexture(tex);
+
+        glDisable(GL_DEPTH_TEST);
+
+        SetAsRenderTarget(temp);
+        blurH.SetTexture(E_EFFECT1, tex);
+        blurH.SetTexture(E_EFFECT2, depth);
+        blurH.Draw();
+
+        SetAsRenderTarget(tex);
+        blurV.SetTexture(E_EFFECT1, temp);
+        blurH.SetTexture(E_EFFECT2, depth);
         blurV.Draw();
 
         glEnable(GL_DEPTH_TEST);

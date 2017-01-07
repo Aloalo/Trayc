@@ -13,8 +13,8 @@ namespace engine
     public:
         ViewRayDataUB(void);
 
-        UNIFORM_MACRO(float, tanHalfFovy, 0); // tan(fovy / 2)
-        UNIFORM_MACRO(float, aspectTanHalfFovy, 4); // aspectRatio * tan(fovy / 2)
+        UNIFORM_MACRO(glm::vec4, fovData, 0); // tan(fovy / 2) :: aspectRatio * tan(fovy / 2) :: - :: -
+        UNIFORM_MACRO(glm::vec4, cameraDist, sizeof(glm::vec4)); // near :: far :: far-near :: 1/(far-near)
     };
 
     class MatricesUB : public UniformBuffer

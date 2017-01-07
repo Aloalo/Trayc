@@ -98,13 +98,19 @@ namespace engine
         glEnable(GL_DEPTH_TEST);
 
         // Blur shadowmaps
+        const GeometryRenderPass *gPass = static_cast<const GeometryRenderPass*>(mRenderer->GetRenderPass("gPass"));
+        const Texture2D &depth = gPass->GetDstBuffer().GetAttachment(GetMRTIdx(TextureType::G_DEPTH_TEXTURE));
         for(int i = 0; i < ctLights; ++i)
         {
             const Light::Type type = scene->mLights[i]->GetType();
 
             if(type != Light::AMBIENT) {
-                const FrameBuffer &fb = mProjectedShadowFBs[i];
-                TextureEffects::Get().Blur(fb.GetAttachment(0));
+                const Texture2D &tex = mProjectedShadowFBs[i].GetAttachment(0);
+
+                const int ctPasses = Setting<int>("softShadowsBlurPasses");
+                for(int j = 0; j < ctPasses; ++j) {
+                    TextureEffects::Get().ShadowBlur(tex, depth);
+                }
             }
         }
     }

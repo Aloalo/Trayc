@@ -19,6 +19,12 @@ namespace engine
             return mSettings.get<T>(name);
         }
 
+        template<class T>
+        void SetSetting(const std::string &name, T value)
+        {
+            mSettings << name << value;
+        }
+
         template<>
         int GetSetting(const std::string &name) const
         {

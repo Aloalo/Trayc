@@ -2,6 +2,7 @@
 #include "GUIView.h"
 #include <Engine/Engine/Game.h>
 #include <Engine/Engine/AssetLoader.h>
+#include <Engine/Utils/Setting.h>
 #include <easylogging++.h>
 
 using namespace engine;
@@ -54,6 +55,15 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
     if(e.keysym.sym == SDLK_o && e.type == SDL_KEYDOWN) {
         mGame->mRenderer.SetUsePBR(!mGame->mRenderer.UsePBR());
         LOG(INFO) << "[GUIView::KeyPress] PBR: " << mGame->mRenderer.UsePBR();
+    }
+
+    if(e.keysym.sym == SDLK_b && e.type == SDL_KEYDOWN) {
+        static int initialShadowsPasses = Setting<int>("softShadowsBlurPasses");
+        const int currentShadowsPasses = Setting<int>("softShadowsBlurPasses");
+
+        Setting<int>("softShadowsBlurPasses") = (currentShadowsPasses ? 0 : initialShadowsPasses);
+
+        LOG(INFO) << "[GUIView::KeyPress] Shadow Blur Passes: " << Setting<int>("softShadowsBlurPasses");
     }
 }
 

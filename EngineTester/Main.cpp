@@ -112,6 +112,7 @@ void InitShadows(Game &game, Scene &scene, const string &model, const char *prog
 void PrintHelp()
 {
     cout << "o - toggle pbr" << endl << endl;
+    cout << "b - toggle soft shadows" << endl << endl;
 
     cout << "Load sponza demo: \"-sponza\"" << endl;
     cout << "   p - pause lights" << endl << endl;
@@ -120,7 +121,7 @@ void PrintHelp()
     cout << "   right click - rotate head" << endl << endl;
 
     cout << "Load pbr demo: \"-pbr\"" << endl;
-    cout << "   arrows - toggle materials" << endl;
+    cout << "   arrow keys - toggle materials" << endl;
     cout << "   right click - rotate ball" << endl << endl;
 
     cout << "Load shadows demo: \"-shadows\"" << endl;
