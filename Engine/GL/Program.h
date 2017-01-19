@@ -57,6 +57,7 @@ namespace engine
         void LinkProgram(const char *name);
 
         GLuint mID;
+        std::string mName;
         std::map<std::string, GLint> mUniformLocations;
 
         static GLuint mBoundProgram;

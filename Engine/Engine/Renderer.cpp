@@ -187,6 +187,9 @@ namespace engine
         mLinearSampler.BindToSlot(TextureType::LIGHT_ACCUM_TEXTURE);
         mLinearSampler.BindToSlot(TextureType::S_SHADOWPROJECTION);
         mLinearSampler.BindToSlot(TextureType::FINAL_SLOT);
+        mLinearSampler.BindToSlot(TextureType::E_EFFECT1);
+        mLinearSampler.BindToSlot(TextureType::E_EFFECT2);
+        mLinearSampler.BindToSlot(TextureType::E_EFFECT3);
 
         mLinearMipMapSampler.InitForDiffuse();
         mLinearMipMapSampler.BindToSlot(TextureType::DIFFUSE_MAP);

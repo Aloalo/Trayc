@@ -1,5 +1,6 @@
 
 #include <Engine/GL/Program.h>
+#include <Engine/Core/Defines.h>
 #include <Engine/Utils/ErrorCheck.h>
 #include <Engine/Utils/UniformBuffers.h>
 #include <easylogging++.h>
@@ -29,6 +30,7 @@ namespace engine
     {
         Destroy();
         mID = glCreateProgram();
+        mName = string(name);
 
         Attach(vs);
         Attach(gs);
@@ -51,6 +53,7 @@ namespace engine
     {
         Destroy();
         mID = glCreateProgram();
+        mName = string(name);
 
         Attach(vs);
         Attach(fs);
@@ -103,7 +106,6 @@ namespace engine
 
     void Program::BindUniformBuffers(const std::set<std::string> &ubNames) const
     {
-        // TODO: This will generate GL errors because shader can find uniform blocks that are in non active #ifdef blocks
         for(const string &ubName : ubNames) {
             const UniformBuffer *buffer = UniformBuffers::Get().GetUniformBuffer(ubName);
             SetUniformBlockBinding(ubName.c_str(), buffer->GetBlockBinding());
@@ -112,6 +114,7 @@ namespace engine
 
     void Program::Init(const char *name, const Shader::Defines &defines)
     {
+        mName = string(name);
         string sn(name);
         sn += ".geom";
         ifstream f(sn.c_str());
@@ -126,6 +129,7 @@ namespace engine
 
     void Program::Init(const string &vsName, const string &fsName, const Shader::Defines &defines)
     {
+        mName = "(" + vsName + ", " + fsName + ")";
         Init(VertexShader(vsName.c_str(), defines), FragmentShader(fsName.c_str(), defines));
     }
 
@@ -151,7 +155,14 @@ namespace engine
     void Program::SetUniformBlockBinding(const GLchar *name, GLuint bindingPoint) const
     {
         const GLuint blockIndex = GetUniformBlockLocation(name);
-        glUniformBlockBinding(mID, blockIndex, bindingPoint);
+        if(blockIndex != GL_INVALID_INDEX) {
+            glUniformBlockBinding(mID, blockIndex, bindingPoint);
+        }
+    #if PRODUCTION
+        if(blockIndex == GL_INVALID_INDEX) {
+            LOG(WARNING) << "[Program::GetUniformBlockLocation] Trying to bind unexisting uniform block " << name << " to program " << mName;
+        }
+    #endif
     }
 
     GLint Program::GetUniformi(const GLchar *name) const

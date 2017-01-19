@@ -58,6 +58,16 @@ namespace engine
         glSamplerParameteri(mID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
 
+    void TextureSampler::InitNearestDataTexture()
+    {
+        Init();
+
+        glSamplerParameteri(mID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glSamplerParameteri(mID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glSamplerParameteri(mID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glSamplerParameteri(mID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    }
+
     void TextureSampler::InitForShadowmapTexture()
     {
         Init();

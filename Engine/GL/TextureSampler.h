@@ -26,6 +26,9 @@ namespace engine
         // Linear mag filter, Linear min filter, wrap clamp
         void InitForDataTexture();
 
+        // Nearest mag filter, Nearest min filter, wrap clamp
+        void InitNearestDataTexture();
+
         void InitForShadowmapTexture();
 
     private:
