@@ -21,7 +21,7 @@ void PBRMaterialDemo::Init(Game &game, Scene &scene)
     const string path = AssetLoader::Get().TexturePath("pbr/");
     ifstream in(path + "list.txt");
 
-    TriangleMesh sphere = GetSphereMeshSolid(false, 4, 50.0f);
+    TriangleMesh sphere = GetSphereMeshSolid(false, 5, 50.0f);
     scene.mTriMeshes.push_back(sphere);
     const int sphereMeshIdx = scene.mTriMeshes.size() - 1;
 

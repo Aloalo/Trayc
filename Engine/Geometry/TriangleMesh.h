@@ -13,7 +13,7 @@ namespace engine
     class TriangleMesh
     {
     public:
-        TriangleMesh(unsigned int drawMode);
+        TriangleMesh(unsigned int drawMode, int reserve = 16);
 
         std::vector<glm::vec3> mPositions;
         std::vector<glm::vec2> mUVs;

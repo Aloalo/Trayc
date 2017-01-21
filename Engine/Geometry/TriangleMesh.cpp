@@ -6,9 +6,15 @@ using namespace std;
 
 namespace engine
 {
-    TriangleMesh::TriangleMesh(unsigned int drawMode)
+    TriangleMesh::TriangleMesh(unsigned int drawMode, int reserve)
         : mDrawMode(drawMode)
     {
+        mPositions.reserve(reserve);
+        mUVs.reserve(reserve);
+        mNormals.reserve(reserve);
+        mTangents.reserve(reserve);
+        mBitangents.reserve(reserve);
+        mIndices.reserve(reserve);
     }
 
     void TriangleMesh::Clear()

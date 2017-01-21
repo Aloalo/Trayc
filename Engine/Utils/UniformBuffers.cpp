@@ -46,6 +46,7 @@ namespace engine
         if(name == mMatrices.GetName()) {
             return &mMatrices;
         }
+        return nullptr;
     }
 }
 

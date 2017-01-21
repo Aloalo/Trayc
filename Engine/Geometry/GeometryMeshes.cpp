@@ -2,6 +2,7 @@
 #include <Engine/Geometry/GeometryMeshes.h>
 #include <GL/glew.h>
 #include <algorithm>
+#include <thread>
 
 using namespace std;
 using namespace glm;
@@ -224,7 +225,6 @@ namespace engine
 
     TriangleMesh GetSphereMeshSolid(bool indexed, int quality, float radius)
     {
-        TriangleMesh sphere(GL_TRIANGLES);
 
         const float X = 0.525731112119133606f;
         const float Z = 0.850650808352039932f;
@@ -236,7 +236,8 @@ namespace engine
             vec3(Z, X, 0.0), vec3(-Z, X, 0.0), vec3(Z, -X, 0.0), vec3(-Z, -X, 0.0)
         };
 
-        const unsigned int indices[20][3] =
+        const int ctFaces = 20;
+        const unsigned int indices[ctFaces][3] =
         {
             { 0,4,1 },{ 0,9,4 },{ 9,5,4 },{ 4,5,8 },{ 4,8,1 },
             { 8,10,1 },{ 8,3,10 },{ 5,3,8 },{ 5,2,3 },{ 2,7,3 },
@@ -244,8 +245,24 @@ namespace engine
             { 6,1,10 },{ 9,0,11 },{ 9,11,2 },{ 9,2,5 },{ 7,2,11 }
         };
 
-        for(int i = 0; i < 20; i++) {
-            SphereSubdivide(positions[indices[i][0]], positions[indices[i][1]], positions[indices[i][2]], quality, sphere);
+        const int ctVertices = 3 * (1 << (2 * quality));
+        vector<thread> threads;
+        vector<TriangleMesh> meshes(ctFaces, TriangleMesh(GL_TRIANGLES, ctVertices));
+        for(int i = 0; i < ctFaces; i++) {
+            threads.push_back(thread(SphereSubdivide, positions[indices[i][0]], positions[indices[i][1]], positions[indices[i][2]], quality, ref(meshes[i])));
+        }
+
+        for(auto &t : threads) {
+            t.join();
+        }
+
+        TriangleMesh sphere(GL_TRIANGLES, ctVertices * ctFaces);
+        for(const auto &m : meshes) {
+            sphere.mPositions.insert(sphere.mPositions.end(), m.mPositions.begin(), m.mPositions.end());
+            sphere.mNormals.insert(sphere.mNormals.end(), m.mNormals.begin(), m.mNormals.end());
+            sphere.mUVs.insert(sphere.mUVs.end(), m.mUVs.begin(), m.mUVs.end());
+            sphere.mTangents.insert(sphere.mTangents.end(), m.mTangents.begin(), m.mTangents.end());
+            sphere.mBitangents.insert(sphere.mBitangents.end(), m.mBitangents.begin(), m.mBitangents.end());
         }
 
         for(vec3 &p : sphere.mPositions) {
