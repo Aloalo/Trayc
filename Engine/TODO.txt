@@ -27,7 +27,7 @@ Rendering:
         +Directional shadows
         +Point shadows
         -Spot shadows
-        -Soft shadows
+        +Soft shadows
     -Reflections
     -Parallax mapping
     -Screen space reflections
@@ -61,10 +61,5 @@ Optimizations:
     +Reduce max mipmap level
     +Mesh optimizer (won't do)
     +Global light (ambient + directional)
-    
-Bugs:
-    -Fix VS2013/laptop build
-    
-    
     
     
