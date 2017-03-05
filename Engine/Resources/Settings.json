@@ -5,7 +5,7 @@
   "screenHeight": 720,
   "resolutionScale": 1,
   "anisotropicFiltering": 16,
-  "maxMipmapLevelMod": 3,
+  "maxMipmapLevelMod": 0,
   "gamma": 2.2,
   "vsync": 1,
   "shadowResolution": 2048,
