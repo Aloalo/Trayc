@@ -135,6 +135,10 @@ void PrintHelp()
     cout << "   right click - rotate head" << endl << endl;
 
     cout << "Load pbr demo: \"-pbr\"" << endl;
+    //cout << "   arrow keys - toggle materials" << endl;
+    //cout << "   right click - rotate ball" << endl << endl;
+
+    cout << "Load pbr materials demo: \"-pbrmat\"" << endl;
     cout << "   arrow keys - toggle materials" << endl;
     cout << "   right click - rotate ball" << endl << endl;
 

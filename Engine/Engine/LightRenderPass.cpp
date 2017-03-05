@@ -54,7 +54,7 @@ namespace engine
                 }
             }
 
-            if(i == Light::GLOBAL_LIGHT && usePBR) {
+            if(i == Light::GLOBAL_LIGHT) {
                 prog.SetUniform("reflectionMap", TextureType::SKYBOX_SLOT);
             }
 
@@ -113,7 +113,7 @@ namespace engine
 
             prog.Use();
 
-            if(light->GetType() == Light::GLOBAL_LIGHT && mRenderer->UsePBR()) {
+            if(light->GetType() == Light::GLOBAL_LIGHT) {
                 const ForwardRenderPass *fPass = static_cast<const ForwardRenderPass*>(mRenderer->GetRenderPass("forwardPass"));
                 prog.SetUniform("cubemapM", fPass->GetSkyboxM());
             }

@@ -13,7 +13,7 @@ using namespace std;
 
 PBRDemo::PBRDemo(void)
     : mMouseDown(false), mCurrObjIdx(0), mRotX(0.0f), mRotY(0.0f), 
-    mLight(vec3(0.01f), vec3(1.0f), true, vec3(0.0f, 1.0f, 1.0f))
+    mLight(vec3(0.0f), vec3(1.0f), true, vec3(0.0f, 1.0f, 1.0f))
 {
 }
 
@@ -27,17 +27,17 @@ void PBRDemo::Init(Game &game, Scene &scene)
 
     const float radius = 10.0f;
     TriangleMesh sphere = GetSphereMeshSolid(false, sphereQuality, radius);
+    //TriangleMesh sphere = GetCubeMeshSolid(false, true, scale(mat4(1.0f), vec3(radius)));
     scene.mTriMeshes.push_back(sphere);
     const int sphereMeshIdx = scene.mTriMeshes.size() - 1;
 
-    const float spacing = 3.0f * radius;
+    const float spacing = 2.5f * radius;
     const int ctBalls = 10;
     const float step = 1.0f / float(ctBalls);
     int i = 0;
     for(float rough = 0.1f; i < ctBalls; rough += step, ++i) {
         int j = 0;
         for(float metal = 0.1f; j < ctBalls; metal += step, ++j) {
-            cout << metal << endl;
             Material mat;
             mat.mGloss = rough;
             mat.mKs = vec3(metal);

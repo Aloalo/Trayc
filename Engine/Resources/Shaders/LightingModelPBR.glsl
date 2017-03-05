@@ -88,7 +88,7 @@ vec3 Lighting(in vec3 N, in vec3 L, in vec3 P, in vec3 lightIntensity, in vec3 a
     
 #ifdef GLOBAL_LIGHT
     // TODO: Do proper reflections / IBL
-    vec3 reflection = Reflection(V, N, roughness) * Fdiff * specularColor * 0.00001;
+    vec3 reflection = Reflection(V, N, roughness) * Fdiff;
     return shadow * dotNL * atten * lightIntensity * (diffuse + specular) + reflection;
 #else
     return shadow *  dotNL * atten * lightIntensity * (diffuse + specular);
