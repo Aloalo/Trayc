@@ -12,6 +12,7 @@
 #include "GUIView.h"
 #include "SponzaDemo.h"
 #include "PBRMaterialDemo.h"
+#include "PBRDemo.h"
 #include "HeadDemo.h"
 #include "ShadowsDemo.h"
 
@@ -83,7 +84,20 @@ void InitHead(Game &game, Scene &scene, const char *progName, ivec2 SSize)
     headDemo.Init(game, scene);
 }
 
-PBRMaterialDemo PBRDemo;
+PBRMaterialDemo PBRMatDemo;
+void InitPBRMaterial(Game &game, Scene &scene, const char *progName, ivec2 SSize)
+{
+    //Init Camera handler
+    RotationalCameraHandler camHandler(ConstructRotationalCameraHandler(SSize, Setting<float>("FOV"), 1000.0f, vec3(0.0f, 0.0f, 200.0f), vec3(0.0f)));
+
+    //Init Game
+    game.Init(camHandler, progName, "PBR Materials Demo", SSize.x, SSize.y);
+
+    // Init demo
+    PBRMatDemo.Init(game, scene);
+}
+
+PBRDemo pbrDemo;
 void InitPBR(Game &game, Scene &scene, const char *progName, ivec2 SSize)
 {
     //Init Camera handler
@@ -93,7 +107,7 @@ void InitPBR(Game &game, Scene &scene, const char *progName, ivec2 SSize)
     game.Init(camHandler, progName, "PBR Materials Demo", SSize.x, SSize.y);
 
     // Init demo
-    PBRDemo.Init(game, scene);
+    pbrDemo.Init(game, scene);
 }
 
 ShadowsDemo shadowsDemo;
@@ -149,6 +163,9 @@ int main(int argc, char *argv[])
     }
     else if(string(argv[1]) == "-sponza") {
         InitSponza(game, scene, argv[0], SSize);
+    }
+    else if(string(argv[1]) == "-pbrmat") {
+        InitPBRMaterial(game, scene, argv[0], SSize);
     }
     else if(string(argv[1]) == "-pbr") {
         InitPBR(game, scene, argv[0], SSize);

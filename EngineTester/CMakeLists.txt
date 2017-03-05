@@ -15,6 +15,8 @@ set(EngineTester_SRCS_HDRS
     GUIView.cpp
     PBRMaterialDemo.cpp
     PBRMaterialDemo.h
+    PBRDemo.cpp
+    PBRDemo.h
 )
 
 source_group(Src FILES ${EngineTester_SRCS_HDRS})
