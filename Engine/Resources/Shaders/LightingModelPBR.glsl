@@ -84,7 +84,7 @@ vec3 Lighting(in vec3 N, in vec3 L, in vec3 P, in vec3 lightIntensity, in vec3 a
     float geometryTerm = GSmith(dotNL, saturate(dot(N, V)), a);
     float Nterm = NDF(N, H, a);
     
-    vec3 specular = Fspec * geometryTerm * Nterm;
+    vec3 specular = max(vec3(0.0), Fspec * geometryTerm * Nterm);
     
 #ifdef GLOBAL_LIGHT
     // TODO: Do proper reflections / IBL

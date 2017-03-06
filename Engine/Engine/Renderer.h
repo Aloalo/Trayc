@@ -41,6 +41,7 @@ namespace engine
         const Camera* GetCamera() const;
         bool UsePBR() const;
         AABB GetSceneAABB() const;
+        GLubyte* TakeScreenshot(int &width, int &height) const;
 
     private:
         Renderer(const Renderer &other);

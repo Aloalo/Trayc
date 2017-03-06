@@ -150,6 +150,19 @@ namespace engine
         return gPass->GetGPUSceneData()->mScene->GetAABB();
     }
 
+    GLubyte* Renderer::TakeScreenshot(int &width, int &height) const
+    {
+        FrameBuffer::BackBuffer().Bind();
+        const auto bb = GetRenderPass("bbPass");
+        width = bb->GetDstBuffer().Width();
+        height = bb->GetDstBuffer().Height();
+
+        GLubyte *pixels = new GLubyte[3 * width * height];
+        glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, static_cast<void*>(pixels));
+
+        return pixels;
+    }
+
     void Renderer::InitRendering(const CameraHandler *camera)
     {
         if(mCamera) {

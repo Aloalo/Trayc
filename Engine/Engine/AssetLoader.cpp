@@ -10,6 +10,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include <IL/il.h>
+
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -88,6 +90,16 @@ namespace engine
 
         ret.SetBoundingVolumes(scene->mTriMeshes[meshIdx].GetAABB(), scene->mTriMeshes[meshIdx].GetBSphere());
         return ret;
+    }
+
+    void AssetLoader::SavePicture(const std::string &path, void *pixels, int width, int height)
+    {
+        ILuint ilImage;
+        ilGenImages(1, &ilImage);
+        ilBindImage(ilImage);
+        ilTexImage(width, height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, pixels);
+        ilSaveImage(path.c_str());
+        ilDeleteImage(ilImage);
     }
 
     void AssetLoader::CacheScene(const string &path, const string &name, const Scene &scene) const

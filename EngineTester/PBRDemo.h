@@ -19,11 +19,6 @@ public:
     virtual void MouseButton(const SDL_MouseButtonEvent &e) override;
 
 private:
-    bool mMouseDown;
-    int mCurrObjIdx;
-    float mRotX, mRotY;
-
-    std::vector<engine::Object3D*> mObjects;
     engine::GlobalLight mLight;
 };
 

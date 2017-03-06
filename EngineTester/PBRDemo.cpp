@@ -12,8 +12,7 @@ using namespace glm;
 using namespace std;
 
 PBRDemo::PBRDemo(void)
-    : mMouseDown(false), mCurrObjIdx(0), mRotX(0.0f), mRotY(0.0f), 
-    mLight(vec3(0.0f), vec3(1.0f), true, vec3(0.0f, 1.0f, 1.0f))
+    : mLight(vec3(0.0f), vec3(1.0f), true, vec3(0.0f, 1.0f, 1.0f))
 {
 }
 
@@ -46,8 +45,7 @@ void PBRDemo::Init(Game &game, Scene &scene)
             scene.mMaterials.push_back(mat);
             const int matIdx = scene.mMaterials.size() - 1;
             scene.AddObject(AssetLoader::Get().CreateObject(&scene, sphereMeshIdx, matIdx));
-            mObjects.push_back(&scene.mObjects3D[scene.mObjects3D.size() - 1]);
-            auto object = mObjects.back();
+            auto object = &scene.mObjects3D.back();
             object->mShadowCaster = false;
 
             // Set transform
@@ -68,43 +66,12 @@ void PBRDemo::Init(Game &game, Scene &scene)
 
 void PBRDemo::KeyPress(const SDL_KeyboardEvent &e)
 {
-    return;
-
-    if(e.repeat || e.type == SDL_KEYUP)
-        return;
-
-    if(e.keysym.sym == SDLK_LEFT) {
-        mObjects[mCurrObjIdx]->mVisible = false;
-        mCurrObjIdx = mCurrObjIdx == 0 ? mObjects.size() - 1 : mCurrObjIdx - 1;
-    }
-    else if(e.keysym.sym == SDLK_RIGHT) {
-        mObjects[mCurrObjIdx]->mVisible = false;
-        mCurrObjIdx = (mCurrObjIdx + 1) % mObjects.size();
-    }
-
-    mObjects[mCurrObjIdx]->mVisible = true;
 }
 
 void PBRDemo::MouseButton(const SDL_MouseButtonEvent &e)
 {
-    return;
-
-    if(e.button == SDL_BUTTON_RIGHT) {
-        mMouseDown = (e.state == SDL_PRESSED);
-    }
 }
 
 void PBRDemo::MouseMotion(const SDL_MouseMotionEvent &e)
 {
-    return;
-
-    if(mMouseDown) {
-        static const mat4 I(1.0f);
-        mRotX += float(e.xrel) / 80.0f;
-        mRotY += float(e.yrel) / 80.0f;
-        for(Object3D *obj : mObjects) {
-            obj->SetTransform(rotate(I, mRotX, vec3(0.0f, 1.0f, 0.0f)));
-            obj->SetTransform(obj->GetTransform() * rotate(I, mRotY, vec3(1.0f, 0.0f, 0.0f)));
-        }
-    }
 }

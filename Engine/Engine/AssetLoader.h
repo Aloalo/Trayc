@@ -22,6 +22,8 @@ namespace engine
         Scene LoadScene(const std::string &path, const std::string &name) const;
         Object3D CreateObject(const Scene *scene, int meshIdx, int materialIdx) const;
 
+        void SavePicture(const std::string &path, void *pixels, int width, int height);
+
     private:
         void CacheScene(const std::string &path, const std::string &name, const Scene &scene) const;
         Scene LoadSceneCached(const std::string &path, const std::string &name) const;

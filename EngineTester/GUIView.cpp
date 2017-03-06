@@ -4,9 +4,11 @@
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Utils/Setting.h>
 #include <easylogging++.h>
+#include <fstream>
 
 using namespace engine;
 using namespace glm;
+using namespace std;
 
 GUIView::GUIView(engine::Game *game)
     : mGame(game), mVA(GL_STATIC_DRAW)
@@ -64,6 +66,27 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
         Setting<int>("softShadowsBlurPasses") = (currentShadowsPasses ? 0 : initialShadowsPasses);
 
         LOG(INFO) << "[GUIView::KeyPress] Shadow Blur Passes: " << Setting<int>("softShadowsBlurPasses");
+    }
+
+    if(e.keysym.sym == SDLK_F1 && e.type == SDL_KEYDOWN) {
+        // Load screenshot index
+        ifstream fin(AssetLoader::Get().ResourcePath("screenshots.txt"));
+        int idx = 0;
+        if(fin.good()) {
+            fin >> idx;
+        }
+        fin.close();
+        ++idx;
+
+        // Take screenshot
+        int w, h;
+        auto *pixels = mGame->mRenderer.TakeScreenshot(w, h);
+        AssetLoader::Get().SavePicture(AssetLoader::Get().ResourcePath("screen" + to_string(idx) + ".png"), static_cast<void*>(pixels), w, h);
+        delete[] pixels;
+
+        // Save screenshot index
+        ofstream fout(AssetLoader::Get().ResourcePath("screenshots.txt"));
+        fout << idx;
     }
 }
 
