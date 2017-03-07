@@ -12,7 +12,7 @@ using namespace std;
 ShadowsDemo::ShadowsDemo(void)
     : mLightLookAt(0.0f), mLightStartPos(100.0f), mRotX(0.0f), mCurrSceneIdx(0), mMouseDown(false), mGame(nullptr),
     mPLightObj(nullptr), mLight(vec3(1.0f), true, vec3(1.0f, 0.005f, 0.0f), vec3(mLightStartPos), vec3(0.0f), 20.0f, 90.0f),
-    mAmbientLight(vec3(0.075f), true)
+    mGlobalLight(vec3(0.0f), vec3(0.0f), true, vec3(1.0f))
 {
     mLight.SetDirection(normalize(mLightLookAt - mLight.GetPosition()));
 }
@@ -28,7 +28,7 @@ void ShadowsDemo::Init(Game &game, Scene &scene, const std::string &model)
     Material mat;
     mat.mKd = vec3(1.0f);
     mat.mKs = vec3(0.1f);
-    mat.mGloss = 0.0f;
+    mat.mGloss = 1.0f;
 
     scene.mMaterials.push_back(mat);
     scene.mTriMeshes.push_back(plane);
@@ -54,7 +54,7 @@ void ShadowsDemo::Init(Game &game, Scene &scene, const std::string &model)
     mPLightObj->mShadowCaster = false;
     mPLightObj->SetTransform(translate(mat4(1.0f), mLight.GetPosition()));
 
-    scene.mLights.push_back(&mAmbientLight);
+    scene.mLights.push_back(&mGlobalLight);
     scene.mLights.push_back(&mLight);
 
     game.mRenderer.SetScene(&scene);

@@ -27,7 +27,7 @@ private:
     engine::Game *mGame;
     engine::Object3D *mPLightObj;
     engine::SpotLight mLight;
-    engine::AmbientLight mAmbientLight;
+    engine::GlobalLight mGlobalLight;
 };
 
 #endif
