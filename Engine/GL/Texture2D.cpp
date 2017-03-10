@@ -18,6 +18,16 @@ namespace engine
     {
     }
 
+    Texture2D::Texture2D(uint target, uint ID, uint internalFormat, glm::ivec2 size, uint format, uint type)
+        : Texture(target)
+    {
+        mID = ID;
+        mInternalFormat = internalFormat;
+        mSize = size;
+        mFormat = format;
+        mType = type;
+    }
+
     void Texture2D::Init(const char *file, bool mipmaps, TextureType type)
     {
         InitFromFile(Target(), file, mipmaps, type);
@@ -25,12 +35,12 @@ namespace engine
 
     void Texture2D::Init(uint internalFormat, ivec2 size, uint format, uint type)
     {
-        InitEmpty(Target(), internalFormat, size, format, type);
+        InitEmpty(Target(), internalFormat, size, format, type, true);
     }
 
     void Texture2D::Init(const TextureDescription &desc)
     {
-        InitEmpty(Target(), desc.internalFormat, desc.size, desc.format, desc.type);
+        InitEmpty(Target(), desc.internalFormat, desc.size, desc.format, desc.type, true);
     }
 
     void Texture2D::Resize(ivec2 size)

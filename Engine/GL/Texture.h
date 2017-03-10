@@ -32,7 +32,7 @@ namespace engine
         virtual void Resize(glm::ivec2 size) = 0;
 
         void BindToSlot(int texSlot) const;
-        static void UnBindFromSlot(int texSlot);
+        void UnBindFromSlot(int texSlot) const;
         void Destroy();
 
         glm::ivec2 Size() const;
@@ -49,17 +49,17 @@ namespace engine
         uint mInternalFormat;
         uint mFormat;
         uint mType;
+        uint mID;
 
         // Initialises texture params
         void InitFromFile(uint target, const char *file, bool mipmaps, TextureType type);
         // Doesn't initialise texture params
-        void LoadFromFile(uint target, const char *file, TextureType type);
-        void InitEmpty(uint target, uint internalFormat, glm::ivec2 size, uint format, uint type);
+        void LoadFromFile(uint target, const char *file, TextureType type, bool createTexObj);
+        void InitEmpty(uint target, uint internalFormat, glm::ivec2 size, uint format, uint type, bool createTexObj);
 
         void GenerateMipmaps() const;
 
     private:
-        uint mID;
         uint mTarget;
 
         static uint mBoundTextures[TextureType::CT_TEX_SLOTS];

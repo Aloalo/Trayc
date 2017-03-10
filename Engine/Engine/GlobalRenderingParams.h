@@ -34,6 +34,9 @@ namespace engine
         E_EFFECT2 = 18,
         E_EFFECT3 = 19,
 
+        // For the irradiance map
+        IRRADIANCE_SLOT = 27,
+
         // Where the result of all passes except bb must end up
         FINAL_SLOT = 28,
         SKYBOX_SLOT = 29,

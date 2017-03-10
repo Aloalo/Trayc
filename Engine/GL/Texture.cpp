@@ -1,5 +1,6 @@
 #include <Engine/GL/Texture2D.h>
 #include <Engine/Utils/Setting.h>
+#include <Engine/Utils/ErrorCheck.h>
 
 #include <GL/glew.h>
 #include <IL/il.h>
@@ -8,9 +9,10 @@
 #include <easylogging++.h>
 
 #include <cmath>
-
+#include <set>
 
 using namespace glm;
+using namespace std;
 
 namespace engine
 {
@@ -26,6 +28,16 @@ namespace engine
 
     unsigned int Texture::mBoundTextures[TextureType::CT_TEX_SLOTS] = {0};
 
+    static const std::set<GLenum> CAN_SET_PARAMS = {
+        GL_TEXTURE_1D, GL_TEXTURE_1D_ARRAY,
+        GL_TEXTURE_2D, GL_TEXTURE_2D_ARRAY,
+        GL_TEXTURE_2D_MULTISAMPLE,
+        GL_TEXTURE_2D_MULTISAMPLE_ARRAY,
+        GL_TEXTURE_3D, GL_TEXTURE_CUBE_MAP,
+        GL_TEXTURE_CUBE_MAP_ARRAY,
+        GL_TEXTURE_RECTANGLE
+    };
+
     Texture::Texture(uint target)
         : mSize(0), mInternalFormat(0), mFormat(0), mType(0), mID(0), mTarget(target)
     {
@@ -40,15 +52,15 @@ namespace engine
     {
         if(mBoundTextures[texSlot] != mID) {
             glActiveTexture(GL_TEXTURE0 + texSlot);
-            glBindTexture(GL_TEXTURE_2D, mID);
+            glBindTexture(mTarget, mID);
             mBoundTextures[texSlot] = mID;
         }
     }
 
-    void Texture::UnBindFromSlot(int texSlot)
+    void Texture::UnBindFromSlot(int texSlot) const
     {
         glActiveTexture(GL_TEXTURE0 + texSlot);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(mTarget, 0);
         mBoundTextures[texSlot] = 0;
     }
 
@@ -85,7 +97,7 @@ namespace engine
 
     void Texture::InitFromFile(uint target, const char *file, bool mipmaps, TextureType type)
     {
-        LoadFromFile(target, file, type);
+        LoadFromFile(target, file, type, true);
 
         BindToSlot(EMPTY_SLOT);
         {
@@ -107,7 +119,7 @@ namespace engine
         UnBindFromSlot(EMPTY_SLOT);
     }
 
-    void Texture::LoadFromFile(uint target, const char *file, TextureType type)
+    void Texture::LoadFromFile(uint target, const char *file, TextureType type, bool createTexObj)
     {
         unsigned int imgid;
         ilGenImages(1, &imgid);
@@ -136,7 +148,10 @@ namespace engine
 
         LOG(INFO) << "[Texture::LoadFromFile] Loaded Texture: " << file;
 
-        Init();
+        if(createTexObj) {
+            Init();
+        }
+
         mSize = ivec2(ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
         mInternalFormat = GL_RGBA;
         mFormat = GL_RGBA;
@@ -149,14 +164,17 @@ namespace engine
         ilDeleteImages(1, &imgid);
     }
 
-    void Texture::InitEmpty(uint target, uint internalFormat, ivec2 size, uint format, uint type)
+    void Texture::InitEmpty(uint target, uint internalFormat, ivec2 size, uint format, uint type, bool createTexObj)
     {
         mSize = size;
         mInternalFormat = internalFormat;
         mFormat = format;
         mType = type;
 
-        Texture::Init();
+        if(createTexObj) {
+            Texture::Init();
+        }
+
         BindToSlot(0);
         {
             glTexImage2D(target,
@@ -169,12 +187,14 @@ namespace engine
                 mType,
                 nullptr);
 
-            glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, 0);
-            glTexParameteri(target, GL_TEXTURE_BASE_LEVEL, 0);
+            if(CAN_SET_PARAMS.find(target) != CAN_SET_PARAMS.end()) {
+                glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, 0);
+                glTexParameteri(target, GL_TEXTURE_BASE_LEVEL, 0);
+            }
         }
         UnBindFromSlot(0);
     }

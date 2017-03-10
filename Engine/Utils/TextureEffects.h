@@ -5,6 +5,7 @@
 #include <Engine/Utils/Singleton.h>
 #include <Engine/Engine/TextureCombiner.h>
 #include <Engine/GL/Texture2D.h>
+#include <Engine/GL/CubemapTexture.h>
 #include <Engine/GL/Program.h>
 #include <set>
 #include <map>
@@ -18,6 +19,7 @@ namespace engine
 
         void Blur(const Texture2D &tex);
         void ShadowBlur(const Texture2D &tex, const Texture2D &depth);
+        CubemapTexture GenerateIrradianceMap(const CubemapTexture &tex);
 
     private:
         friend engine::Singleton<TextureEffects>;
@@ -42,6 +44,7 @@ namespace engine
             BLUR_HORIZONTAL,
             SHADOW_BLUR_VERTICAL,
             SHADOW_BLUR_HORIZONTAL,
+            GENERATE_IRRADIANCE_MAP,
 
             CT_PROGRAMS
         };

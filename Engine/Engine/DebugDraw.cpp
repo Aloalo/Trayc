@@ -11,7 +11,7 @@ namespace engine
 {
     void DebugDraw::DrawDepth(const Texture2D &tex, float nearRange, float farRange) const
     {
-        TextureCombiner::SetTexture(TextureType::DEBUG_SLOT, tex);
+        TextureCombiner::SetTexture(TextureType::DEBUG_SLOT, &tex);
         mDrawDepth.Prog().Use();
         mDrawDepth.Prog().SetUniform("nearRange", nearRange);
         mDrawDepth.Prog().SetUniform("farRange", farRange);
@@ -21,7 +21,7 @@ namespace engine
 
     void DebugDraw::DrawTexture(const Texture2D &tex, const vec3 &gamma) const
     {
-        TextureCombiner::SetTexture(TextureType::DEBUG_SLOT, tex);
+        TextureCombiner::SetTexture(TextureType::DEBUG_SLOT, &tex);
         mDrawTex.Prog().Use();
         mDrawTex.Prog().SetUniform("gamma", gamma);
         mDrawTex.Draw();
@@ -30,7 +30,7 @@ namespace engine
 
     void DebugDraw::DrawNormal(const Texture2D &tex) const
     {
-        TextureCombiner::SetTexture(TextureType::DEBUG_SLOT, tex);
+        TextureCombiner::SetTexture(TextureType::DEBUG_SLOT, &tex);
         mDrawNormals.Prog().Use();
         mDrawNormals.Draw();
         Program::Unbind();
@@ -38,7 +38,7 @@ namespace engine
 
     void DebugDraw::DrawGloss(const Texture2D &tex) const
     {
-        TextureCombiner::SetTexture(TextureType::DEBUG_SLOT, tex);
+        TextureCombiner::SetTexture(TextureType::DEBUG_SLOT, &tex);
         mDrawGloss.Prog().Use();
         mDrawGloss.Draw();
         Program::Unbind();

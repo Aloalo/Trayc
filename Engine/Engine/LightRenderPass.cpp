@@ -56,6 +56,9 @@ namespace engine
 
             if(i == Light::GLOBAL_LIGHT) {
                 prog.SetUniform("reflectionMap", TextureType::SKYBOX_SLOT);
+                if(mRenderer->UsePBR()) {
+                    prog.SetUniform("irradianceMap", TextureType::IRRADIANCE_SLOT);
+                }
             }
 
             prog.SetUniform("gAlbedo", TextureType::G_ALBEDO_TEXTURE);

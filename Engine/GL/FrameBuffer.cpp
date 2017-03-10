@@ -1,4 +1,5 @@
 #include <Engine/GL/FrameBuffer.h>
+#include <Engine/Utils/ErrorCheck.h>
 #include <easylogging++.h>
 
 using namespace std;
@@ -84,7 +85,7 @@ namespace engine
         mAttachments.push_back(Attachment(tex, attachment));
 
         Bind();
-        glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex.ID(), 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, tex.Target(), tex.ID(), 0);
         UnBind();
     }
 
@@ -97,7 +98,7 @@ namespace engine
         attachementTex.Init(internalFormat, ivec2(mWidth, mHeight), format, type);
 
         Bind();
-        glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, attachementTex.ID(), 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, attachementTex.Target(), attachementTex.ID(), 0);
         UnBind();
     }
 

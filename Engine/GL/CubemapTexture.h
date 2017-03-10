@@ -15,9 +15,13 @@ namespace engine
         // From file
         void Init(const std::string files[6], TextureType type);
 
+        // Init blank
+        void Init(uint internalFormat, glm::ivec2 size, uint format, uint type);
+
+        Texture2D GetSide(int idx) const;
+
     private:
         static uint mCubeSides[6];
-        Texture2D mSideTextures[6];
     };
 }
 

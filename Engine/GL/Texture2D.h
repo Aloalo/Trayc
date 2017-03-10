@@ -9,7 +9,9 @@ namespace engine
     {
         using uint = unsigned int;
     public:
+        // Sets target to GL_TEXTUR_2D
         Texture2D(void);
+        Texture2D(uint target, uint ID, uint internalFormat, glm::ivec2 size, uint format, uint type);
         Texture2D(const char *file, bool mipmaps, TextureType type);
 
         // From file

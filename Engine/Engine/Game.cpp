@@ -53,11 +53,12 @@ namespace engine
         // Register self
         mInputHandler.AddEventListener(this);
 
-        mRenderer.InitRendering(mCameraHandler);
-        mRenderer.SetScreenSize(screenWidth, screenHeight);
-
         // Init effects
         TextureEffects::Get().Init();
+
+        // Init rendering
+        mRenderer.InitRendering(mCameraHandler);
+        mRenderer.SetScreenSize(screenWidth, screenHeight);
 
         mProfiler.AddProfileTarget("rendering", mFrameCap);
         mProfiler.AddProfileTarget("events", mFrameCap);

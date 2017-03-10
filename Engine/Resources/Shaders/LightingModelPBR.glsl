@@ -1,10 +1,9 @@
 #define TERM_BECKMANN 0
 #define TERM_GGX 1
 
-#include "UB_Matrices.glsl"
-
-uniform samplerCube reflectionMap;
-uniform mat4 cubemapM;
+#ifdef GLOBAL_LIGHT
+    #include "ImageBasedLighting.glsl"
+#endif
 
 float saturate(in float x)
 {
@@ -58,16 +57,6 @@ float NDF(in vec3 N, in vec3 H, in float a)
 #endif
 }
 
-#ifdef GLOBAL_LIGHT
-    vec3 Reflection(in vec3 V, in vec3 N, in float roughness)
-    {
-        float lod = log2(float(textureSize(reflectionMap, 0).x));
-        vec3 R = reflect(-V, N);
-        R = (cubemapM * (invV * vec4(R, 0.0))).xyz;
-        return textureLod(reflectionMap, R, lod * roughness).rgb;
-    }
-#endif
-
 vec3 Lighting(in vec3 N, in vec3 L, in vec3 P, in vec3 lightIntensity, in vec3 albedo, in vec3 specularColor, in float atten, in float roughness, in float shadow)
 {
     vec3 V = -normalize(P);
@@ -85,13 +74,13 @@ vec3 Lighting(in vec3 N, in vec3 L, in vec3 P, in vec3 lightIntensity, in vec3 a
     float Nterm = NDF(N, H, a);
     
     vec3 specular = max(vec3(0.0), Fspec * geometryTerm * Nterm);
+   
+    vec3 Lo = shadow *  dotNL * atten * lightIntensity * (diffuse + specular);
     
-#ifdef GLOBAL_LIGHT
-    // TODO: Do proper reflections / IBL
-    vec3 reflection = Reflection(V, N, roughness) * Fdiff;
-    return shadow * dotNL * atten * lightIntensity * (diffuse + specular) + reflection;
-#else
-    return shadow *  dotNL * atten * lightIntensity * (diffuse + specular);
-#endif
+    #ifdef GLOBAL_LIGHT
+        Lo += IBL(V, N, roughness, specularColor, albedo);
+    #endif
+
+    return Lo;
 }
 

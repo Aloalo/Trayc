@@ -26,6 +26,7 @@ namespace engine
     private:
         Program mSkyboxProg;
         CubemapTexture mSkyboxCubemap;
+        CubemapTexture mIrradianceMap;
         VertexArray mSkyboxVA;
         glm::mat4 mSkyboxTransform;
         glm::mat4 mSkyboxScale;

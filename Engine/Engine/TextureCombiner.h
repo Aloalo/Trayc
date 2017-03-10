@@ -22,7 +22,7 @@ namespace engine
 
         // Get program
         const Program& Prog() const;
-        static void SetTexture(int idx, const Texture2D &tex);
+        static void SetTexture(int idx, const Texture *tex);
 
         void Draw() const;
 

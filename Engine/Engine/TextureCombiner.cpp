@@ -44,9 +44,9 @@ namespace engine
         return mProgram;
     }
 
-    void TextureCombiner::SetTexture(int idx, const Texture2D &tex)
+    void TextureCombiner::SetTexture(int idx, const Texture *tex)
     {
-        tex.BindToSlot(idx);
+        tex->BindToSlot(idx);
     }
 
     void TextureCombiner::Draw() const

@@ -4,6 +4,7 @@
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Engine/Renderer.h>
 #include <Engine/Core/Camera.h>
+#include <Engine/Utils/TextureEffects.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 using namespace glm;
@@ -25,28 +26,35 @@ namespace engine
 
         // Load skybox
         const string sideNames[6] = {
-            AssetLoader::Get().TexturePath("skybox/front.jpg"),
             AssetLoader::Get().TexturePath("skybox/back.jpg"),
-            AssetLoader::Get().TexturePath("skybox/top.jpg"),
+            AssetLoader::Get().TexturePath("skybox/front.jpg"),
             AssetLoader::Get().TexturePath("skybox/bottom.jpg"),
+            AssetLoader::Get().TexturePath("skybox/top.jpg"),
             AssetLoader::Get().TexturePath("skybox/left.jpg"),
-            AssetLoader::Get().TexturePath("skybox/right.jpg")
+            AssetLoader::Get().TexturePath("skybox/right.jpg"),
         };
         mSkyboxCubemap.Init(sideNames, TextureType::DIFFUSE_MAP);
-        mSkyboxCubemap.BindToSlot(TextureType::SKYBOX_SLOT);
 
         const float sideHalfSize = renderer->GetCamera()->mFarDistance * mFarPlaneMod * 0.5f;
-        mSkyboxScale = scale(mat4(1.0f), vec3(sideHalfSize));
-        mSkyboxTransform = rotate(mat4(1.0f), radians(180.0f), vec3(0.0f, 0.0f, 1.0f));
+        mSkyboxScale =  scale(mat4(1.0f), vec3(sideHalfSize));
+        mSkyboxTransform = mat4(1.0f);
         TriangleMesh cube = GetCubeMeshSolid(true, false);
         cube.FlipWinding();
         mSkyboxVA.Init(&cube);
+
+        // Create the irradiance map
+        mIrradianceMap = TextureEffects::Get().GenerateIrradianceMap(mSkyboxCubemap);
+        mSkyboxCubemap.BindToSlot(TextureType::SKYBOX_SLOT);
+        mIrradianceMap.BindToSlot(TextureType::IRRADIANCE_SLOT);
+        // Uncomment to use the irradiance map as skybox
+        // mIrradianceMap.BindToSlot(TextureType::SKYBOX_SLOT);
     }
 
     void Skybox::Destroy()
     {
         mSkyboxProg.Destroy();
         mSkyboxCubemap.Destroy();
+        mIrradianceMap.Destroy();
         mSkyboxVA.Destroy();
     }
 

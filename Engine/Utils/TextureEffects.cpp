@@ -1,5 +1,6 @@
 
 #include <Engine/Utils/TextureEffects.h>
+#include <Engine/Utils/ErrorCheck.h>
 #include <Engine/Engine/AssetLoader.h>
 
 using namespace std;
@@ -10,10 +11,12 @@ namespace engine
    
     TextureEffects::TextureEffects(void)
     {
+        // vertex name, fragment name, num textures, defines
         mProgramDefinitions[BLUR_HORIZONTAL] = { "C_TexToScreen", "P_blur", "1", "HORIZONTAL" };
         mProgramDefinitions[BLUR_VERTICAL] = { "C_TexToScreen", "P_blur",  "1", "VERTICAL" };
         mProgramDefinitions[SHADOW_BLUR_HORIZONTAL] = { "C_TexToScreen", "P_shadowBlur",  "2", "HORIZONTAL" };
         mProgramDefinitions[SHADOW_BLUR_VERTICAL] = { "C_TexToScreen", "P_shadowBlur",  "2", "VERTICAL" };
+        mProgramDefinitions[GENERATE_IRRADIANCE_MAP] = { "C_TexToScreen", "GenerateIrradianceMap",  "1" };
     }
 
     const Texture2D& TextureEffects::GetTexture(const Texture2D &tex)
@@ -88,11 +91,11 @@ namespace engine
         glDisable(GL_DEPTH_TEST);
 
         SetAsRenderTarget(temp);
-        blurH.SetTexture(E_EFFECT1, tex);
+        blurH.SetTexture(E_EFFECT1, &tex);
         blurH.Draw();
 
         SetAsRenderTarget(tex);
-        blurV.SetTexture(E_EFFECT1, temp);
+        blurV.SetTexture(E_EFFECT1, &temp);
         blurV.Draw();
 
         glEnable(GL_DEPTH_TEST);
@@ -108,15 +111,39 @@ namespace engine
         glDisable(GL_DEPTH_TEST);
 
         SetAsRenderTarget(temp);
-        blurH.SetTexture(E_EFFECT1, tex);
-        blurH.SetTexture(E_EFFECT2, depth);
+        blurH.SetTexture(E_EFFECT1, &tex);
+        blurH.SetTexture(E_EFFECT2, &depth);
         blurH.Draw();
 
         SetAsRenderTarget(tex);
-        blurV.SetTexture(E_EFFECT1, temp);
-        blurH.SetTexture(E_EFFECT2, depth);
+        blurV.SetTexture(E_EFFECT1, &temp);
+        blurH.SetTexture(E_EFFECT2, &depth);
         blurV.Draw();
 
         glEnable(GL_DEPTH_TEST);
+    }
+
+    CubemapTexture TextureEffects::GenerateIrradianceMap(const CubemapTexture &tex)
+    {
+        CubemapTexture ret;
+        ret.Init(GL_RGBA, ivec2(1024), GL_RGBA, GL_UNSIGNED_BYTE);
+
+        const TextureCombiner &gen = mCombiners[GENERATE_IRRADIANCE_MAP];
+        gen.SetTexture(E_EFFECT1, &tex);
+
+        glDisable(GL_DEPTH_TEST);
+
+        const Program &p = gen.Prog();
+        p.Use();
+        for(int i = 0; i < 6; ++i) {
+            const Texture2D side = ret.GetSide(i);
+            SetAsRenderTarget(side);
+            p.SetUniform("cubeFace", i);
+            gen.Draw();
+        }
+
+        glEnable(GL_DEPTH_TEST);
+
+        return ret;
     }
 }

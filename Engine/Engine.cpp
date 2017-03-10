@@ -45,7 +45,7 @@ namespace engine
         performanceConf.set(el::Level::Error, el::ConfigurationType::Filename, "logs/perflog.log");
         performanceConf.set(el::Level::Warning, el::ConfigurationType::Filename, "logs/perflog.log");
 
-#if DEPLOY
+#if 1 //DEPLOY
         performanceConf.set(el::Level::Info, el::ConfigurationType::ToStandardOutput, "false");
         performanceConf.set(el::Level::Error, el::ConfigurationType::ToStandardOutput, "false");
         performanceConf.set(el::Level::Warning, el::ConfigurationType::ToStandardOutput, "false");
