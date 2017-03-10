@@ -12,7 +12,7 @@ using namespace std;
 
 PBRMaterialDemo::PBRMaterialDemo(void)
     : mMouseDown(false), mCurrObjIdx(0), mRotX(0.0f), mRotY(0.0f), 
-    mLight(vec3(0.01f), vec3(1.0f), true, vec3(0.0f, 1.0f, 1.0f))
+    mLight(vec3(0.0f), vec3(1.0f), true, vec3(0.0f, 1.0f, 1.0f))
 {
 }
 
