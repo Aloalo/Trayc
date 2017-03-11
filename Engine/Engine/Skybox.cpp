@@ -25,13 +25,14 @@ namespace engine
         Program::Unbind();
 
         // Load skybox
+        const string skyboxFolder = "skybox/";
         const string sideNames[6] = {
-            AssetLoader::Get().TexturePath("skybox/back.jpg"),
-            AssetLoader::Get().TexturePath("skybox/front.jpg"),
-            AssetLoader::Get().TexturePath("skybox/bottom.jpg"),
-            AssetLoader::Get().TexturePath("skybox/top.jpg"),
-            AssetLoader::Get().TexturePath("skybox/left.jpg"),
-            AssetLoader::Get().TexturePath("skybox/right.jpg"),
+            AssetLoader::Get().TexturePath(skyboxFolder + "back.jpg"),
+            AssetLoader::Get().TexturePath(skyboxFolder + "front.jpg"),
+            AssetLoader::Get().TexturePath(skyboxFolder + "bottom.jpg"),
+            AssetLoader::Get().TexturePath(skyboxFolder + "top.jpg"),
+            AssetLoader::Get().TexturePath(skyboxFolder + "left.jpg"),
+            AssetLoader::Get().TexturePath(skyboxFolder + "right.jpg"),
         };
         mSkyboxCubemap.Init(sideNames, TextureType::DIFFUSE_MAP);
 

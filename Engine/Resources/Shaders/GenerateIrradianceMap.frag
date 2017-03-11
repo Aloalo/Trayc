@@ -40,9 +40,9 @@ void main()
 
     vec3 sum = vec3(0.0, 0.0, 0.0);
     float index = 0.0;
-    for(float phi = 0.0; phi < 6.283; phi += 0.025)
+    for(float phi = 0.0; phi < 6.283; phi += 0.02)
     {
-        for(float theta = 0.0; theta < 1.57; theta += 0.1)
+        for(float theta = 0.0; theta < 1.57; theta += 0.02)
         {
             vec3 temp = cos(phi) * right + sin(phi) * up;
             vec3 sampleVector = cos(theta) * normal + sin(theta) * temp;

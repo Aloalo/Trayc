@@ -126,7 +126,7 @@ namespace engine
     CubemapTexture TextureEffects::GenerateIrradianceMap(const CubemapTexture &tex)
     {
         CubemapTexture ret;
-        ret.Init(GL_RGBA, ivec2(1024), GL_RGBA, GL_UNSIGNED_BYTE);
+        ret.Init(GL_RGBA, ivec2(128), GL_RGBA, GL_UNSIGNED_BYTE);
 
         const TextureCombiner &gen = mCombiners[GENERATE_IRRADIANCE_MAP];
         gen.SetTexture(E_EFFECT1, &tex);

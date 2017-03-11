@@ -21,7 +21,7 @@ void PBRDemo::Init(Game &game, Scene &scene)
 #ifdef _DEBUG
     const int sphereQuality = 3;
 #else
-    const int sphereQuality = 5;
+    const int sphereQuality = 4;
 #endif
 
     const float radius = 10.0f;
