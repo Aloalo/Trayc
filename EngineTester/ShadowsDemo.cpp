@@ -20,7 +20,12 @@ ShadowsDemo::ShadowsDemo(void)
 void ShadowsDemo::Init(Game &game, Scene &scene, const std::string &model)
 {
     scene = AssetLoader::Get().LoadScene(AssetLoader::Get().ModelPath(model + "/"), model + ".obj");
-    scene.Scale(80.0f);
+    if(model == "mitsuba") {
+        scene.Scale(20.0f);
+    }
+    else {
+        scene.Scale(80.0f);
+    }
     const float planeHeight = scene.GetAABB().mMinv.y;
 
     // init plane

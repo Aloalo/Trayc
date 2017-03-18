@@ -34,13 +34,13 @@ void PBRDemo::Init(Game &game, Scene &scene)
     const int ctBalls = 10;
     const float step = 1.0f / float(ctBalls);
     int i = 0;
-    for(float rough = 0.1f; i < ctBalls; rough += step, ++i) {
+    for(float rough = 0.001f; i <= ctBalls; rough += step, ++i) {
         int j = 0;
-        for(float metal = 0.1f; j < ctBalls; metal += step, ++j) {
+        for(float metal = 0.001f; j <= ctBalls; metal += step, ++j) {
             Material mat;
             mat.mGloss = rough;
             mat.mKs = vec3(metal);
-            mat.mKd = vec3(0.0f);
+            mat.mKd = vec3(1.0f, 0.0f, 0.0f);
             mat.mNeedsForwardRender = false;
             scene.mMaterials.push_back(mat);
             const int matIdx = scene.mMaterials.size() - 1;
