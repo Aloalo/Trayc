@@ -41,34 +41,37 @@ GUIView::~GUIView(void)
 
 void GUIView::KeyPress(const SDL_KeyboardEvent &e)
 {
-    if(e.repeat) {
+    if(e.repeat || e.type != SDL_KEYDOWN) {
         return;
     }
 
-    if(e.keysym.sym == SDLK_ESCAPE && e.type == SDL_KEYDOWN) {
-        Renderable::mIsActive = !Renderable::mIsActive;
+    const int skyboxCount = 3;
+    static int skyboxIdx = 0;
 
+    switch(e.keysym.sym)
+    {
+    case SDLK_ESCAPE:
+    {
+        Renderable::mIsActive = !Renderable::mIsActive;
         CameraHandler *camHandler = mGame->GetCameraHandler();
         camHandler->InputObserver::mActive = !camHandler->InputObserver::mActive;
-
         mGame->mInputHandler.SetCursorFree(!mGame->mInputHandler.IsCursorFree());
+        break;
     }
-
-    if(e.keysym.sym == SDLK_o && e.type == SDL_KEYDOWN) {
+    case SDLK_o:
         mGame->mRenderer.SetUsePBR(!mGame->mRenderer.UsePBR());
         LOG(INFO) << "[GUIView::KeyPress] PBR: " << mGame->mRenderer.UsePBR();
-    }
-
-    if(e.keysym.sym == SDLK_b && e.type == SDL_KEYDOWN) {
+        break;
+    case SDLK_b:
+    {
         static int initialShadowsPasses = Setting<int>("softShadowsBlurPasses");
         const int currentShadowsPasses = Setting<int>("softShadowsBlurPasses");
-
         Setting<int>("softShadowsBlurPasses") = (currentShadowsPasses ? 0 : initialShadowsPasses);
-
         LOG(INFO) << "[GUIView::KeyPress] Shadow Blur Passes: " << Setting<int>("softShadowsBlurPasses");
+        break;
     }
-
-    if(e.keysym.sym == SDLK_F1 && e.type == SDL_KEYDOWN) {
+    case SDLK_F1:
+    {
         // Load screenshot index
         ifstream fin(AssetLoader::Get().ResourcePath("screenshots.txt"));
         int idx = 0;
@@ -87,6 +90,22 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
         // Save screenshot index
         ofstream fout(AssetLoader::Get().ResourcePath("screenshots.txt"));
         fout << idx;
+        break;
+    }
+    case SDLK_UP:
+    {
+        skyboxIdx = (skyboxIdx + 1) % skyboxCount;
+        mGame->mRenderer.LoadSkybox(skyboxIdx);
+        break;
+    }
+    case SDLK_DOWN:
+    {
+        skyboxIdx = (skyboxIdx == 0 ? skyboxCount - 1 : skyboxIdx - 1);
+        mGame->mRenderer.LoadSkybox(skyboxIdx);
+        break;
+    }
+    default:
+        break;
     }
 }
 

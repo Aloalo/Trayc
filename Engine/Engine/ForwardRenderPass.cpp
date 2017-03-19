@@ -68,4 +68,9 @@ namespace engine
     {
         return mSkybox.GetTransform();
     }
+
+    void ForwardRenderPass::LoadSkybox(int idx)
+    {
+        mSkybox.LoadSkybox(idx);
+    }
 }

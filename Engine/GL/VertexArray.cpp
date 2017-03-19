@@ -127,6 +127,7 @@ namespace engine
     void VertexArray::Destroy()
     {
         glDeleteVertexArrays(1, &mVAO);
+        mVAO = 0;
         mVBO.Destroy();
         mIBO.Destroy();
     }

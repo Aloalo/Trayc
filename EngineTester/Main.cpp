@@ -24,7 +24,7 @@ using namespace glm;
 
 DefaultCameraHandler ConstructDefaultCameraHandler(ivec2 ss, float FOV, float farDist)
 {
-    const float nearDist = 10.0f;
+    const float nearDist = 1.0f;
     const vec3 cameraPos(0.0f, 200.0f, 0.0f);
     const Camera camera(cameraPos, float(ss.x) / float(ss.y), FOV, nearDist, farDist);
 
@@ -37,7 +37,7 @@ DefaultCameraHandler ConstructDefaultCameraHandler(ivec2 ss, float FOV, float fa
 
 RotationalCameraHandler ConstructRotationalCameraHandler(ivec2 ss, float FOV, float farDist, vec3 cameraPos, vec3 lookAtPoint)
 {
-    const float nearDist = 10.0f;
+    const float nearDist = 1.0f;
     const Camera camera(cameraPos, float(ss.x) / float(ss.y), FOV, nearDist, farDist);
 
     const float rotationSpeed = 0.003f;
@@ -127,6 +127,7 @@ void PrintHelp()
 {
     cout << "o - toggle pbr" << endl << endl;
     cout << "b - toggle soft shadows" << endl << endl;
+    cout << "up/down - change environment" << endl << endl;
 
     cout << "Load sponza demo: \"-sponza\"" << endl;
     cout << "   p - pause lights" << endl << endl;
@@ -135,15 +136,13 @@ void PrintHelp()
     cout << "   right click - rotate head" << endl << endl;
 
     cout << "Load pbr demo: \"-pbr\"" << endl;
-    //cout << "   arrow keys - toggle materials" << endl;
-    //cout << "   right click - rotate ball" << endl << endl;
 
     cout << "Load pbr materials demo: \"-pbrmat\"" << endl;
     cout << "   arrow keys - toggle materials" << endl;
     cout << "   right click - rotate ball" << endl << endl;
 
     cout << "Load shadows demo: \"-shadows\"" << endl;
-    cout << "   -buddha or -dragon" << endl;
+    cout << "   -buddha | -dragon | -mitsuba | -cerberus" << endl;
     cout << "   right click - rotate light" << endl;
 
     cout << endl << endl;

@@ -19,22 +19,35 @@ namespace engine
 
     void Skybox::Init(const Renderer *renderer)
     {
+        Destroy();
+
         mSkyboxProg.Init(AssetLoader::Get().ShaderPath("F_Skybox").data());
         mSkyboxProg.Use();
         mSkyboxProg.SetUniform("skybox", TextureType::SKYBOX_SLOT);
         Program::Unbind();
 
-        // Load skybox
-        const string skyboxFolder = "skybox/";
-        const string sideNames[6] = {
-            AssetLoader::Get().TexturePath(skyboxFolder + "back.jpg"),
-            AssetLoader::Get().TexturePath(skyboxFolder + "front.jpg"),
-            AssetLoader::Get().TexturePath(skyboxFolder + "bottom.jpg"),
-            AssetLoader::Get().TexturePath(skyboxFolder + "top.jpg"),
-            AssetLoader::Get().TexturePath(skyboxFolder + "left.jpg"),
-            AssetLoader::Get().TexturePath(skyboxFolder + "right.jpg"),
-        };
-        mSkyboxCubemap.Init(sideNames, TextureType::DIFFUSE_MAP);
+        // Load skyboxes
+        const int ctSkyboxes = 3;
+
+        for(int i = 0; i < ctSkyboxes; ++i) {
+            mSkyboxCubemaps.push_back(CubemapTexture());
+
+            const string skyboxFolder = "skybox" + to_string(i) + "/";
+            const string sideNames[6] = {
+                AssetLoader::Get().TexturePath(skyboxFolder + "back.jpg"),
+                AssetLoader::Get().TexturePath(skyboxFolder + "front.jpg"),
+                AssetLoader::Get().TexturePath(skyboxFolder + "bottom.jpg"),
+                AssetLoader::Get().TexturePath(skyboxFolder + "top.jpg"),
+                AssetLoader::Get().TexturePath(skyboxFolder + "left.jpg"),
+                AssetLoader::Get().TexturePath(skyboxFolder + "right.jpg"),
+            };
+            mSkyboxCubemaps[i].Init(sideNames, TextureType::DIFFUSE_MAP);
+            // Create the irradiance map
+            mIrradianceMaps.push_back(TextureEffects::Get().GenerateIrradianceMap(mSkyboxCubemaps[i]));
+        }
+
+        mSkyboxCubemaps[0].BindToSlot(TextureType::SKYBOX_SLOT);
+        mIrradianceMaps[0].BindToSlot(TextureType::IRRADIANCE_SLOT);
 
         const float sideHalfSize = renderer->GetCamera()->mFarDistance * mFarPlaneMod * 0.5f;
         mSkyboxScale =  scale(mat4(1.0f), vec3(sideHalfSize));
@@ -42,20 +55,23 @@ namespace engine
         TriangleMesh cube = GetCubeMeshSolid(true, false);
         cube.FlipWinding();
         mSkyboxVA.Init(&cube);
+    }
 
-        // Create the irradiance map
-        mIrradianceMap = TextureEffects::Get().GenerateIrradianceMap(mSkyboxCubemap);
-        mSkyboxCubemap.BindToSlot(TextureType::SKYBOX_SLOT);
-        mIrradianceMap.BindToSlot(TextureType::IRRADIANCE_SLOT);
-        // Uncomment to use the irradiance map as skybox
-        // mIrradianceMap.BindToSlot(TextureType::SKYBOX_SLOT);
+    void Skybox::LoadSkybox(int skyboxIdx)
+    {
+        mSkyboxCubemaps[skyboxIdx].BindToSlot(TextureType::SKYBOX_SLOT);
+        mIrradianceMaps[skyboxIdx].BindToSlot(TextureType::IRRADIANCE_SLOT);
     }
 
     void Skybox::Destroy()
     {
         mSkyboxProg.Destroy();
-        mSkyboxCubemap.Destroy();
-        mIrradianceMap.Destroy();
+        for(auto &t : mSkyboxCubemaps) {
+            t.Destroy();
+        }
+        for(auto &t : mIrradianceMaps) {
+            t.Destroy();
+        }
         mSkyboxVA.Destroy();
     }
 

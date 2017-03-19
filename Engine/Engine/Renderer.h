@@ -42,6 +42,7 @@ namespace engine
         bool UsePBR() const;
         AABB GetSceneAABB() const;
         GLubyte* TakeScreenshot(int &width, int &height) const;
+        void LoadSkybox(int idx);
 
     private:
         Renderer(const Renderer &other);

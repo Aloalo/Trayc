@@ -35,9 +35,16 @@ namespace engine
         }
         GenerateMipmaps();
 
-        TextureParam(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-        TextureParam(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        TextureParam(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        BindToSlot(0);
+        {
+            TextureParam(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+            TextureParam(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            TextureParam(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            TextureParam(GL_TEXTURE_BASE_LEVEL, 0);
+        }
+        UnBindFromSlot(0);
     }
 
     void CubemapTexture::Init(uint internalFormat, ivec2 size, uint format, uint type)

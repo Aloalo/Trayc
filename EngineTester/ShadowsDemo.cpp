@@ -23,6 +23,9 @@ void ShadowsDemo::Init(Game &game, Scene &scene, const std::string &model)
     if(model == "mitsuba") {
         scene.Scale(20.0f);
     }
+    else if(model == "cerberus") {
+        scene.Scale(0.5f);
+    }
     else {
         scene.Scale(80.0f);
     }

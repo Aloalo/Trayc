@@ -18,6 +18,7 @@ namespace engine
         Skybox(void);
 
         void Init(const Renderer *renderer);
+        void LoadSkybox(int skyboxIdx);
         void Destroy();
 
         void Draw(const Camera *camera) const;
@@ -25,8 +26,8 @@ namespace engine
 
     private:
         Program mSkyboxProg;
-        CubemapTexture mSkyboxCubemap;
-        CubemapTexture mIrradianceMap;
+        std::vector<CubemapTexture> mSkyboxCubemaps;
+        std::vector<CubemapTexture> mIrradianceMaps;
         VertexArray mSkyboxVA;
         glm::mat4 mSkyboxTransform;
         glm::mat4 mSkyboxScale;

@@ -163,6 +163,11 @@ namespace engine
         return pixels;
     }
 
+    void Renderer::LoadSkybox(int idx)
+    {
+        static_cast<ForwardRenderPass*>(GetRenderPass("forwardPass"))->LoadSkybox(idx);
+    }
+
     void Renderer::InitRendering(const CameraHandler *camera)
     {
         if(mCamera) {
@@ -209,6 +214,7 @@ namespace engine
         mLinearMipMapSampler.BindToSlot(TextureType::NORMAL_MAP);
         mLinearMipMapSampler.BindToSlot(TextureType::SPECULAR_MAP);
         mLinearMipMapSampler.BindToSlot(TextureType::HEIGHT_MAP);
+        mLinearMipMapSampler.BindToSlot(TextureType::SKYBOX_SLOT);
 
         mShadowmapSampler.InitForShadowmapTexture();
         mShadowmapSampler.BindToSlot(TextureType::S_SHADOWMAP);
