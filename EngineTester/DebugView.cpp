@@ -5,6 +5,7 @@
 #include <Engine/Engine/ShadowRenderPass.h>
 #include <Engine/Engine/DebugDraw.h>
 #include <Engine/Utils/Setting.h>
+#include <easylogging++.h>
 
 using namespace engine;
 using namespace glm;
@@ -25,36 +26,44 @@ void DebugView::KeyPress(const SDL_KeyboardEvent &e)
     {
     case SDLK_1:
         Renderable::mIsActive = false;
+        LOG(INFO) << "[DebugView::KeyPress] Render deferred.";
         break;
     case SDLK_2:
         Renderable::mIsActive = true;
         mTexType = TextureType::G_DEPTH_TEXTURE;
+        LOG(INFO) << "[DebugView::KeyPress] Render depth.";
         break;
     case SDLK_3:
         Renderable::mIsActive = true;
         mTexType = TextureType::G_NORMAL_TEXTURE;
+        LOG(INFO) << "[DebugView::KeyPress] Render normal.";
         break;
     case SDLK_4:
         Renderable::mIsActive = true;
         mDrawGloss = false;
         mTexType = TextureType::G_SPEC_GLOSS_TEXTURE;
+        LOG(INFO) << "[DebugView::KeyPress] Render specular.";
         break;
     case SDLK_5:
         Renderable::mIsActive = true;
         mDrawGloss = true;
         mTexType = TextureType::G_SPEC_GLOSS_TEXTURE;
+        LOG(INFO) << "[DebugView::KeyPress] Render gloss.";
         break;
     case SDLK_6:
         Renderable::mIsActive = true;
         mTexType = TextureType::G_ALBEDO_TEXTURE;
+        LOG(INFO) << "[DebugView::KeyPress] Render albedo.";
         break;
     case SDLK_7:
         Renderable::mIsActive = true;
         mTexType = TextureType::S_SHADOWMAP;
+        LOG(INFO) << "[DebugView::KeyPress] Render shadowmap.";
         break;
     case SDLK_8:
         Renderable::mIsActive = true;
         mTexType = TextureType::S_SHADOWPROJECTION;
+        LOG(INFO) << "[DebugView::KeyPress] Render shadow projection.";
         break;
     default:
         break;
