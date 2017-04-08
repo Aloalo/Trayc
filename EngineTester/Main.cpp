@@ -129,11 +129,8 @@ void PrintHelp()
     cout << "b - toggle soft shadows" << endl << endl;
     cout << "up/down - change environment" << endl << endl;
 
-    cout << "Load sponza demo: \"-sponza\"" << endl;
-    cout << "   p - pause lights" << endl << endl;
-
-    cout << "Load head demo: \"-head\"" << endl;
-    cout << "   right click - rotate head" << endl << endl;
+    //cout << "Load sponza demo: \"-sponza\"" << endl;
+    //cout << "   p - pause lights" << endl << endl;
 
     cout << "Load pbr demo: \"-pbr\"" << endl;
 
@@ -141,8 +138,8 @@ void PrintHelp()
     cout << "   arrow keys - toggle materials" << endl;
     cout << "   right click - rotate ball" << endl << endl;
 
-    cout << "Load shadows demo: \"-shadows\"" << endl;
-    cout << "   -buddha | -dragon | -mitsuba | -cerberus" << endl;
+    cout << "Load model:" << endl;
+    cout << "   -cerberus | -head | -buddha | -dragon | -mitsuba | " << endl;
     cout << "   right click - rotate light" << endl;
 
     cout << endl << endl;
@@ -159,30 +156,25 @@ int main(int argc, char *argv[])
 
     PrintHelp();
     if(argc == 1) {
-        InitSponza(game, scene, argv[0], SSize);
+        InitShadows(game, scene, "cerberus", argv[0], SSize);
     }
     else if(string(argv[1]) == "-head") {
         InitHead(game, scene, argv[0], SSize);
     }
-    else if(string(argv[1]) == "-sponza") {
-        InitSponza(game, scene, argv[0], SSize);
-    }
+    //else if(string(argv[1]) == "-sponza") {
+    //    InitSponza(game, scene, argv[0], SSize);
+    //}
     else if(string(argv[1]) == "-pbrmat") {
         InitPBRMaterial(game, scene, argv[0], SSize);
     }
     else if(string(argv[1]) == "-pbr") {
         InitPBR(game, scene, argv[0], SSize);
     }
-    else if(string(argv[1]) == "-shadows") {
-        if(argc > 2) {
-            InitShadows(game, scene, string(argv[2]+1), argv[0], SSize);
-        }
-        else {
-            InitShadows(game, scene, "dragon", argv[0], SSize);
-        }
+    else if(argc > 2) {
+         InitShadows(game, scene, string(argv[2]+1), argv[0], SSize);
     }
     else {
-        InitSponza(game, scene, argv[0], SSize);
+        InitShadows(game, scene, "cerberus", argv[0], SSize);
     }
 
     game.mContextHandler.VsyncMode(Setting<int>("vsync"));
