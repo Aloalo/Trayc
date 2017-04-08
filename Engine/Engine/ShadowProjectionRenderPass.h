@@ -33,6 +33,8 @@ namespace engine
 
         virtual void Render(const RenderingContext &rContext) const override;
 
+        virtual void ResizeDstBuffer(int width, int height) override;
+
         const Texture2D& GetProjectedShadowmap(int idx) const;
 
         // Inits shadow framebuffers

@@ -114,6 +114,13 @@ namespace engine
             }
         }
     }
+
+    void ShadowProjectionRenderPass::ResizeDstBuffer(int width, int height)
+    {
+        for(FrameBuffer &fb : mProjectedShadowFBs) {
+            fb.Resize(width, height);
+        }
+    }
     
     const Texture2D& ShadowProjectionRenderPass::GetProjectedShadowmap(int idx) const
     {

@@ -31,7 +31,7 @@ namespace engine
         const std::string& GetName() const;
         virtual const FrameBuffer& GetDstBuffer() const;
 
-        void ResizeDstBuffer(int width, int height);
+        virtual void ResizeDstBuffer(int width, int height);
 
     protected:
         glm::vec4 mClearColor;
