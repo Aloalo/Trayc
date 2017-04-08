@@ -45,7 +45,7 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
         return;
     }
 
-    const int skyboxCount = 3;
+    const int skyboxCount = 4;
     static int skyboxIdx = 0;
 
     switch(e.keysym.sym)

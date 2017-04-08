@@ -170,11 +170,8 @@ int main(int argc, char *argv[])
     else if(string(argv[1]) == "-pbr") {
         InitPBR(game, scene, argv[0], SSize);
     }
-    else if(argc > 2) {
-         InitShadows(game, scene, string(argv[2]+1), argv[0], SSize);
-    }
     else {
-        InitShadows(game, scene, "cerberus", argv[0], SSize);
+         InitShadows(game, scene, string(argv[1]+1), argv[0], SSize);
     }
 
     game.mContextHandler.VsyncMode(Setting<int>("vsync"));

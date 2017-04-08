@@ -27,7 +27,7 @@ namespace engine
         Program::Unbind();
 
         // Load skyboxes
-        const int ctSkyboxes = 3;
+        const int ctSkyboxes = 4;
 
         for(int i = 0; i < ctSkyboxes; ++i) {
             mSkyboxCubemaps.push_back(CubemapTexture());
