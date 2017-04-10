@@ -78,7 +78,7 @@ vec3 Lighting(in vec3 N, in vec3 L, in vec3 P, in vec3 lightIntensity, in vec3 a
     vec3 Lo = shadow *  dotNL * atten * lightIntensity * (diffuse + specular);
     
     #ifdef GLOBAL_LIGHT
-        Lo += IBL(V, N, roughness, specularColor, albedo);
+        Lo += IBL(V, N, roughness, Fdiff, albedo);
     #endif
 
     return Lo;
