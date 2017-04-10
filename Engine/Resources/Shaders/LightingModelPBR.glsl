@@ -74,8 +74,8 @@ vec3 Lighting(in vec3 N, in vec3 L, in vec3 P, in vec3 lightIntensity, in vec3 a
     float Nterm = NDF(N, H, a);
     
     vec3 specular = max(vec3(0.0), Fspec * geometryTerm * Nterm);
-   
-    vec3 Lo = shadow *  dotNL * atten * lightIntensity * (diffuse + specular);
+    //shadow = shadow * 0.00001 + 1.0;
+    vec3 Lo = shadow * dotNL * atten * lightIntensity * (diffuse + specular);
     
     #ifdef GLOBAL_LIGHT
         Lo += IBL(V, N, roughness, Fdiff, albedo);

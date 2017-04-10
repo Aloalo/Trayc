@@ -139,7 +139,7 @@ void PrintHelp()
     cout << "   right click - rotate ball" << endl << endl;
 
     cout << "Load model:" << endl;
-    cout << "   -cerberus | -head | -buddha | -dragon | -mitsuba | " << endl;
+    cout << "   -cerberus | -head | -buddha | -dragon | -mitsuba | -teapot" << endl;
     cout << "   right click - rotate light" << endl;
 
     cout << endl << endl;
