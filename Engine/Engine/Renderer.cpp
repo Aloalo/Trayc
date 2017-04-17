@@ -55,6 +55,9 @@ namespace engine
         mUsePBR = usePBR;
         LightRenderPass *lPass = static_cast<LightRenderPass*>(GetRenderPass("lPass"));
         lPass->CompileShaders();
+
+        BackBufferRenderPass *bbPass = static_cast<BackBufferRenderPass*>(GetRenderPass("bbPass"));
+        bbPass->CompileShaders();
     }
 
     void Renderer::SetScene(Scene *scene)

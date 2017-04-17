@@ -26,6 +26,8 @@ namespace engine
         virtual void Init() override;
         virtual void Destroy() override;
 
+        void CompileShaders();
+
         virtual void Render(const RenderingContext &rContext) const override;
     private:
         const Texture2D *mFinalTex;
