@@ -17,6 +17,16 @@
 #                    way the DevIL developers release it.
 #
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+	# 64 bits
+	set(DEVIL_LIB_DIR "${CMAKE_SOURCE_DIR}/libs/DevIL/lib/x64/Release")
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+	# 32 bits
+	set(DEVIL_LIB_DIR "${CMAKE_SOURCE_DIR}/libs/DevIL/lib/x86/Release")
+endif()
+
+message("DEVIL_LIB_DIR is ${DEVIL_LIB_DIR}")
+
 find_path(IL_INCLUDE_DIR IL/il.h
     PATHS
     "${CMAKE_SOURCE_DIR}/libs/DevIL/include"
@@ -24,35 +34,35 @@ find_path(IL_INCLUDE_DIR IL/il.h
 
 find_path(IL_BIN_DIR DevIL.dll
     PATHS
-    "${CMAKE_SOURCE_DIR}/libs/DevIL/lib"
+    "${DEVIL_LIB_DIR}"
 )
 
 find_path(ILU_BIN_DIR ILU.dll
     PATHS
-    "${CMAKE_SOURCE_DIR}/libs/DevIL/lib"
+    "${DEVIL_LIB_DIR}"
 )
 
 find_path(ILUT_BIN_DIR ILUT.dll
     PATHS
-    "${CMAKE_SOURCE_DIR}/libs/DevIL/lib"
+    "${DEVIL_LIB_DIR}"
 )
 
 find_library(IL_LIBRARIES
   NAMES IL DevIL
   PATHS
-   "${CMAKE_SOURCE_DIR}/libs/DevIL/lib"
+    "${DEVIL_LIB_DIR}"
 )
 
 find_library(ILUT_LIBRARIES
   NAMES ILUT
   PATHS
-  "${CMAKE_SOURCE_DIR}/libs/DevIL/lib"
+    "${DEVIL_LIB_DIR}"
 )
 
 find_library(ILU_LIBRARIES
   NAMES ILU
   PATHS
-  "${CMAKE_SOURCE_DIR}/libs/DevIL/lib"
+    "${DEVIL_LIB_DIR}"
 )
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(IL DEFAULT_MSG

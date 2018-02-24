@@ -55,8 +55,8 @@ function(copy_dlls)
 
     file(COPY ${DLLS} DESTINATION ./Debug)
     file(COPY ${DLLS} DESTINATION ./Release)
-    file(COPY ${ASSIMP_DLLS_DEBUG} DESTINATION ./Debug)
-    file(COPY ${ASSIMP_DLLS_RELEASE} DESTINATION ./Release)
+    file(COPY ${ASSIMP_DLL} DESTINATION ./Debug)
+    file(COPY ${ASSIMP_DLL} DESTINATION ./Release)
 endfunction()
 
 include_directories(

@@ -9,45 +9,36 @@
 # ASSIMP_DLLS_RELEASE
 # 
 
-if(MSVC14)
-    set(ASSIMP_DIR "${CMAKE_SOURCE_DIR}/libs/assimp/vs2015")
-    set(LIB_NAME "assimp-vc130-mt")
-elseif(MSVC12)
-    set(ASSIMP_DIR "${CMAKE_SOURCE_DIR}/libs/assimp/vs2013")
-    set(LIB_NAME "assimp-vc120-mt")
-endif(MSVC14)
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+	# 64 bits
+	set(ASSIMP_LIB_DIR "${CMAKE_SOURCE_DIR}/libs/assimp/x64")
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+	# 32 bits
+	set(ASSIMP_LIB_DIR "${CMAKE_SOURCE_DIR}/libs/assimp/x86")
+endif()
 
-MESSAGE("ASSIMP_DIR is ${ASSIMP_DIR}")
+set(LIB_NAME "assimp")
+
+message("ASSIMP_LIB_DIR is ${ASSIMP_LIB_DIR}")
 
 find_path(ASSIMP_INCLUDE_DIR assimp/anim.h
     PATHS
     "${CMAKE_SOURCE_DIR}/libs/assimp/include"
 )
 
-MESSAGE("ASSIMP_INCLUDE_DIR is ${ASSIMP_INCLUDE_DIR}")
+message("ASSIMP_INCLUDE_DIR is ${ASSIMP_INCLUDE_DIR}")
 
-find_library(ASSIMP_LIBRARY_DEBUG
-  NAMES "${LIB_NAME}d.lib"
-  PATHS
-   "${ASSIMP_DIR}/lib"
-)
 
-find_library(ASSIMP_LIBRARY_RELEASE
+find_library(ASSIMP_LIBRARY
   NAMES "${LIB_NAME}.lib"
   PATHS
-   "${ASSIMP_DIR}/lib"
+   "${ASSIMP_LIB_DIR}"
 )
 
-file(GLOB ASSIMP_DLLS_DEBUG
-  "${ASSIMP_DIR}/bin/*d.dll"
+file(GLOB ASSIMP_DLL
+  "${ASSIMP_LIB_DIR}/assimp-vc140-mt.dll"
 )
 
-file(GLOB ASSIMP_DLLS_RELEASE
-  "${ASSIMP_DIR}/bin/*[^d].dll"
-)
-MESSAGE("ASSIMP_DLLS_RELEASE is ${ASSIMP_DLLS_RELEASE}")
-MESSAGE("ASSIMP_DLLS_DEBUG is ${ASSIMP_DLLS_DEBUG}")
-
-MESSAGE("ASSIMP_LIBRARY_DEBUG is ${ASSIMP_LIBRARY_DEBUG}")
-MESSAGE("ASSIMP_LIBRARY_RELEASE is ${ASSIMP_LIBRARY_RELEASE}")
+message("ASSIMP_DLL is ${ASSIMP_DLL}")
+message("ASSIMP_LIBRARY is ${ASSIMP_LIBRARY}")
 
