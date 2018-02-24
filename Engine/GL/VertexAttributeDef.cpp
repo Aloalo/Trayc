@@ -10,6 +10,6 @@ namespace engine
 
     int VertexAttribDef::SizeInBytes() const
     {
-        return size * SizeOfGLType(type);
+        return size * static_cast<int>(SizeOfGLType(type));
     }
 }

@@ -80,7 +80,7 @@ namespace engine
     void Shader::FindUniformBlocks(const string &source)
     {
         static const string ubTag = "layout(std140) uniform ";
-        static const int ubTagLen = ubTag.size();
+        static const size_t ubTagLen = ubTag.size();
 
         size_t pos = source.find(ubTag);
         while(pos != string::npos)

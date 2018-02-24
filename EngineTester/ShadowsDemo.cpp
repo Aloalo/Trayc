@@ -43,7 +43,7 @@ void ShadowsDemo::Init(Game &game, Scene &scene, const std::string &model)
 
     scene.mMaterials.push_back(mat);
     scene.mTriMeshes.push_back(plane);
-    scene.AddObject(AssetLoader::Get().CreateObject(&scene, scene.mTriMeshes.size() - 1, scene.mMaterials.size() - 1));
+    scene.AddObject(AssetLoader::Get().CreateObject(&scene, static_cast<int>(scene.mTriMeshes.size()) - 1, static_cast<int>(scene.mMaterials.size()) - 1));
     scene.mObjects3D.back().mShadowCaster = false;
 
     // Init light object
@@ -53,12 +53,12 @@ void ShadowsDemo::Init(Game &game, Scene &scene, const std::string &model)
     lightMat.mKd = vec3(1.0f);
     lightMat.mNeedsForwardRender = true;
     scene.mMaterials.push_back(lightMat);
-    const int lightMatIdx = scene.mMaterials.size() - 1;
+    const int lightMatIdx = static_cast<int>(scene.mMaterials.size()) - 1;
 
     TriangleMesh lightMesh = GetSphereMeshSolid(false, 1, 5.0f);
     lightMesh.FlipNormals();
     scene.mTriMeshes.push_back(lightMesh);
-    const int lightMeshIdx = scene.mTriMeshes.size() - 1;
+    const int lightMeshIdx = static_cast<int>(scene.mTriMeshes.size()) - 1;
 
     scene.AddObject(AssetLoader::Get().CreateObject(&scene, lightMeshIdx, lightMatIdx));
     mPLightObj = &scene.GetObject(scene.GetNumObjects() - 1);

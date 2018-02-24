@@ -143,7 +143,7 @@ namespace engine
 
         Bind();
         if(ctColorAttachments > 0) {
-            glDrawBuffers(mAttachments.size(), colorAttachments);
+            glDrawBuffers(static_cast<GLsizei>(mAttachments.size()), colorAttachments);
         }
         else {
             glDrawBuffer(GL_NONE);

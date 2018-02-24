@@ -30,7 +30,7 @@ namespace engine
     {
         auto vertices = mMeshAABB.Vertices();
 
-        const int ctVertices = vertices.size();
+        const int ctVertices = static_cast<int>(vertices.size());
         for(int i = 0; i < ctVertices; ++i)
             vertices[i] = vec3(mTransform * vec4(vertices[i], 1.0f));
 

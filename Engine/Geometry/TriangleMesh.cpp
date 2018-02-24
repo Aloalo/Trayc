@@ -36,7 +36,7 @@ namespace engine
 
     void TriangleMesh::FlipWinding()
     {
-        const int ctIndices = mIndices.size();
+        const int ctIndices = static_cast<int>(mIndices.size());
         for(int i = 0; i < ctIndices; i += 3)
             swap(mIndices[i + 1], mIndices[i + 2]);
     }
@@ -71,7 +71,7 @@ namespace engine
 
     GLenum TriangleMesh::GetIndexType() const
     {
-        const int ctPositions = mPositions.size();
+        const int ctPositions = static_cast<int>(mPositions.size());
         if(ctPositions < 256)
             return GL_UNSIGNED_BYTE;
         else if(ctPositions < 65536)
@@ -83,7 +83,7 @@ namespace engine
     template<typename T>
     static inline void* CastIndices(const vector<unsigned int> &mIndices)
     {
-        const int ctIndices = mIndices.size();
+        const int ctIndices = static_cast<int>(mIndices.size());
 
         T *indices = new T[ctIndices];
 
@@ -97,7 +97,7 @@ namespace engine
     {
         if(mIndices.size() > 0)
         {
-            const int ctPositions = mPositions.size();
+            const int ctPositions = static_cast<int>(mPositions.size());
 
             if(ctPositions < 256)
                 return CastIndices<unsigned char>(mIndices);
@@ -111,7 +111,7 @@ namespace engine
 
     vector<float> TriangleMesh::GetVertexArray() const
     {
-        const int ctVertices = mPositions.size();
+        const int ctVertices = static_cast<int>(mPositions.size());
         vector<float> ret;
         ret.reserve(ctVertices * GetVertexSize());
 
@@ -203,7 +203,7 @@ namespace engine
             newAABB |= p;
         mAABB = newAABB;
 
-        const int ctPos = mPositions.size();
+        const int ctPos = static_cast<int>(mPositions.size());
         vec3 a, b;
         float maxDistSq = -1.0f;
         for(int i = 0; i < ctPos; ++i) {

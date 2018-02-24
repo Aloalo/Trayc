@@ -70,7 +70,7 @@ namespace engine
         const AABB sceneAABB = scene->GetShadowCastersAABB();
 
         // Project shadowmaps to shadow projection buffer
-        const int ctLights = scene->mLights.size();
+        const int ctLights = static_cast<int>(scene->mLights.size());
         glDisable(GL_DEPTH_TEST);
         for(int i = 0; i < ctLights; ++i)
         {

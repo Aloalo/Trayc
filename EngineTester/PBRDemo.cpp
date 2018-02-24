@@ -28,7 +28,7 @@ void PBRDemo::Init(Game &game, Scene &scene)
     TriangleMesh sphere = GetSphereMeshSolid(false, sphereQuality, radius);
     //TriangleMesh sphere = GetCubeMeshSolid(false, true, scale(mat4(1.0f), vec3(radius)));
     scene.mTriMeshes.push_back(sphere);
-    const int sphereMeshIdx = scene.mTriMeshes.size() - 1;
+    const int sphereMeshIdx = static_cast<int>(scene.mTriMeshes.size()) - 1;
 
     const float spacing = 2.5f * radius;
     const int ctBalls = 10;
@@ -43,7 +43,7 @@ void PBRDemo::Init(Game &game, Scene &scene)
             mat.mKd = vec3(1.0f, 0.0f, 0.0f);
             mat.mNeedsForwardRender = false;
             scene.mMaterials.push_back(mat);
-            const int matIdx = scene.mMaterials.size() - 1;
+            const int matIdx = static_cast<int>(scene.mMaterials.size()) - 1;
             scene.AddObject(AssetLoader::Get().CreateObject(&scene, sphereMeshIdx, matIdx));
             auto object = &scene.mObjects3D.back();
             object->mShadowCaster = false;

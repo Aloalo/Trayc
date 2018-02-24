@@ -50,6 +50,6 @@ namespace engine
 
     int CubicBSpline::NumControlPoints() const
     {
-        return mR.size();
+        return static_cast<int>(mR.size());
     }
 }

@@ -108,8 +108,8 @@ namespace engine
 
     void VertexArray::Init(const TriangleMesh *mesh)
     {
-        const int ctVertices = mesh->mPositions.size();
-        const int ctIndices = mesh->mIndices.size();
+        const int ctVertices = static_cast<int>(mesh->mPositions.size());
+        const int ctIndices = static_cast<int>(mesh->mIndices.size());
 
         AddAttributes(mesh->GetVertexAttribDefs());
         Init(ctVertices, ctVertices);
@@ -164,7 +164,7 @@ namespace engine
                     attrib.type,
                     attrib.normalized,
                     mVertexSize,
-                    (void*)offset);
+                    reinterpret_cast<const GLvoid*>(offset));
                 offset += attrib.SizeInBytes();
             }
 
@@ -192,7 +192,7 @@ namespace engine
                         attrib.type,
                         attrib.normalized,
                         mVertexSize,
-                        (void*)offset);
+                        reinterpret_cast<const GLvoid*>(offset));
                     offset += attrib.SizeInBytes();
                 }
                 else {
@@ -239,7 +239,7 @@ namespace engine
     {
         int ret = 0;
         for(const VertexAttribDef &attrib : mVertAttribs)
-            ret += attrib.size * SizeOfGLType(attrib.type);
+            ret += attrib.size * static_cast<int>(SizeOfGLType(attrib.type));
         return ret;
     }
 }

@@ -46,7 +46,7 @@ namespace engine
         mShadowMappingProgram.Use();
         
         // Render shadowmaps
-        int ctFBs = mShadowFBs.size();
+        const int ctFBs = static_cast<int>(mShadowFBs.size());
         for(int i = 0; i < ctFBs; ++i)
         {
             const FrameBuffer &fb = mShadowFBs[i];

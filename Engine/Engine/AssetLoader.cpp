@@ -149,7 +149,7 @@ namespace engine
 
         // Cache meshes
         Array meshes;
-        const int ctMeshes = scene.mTriMeshes.size();
+        const int ctMeshes = static_cast<int>(scene.mTriMeshes.size());
         for(int i = 0; i < ctMeshes; ++i)
         {
             const TriangleMesh &eMesh = scene.mTriMeshes[i];
@@ -232,7 +232,7 @@ namespace engine
 
         // Load materials
         const Array materials = LoadArray(basePath + mMatCacheSuffix);
-        const int ctMaterials = materials.size();
+        const int ctMaterials = static_cast<int>(materials.size());
         for(int i = 0; i < ctMaterials; ++i)
         {
             const Object &jMat = materials.get<Object>(i);
@@ -249,7 +249,7 @@ namespace engine
             mat.mNeedsForwardRender = jMat.get<Boolean>("needsForwardRender");
 
             const Array &matTexMaps = jMat.get<Array>("textureMaps");
-            const int ctTexMaps = matTexMaps.size();
+            const int ctTexMaps = static_cast<int>(matTexMaps.size());
             for(int j = 0; j < ctTexMaps; ++j)
             {
                 const Object &texMap = matTexMaps.get<Object>(j);
@@ -259,7 +259,7 @@ namespace engine
 
         // Load meshes
         const Array meshes = LoadArray(basePath + mMeshCacheSuffix);
-        const int ctMeshes = meshes.size();
+        const int ctMeshes = static_cast<int>(meshes.size());
         for(int i = 0; i < ctMeshes; ++i)
         {
             const Object &jMesh = meshes.get<Object>(i);
@@ -309,7 +309,7 @@ namespace engine
 
         // Load objects
         const Array objects = LoadArray(basePath + mObjCacheSuffix);
-        const int ctObjects = objects.size();
+        const int ctObjects = static_cast<int>(objects.size());
         for(int i = 0; i < ctObjects; ++i)
         {
             const Object &object = objects.get<Object>(i);

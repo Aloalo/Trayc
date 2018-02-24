@@ -29,7 +29,7 @@ void PBRMaterialDemo::Init(Game &game, Scene &scene)
 
     TriangleMesh sphere = GetSphereMeshSolid(false, sphereQuality, 50.0f);
     scene.mTriMeshes.push_back(sphere);
-    const int sphereMeshIdx = scene.mTriMeshes.size() - 1;
+    const int sphereMeshIdx = static_cast<int>(scene.mTriMeshes.size()) - 1;
 
     scene.mObjects3D.reserve(50);
     string line;
@@ -46,7 +46,7 @@ void PBRMaterialDemo::Init(Game &game, Scene &scene)
         mat.mTextureMaps.push_back(Material::TextureInfo(texPath + "-metal-rough.png", TextureType::SPECULAR_MAP));
 
         scene.mMaterials.push_back(mat);
-        const int matIdx = scene.mMaterials.size() - 1;
+        const int matIdx = static_cast<int>(scene.mMaterials.size()) - 1;
 
         scene.AddObject(AssetLoader::Get().CreateObject(&scene, sphereMeshIdx, matIdx));
         mObjects.push_back(&scene.mObjects3D[scene.mObjects3D.size() - 1]);
@@ -100,7 +100,7 @@ void PBRMaterialDemo::KeyPress(const SDL_KeyboardEvent &e)
 
     if(e.keysym.sym == SDLK_LEFT) {
         mObjects[mCurrObjIdx]->mVisible = false;
-        mCurrObjIdx = mCurrObjIdx == 0 ? mObjects.size() - 1 : mCurrObjIdx - 1;
+        mCurrObjIdx = mCurrObjIdx == 0 ? static_cast<int>(mObjects.size()) - 1 : mCurrObjIdx - 1;
     }
     else if(e.keysym.sym == SDLK_RIGHT) {
         mObjects[mCurrObjIdx]->mVisible = false;

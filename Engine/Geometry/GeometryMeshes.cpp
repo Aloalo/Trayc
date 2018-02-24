@@ -42,7 +42,7 @@ namespace engine
     
     static void IndexMesh(TriangleMesh &mesh)
     {
-        const GLuint ctVertices = mesh.mPositions.size();
+        const GLuint ctVertices = static_cast<GLuint>(mesh.mPositions.size());
 
         const TriangleMesh meshCopy(mesh);
 
@@ -60,7 +60,7 @@ namespace engine
                 mesh.mIndices.push_back(index);
             else
             {
-                const GLuint ctOutVertices = mesh.mPositions.size();
+                const GLuint ctOutVertices = static_cast<GLuint>(mesh.mPositions.size());
                 mesh.mPositions.push_back(meshCopy.mPositions[i]);
                 mesh.mNormals.push_back(meshCopy.mNormals[i]);
                 mesh.mIndices.push_back(ctOutVertices);
@@ -71,7 +71,7 @@ namespace engine
 
     void CalculateNormals(TriangleMesh &mesh)
     {
-        const int ctPos = mesh.mPositions.size();
+        const int ctPos = static_cast<int>(mesh.mPositions.size());
         for(int i = 0; i < ctPos - 2; i += 3)
         {
             const vec3 &x1 = mesh.mPositions[i + 0];
