@@ -1,14 +1,10 @@
 
 #include <Engine/Engine/RayTraceRenderPass.h>
 #include <Engine/Engine/AssetLoader.h>
-#include <Engine/Utils/StlExtensions.hpp>
-#include <Engine/Engine/ShadowRenderPass.h>
-#include <Engine/Engine/GeometryRenderPass.h>
-#include <Engine/Engine/ForwardRenderPass.h>
-#include <Engine/Engine/Renderer.h>
+#include <Engine/Core/Camera.h>
 #include <Engine/Utils/Setting.h>
-#include <Engine/Utils/Utilities.h>
-#include <glm/gtc/matrix_transform.hpp>
+#include <Engine/Utils/UniformBuffers.h>
+#include <easylogging++.h>
 
 using namespace glm;
 using namespace std;
@@ -19,6 +15,11 @@ namespace engine
     RayTraceRenderPass::RayTraceRenderPass(void)
         : RenderPass("rtPass", GL_COLOR_BUFFER_BIT)
     {
+    }
+
+    void RayTraceRenderPass::AddSphere(const RTSphere &sphere)
+    {
+        mSpheres.push_back(sphere);
     }
 
     void RayTraceRenderPass::CompileShaders()
@@ -35,6 +36,13 @@ namespace engine
         // Init shader
         CompileShaders();
 
+        GLint value = -1;
+        glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &value);
+        LOG(INFO) << "[RayTraceRenderPass::Init] GL_MAX_FRAGMENT_UNIFORM_COMPONENTS: " << value;
+
+        glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &value);
+        LOG(INFO) << "[RayTraceRenderPass::Init] GL_MAX_UNIFORM_BLOCK_SIZE: " << value;
+
         // Init buffer
         mDstFB.Init(width, height);
         mDstFB.AddAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); //Lighting out / x
@@ -50,8 +58,15 @@ namespace engine
         mRayTraceCombiner.Destroy();
     }
 
+    void RayTraceRenderPass::UploadToGPU() const
+    {
+        UniformBuffers::Get().Primitives().spheres(mSpheres);
+    }
+
     void RayTraceRenderPass::Render(const RenderingContext &rContext) const
     {
+        UploadToGPU();
+
         const Camera &cam = *rContext.mCamera;
         const float halfTanFov = tanf(radians(cam.mFoV)) * 0.5f;
 
@@ -61,6 +76,8 @@ namespace engine
         p.SetUniform("U", cam.GetRight() * halfTanFov * cam.mAspectRatio);
         p.SetUniform("V", cam.GetUp() * halfTanFov);
         p.SetUniform("W", cam.GetDirection());
+        p.SetUniform("ctSpheres", static_cast<int>(mSpheres.size()));
+
         mRayTraceCombiner.Draw();
     }
 }

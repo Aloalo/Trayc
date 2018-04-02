@@ -289,6 +289,11 @@ namespace engine
     {
     }
 
+    void RayTracer::AddSphere(const RTSphere &sphere)
+    {
+        mRTPass->AddSphere(sphere);
+    }
+
     void RayTracer::SetScreenSize(int width, int height)
     {
         GetRenderPass("bbPass")->ResizeDstBuffer(width, height);
@@ -310,7 +315,8 @@ namespace engine
         glDisable(GL_FRAMEBUFFER_SRGB);
 
         // Init render passes
-        mRenderPasses.push_back(new RayTraceRenderPass());
+        mRTPass = new RayTraceRenderPass();
+        mRenderPasses.push_back(mRTPass);
         mRenderPasses.push_back(new BackBufferRenderPass());
 
         for (RenderPass *rPass : mRenderPasses) {

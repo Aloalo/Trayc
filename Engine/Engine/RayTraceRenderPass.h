@@ -3,8 +3,8 @@
 #define EN_RAY_TRACE_RENDER_PASS_H
 
 #include <Engine/Engine/RenderPass.h>
-#include <Engine/Engine/Light.h>
 #include <Engine/Engine/TextureCombiner.h>
+#include <Engine/Geometry/RayTracePrimitives.h>
 
 namespace engine
 {
@@ -19,8 +19,13 @@ namespace engine
         virtual void Render(const RenderingContext &rContext) const override;
 
         void CompileShaders();
+
+        void AddSphere(const RTSphere &sphere);
     private:
+        void UploadToGPU() const;
+
         TextureCombiner mRayTraceCombiner;
+        std::vector<RTSphere> mSpheres;
     };
 }
 

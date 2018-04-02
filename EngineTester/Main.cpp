@@ -147,7 +147,7 @@ void PrintHelp()
 
 int main(int argc, char *argv[])
 {
-    InitLogging(argc, argv);
+    InitLogging(argc, argv, false);
     const ivec2 SSize(Setting<int>("screenWidth"), Setting<int>("screenHeight"));
     const float timeStep = 1.0f / 60.0f;
 

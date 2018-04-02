@@ -41,6 +41,12 @@ namespace engine
         void SetUniform(const std::string &name, const glm::mat3 &x) const;
         void SetUniform(const std::string &name, const glm::mat4 &x) const;
 
+        template<class T>
+        void SetUniform(const std::string &name, const std::vector<T> &data) const
+        {
+
+        }
+
         void SetUniform(const std::string &name, GLsizei cnt, const GLfloat *x) const;
         void SetUniform(const std::string &name, GLsizei cnt, const glm::vec2 *x) const;
         void SetUniform(const std::string &name, GLsizei cnt, const glm::vec3 *x) const;

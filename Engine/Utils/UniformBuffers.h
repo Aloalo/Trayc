@@ -3,8 +3,10 @@
 
 #include <Engine/GL/UniformBuffer.h>
 #include <Engine/Utils/Singleton.h>
+#include <Engine/Geometry/RayTracePrimitives.h>
 #include <glm/glm.hpp>
 #include <string>
+#include <vector>
 
 namespace engine
 {
@@ -30,12 +32,21 @@ namespace engine
         UNIFORM_MACRO(glm::mat4, invVP, 5 * sizeof(glm::mat4));
     };
 
+    class PrimitivesUB : public UniformBuffer
+    {
+    public:
+        PrimitivesUB(void);
+
+        UNIFORM_ARRAY_MACRO(std::vector<RTSphere>, spheres, 0); // tan(fovy / 2) :: aspectRatio * tan(fovy / 2) :: - :: -
+    };
+
     class UniformBuffers : public Singleton<UniformBuffers>
     {
     public:
         void Destroy();
         const ViewRayDataUB& ViewRayData() const;
         const MatricesUB& Matrices() const;
+        const PrimitivesUB& Primitives() const;
         const UniformBuffer* GetUniformBuffer(const std::string &name) const;
 
     private:
@@ -44,6 +55,7 @@ namespace engine
 
         ViewRayDataUB mViewRayData;
         MatricesUB mMatrices;
+        PrimitivesUB mPrimitives;
     };
 }
 

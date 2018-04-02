@@ -42,15 +42,27 @@ void Init(RayTracedGame &game, const char *progName)
 
     //Init Game
     game.Init(camHandler, progName, "RTRTGame", SSize.x, SSize.y);
+
+    const float R = 1.0f;
+    const float offsets[] = {-4.0f * R, -2.0f * R , 0.0f, 2.0f * R , 4.0f * R };
+    const int N = 5;
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            for (int k = 0; k < N; ++k) {
+                const RTSphere sphere = { vec4(offsets[i], offsets[j], offsets[k], R), vec4(0.1f, 0.6f, 0.4f, 0.5f), vec4(0.0f) };
+                game.mRenderer.AddSphere(sphere);
+            }
+        }
+    }
 }
 
 int main(int argc, char *argv[])
 {
-    InitLogging(argc, argv);
+    InitLogging(argc, argv, false);
     RayTracedGame game(1.0f / 60.0f);
     Init(game, argv[0]);
 
-    // game.mContextHandler.VsyncMode(0);
+    game.mContextHandler.VsyncMode(0);
 
     GUIView guiView(&game);
     game.mInputHandler.AddEventListener(&guiView);

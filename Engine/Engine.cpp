@@ -9,7 +9,7 @@ INITIALIZE_EASYLOGGINGPP
 
 namespace engine
 {
-    void InitLogging(int argc, char *argv[])
+    void InitLogging(int argc, char *argv[], bool perfLog)
     {
         // Delete old log files
         std::remove("logs/infolog.log");
@@ -45,11 +45,11 @@ namespace engine
         performanceConf.set(el::Level::Error, el::ConfigurationType::Filename, "logs/perflog.log");
         performanceConf.set(el::Level::Warning, el::ConfigurationType::Filename, "logs/perflog.log");
 
-#if 1 //DEPLOY
-        performanceConf.set(el::Level::Info, el::ConfigurationType::ToStandardOutput, "false");
-        performanceConf.set(el::Level::Error, el::ConfigurationType::ToStandardOutput, "false");
-        performanceConf.set(el::Level::Warning, el::ConfigurationType::ToStandardOutput, "false");
-#endif
+        if (!perfLog) {
+            performanceConf.set(el::Level::Info, el::ConfigurationType::ToStandardOutput, "false");
+            performanceConf.set(el::Level::Error, el::ConfigurationType::ToStandardOutput, "false");
+            performanceConf.set(el::Level::Warning, el::ConfigurationType::ToStandardOutput, "false");
+        }
 
         el::Loggers::reconfigureLogger("performance", performanceConf);
     }

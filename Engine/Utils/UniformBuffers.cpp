@@ -16,16 +16,24 @@ namespace engine
     {
     }
 
+    PrimitivesUB::PrimitivesUB(void)
+        : UniformBuffer(GL_DYNAMIC_DRAW, "Primitives")
+    {
+    }
+
+
     UniformBuffers::UniformBuffers(void)
     {
         mViewRayData.Init(2 * sizeof(vec4));
         mMatrices.Init(6 * sizeof(mat4));
+        mPrimitives.Init(125 * sizeof(RTSphere));
     }
 
     void UniformBuffers::Destroy()
     {
         mViewRayData.Destroy();
         mMatrices.Destroy();
+        mPrimitives.Destroy();
     }
 
     const ViewRayDataUB& UniformBuffers::ViewRayData() const
@@ -38,6 +46,11 @@ namespace engine
         return mMatrices;
     }
 
+    const PrimitivesUB& UniformBuffers::Primitives() const
+    {
+        return mPrimitives;
+    }
+
     const UniformBuffer* UniformBuffers::GetUniformBuffer(const std::string &name) const
     {
         if(name == mViewRayData.GetName()) {
@@ -45,6 +58,9 @@ namespace engine
         }
         if(name == mMatrices.GetName()) {
             return &mMatrices;
+        }
+        if (name == mPrimitives.GetName()) {
+            return &mPrimitives;
         }
         return nullptr;
     }

@@ -1,0 +1,11 @@
+App:
+  -Proper N for number of RTprimitives
+  -Performace testbed
+  -Rectangles
+  -Lights
+
+Shader:
+  -Blinn-phong shading
+  -Shadows
+  -Reflection
+  -Refraction

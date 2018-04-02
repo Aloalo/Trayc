@@ -5,6 +5,7 @@
 #include <Engine/GL/TextureSampler.h>
 #include <Engine/Utils/UniformBuffers.h>
 #include <Engine/Geometry/AABB.h>
+#include <Engine/Geometry/RayTracePrimitives.h>
 #include <vector>
 
 namespace engine
@@ -78,16 +79,22 @@ namespace engine
         virtual void Render() const override;
     };
 
+    class RayTraceRenderPass;
+
     class RayTracer : public Renderer
     {
     public:
         RayTracer(void);
         ~RayTracer(void);
 
+        void AddSphere(const RTSphere &sphere);
+
         virtual void SetScreenSize(int width, int height) override;
     private:
         virtual void InitRendering(const CameraHandler *camera) override;
         virtual void Render() const override;
+
+        RayTraceRenderPass *mRTPass;
     };
 }
 

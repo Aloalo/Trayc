@@ -10,6 +10,12 @@
         SetSubData(offset, x); \
         }
 
+#define UNIFORM_ARRAY_MACRO(tp,name,offset) \
+    void (name(const tp &x) const) \
+        { \
+        SetSubData(offset, static_cast<int>(sizeof(x[0]) * x.size()), x.data()); \
+        }
+
 namespace engine
 {
     class UniformBuffer

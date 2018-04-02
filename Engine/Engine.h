@@ -7,7 +7,7 @@
 
 namespace engine
 {
-    void InitLogging(int argc, char *argv[]);
+    void InitLogging(int argc, char *argv[], bool perLog);
 }
 
 #endif

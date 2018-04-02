@@ -53,6 +53,7 @@ set(Engine_Geometry
     Geometry/Plane.cpp
     Geometry/Sphere.h
     Geometry/Sphere.cpp
+    Geometry/RayTracePrimitives.h
 )
 
 set(Engine_GL
