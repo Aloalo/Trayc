@@ -10,7 +10,7 @@
 using namespace engine;
 using namespace glm;
 
-DebugView::DebugView(const engine::Renderer *renderer, float nearDist, float farDist)
+DebugView::DebugView(const engine::Rasterizer *renderer, float nearDist, float farDist)
     : mRenderer(renderer), mTexType(TextureType::G_ALBEDO_TEXTURE), mNearDist(nearDist), mFarDist(farDist), mDrawGloss(false)
 {
     Renderable::mIsActive = false;

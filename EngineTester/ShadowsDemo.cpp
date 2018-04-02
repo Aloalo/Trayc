@@ -17,7 +17,7 @@ ShadowsDemo::ShadowsDemo(void)
     mLight.SetDirection(normalize(mLightLookAt - mLight.GetPosition()));
 }
 
-void ShadowsDemo::Init(Game &game, Scene &scene, const std::string &model)
+void ShadowsDemo::Init(RasterizedGame &game, Scene &scene, const std::string &model)
 {
     scene = AssetLoader::Get().LoadScene(AssetLoader::Get().ModelPath(model + "/"), model + ".obj");
     if(model == "mitsuba") {

@@ -23,48 +23,71 @@ namespace engine
         using RenderPasses = std::vector<RenderPass*>;
 
         Renderer(void);
-        ~Renderer(void);
-
-        void SetUsePBR(bool usePBR);
-        void SetScene(Scene *scene);
+        virtual ~Renderer(void);
 
         //Renderables
         void AddRenderable(Renderable *renderable);
         void RemoveRenderable(Renderable *renderable);
 
-        void SetScreenSize(int width, int height);
+        virtual void SetScreenSize(int width, int height) = 0;
 
         const RenderPass* GetRenderPass(const std::string &name) const;
+        RenderPass* GetRenderPass(const std::string &name);
         const RenderPass* GetRenderPass(int idx) const;
         const RenderPasses& GetRenderPasses() const;
 
         const Camera* GetCamera() const;
-        bool UsePBR() const;
         AABB GetSceneAABB() const;
         GLubyte* TakeScreenshot(int &width, int &height) const;
-        void LoadSkybox(int idx);
 
-    private:
-        Renderer(const Renderer &other);
-        Renderer& operator=(const Renderer &other);
-
-        RenderPass* GetRenderPass(const std::string &name);
+    protected:
+        void SetViewRayData();
+        
         friend class Game;
         //Rendering
-        void InitRendering(const CameraHandler *camera);
-        void Render() const;
+        virtual void InitRendering(const CameraHandler *camera) = 0;
+        virtual void Render() const = 0;
 
         const CameraHandler *mCamera;
 
-        bool mUsePBR;
-
         std::vector<Renderable*> mRenderables;
         std::vector<RenderPass*> mRenderPasses;
+    };
+
+    class Rasterizer : public Renderer
+    {
+    public:
+        Rasterizer(void);
+        ~Rasterizer(void);
+
+        void SetUsePBR(bool usePBR);
+        bool UsePBR() const;
+        void SetScene(Scene *scene);
+        virtual void SetScreenSize(int width, int height) override;
+        void LoadSkybox(int idx);
+
+    private:
+        bool mUsePBR;
 
         // Samplers
         TextureSampler mLinearMipMapSampler;
         TextureSampler mLinearSampler;
         TextureSampler mShadowmapSampler;
+
+        virtual void InitRendering(const CameraHandler *camera) override;
+        virtual void Render() const override;
+    };
+
+    class RayTracer : public Renderer
+    {
+    public:
+        RayTracer(void);
+        ~RayTracer(void);
+
+        virtual void SetScreenSize(int width, int height) override;
+    private:
+        virtual void InitRendering(const CameraHandler *camera) override;
+        virtual void Render() const override;
     };
 }
 

@@ -13,7 +13,7 @@ class HeadDemo
 public:
     explicit HeadDemo(float scale);
 
-    void Init(engine::Game &game, engine::Scene &scene);
+    void Init(engine::RasterizedGame &game, engine::Scene &scene);
     virtual void MouseMotion(const SDL_MouseMotionEvent &e) override;
     virtual void MouseButton(const SDL_MouseButtonEvent &e) override;
 

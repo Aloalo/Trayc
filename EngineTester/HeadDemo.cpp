@@ -16,7 +16,7 @@ HeadDemo::HeadDemo(float scale)
 {
 }
 
-void HeadDemo::Init(Game &game, Scene &scene)
+void HeadDemo::Init(RasterizedGame &game, Scene &scene)
 {
     // Init Light
     scene.mLights.push_back(&mLight);

@@ -15,7 +15,7 @@ namespace engine
         TextureCombiner(void);
         ~TextureCombiner(void);
 
-        void Init(const char *progName, const Shader::Defines &defines);
+        void Init(const char *progName, const Shader::Defines &defines = Shader::Defines());
         void Init(const char *vsName, const char *fsName, const Shader::Defines &defines);
         void Init(const std::string &vsName, const std::string &fsName, const Shader::Defines &defines);
         void Destroy();

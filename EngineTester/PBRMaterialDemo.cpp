@@ -16,7 +16,7 @@ PBRMaterialDemo::PBRMaterialDemo(void)
 {
 }
 
-void PBRMaterialDemo::Init(Game &game, Scene &scene)
+void PBRMaterialDemo::Init(RasterizedGame &game, Scene &scene)
 {
     const string path = AssetLoader::Get().TexturePath("pbr/");
     ifstream in(path + "list.txt");

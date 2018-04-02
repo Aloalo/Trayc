@@ -13,7 +13,7 @@ class ShadowsDemo
 public:
     ShadowsDemo(void);
 
-    void Init(engine::Game &game, engine::Scene &scene, const std::string &model);
+    void Init(engine::RasterizedGame &game, engine::Scene &scene, const std::string &model);
     virtual void MouseMotion(const SDL_MouseMotionEvent &e) override;
     virtual void MouseButton(const SDL_MouseButtonEvent &e) override;
 

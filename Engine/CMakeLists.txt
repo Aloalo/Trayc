@@ -141,6 +141,8 @@ set(Engine_Engine
     Engine/DebugDraw.cpp
     Engine/Skybox.h
     Engine/Skybox.cpp
+    Engine/RayTraceRenderPass.h
+    Engine/RayTraceRenderPass.cpp
 )
 
 set(Engine_LIBS

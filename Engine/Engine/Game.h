@@ -14,8 +14,8 @@ namespace engine
     class Game : public InputObserver
     {
     public:
-        Game(float timeStep);
-        ~Game(void);
+        Game(float timeStep, Renderer *renderer);
+        virtual ~Game(void);
 
         // Copies cameraHandler and manages it by itself
         template<class CameraHandlerType>
@@ -38,7 +38,7 @@ namespace engine
         InputHandler mInputHandler;
         UpdateableHandler mUpdateableMenager;
         ContextHandler mContextHandler;
-        Renderer mRenderer;
+        
 
     private:
         Game(const Game &other);
@@ -50,9 +50,24 @@ namespace engine
         void Init(char const *programName, const char *windowTitle, int screenWidth, int screenHeight);
         CameraHandler *mCameraHandler;
 
+        Renderer *mRendererPtr;
         Profiler mProfiler;
         int mFrameCap;
         int mCtFramesPassed; //For profiling
+    };
+
+    class RasterizedGame : public Game
+    {
+    public:
+        RasterizedGame(float timeStep);
+        Rasterizer mRenderer;
+    };
+
+    class RayTracedGame : public Game
+    {
+    public:
+        RayTracedGame(float timeStep);
+        RayTracer mRenderer;
     };
 }
 

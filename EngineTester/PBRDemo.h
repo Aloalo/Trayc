@@ -13,7 +13,7 @@ class PBRDemo
 public:
     PBRDemo(void);
 
-    void Init(engine::Game &game, engine::Scene &scene);
+    void Init(engine::RasterizedGame &game, engine::Scene &scene);
     virtual void KeyPress(const SDL_KeyboardEvent &e) override;
     virtual void MouseMotion(const SDL_MouseMotionEvent &e) override;
     virtual void MouseButton(const SDL_MouseButtonEvent &e) override;

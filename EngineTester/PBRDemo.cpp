@@ -16,7 +16,7 @@ PBRDemo::PBRDemo(void)
 {
 }
 
-void PBRDemo::Init(Game &game, Scene &scene)
+void PBRDemo::Init(RasterizedGame &game, Scene &scene)
 {
 #ifdef _DEBUG
     const int sphereQuality = 3;

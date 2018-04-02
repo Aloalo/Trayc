@@ -7,8 +7,8 @@ using namespace std;
 
 namespace engine
 {
-    Game::Game(float timeStep)
-        : mUpdateableMenager(timeStep), mFrameCap(100), mCtFramesPassed(0), mCameraHandler(nullptr)
+    Game::Game(float timeStep, Renderer *renderer)
+        : mUpdateableMenager(timeStep), mRendererPtr(renderer), mFrameCap(100), mCtFramesPassed(0), mCameraHandler(nullptr)
     {
     }
 
@@ -57,8 +57,8 @@ namespace engine
         TextureEffects::Get().Init();
 
         // Init rendering
-        mRenderer.InitRendering(mCameraHandler);
-        mRenderer.SetScreenSize(screenWidth, screenHeight);
+        mRendererPtr->InitRendering(mCameraHandler);
+        mRendererPtr->SetScreenSize(screenWidth, screenHeight);
 
         mProfiler.AddProfileTarget("rendering", mFrameCap);
         mProfiler.AddProfileTarget("events", mFrameCap);
@@ -82,7 +82,7 @@ namespace engine
         mProfiler.StopClock("update");
 
         mProfiler.StartClock("rendering");
-        mRenderer.Render();
+        mRendererPtr->Render();
         mContextHandler.SwapBuffers();
         mProfiler.StopClock("rendering");
 
@@ -99,7 +99,7 @@ namespace engine
     {
         if(e.event == SDL_WINDOWEVENT_RESIZED) {
             mCameraHandler->SetAspectRatio(float(e.data1) / float(e.data2));
-            mRenderer.SetScreenSize(e.data1, e.data2);
+            mRendererPtr->SetScreenSize(e.data1, e.data2);
         }
     }
 
@@ -126,5 +126,16 @@ namespace engine
     CameraHandler* Game::GetCameraHandler()
     {
         return mCameraHandler;
+    }
+
+
+    RasterizedGame::RasterizedGame(float timeStep)
+        : Game(timeStep, &mRenderer)
+    {
+    }
+
+    RayTracedGame::RayTracedGame(float timeStep)
+        : Game(timeStep, &mRenderer)
+    {
     }
 }

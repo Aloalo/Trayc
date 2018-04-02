@@ -33,7 +33,7 @@ namespace engine
             vector<string>(1, "SPOT_LIGHT"),
         };
 
-        const bool usePBR = mRenderer->UsePBR();
+        const bool usePBR = dynamic_cast<const Rasterizer*>(mRenderer)->UsePBR();
         // Init light programs
         for(int i = 0; i < Light::Type::CT_LIGHT_TYPES; ++i)
         {
@@ -56,7 +56,7 @@ namespace engine
 
             if(i == Light::GLOBAL_LIGHT) {
                 prog.SetUniform("reflectionMap", TextureType::SKYBOX_SLOT);
-                if(mRenderer->UsePBR()) {
+                if(usePBR) {
                     prog.SetUniform("irradianceMap", TextureType::IRRADIANCE_SLOT);
                 }
             }

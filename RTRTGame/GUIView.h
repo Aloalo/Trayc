@@ -8,20 +8,20 @@
 
 namespace engine
 {
-    class RasterizedGame;
+    class RayTracedGame;
 }
 
 class GUIView 
     : public engine::Renderable, public engine::InputObserver
 {
 public:
-    explicit GUIView(engine::RasterizedGame *game);
+    explicit GUIView(engine::RayTracedGame *game);
     ~GUIView(void);
 
     virtual void KeyPress(const SDL_KeyboardEvent &e) override;
     virtual void Draw(const engine::RenderingContext &rContext) const override;
 private:
-    engine::RasterizedGame *mGame;
+    engine::RayTracedGame *mGame;
     engine::VertexArray mVA;
     engine::Program mProgram;
 };

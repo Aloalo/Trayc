@@ -47,7 +47,7 @@ RotationalCameraHandler ConstructRotationalCameraHandler(ivec2 ss, float FOV, fl
 }
 
 SponzaDemo sponzaDemo;
-void InitSponza(Game &game, Scene &scene, const char *progName, ivec2 SSize)
+void InitSponza(RasterizedGame &game, Scene &scene, const char *progName, ivec2 SSize)
 {
     //Init Camera handler
     DefaultCameraHandler camHandler(ConstructDefaultCameraHandler(SSize, Setting<float>("FOV"), 4000.0f));
@@ -68,7 +68,7 @@ void InitSponza(Game &game, Scene &scene, const char *progName, ivec2 SSize)
 
 const float headScale = 80.0f;
 HeadDemo headDemo(headScale);
-void InitHead(Game &game, Scene &scene, const char *progName, ivec2 SSize)
+void InitHead(RasterizedGame &game, Scene &scene, const char *progName, ivec2 SSize)
 {
     // Init scene
     scene = AssetLoader::Get().LoadScene(AssetLoader::Get().ModelPath("Head/"), "Head.obj");
@@ -85,7 +85,7 @@ void InitHead(Game &game, Scene &scene, const char *progName, ivec2 SSize)
 }
 
 PBRMaterialDemo PBRMatDemo;
-void InitPBRMaterial(Game &game, Scene &scene, const char *progName, ivec2 SSize)
+void InitPBRMaterial(RasterizedGame &game, Scene &scene, const char *progName, ivec2 SSize)
 {
     //Init Camera handler
     RotationalCameraHandler camHandler(ConstructRotationalCameraHandler(SSize, Setting<float>("FOV"), 1000.0f, vec3(0.0f, 0.0f, 200.0f), vec3(0.0f)));
@@ -98,7 +98,7 @@ void InitPBRMaterial(Game &game, Scene &scene, const char *progName, ivec2 SSize
 }
 
 PBRDemo pbrDemo;
-void InitPBR(Game &game, Scene &scene, const char *progName, ivec2 SSize)
+void InitPBR(RasterizedGame &game, Scene &scene, const char *progName, ivec2 SSize)
 {
     //Init Camera handler
     RotationalCameraHandler camHandler(ConstructRotationalCameraHandler(SSize, Setting<float>("FOV"), 1000.0f, vec3(0.0f, 0.0f, 200.0f), vec3(0.0f)));
@@ -111,7 +111,7 @@ void InitPBR(Game &game, Scene &scene, const char *progName, ivec2 SSize)
 }
 
 ShadowsDemo shadowsDemo;
-void InitShadows(Game &game, Scene &scene, const string &model, const char *progName, ivec2 SSize)
+void InitShadows(RasterizedGame &game, Scene &scene, const string &model, const char *progName, ivec2 SSize)
 {
     //Init Camera handler
     RotationalCameraHandler camHandler(ConstructRotationalCameraHandler(SSize, Setting<float>("FOV"), 1000.0f, vec3(0.0f, 50.0f, 100.0f), vec3(0.0f)));
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
     const ivec2 SSize(Setting<int>("screenWidth"), Setting<int>("screenHeight"));
     const float timeStep = 1.0f / 60.0f;
 
-    Game game(timeStep);
+    RasterizedGame game(timeStep);
     Scene scene;
 
     PrintHelp();

@@ -2,7 +2,7 @@
 #include "GUIView.h"
 #include <Engine/Engine/Game.h>
 #include <Engine/Engine/AssetLoader.h>
-#include <Engine/Utils/Setting.h>
+#include <Engine/Engine/RayTraceRenderPass.h>
 #include <easylogging++.h>
 #include <fstream>
 
@@ -10,7 +10,7 @@ using namespace engine;
 using namespace glm;
 using namespace std;
 
-GUIView::GUIView(engine::RasterizedGame *game)
+GUIView::GUIView(engine::RayTracedGame *game)
     : mGame(game), mVA(GL_STATIC_DRAW)
 {
     // Init half screen shading
@@ -45,9 +45,6 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
         return;
     }
 
-    const int skyboxCount = 4;
-    static int skyboxIdx = 0;
-
     switch(e.keysym.sym)
     {
     case SDLK_ESCAPE:
@@ -58,20 +55,10 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
         mGame->mInputHandler.SetCursorFree(!mGame->mInputHandler.IsCursorFree());
         break;
     }
-    case SDLK_o:
-        mGame->mRenderer.SetUsePBR(!mGame->mRenderer.UsePBR());
-        LOG(INFO) << "[GUIView::KeyPress] PBR: " << mGame->mRenderer.UsePBR();
-        break;
-    case SDLK_b:
-    {
-        static int initialShadowsPasses = Setting<int>("softShadowsBlurPasses");
-        const int currentShadowsPasses = Setting<int>("softShadowsBlurPasses");
-        Setting<int>("softShadowsBlurPasses") = (currentShadowsPasses ? 0 : initialShadowsPasses);
-        LOG(INFO) << "[GUIView::KeyPress] Shadow Blur Passes: " << Setting<int>("softShadowsBlurPasses");
-        break;
-    }
     case SDLK_F1:
     {
+        LOG(INFO) << "Taking screenshot";
+
         // Load screenshot index
         ifstream fin(AssetLoader::Get().ResourcePath("screenshots.txt"));
         int idx = 0;
@@ -92,17 +79,12 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
         fout << idx;
         break;
     }
-    case SDLK_UP:
+    case SDLK_F2:
     {
-        skyboxIdx = (skyboxIdx + 1) % skyboxCount;
-        mGame->mRenderer.LoadSkybox(skyboxIdx);
-        break;
-    }
-    case SDLK_DOWN:
-    {
-        skyboxIdx = (skyboxIdx == 0 ? skyboxCount - 1 : skyboxIdx - 1);
-        mGame->mRenderer.LoadSkybox(skyboxIdx);
-        break;
+        LOG(INFO) << "Recompiling shaders";
+
+        RayTraceRenderPass *rtPass = dynamic_cast<RayTraceRenderPass*>(mGame->mRenderer.GetRenderPass("rtPass"));
+        rtPass->CompileShaders();
     }
     default:
         break;

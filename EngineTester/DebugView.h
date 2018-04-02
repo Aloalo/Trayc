@@ -7,19 +7,19 @@
 
 namespace engine
 {
-    class Renderer;
+    class Rasterizer;
 }
 
 class DebugView 
     : public engine::Renderable, public engine::InputObserver
 {
 public:
-    DebugView(const engine::Renderer *renderer, float nearDist, float farDist);
+    DebugView(const engine::Rasterizer *renderer, float nearDist, float farDist);
 
     virtual void KeyPress(const SDL_KeyboardEvent &e) override;
     virtual void Draw(const engine::RenderingContext &rContext) const override;
 private:
-    const engine::Renderer *mRenderer;
+    const engine::Rasterizer *mRenderer;
     engine::TextureType mTexType;
     float mNearDist, mFarDist;
     bool mDrawGloss;

@@ -154,7 +154,7 @@ namespace engine
         {
             mVBO.Bind();
 
-            int offset = 0;
+            uint64_t offset = 0;
             for(const VertexAttribDef &attrib : mVertAttribs)
             {
                 glEnableVertexAttribArray(attrib.index);
@@ -165,7 +165,7 @@ namespace engine
                     attrib.normalized,
                     mVertexSize,
                     reinterpret_cast<const GLvoid*>(offset));
-                offset += attrib.SizeInBytes();
+                offset += static_cast<uint64_t>(attrib.SizeInBytes());
             }
 
         }
@@ -178,7 +178,7 @@ namespace engine
         {
             mVBO.Bind();
 
-            int offset = 0;
+            uint64_t offset = 0;
             const int ctAttribs = int(mVertAttribs.size());
             for(int i = 0; i < ctAttribs; ++i)
             {
@@ -193,7 +193,7 @@ namespace engine
                         attrib.normalized,
                         mVertexSize,
                         reinterpret_cast<const GLvoid*>(offset));
-                    offset += attrib.SizeInBytes();
+                    offset += static_cast<uint64_t>(attrib.SizeInBytes());
                 }
                 else {
                     glDisableVertexAttribArray(attrib.index);

@@ -20,9 +20,6 @@ namespace engine
         const Camera& GetCamera() const;
         void SetAspectRatio(float aspect);
 
-    protected:
-        friend class Renderer;
-        friend class Game;
         Camera mCamera;
     };
 }

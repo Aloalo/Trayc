@@ -32,6 +32,7 @@ ENTITYX_HAVE_CXX11_STDLIB
 option(BUILD_TRAYC "Build the Trayc library" OFF)
 option(BUILD_FUNCTIONDRAWER "Build the FunctionDrawer" OFF)
 option(BUILD_ENGINE_TESTER "Build EngineTester" ON)
+option(BUILD_RTRTGAME "Build RTRTGame" ON)
 option(BUILD_BALLPHYSICS "Build BallPhysics" OFF)
 option(BUILD_MANDELBROT "Build Mandelbrot" OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -84,6 +85,10 @@ endif(BUILD_FUNCTIONDRAWER)
 if(BUILD_ENGINE_TESTER)
     add_subdirectory(EngineTester)
 endif(BUILD_ENGINE_TESTER)
+
+if(BUILD_RTRTGAME)
+    add_subdirectory(RTRTGame)
+endif(BUILD_RTRTGAME)
 
 if(BUILD_BALLPHYSICS)
     add_subdirectory(BallPhysics)
