@@ -3,9 +3,9 @@
 
 namespace engine
 {
-    VertexShader::VertexShader(const char *name, const Defines &defines)
+    VertexShader::VertexShader(const char *name, const Defines &defines, const Constants &constants)
     {
-        Init(name, defines);
+        Init(name, defines, constants);
     }
 
     VertexShader::~VertexShader(void)

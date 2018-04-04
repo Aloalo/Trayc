@@ -1,5 +1,4 @@
 App:
-  -Proper N for number of RTprimitives
   -Performace testbed
   -Rectangles
   -Lights

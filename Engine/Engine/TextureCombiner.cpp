@@ -16,21 +16,21 @@ namespace engine
     {
     }
 
-    void TextureCombiner::Init(const char *progName, const Shader::Defines &defines)
+    void TextureCombiner::Init(const char *progName, const Shader::Defines &defines, const Shader::Constants &constants)
     {
-        mProgram.Init(progName, defines);
+        mProgram.Init(progName, defines, constants);
         Init();
     }
 
-    void TextureCombiner::Init(const char *vsName, const char *fsName, const Shader::Defines &defines)
+    void TextureCombiner::Init(const char *vsName, const char *fsName, const Shader::Defines &defines, const Shader::Constants &constants)
     {
-        mProgram.Init(VertexShader(vsName, defines), FragmentShader(fsName, defines));
+        mProgram.Init(VertexShader(vsName, defines, constants), FragmentShader(fsName, defines, constants));
         Init();
     }
 
-    void TextureCombiner::Init(const string &vsName, const string &fsName, const Shader::Defines &defines)
+    void TextureCombiner::Init(const string &vsName, const string &fsName, const Shader::Defines &defines, const Shader::Constants &constants)
     {
-        mProgram.Init(VertexShader(vsName.c_str(), defines), FragmentShader(fsName.c_str(), defines));
+        mProgram.Init(VertexShader(vsName.c_str(), defines, constants), FragmentShader(fsName.c_str(), defines, constants));
         Init();
     }
 

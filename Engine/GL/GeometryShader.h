@@ -10,7 +10,7 @@ namespace engine
         public Shader
     {
     public:
-        GeometryShader(const char *name, const Defines &defines);
+        GeometryShader(const char *name, const Defines &defines, const Constants &constants);
         ~GeometryShader(void);
 
         const char* GetExtension() const override;

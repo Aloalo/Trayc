@@ -8,5 +8,5 @@ struct Sphere
 
 layout(std140) uniform Primitives
 {
-    Sphere spheres[125];
+    Sphere spheres[MAX_SPHERES];
 };

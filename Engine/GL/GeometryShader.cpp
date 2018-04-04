@@ -3,9 +3,9 @@
 
 namespace engine
 {
-    GeometryShader::GeometryShader(const char *name, const Defines &defines)
+    GeometryShader::GeometryShader(const char *name, const Defines &defines, const Constants &constants)
     {
-        Init(name, defines);
+        Init(name, defines, constants);
     }
 
     GeometryShader::~GeometryShader(void)

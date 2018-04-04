@@ -11,6 +11,8 @@ namespace engine
     {
     public:
         using Defines = std::vector<std::string>;
+        using Constant = std::pair<std::string, int>;
+        using Constants = std::vector<Constant>;
 
         virtual ~Shader(void);
 
@@ -24,13 +26,14 @@ namespace engine
         friend class Program;
 
         GLuint mID;
-        void Init(const char *name, const Defines &defines);
+        void Init(const char *name, const Defines &defines, const Constants &constants);
         void Init2(const GLchar *src, const char *name, GLint len = 0);
 
     private:
         std::vector<std::string> mUniformBlocks;
         void FindUniformBlocks(const std::string &source);
         static void InsertDefines(std::string &source, const Defines &defines);
+        static void InsertConstants(std::string &source, const Constants &constants);
         static void ExpandIncludes(const std::string &path, std::string &source);
         static const std::string mHeader;
         static void AddHeader(std::string &source);

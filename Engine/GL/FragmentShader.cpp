@@ -4,9 +4,9 @@
 
 namespace engine
 {
-    FragmentShader::FragmentShader(const char *name, const Defines &defines)
+    FragmentShader::FragmentShader(const char *name, const Defines &defines, const Constants &constants)
     {
-        Init(name, defines);
+        Init(name, defines, constants);
     }
 
     FragmentShader::~FragmentShader(void)

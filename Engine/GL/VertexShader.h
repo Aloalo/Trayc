@@ -10,7 +10,7 @@ namespace engine
         public Shader
     {
     public:
-        VertexShader(const char *name, const Defines &defines);
+        VertexShader(const char *name, const Defines &defines, const Constants &constants);
         ~VertexShader(void);
 
         const char* GetExtension() const override;

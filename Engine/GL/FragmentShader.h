@@ -11,7 +11,7 @@ namespace engine
         public Shader
     {
     public:
-        FragmentShader(const char *name, const Defines &defines); // from file
+        FragmentShader(const char *name, const Defines &defines, const Constants &constants); // from file
         ~FragmentShader(void);
 
         const char* GetExtension() const override;

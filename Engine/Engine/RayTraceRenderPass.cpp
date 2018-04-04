@@ -10,8 +10,12 @@ using namespace glm;
 using namespace std;
 using namespace stdext;
 
+#define MAKE_CONSTANT(v) Shader::Constant((#v), (v))
+
 namespace engine
 {
+    static const int MAX_SPHERES = 125;
+
     RayTraceRenderPass::RayTraceRenderPass(void)
         : RenderPass("rtPass", GL_COLOR_BUFFER_BIT)
     {
@@ -19,12 +23,15 @@ namespace engine
 
     void RayTraceRenderPass::AddSphere(const RTSphere &sphere)
     {
+        assert(mSpheres.size() < MAX_SPHERES);
         mSpheres.push_back(sphere);
     }
 
     void RayTraceRenderPass::CompileShaders()
     {
-        mRayTraceCombiner.Init(AssetLoader::Get().ShaderPath("RayTrace").data());
+        const Shader::Defines defines = {};
+        const Shader::Constants constants = { MAKE_CONSTANT(MAX_SPHERES) };
+        mRayTraceCombiner.Init(AssetLoader::Get().ShaderPath("RayTrace").data(), defines, constants);
         Program::Unbind();
     }
 

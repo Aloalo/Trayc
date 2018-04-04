@@ -112,7 +112,7 @@ namespace engine
         }
     }
 
-    void Program::Init(const char *name, const Shader::Defines &defines)
+    void Program::Init(const char *name, const Shader::Defines &defines, const Shader::Constants &constants)
     {
         mName = string(name);
         string sn(name);
@@ -120,17 +120,17 @@ namespace engine
         ifstream f(sn.c_str());
 
         if(f.good())
-            Init(VertexShader(name, defines), GeometryShader(name, defines), FragmentShader(name, defines), name);
+            Init(VertexShader(name, defines, constants), GeometryShader(name, defines, constants), FragmentShader(name, defines, constants), name);
         else
-            Init(VertexShader(name, defines), FragmentShader(name, defines), name);
+            Init(VertexShader(name, defines, constants), FragmentShader(name, defines, constants), name);
 
         f.close();
     }
 
-    void Program::Init(const string &vsName, const string &fsName, const Shader::Defines &defines)
+    void Program::Init(const string &vsName, const string &fsName, const Shader::Defines &defines, const Shader::Constants &constants)
     {
         mName = "(" + vsName + ", " + fsName + ")";
-        Init(VertexShader(vsName.c_str(), defines), FragmentShader(fsName.c_str(), defines));
+        Init(VertexShader(vsName.c_str(), defines, constants), FragmentShader(fsName.c_str(), defines, constants));
     }
 
     void Program::Use() const

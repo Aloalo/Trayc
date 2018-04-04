@@ -24,7 +24,7 @@ namespace engine
         return  mUniformBlocks;
     }
 
-    void Shader::Init(const char *name, const Defines &defines)
+    void Shader::Init(const char *name, const Defines &defines, const Constants &constants)
     {
         string sn(name);
         sn += GetExtension();
@@ -38,6 +38,7 @@ namespace engine
             string source(strStream.str());
             source.erase(source.find_last_of('}')+1, source.length());
             InsertDefines(source, defines);
+            InsertConstants(source, constants);
 
             const string path = sn.substr(0, sn.find_last_of("/") + 1);
             ExpandIncludes(path, source);
@@ -102,6 +103,17 @@ namespace engine
         }
 
         source.insert(source.find("\n") + 1, strDefines);
+    }
+
+    void Shader::InsertConstants(string &source, const Constants &constants)
+    {
+        string strConstants;
+
+        for (const Constant &c : constants) {
+            strConstants += "#define " + c.first + " " + to_string(c.second) + "\n";
+        }
+
+        source.insert(source.find("\n") + 1, strConstants);
     }
 
     static inline string FileToString(const string &fname)
