@@ -23,7 +23,7 @@ namespace engine
         const vec3 nc = p - Z * near;
         const vec3 fc = p - Z * far;
 
-        const float tang = tanf(radians(fov * 0.5f));
+        const float tang = tanf(radians(fov)) * 0.5f;
         const float nh = near * tang;
         const float nw = nh * ar;
         const float fh = far * tang;
@@ -67,6 +67,15 @@ namespace engine
         return true;
     }
 
+    bool Frustum::Intersect(const vec4 &s) const
+    {
+        const vec3 center = vec3(s);
+        for (const Plane &pl : mPlanes) {
+            if (pl.Distance(center) < -s.w)
+                return false;
+        }
+        return true;
+    }
 
     bool Frustum::Intersect(const AABB &b) const
     {

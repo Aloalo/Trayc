@@ -1,6 +1,5 @@
 App:
   -Performace testbed
-  -Frustum culling
   -Rectangles
 
 Shader:

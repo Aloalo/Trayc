@@ -24,7 +24,7 @@ DefaultCameraHandler ConstructDefaultCameraHandler(ivec2 ss, float FOV, float fa
 
 RotationalCameraHandler ConstructRotationalCameraHandler(ivec2 ss, float FOV, float farDist, vec3 cameraPos, vec3 lookAtPoint)
 {
-    const float nearDist = 1.0f;
+    const float nearDist = 0.01f;
     const Camera camera(cameraPos, float(ss.x) / float(ss.y), FOV, nearDist, farDist);
 
     const float rotationSpeed = 0.003f;

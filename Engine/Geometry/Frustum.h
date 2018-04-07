@@ -19,6 +19,7 @@ namespace engine
         void Set(const glm::vec3 &p, const glm::vec3 &l, const glm::vec3 &u, float fov, float ar, float near, float far);
         bool Intersect(const glm::vec3 &p) const;
         bool Intersect(const Sphere &s) const;
+        bool Intersect(const glm::vec4 &s) const;
         bool Intersect(const AABB &b) const;
     private:
         enum

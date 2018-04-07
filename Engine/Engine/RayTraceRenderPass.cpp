@@ -82,18 +82,29 @@ namespace engine
         mRayTraceCombiner.Destroy();
     }
 
-    void RayTraceRenderPass::UploadToGPU() const
+    void RayTraceRenderPass::UploadToGPU(const Camera &cam) const
     {
+        vector<RTSphere> visibleSpheres;
+        const Frustum frustum = cam.GetFrustum();
+
+        for (const RTSphere &sphere : mSpheres) {
+            if (frustum.Intersect(sphere.positionRadius)) {
+                visibleSpheres.push_back(sphere);
+            }
+        }
+
+        cout << visibleSpheres.size() << endl;
+
         const auto primitivesUB = UniformBuffers::Get().Primitives();
-        primitivesUB.spheres(mSpheres);
+        primitivesUB.spheres(visibleSpheres);
         primitivesUB.lights(mLights);
     }
 
     void RayTraceRenderPass::Render(const RenderingContext &rContext) const
     {
-        UploadToGPU();
-
         const Camera &cam = *rContext.mCamera;
+        UploadToGPU(cam);
+
         const float halfTanFov = tanf(radians(cam.mFoV)) * 0.5f;
 
         const Program &p = mRayTraceCombiner.Prog();
