@@ -13,6 +13,24 @@ uniform vec3 U;
 uniform vec3 V;
 uniform vec3 W;
 
+bool intersectSphereSimple(in vec3 origin, in vec3 direction, in vec4 positionRadius)
+{
+	vec3 L = positionRadius.xyz - origin;
+	float t = dot(L, direction);
+	
+	if (t < 0.0) {
+        return false;
+    }
+	float d2 = dot(L, L) - t * t;
+	
+	float radius2 = positionRadius.w * positionRadius.w;
+	if (d2 > radius2) {
+        return false;
+    }
+    
+    return true;
+}
+
 bool intersectSphere(in vec3 origin, in vec3 direction, in vec4 positionRadius, inout float minLambda, out vec3 N, out vec3 P)
 {
 	vec3 L = positionRadius.xyz - origin;
@@ -41,6 +59,16 @@ bool intersectSphere(in vec3 origin, in vec3 direction, in vec4 positionRadius, 
     return true;
 }
 
+bool anyHit(in vec3 origin, in vec3 direction)
+{
+    for (int i = 0; i < ctSpheres; ++i) {
+        if (intersectSphereSimple(origin, direction, spheres[i].positionRadius)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in vec4 materailData)
 {
     vec3 ret = ambientColor;
@@ -49,6 +77,11 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in vec4 materailData)
         vec3 L = light.positionRadius.xyz - P;
         float atten = 1.0 / length(L);
         L *= atten;
+        
+        if(anyHit(P, L)) {
+            continue;
+        }
+        
         vec3 lightIntensity = lightFallofFactor * atten * atten * light.intensity;
         
         // Diffuse

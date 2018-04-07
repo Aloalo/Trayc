@@ -93,8 +93,6 @@ namespace engine
             }
         }
 
-        cout << visibleSpheres.size() << endl;
-
         const auto primitivesUB = UniformBuffers::Get().Primitives();
         primitivesUB.spheres(visibleSpheres);
         primitivesUB.lights(mLights);

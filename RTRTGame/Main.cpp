@@ -61,11 +61,11 @@ void Init(RayTracedGame &game, const char *progName)
 
 int main(int argc, char *argv[])
 {
-    InitLogging(argc, argv, true);
+    InitLogging(argc, argv, false);
     RayTracedGame game(1.0f / 60.0f);
     Init(game, argv[0]);
 
-    game.mContextHandler.VsyncMode(0);
+    // game.mContextHandler.VsyncMode(0);
 
     GUIView guiView(&game);
     game.mInputHandler.AddEventListener(&guiView);
