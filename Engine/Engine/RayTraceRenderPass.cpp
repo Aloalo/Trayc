@@ -84,17 +84,8 @@ namespace engine
 
     void RayTraceRenderPass::UploadToGPU(const Camera &cam) const
     {
-        vector<RTSphere> visibleSpheres;
-        const Frustum frustum = cam.GetFrustum();
-
-        for (const RTSphere &sphere : mSpheres) {
-            if (frustum.Intersect(sphere.positionRadius)) {
-                visibleSpheres.push_back(sphere);
-            }
-        }
-
         const auto primitivesUB = UniformBuffers::Get().Primitives();
-        primitivesUB.spheres(visibleSpheres);
+        primitivesUB.spheres(mSpheres);
         primitivesUB.lights(mLights);
     }
 

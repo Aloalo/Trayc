@@ -101,9 +101,9 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in vec4 materailData)
     return ret;
 }
 
-void rayTrace(in vec3 origin, in vec3 direction)
+vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 new_direction, out float addFactor)
 {
-    vec3 N, P;
+    vec3 N, P, retColor = vec3(0.0);
     float minLambda = 100000.0;
     int hitIdx = -1;
     for (int i = 0; i < ctSpheres; ++i) {
@@ -112,9 +112,15 @@ void rayTrace(in vec3 origin, in vec3 direction)
         }
     }
     
-    if(hitIdx != -1) {
-        outColor = shade(P, N, spheres[hitIdx].diffuseSpecular, spheres[hitIdx].materailData);
+    if (hitIdx != -1) {
+        Sphere sphere = spheres[hitIdx];
+        retColor = shade(P, N, sphere.diffuseSpecular, sphere.materailData);
         hitIdx = -1;
+        if (sphere.materailData.y > 0.0) {
+            new_origin = P;
+            new_direction = reflect(direction, N);
+            addFactor = sphere.materailData.y;
+        }
     }
     
     for (int i = 0; i < ctLights; ++i) {
@@ -123,16 +129,47 @@ void rayTrace(in vec3 origin, in vec3 direction)
         }
     }
     
-    if(hitIdx != -1) {
-        outColor = lights[hitIdx].intensity;
+    if (hitIdx != -1) {
+        retColor = lights[hitIdx].intensity;
+        new_direction = vec3(0.0);
     }
+    
+    return retColor;
 }
+
+vec3 rayTrace_4(in vec3 origin, in vec3 direction)
+{
+    vec3 new_origin;
+    vec3 new_direction;
+    float addFactor;
+    vec3 color = rayTrace(origin, direction, new_origin, new_direction, addFactor);
+    return color;
+}
+
+#define RAY_TRACE_MACRO(DEPTH, NEXT) \
+vec3 rayTrace_##DEPTH(in vec3 origin, in vec3 direction) \
+{ \
+    vec3 new_origin; \
+    vec3 new_direction; \
+    float addFactor = 0.0; \
+    vec3 color = rayTrace(origin, direction, new_origin, new_direction, addFactor); \
+    \
+    if (addFactor > 0.0) { \
+        color += addFactor * rayTrace_##NEXT(new_origin, new_direction); \
+    } \
+    \
+    return color; \
+}
+
+RAY_TRACE_MACRO(3, 4)
+RAY_TRACE_MACRO(2, 3)
+RAY_TRACE_MACRO(1, 2)
+RAY_TRACE_MACRO(0, 1)
 
 void main()
 {
     vec3 viewRay = normalize(clipSpaceCoords.x * U + clipSpaceCoords.y * V + W);
-    outColor = vec3(0.0);
-    rayTrace(cameraPos, viewRay);
+    outColor = rayTrace_0(cameraPos, viewRay);
 
     //outColor = outColor * 0.0001 + (dot(-normalize(cameraPos), normalize(viewRay)) > 0.98 ? vec4(1.0) : vec4(0.0));
 }

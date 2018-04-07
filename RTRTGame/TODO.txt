@@ -3,5 +3,4 @@ App:
   -Rectangles
 
 Shader:
-  -Reflection
   -Refraction

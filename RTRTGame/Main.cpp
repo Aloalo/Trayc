@@ -9,13 +9,12 @@ using namespace engine;
 using namespace std;
 using namespace glm;
 
-DefaultCameraHandler ConstructDefaultCameraHandler(ivec2 ss, float FOV, float farDist)
+DefaultCameraHandler ConstructDefaultCameraHandler(ivec2 ss, float FOV, float farDist, vec3 cameraPos)
 {
-    const float nearDist = 1.0f;
-    const vec3 cameraPos(0.0f, 200.0f, 0.0f);
+    const float nearDist = 0.01f;
     const Camera camera(cameraPos, float(ss.x) / float(ss.y), FOV, nearDist, farDist);
 
-    const float moveSpeed = 600.0f;
+    const float moveSpeed = 10.0f;
     const float rotationSpeed = 0.0015f;
     const float springiness = 20.0f;
 
@@ -38,18 +37,24 @@ void Init(RayTracedGame &game, const char *progName)
     const ivec2 SSize(Setting<int>("screenWidth"), Setting<int>("screenHeight"));
     
     //Init Camera handler
-    const RotationalCameraHandler camHandler(ConstructRotationalCameraHandler(SSize, Setting<float>("FOV"), 1000.0f, vec3(5.0f, 0.0f, 0.0f), vec3(0.0f)));
+    //const auto camHandler(ConstructRotationalCameraHandler(SSize, Setting<float>("FOV"), 1000.0f, vec3(5.0f, 0.0f, 0.0f), vec3(0.0f)));
+    const auto camHandler(ConstructDefaultCameraHandler(SSize, Setting<float>("FOV"), 1000.0f, vec3(20.0f, 0.0f, 0.0f)));
 
     //Init Game
     game.Init(camHandler, progName, "RTRTGame", SSize.x, SSize.y);
 
     const float R = 1.0f;
-    const float offsets[] = {-4.0f * R, -2.0f * R , 0.0f, 2.0f * R , 4.0f * R };
+    const float offsets[] = {-8.0f * R, -4.0f * R , 0.0f, 4.0f * R , 8.0f * R };
     const int N = 5;
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
             for (int k = 0; k < N; ++k) {
-                const RTSphere sphere = { vec4(offsets[i], offsets[j], offsets[k], R), vec4(0.1f, 0.6f, 0.4f, 0.5f), vec4(512.0f, 0.0f, 0.0f, 0.0f) };
+                RTSphere sphere = { vec4(offsets[i], offsets[j], offsets[k], R), vec4(0.1f, 0.6f, 0.4f, 0.5f), vec4(512.0f, 0.0f, 0.0f, 0.0f) };
+
+                if (i == N-1) {
+                    sphere.materailData.y = 0.5f;
+                }
+
                 game.mRenderer.AddSphere(sphere);
             }
         }
@@ -61,11 +66,11 @@ void Init(RayTracedGame &game, const char *progName)
 
 int main(int argc, char *argv[])
 {
-    InitLogging(argc, argv, false);
+    InitLogging(argc, argv, true);
     RayTracedGame game(1.0f / 60.0f);
     Init(game, argv[0]);
 
-    // game.mContextHandler.VsyncMode(0);
+    game.mContextHandler.VsyncMode(0);
 
     GUIView guiView(&game);
     game.mInputHandler.AddEventListener(&guiView);
