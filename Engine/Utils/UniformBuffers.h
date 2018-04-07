@@ -37,7 +37,11 @@ namespace engine
     public:
         PrimitivesUB(void);
 
-        UNIFORM_ARRAY_MACRO(std::vector<RTSphere>, spheres, 0); // tan(fovy / 2) :: aspectRatio * tan(fovy / 2) :: - :: -
+        static const int MAX_SPHERES = 125;
+        static const int MAX_LIGHTS = 5;
+
+        UNIFORM_ARRAY_MACRO(std::vector<RTSphere>, spheres, 0);
+        UNIFORM_ARRAY_MACRO(std::vector<RTLight>, lights, sizeof(RTSphere) * MAX_SPHERES);
     };
 
     class UniformBuffers : public Singleton<UniformBuffers>

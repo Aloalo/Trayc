@@ -10,12 +10,10 @@ using namespace glm;
 using namespace std;
 using namespace stdext;
 
-#define MAKE_CONSTANT(v) Shader::Constant((#v), (v))
+#define MAKE_CONSTANT(n, v) Shader::Constant((#n), (v))
 
 namespace engine
 {
-    static const int MAX_SPHERES = 125;
-
     RayTraceRenderPass::RayTraceRenderPass(void)
         : RenderPass("rtPass", GL_COLOR_BUFFER_BIT)
     {
@@ -23,15 +21,34 @@ namespace engine
 
     void RayTraceRenderPass::AddSphere(const RTSphere &sphere)
     {
-        assert(mSpheres.size() < MAX_SPHERES);
+        if (mSpheres.size() > PrimitivesUB::MAX_SPHERES) {
+            throw exception("Exceeded MAX_SPHERES");
+        }
         mSpheres.push_back(sphere);
+    }
+
+    void RayTraceRenderPass::AddLight(const RTLight &light)
+    {
+        if (mLights.size() > PrimitivesUB::MAX_LIGHTS) {
+            throw exception("Exceeded MAX_LIGHTS");
+        }
+        mLights.push_back(light);
     }
 
     void RayTraceRenderPass::CompileShaders()
     {
         const Shader::Defines defines = {};
-        const Shader::Constants constants = { MAKE_CONSTANT(MAX_SPHERES) };
+        const Shader::Constants constants = {
+            MAKE_CONSTANT(MAX_SPHERES, PrimitivesUB::MAX_SPHERES),
+            MAKE_CONSTANT(MAX_LIGHTS, PrimitivesUB::MAX_LIGHTS)
+        };
         mRayTraceCombiner.Init(AssetLoader::Get().ShaderPath("RayTrace").data(), defines, constants);
+
+        const Program &p = mRayTraceCombiner.Prog();
+        p.Use();
+        p.SetUniform("ambientColor", vec3(0.1f));
+        p.SetUniform("lightFallofFactor", 50.0f);
+
         Program::Unbind();
     }
 
@@ -52,7 +69,7 @@ namespace engine
 
         // Init buffer
         mDstFB.Init(width, height);
-        mDstFB.AddAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT); //Lighting out / x
+        mDstFB.AddAttachment(GL_RGB16F, GL_RGB, GL_FLOAT); //Lighting out
         mDstFB.Compile();
 
         // Bind own textures to appropriate slots
@@ -67,7 +84,9 @@ namespace engine
 
     void RayTraceRenderPass::UploadToGPU() const
     {
-        UniformBuffers::Get().Primitives().spheres(mSpheres);
+        const auto primitivesUB = UniformBuffers::Get().Primitives();
+        primitivesUB.spheres(mSpheres);
+        primitivesUB.lights(mLights);
     }
 
     void RayTraceRenderPass::Render(const RenderingContext &rContext) const
@@ -84,6 +103,7 @@ namespace engine
         p.SetUniform("V", cam.GetUp() * halfTanFov);
         p.SetUniform("W", cam.GetDirection());
         p.SetUniform("ctSpheres", static_cast<int>(mSpheres.size()));
+        p.SetUniform("ctLights", static_cast<int>(mLights.size()));
 
         mRayTraceCombiner.Draw();
     }

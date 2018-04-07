@@ -1,10 +1,9 @@
 App:
   -Performace testbed
+  -Frustum culling
   -Rectangles
-  -Lights
 
 Shader:
-  -Blinn-phong shading
   -Shadows
   -Reflection
   -Refraction

@@ -88,6 +88,7 @@ namespace engine
         ~RayTracer(void);
 
         void AddSphere(const RTSphere &sphere);
+        void AddLight(const RTLight &light);
 
         virtual void SetScreenSize(int width, int height) override;
     private:

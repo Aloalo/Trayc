@@ -294,6 +294,12 @@ namespace engine
         mRTPass->AddSphere(sphere);
     }
 
+
+    void RayTracer::AddLight(const RTLight &light)
+    {
+        mRTPass->AddLight(light);
+    }
+
     void RayTracer::SetScreenSize(int width, int height)
     {
         GetRenderPass("bbPass")->ResizeDstBuffer(width, height);

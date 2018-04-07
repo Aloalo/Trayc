@@ -26,7 +26,7 @@ namespace engine
     {
         mViewRayData.Init(2 * sizeof(vec4));
         mMatrices.Init(6 * sizeof(mat4));
-        mPrimitives.Init(125 * sizeof(RTSphere));
+        mPrimitives.Init(PrimitivesUB::MAX_SPHERES * sizeof(RTSphere) + PrimitivesUB::MAX_LIGHTS * sizeof(RTLight));
     }
 
     void UniformBuffers::Destroy()

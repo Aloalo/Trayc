@@ -11,6 +11,12 @@ namespace engine
         glm::vec4 diffuseSpecular;
         glm::vec4 materailData;
     };
+
+    struct RTLight
+    {
+        glm::vec4 positionRadius;
+        glm::vec3 intensity;
+    };
 }
 
 #endif

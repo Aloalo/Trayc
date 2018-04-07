@@ -49,16 +49,19 @@ void Init(RayTracedGame &game, const char *progName)
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
             for (int k = 0; k < N; ++k) {
-                const RTSphere sphere = { vec4(offsets[i], offsets[j], offsets[k], R), vec4(0.1f, 0.6f, 0.4f, 0.5f), vec4(0.0f) };
+                const RTSphere sphere = { vec4(offsets[i], offsets[j], offsets[k], R), vec4(0.1f, 0.6f, 0.4f, 0.5f), vec4(512.0f, 0.0f, 0.0f, 0.0f) };
                 game.mRenderer.AddSphere(sphere);
             }
         }
     }
+
+    const RTLight light = { vec4(10.0f, 10.0f, 10.0f, 0.3f), vec3(1.0f) };
+    game.mRenderer.AddLight(light);
 }
 
 int main(int argc, char *argv[])
 {
-    InitLogging(argc, argv, false);
+    InitLogging(argc, argv, true);
     RayTracedGame game(1.0f / 60.0f);
     Init(game, argv[0]);
 

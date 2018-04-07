@@ -21,11 +21,13 @@ namespace engine
         void CompileShaders();
 
         void AddSphere(const RTSphere &sphere);
+        void AddLight(const RTLight &light);
     private:
         void UploadToGPU() const;
 
         TextureCombiner mRayTraceCombiner;
         std::vector<RTSphere> mSpheres;
+        std::vector<RTLight> mLights;
     };
 }
 
