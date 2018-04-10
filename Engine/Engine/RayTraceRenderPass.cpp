@@ -35,12 +35,21 @@ namespace engine
         mLights.push_back(light);
     }
 
+    void RayTraceRenderPass::AddRectangle(const RTRectangle &rect)
+    {
+        if (mRectangles.size() > PrimitivesUB::MAX_RECTANGLES) {
+            throw exception("Exceeded MAX_RECTANGLES");
+        }
+        mRectangles.push_back(rect);
+    }
+
     void RayTraceRenderPass::CompileShaders()
     {
         const Shader::Defines defines = {};
         const Shader::Constants constants = {
             MAKE_CONSTANT(MAX_SPHERES, PrimitivesUB::MAX_SPHERES),
-            MAKE_CONSTANT(MAX_LIGHTS, PrimitivesUB::MAX_LIGHTS)
+            MAKE_CONSTANT(MAX_LIGHTS, PrimitivesUB::MAX_LIGHTS),
+            MAKE_CONSTANT(MAX_RECTANGLES, PrimitivesUB::MAX_RECTANGLES)
         };
         mRayTraceCombiner.Init(AssetLoader::Get().ShaderPath("RayTrace").data(), defines, constants);
 
@@ -85,6 +94,7 @@ namespace engine
     void RayTraceRenderPass::UploadToGPU(const Camera &cam) const
     {
         const auto primitivesUB = UniformBuffers::Get().Primitives();
+        primitivesUB.rectangles(mRectangles);
         primitivesUB.spheres(mSpheres);
         primitivesUB.lights(mLights);
     }
@@ -104,6 +114,7 @@ namespace engine
         p.SetUniform("W", cam.GetDirection());
         p.SetUniform("ctSpheres", static_cast<int>(mSpheres.size()));
         p.SetUniform("ctLights", static_cast<int>(mLights.size()));
+        p.SetUniform("ctRectangles", static_cast<int>(mRectangles.size()));
 
         mRayTraceCombiner.Draw();
     }

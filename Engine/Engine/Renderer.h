@@ -89,6 +89,7 @@ namespace engine
 
         void AddSphere(const RTSphere &sphere);
         void AddLight(const RTLight &light);
+        void AddRectangle(const RTRectangle &rect);
 
         virtual void SetScreenSize(int width, int height) override;
     private:

@@ -1,5 +1,5 @@
-#ifndef ET_GUI_VIEW_H
-#define ET_GUI_VIEW_H
+#ifndef RTRT_GUI_VIEW_H
+#define RTRT_GUI_VIEW_H
 
 #include <Engine/Engine/Renderable.h>
 #include <Engine/Core/InputObserver.h>
@@ -25,4 +25,5 @@ private:
     engine::VertexArray mVA;
     engine::Program mProgram;
 };
+
 #endif

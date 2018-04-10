@@ -22,12 +22,14 @@ namespace engine
 
         void AddSphere(const RTSphere &sphere);
         void AddLight(const RTLight &light);
+        void AddRectangle(const RTRectangle &rect);
     private:
         void UploadToGPU(const Camera &cam) const;
 
         TextureCombiner mRayTraceCombiner;
         std::vector<RTSphere> mSpheres;
         std::vector<RTLight> mLights;
+        std::vector<RTRectangle> mRectangles;
     };
 }
 

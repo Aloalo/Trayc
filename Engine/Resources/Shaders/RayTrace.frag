@@ -4,6 +4,7 @@ layout(location = 0) out vec3 outColor;
 #include "UB_Primitives.glsl"
 uniform int ctSpheres;
 uniform int ctLights;
+uniform int ctRectangles;
 
 uniform vec3 ambientColor;
 uniform float lightFallofFactor;
@@ -13,7 +14,7 @@ uniform vec3 U;
 uniform vec3 V;
 uniform vec3 W;
 
-bool intersectSphereSimple(in vec3 origin, in vec3 direction, in vec4 positionRadius)
+bool intersectSphereSimple(in vec3 origin, in vec3 direction, in vec4 positionRadius, in float maxLambda)
 {
 	vec3 L = positionRadius.xyz - origin;
 	float t = dot(L, direction);
@@ -25,6 +26,11 @@ bool intersectSphereSimple(in vec3 origin, in vec3 direction, in vec4 positionRa
 	
 	float radius2 = positionRadius.w * positionRadius.w;
 	if (d2 > radius2) {
+        return false;
+    }
+    
+    float lambda = t - sqrt(radius2 - d2);
+    if (lambda > maxLambda) {
         return false;
     }
     
@@ -59,17 +65,72 @@ bool intersectSphere(in vec3 origin, in vec3 direction, in vec4 positionRadius, 
     return true;
 }
 
-bool anyHit(in vec3 origin, in vec3 direction)
+vec3 RECT_NORMALS[3] = vec3[](
+    vec3(1.0, 0.0, 0.0),
+    vec3(0.0, 1.0, 0.0),
+    vec3(0.0, 0.0, 1.0)
+);
+
+bool intersectRectangleSimple(in vec3 origin, in vec3 direction, in Rectangle rectangle, in float maxLambda)
+{
+    float lambda = (rectangle.offset - origin[rectangle.normal]) / direction[rectangle.normal];
+    
+    if (lambda < 0.0 || lambda > maxLambda) {
+        return false;
+    }
+    
+    vec3 hitPoint = origin + lambda * direction;
+    vec2 planePoint = vec2(hitPoint[(rectangle.normal + 1) % 3], hitPoint[(rectangle.normal + 2) % 3]);
+    
+    if (any(lessThan(planePoint, rectangle.rect.xy)) || any(greaterThan(planePoint, rectangle.rect.zw))) {
+        return false;
+    }
+    
+    return true;
+}
+
+bool intersectRectangle(in vec3 origin, in vec3 direction, in Rectangle rectangle, inout float minLambda, out vec3 N, out vec3 P)
+{
+    float lambda = (rectangle.offset - origin[rectangle.normal]) / direction[rectangle.normal];
+    
+    if (lambda < 0.0 || lambda > minLambda) {
+        return false;
+    }
+    
+    vec3 hitPoint = origin + lambda * direction;
+    // The values for the X-Z plane should be swizzled for Rectangle.rect.xy, Rectangle.rect.zw
+    vec2 planePoint = vec2(hitPoint[(rectangle.normal + 1) % 3], hitPoint[(rectangle.normal + 2) % 3]);
+    
+    if (any(lessThan(planePoint, rectangle.rect.xy)) || any(greaterThan(planePoint, rectangle.rect.zw))) {
+        return false;
+    }
+	
+    minLambda = lambda;
+    P = hitPoint;
+    N = RECT_NORMALS[rectangle.normal];
+    N *= -sign(dot(N, direction));
+    
+    return true;
+}
+
+bool anyHit(in vec3 origin, in vec3 direction, in float maxLambda)
 {
     for (int i = 0; i < ctSpheres; ++i) {
-        if (intersectSphereSimple(origin, direction, spheres[i].positionRadius)) {
+        if (intersectSphereSimple(origin, direction, spheres[i].positionRadius, maxLambda)) {
             return true;
         }
     }
+    
+    for (int i = 0; i < ctRectangles; ++i) {
+        if (intersectRectangleSimple(origin, direction, rectangles[i], maxLambda)) {
+            return true;
+        }
+    }
+    
     return false;
 }
 
-vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in vec4 materailData)
+vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss)
 {
     vec3 ret = ambientColor;
     for (int i = 0; i < ctLights; ++i) {
@@ -78,7 +139,8 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in vec4 materailData)
         float atten = 1.0 / length(L);
         L *= atten;
         
-        if(anyHit(P, L)) {
+        // TODO(jure): proper offsetting
+        if(anyHit(P + L * 0.1, L, 1.0 / atten)) {
             continue;
         }
         
@@ -94,7 +156,7 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in vec4 materailData)
             vec3 V = normalize(cameraPos - P);
             vec3 H = normalize(V + L);
             float dotNH = max(0.0, dot(N, H));
-            ret += diffuseSpecular.a * pow(dotNH, materailData.r) * lightIntensity;
+            ret += diffuseSpecular.a * pow(dotNH, gloss) * lightIntensity;
         }
     }
     
@@ -114,12 +176,31 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
     
     if (hitIdx != -1) {
         Sphere sphere = spheres[hitIdx];
-        retColor = shade(P, N, sphere.diffuseSpecular, sphere.materailData);
+        retColor = shade(P, N, sphere.diffuseSpecular, sphere.materailData.r);
         hitIdx = -1;
         if (sphere.materailData.y > 0.0) {
             new_origin = P;
             new_direction = reflect(direction, N);
             addFactor = sphere.materailData.y;
+        }
+    }
+    
+    for (int i = 0; i < ctRectangles; ++i) {
+        if (intersectRectangle(origin, direction, rectangles[i], minLambda, N, P)) {
+            hitIdx = i;
+        }
+    }
+    
+    if (hitIdx != -1) {
+        Rectangle rectangle = rectangles[hitIdx];
+        retColor = shade(P, N, rectangle.diffuseSpecular, rectangle.materailData.r);
+        hitIdx = -1;
+        
+        addFactor = -1.0;
+        if (rectangle.materailData.y > 0.0) {
+            new_origin = P;
+            new_direction = reflect(direction, N);
+            addFactor = rectangle.materailData.y;
         }
     }
     
@@ -131,13 +212,13 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
     
     if (hitIdx != -1) {
         retColor = lights[hitIdx].intensity;
-        new_direction = vec3(0.0);
+        addFactor = -1.0;
     }
     
     return retColor;
 }
 
-vec3 rayTrace_4(in vec3 origin, in vec3 direction)
+vec3 rayTrace_2(in vec3 origin, in vec3 direction)
 {
     vec3 new_origin;
     vec3 new_direction;
@@ -151,7 +232,7 @@ vec3 rayTrace_##DEPTH(in vec3 origin, in vec3 direction) \
 { \
     vec3 new_origin; \
     vec3 new_direction; \
-    float addFactor = 0.0; \
+    float addFactor = -1.0; \
     vec3 color = rayTrace(origin, direction, new_origin, new_direction, addFactor); \
     \
     if (addFactor > 0.0) { \
@@ -161,8 +242,8 @@ vec3 rayTrace_##DEPTH(in vec3 origin, in vec3 direction) \
     return color; \
 }
 
-RAY_TRACE_MACRO(3, 4)
-RAY_TRACE_MACRO(2, 3)
+//RAY_TRACE_MACRO(3, 4)
+//RAY_TRACE_MACRO(2, 3)
 RAY_TRACE_MACRO(1, 2)
 RAY_TRACE_MACRO(0, 1)
 

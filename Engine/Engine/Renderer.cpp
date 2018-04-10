@@ -300,6 +300,11 @@ namespace engine
         mRTPass->AddLight(light);
     }
 
+    void RayTracer::AddRectangle(const RTRectangle &rect)
+    {
+        mRTPass->AddRectangle(rect);
+    }
+
     void RayTracer::SetScreenSize(int width, int height)
     {
         GetRenderPass("bbPass")->ResizeDstBuffer(width, height);

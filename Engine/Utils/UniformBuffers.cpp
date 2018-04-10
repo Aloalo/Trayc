@@ -1,6 +1,7 @@
 
 #include <Engine/Utils/UniformBuffers.h>
 #include <GL/glew.h>
+#include <easylogging++.h>
 
 using namespace glm;
 
@@ -26,7 +27,14 @@ namespace engine
     {
         mViewRayData.Init(2 * sizeof(vec4));
         mMatrices.Init(6 * sizeof(mat4));
-        mPrimitives.Init(PrimitivesUB::MAX_SPHERES * sizeof(RTSphere) + PrimitivesUB::MAX_LIGHTS * sizeof(RTLight));
+
+        const auto primitivesSize = PrimitivesUB::MAX_SPHERES * sizeof(RTSphere) +
+            PrimitivesUB::MAX_LIGHTS * sizeof(RTLight) +
+            PrimitivesUB::MAX_RECTANGLES * sizeof(RTRectangle);
+
+        LOG(INFO) << "PrimitivesUB size: " << primitivesSize;
+
+        mPrimitives.Init(primitivesSize);
     }
 
     void UniformBuffers::Destroy()

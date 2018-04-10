@@ -1,7 +1,7 @@
 #include <glm/glm.hpp>
 
-#ifndef EN_RT_SPHERE
-#define EN_RT_SPHERE
+#ifndef EN_RAY_TRACE_PRIMITIVES
+#define EN_RAY_TRACE_PRIMITIVES
 
 namespace engine
 {
@@ -16,6 +16,16 @@ namespace engine
     {
         glm::vec4 positionRadius;
         glm::vec3 intensity;
+        int __padding;
+    };
+
+    struct RTRectangle
+    {
+        glm::vec4 rect;
+        glm::vec4 diffuseSpecular;
+        glm::vec2 materailData;
+        float offset;
+        int normal;
     };
 }
 

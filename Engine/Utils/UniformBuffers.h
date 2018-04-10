@@ -37,11 +37,13 @@ namespace engine
     public:
         PrimitivesUB(void);
 
-        static const int MAX_SPHERES = 125;
-        static const int MAX_LIGHTS = 5;
+        static const int MAX_RECTANGLES = 32;
+        static const int MAX_SPHERES = 128;
+        static const int MAX_LIGHTS = 4;
 
-        UNIFORM_ARRAY_MACRO(std::vector<RTSphere>, spheres, 0);
-        UNIFORM_ARRAY_MACRO(std::vector<RTLight>, lights, sizeof(RTSphere) * MAX_SPHERES);
+        UNIFORM_ARRAY_MACRO(std::vector<RTRectangle>, rectangles, 0);
+        UNIFORM_ARRAY_MACRO(std::vector<RTSphere>, spheres, sizeof(RTRectangle) * MAX_RECTANGLES);
+        UNIFORM_ARRAY_MACRO(std::vector<RTLight>, lights, sizeof(RTSphere) * MAX_SPHERES + sizeof(RTRectangle) * MAX_RECTANGLES);
     };
 
     class UniformBuffers : public Singleton<UniformBuffers>

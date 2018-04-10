@@ -1,6 +1,8 @@
 App:
   -Performace testbed
-  -Rectangles
-
+  -Boxes
+  -Light reflection from reflective rectangles
+  
 Shader:
   -Refraction
+  

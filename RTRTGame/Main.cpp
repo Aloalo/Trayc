@@ -62,6 +62,14 @@ void Init(RayTracedGame &game, const char *progName)
 
     const RTLight light = { vec4(10.0f, 10.0f, 10.0f, 0.3f), vec3(1.0f) };
     game.mRenderer.AddLight(light);
+
+    const float recOffset = offsets[0] - 20.0f * R;
+    const RTRectangle r1 = { vec4(-50.0f, -50.0f, 50.0f, 50.0f), vec4(0.1f, 0.6f, 0.4f, 0.5f), vec2(128.0f, 0.0f), recOffset, 0 };
+    RTRectangle r2 = r1;
+    r2.offset *= -1;
+    game.mRenderer.AddRectangle(r1);
+    game.mRenderer.AddRectangle(r2);
+
 }
 
 int main(int argc, char *argv[])
