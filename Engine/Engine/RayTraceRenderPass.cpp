@@ -43,13 +43,22 @@ namespace engine
         mRectangles.push_back(rect);
     }
 
+    void RayTraceRenderPass::AddBox(const RTBox &box)
+    {
+        if (mBoxes.size() > PrimitivesUB::MAX_BOXES) {
+            throw exception("Exceeded MAX_BOXES");
+        }
+        mBoxes.push_back(box);
+    }
+
     void RayTraceRenderPass::CompileShaders()
     {
         const Shader::Defines defines = {};
         const Shader::Constants constants = {
             MAKE_CONSTANT(MAX_SPHERES, PrimitivesUB::MAX_SPHERES),
             MAKE_CONSTANT(MAX_LIGHTS, PrimitivesUB::MAX_LIGHTS),
-            MAKE_CONSTANT(MAX_RECTANGLES, PrimitivesUB::MAX_RECTANGLES)
+            MAKE_CONSTANT(MAX_RECTANGLES, PrimitivesUB::MAX_RECTANGLES),
+            MAKE_CONSTANT(MAX_BOXES, PrimitivesUB::MAX_BOXES)
         };
         mRayTraceCombiner.Init(AssetLoader::Get().ShaderPath("RayTrace").data(), defines, constants);
 
@@ -95,6 +104,7 @@ namespace engine
     {
         const auto primitivesUB = UniformBuffers::Get().Primitives();
         primitivesUB.rectangles(mRectangles);
+        primitivesUB.boxes(mBoxes);
         primitivesUB.spheres(mSpheres);
         primitivesUB.lights(mLights);
     }
@@ -115,6 +125,7 @@ namespace engine
         p.SetUniform("ctSpheres", static_cast<int>(mSpheres.size()));
         p.SetUniform("ctLights", static_cast<int>(mLights.size()));
         p.SetUniform("ctRectangles", static_cast<int>(mRectangles.size()));
+        p.SetUniform("ctBoxes", static_cast<int>(mBoxes.size()));
 
         mRayTraceCombiner.Draw();
     }

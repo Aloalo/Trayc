@@ -27,6 +27,16 @@ namespace engine
         float offset;
         int normal;
     };
+
+    struct RTBox
+    {
+        glm::vec4 diffuseSpecular;
+        glm::vec4 materailData;
+        glm::vec3 minv;
+        int __padding1;
+        glm::vec3 maxv;
+        int __padding2;
+    };
 }
 
 #endif

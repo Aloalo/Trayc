@@ -1,8 +1,11 @@
 App:
-  -Performace testbed
-  -Boxes
   -Light reflection from reflective rectangles
   
 Shader:
   -Refraction
   
+Optimizations:
+  -Performace testbed
+  -Don't compute P in intersect functions
+  -Material data can be 1 byte per component
+  -Check if UB is slow

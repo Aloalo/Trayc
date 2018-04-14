@@ -21,9 +21,18 @@ struct Rectangle
     int normal;
 };
 
+struct Box
+{
+    vec4 diffuseSpecular;
+    vec4 materailData;
+    vec3 minv;
+    vec3 maxv;
+};
+
 layout(std140) uniform Primitives
 {
     Rectangle rectangles[MAX_RECTANGLES];
+    Box boxes[MAX_BOXES];
     Sphere spheres[MAX_SPHERES];
     Light lights[MAX_LIGHTS];
 };

@@ -5,6 +5,7 @@ layout(location = 0) out vec3 outColor;
 uniform int ctSpheres;
 uniform int ctLights;
 uniform int ctRectangles;
+uniform int ctBoxes;
 
 uniform vec3 ambientColor;
 uniform float lightFallofFactor;
@@ -113,6 +114,48 @@ bool intersectRectangle(in vec3 origin, in vec3 direction, in Rectangle rectangl
     return true;
 }
 
+vec3 boxnormal(in vec3 t0, in vec3 t1, in float t)
+{
+    vec3 neg = vec3(t == t0.x ? 1.0f : 0.0f, t == t0.y ? 1.0f : 0.0f, t == t0.z ? 1.0f : 0.0f);
+    vec3 pos = vec3(t == t1.x ? 1.0f : 0.0f, t == t1.y ? 1.0f : 0.0f, t == t1.z ? 1.0f : 0.0f);
+    return pos - neg;
+}
+
+bool intersectBox(in vec3 origin, in vec3 direction, in Box b, inout float minLambda, out vec3 N, out vec3 P)
+{
+    vec3 tmin = (b.minv - origin) / direction;
+    vec3 tmax = (b.maxv - origin) / direction;
+    
+    vec3 near = min(tmin, tmax);
+    vec3 far = max(tmin, tmax);
+    float lmin = max(0.0, max(max(near.x, near.y), near.z));
+    float lmax = min(min(far.x, far.y), far.z);
+    
+    if(lmin < 0.0 || lmax < lmin || lmin > minLambda) {
+        return false;
+    }
+    
+    minLambda = lmin;
+    P = origin + direction * lmin;
+    N = boxnormal(tmin, tmax, lmin);
+    
+    return true;
+}
+
+bool intersectBoxSimple(in vec3 origin, in vec3 direction, in Box b, in float maxLambda)
+{
+    vec3 tmin = (b.minv - origin) / direction;
+    vec3 tmax = (b.maxv - origin) / direction;
+    
+    vec3 near = min(tmin, tmax);
+    vec3 far = max(tmin, tmax);
+    float lmin = max(0.0, max(max(near.x, near.y), near.z));
+    float lmax = min(min(far.x, far.y), far.z);
+    
+    return lmax > lmin && lmin < maxLambda;
+}
+
+
 bool anyHit(in vec3 origin, in vec3 direction, in float maxLambda)
 {
     for (int i = 0; i < ctSpheres; ++i) {
@@ -123,6 +166,12 @@ bool anyHit(in vec3 origin, in vec3 direction, in float maxLambda)
     
     for (int i = 0; i < ctRectangles; ++i) {
         if (intersectRectangleSimple(origin, direction, rectangles[i], maxLambda)) {
+            return true;
+        }
+    }
+    
+    for (int i = 0; i < ctBoxes; ++i) {
+        if (intersectBoxSimple(origin, direction, boxes[i], maxLambda)) {
             return true;
         }
     }
@@ -204,6 +253,26 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
         }
     }
     
+    for (int i = 0; i < ctBoxes; ++i) {
+        if (intersectBox(origin, direction, boxes[i], minLambda, N, P)) {
+            hitIdx = i;
+        }
+    }
+    
+    if (hitIdx != -1) {
+        Box box = boxes[hitIdx];
+        retColor = shade(P, N, box.diffuseSpecular, box.materailData.r);
+        hitIdx = -1;
+        
+        addFactor = -1.0;
+        if (box.materailData.y > 0.0) {
+            new_origin = P;
+            new_direction = reflect(direction, N);
+            addFactor = box.materailData.y;
+        }
+    }
+    
+    
     for (int i = 0; i < ctLights; ++i) {
         if (intersectSphere(origin, direction, lights[i].positionRadius, minLambda, N, P)) {
             hitIdx = i;
@@ -218,12 +287,12 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
     return retColor;
 }
 
-vec3 rayTrace_2(in vec3 origin, in vec3 direction)
+vec3 rayTrace_4(in vec3 origin, in vec3 direction)
 {
     vec3 new_origin;
     vec3 new_direction;
     float addFactor;
-    vec3 color = rayTrace(origin, direction, new_origin, new_direction, addFactor);
+    vec3 color = rayTrace(origin + direction * 0.1, direction, new_origin, new_direction, addFactor);
     return color;
 }
 
@@ -233,7 +302,7 @@ vec3 rayTrace_##DEPTH(in vec3 origin, in vec3 direction) \
     vec3 new_origin; \
     vec3 new_direction; \
     float addFactor = -1.0; \
-    vec3 color = rayTrace(origin, direction, new_origin, new_direction, addFactor); \
+    vec3 color = rayTrace(origin + direction * 0.1, direction, new_origin, new_direction, addFactor); \
     \
     if (addFactor > 0.0) { \
         color += addFactor * rayTrace_##NEXT(new_origin, new_direction); \
@@ -242,8 +311,8 @@ vec3 rayTrace_##DEPTH(in vec3 origin, in vec3 direction) \
     return color; \
 }
 
-//RAY_TRACE_MACRO(3, 4)
-//RAY_TRACE_MACRO(2, 3)
+RAY_TRACE_MACRO(3, 4)
+RAY_TRACE_MACRO(2, 3)
 RAY_TRACE_MACRO(1, 2)
 RAY_TRACE_MACRO(0, 1)
 

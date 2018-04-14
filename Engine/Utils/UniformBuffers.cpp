@@ -30,7 +30,8 @@ namespace engine
 
         const auto primitivesSize = PrimitivesUB::MAX_SPHERES * sizeof(RTSphere) +
             PrimitivesUB::MAX_LIGHTS * sizeof(RTLight) +
-            PrimitivesUB::MAX_RECTANGLES * sizeof(RTRectangle);
+            PrimitivesUB::MAX_RECTANGLES * sizeof(RTRectangle) +
+            PrimitivesUB::MAX_BOXES * sizeof(RTBox);
 
         LOG(INFO) << "PrimitivesUB size: " << primitivesSize;
 
