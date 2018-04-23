@@ -35,7 +35,7 @@ RotationalCameraHandler ConstructRotationalCameraHandler(ivec2 ss, float FOV, fl
 void Init(RayTracedGame &game, const char *progName)
 {
     const ivec2 SSize(Setting<int>("screenWidth"), Setting<int>("screenHeight"));
-    
+        
     //Init Camera handler
     //const auto camHandler(ConstructRotationalCameraHandler(SSize, Setting<float>("FOV"), 1000.0f, vec3(5.0f, 0.0f, 0.0f), vec3(0.0f)));
     const auto camHandler(ConstructDefaultCameraHandler(SSize, Setting<float>("FOV"), 1000.0f, vec3(20.0f, 0.0f, 0.0f)));
@@ -71,7 +71,7 @@ void Init(RayTracedGame &game, const char *progName)
     game.mRenderer.AddRectangle(r2);
 
 
-    const RTBox box = { vec4(1.0f, 0.6f, 0.4f, 0.5f), vec4(512.0f, 0.0f, 0.0f, 0.0f), vec3(0.0f, 15.0f, 0.0f), 0, vec3(5.0f, 25.0f, 5.0f), 0 };
+    const RTBox box = { vec4(1.0f, 0.6f, 0.4f, 0.5f), vec4(512.0f, 1.0f, 0.0f, 0.0f), vec3(0.0f, 15.0f, 0.0f), 0, vec3(5.0f, 25.0f, 5.0f), 0 };
     game.mRenderer.AddBox(box);
 }
 

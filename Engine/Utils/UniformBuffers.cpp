@@ -18,7 +18,7 @@ namespace engine
     }
 
     PrimitivesUB::PrimitivesUB(void)
-        : UniformBuffer(GL_DYNAMIC_DRAW, "Primitives")
+        : UniformBuffer(GL_STREAM_DRAW, "Primitives")
     {
     }
 

@@ -1,7 +1,7 @@
-#include <glm/glm.hpp>
-
 #ifndef EN_RAY_TRACE_PRIMITIVES
 #define EN_RAY_TRACE_PRIMITIVES
+
+#include <glm/glm.hpp>
 
 namespace engine
 {

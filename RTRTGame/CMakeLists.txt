@@ -5,6 +5,8 @@ set(RTRTGame_SRCS_HDRS
     Main.cpp
     GUIView.cpp
     GUIView.h
+    RTRTObjects.cpp
+    RTRTObjects.h
 )
 
 source_group(Src FILES ${RTRTGame_SRCS_HDRS})

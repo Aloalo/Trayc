@@ -105,6 +105,8 @@ set(Engine_Utils
     Utils/UniformBuffers.cpp
     Utils/TextureEffects.h
     Utils/TextureEffects.cpp
+    Utils/TimerQuery.h
+    Utils/TimerQuery.cpp
 )
 
 set(Engine_Engine
