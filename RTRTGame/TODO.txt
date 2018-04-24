@@ -1,17 +1,19 @@
-App:
-  - Game <-> Level
-  - Player sphere
-  - Raycasting
-    - Player camera
-    - Damage
-  - Physics
-  
-Shader:
-  - Light reflection from reflective rectangles
-  
-Optimizations:
-  - Checkerboarding
-  - Don't compute P in intersect functions
-  - Material data can be 1 byte per component
-  - Have there be exactly MAX_{X} objects for a scene -> no more ct{X}
+
+- Nail down RT type structures
+    - Optimization pass
+    - Does player sphere get saved?
+    - THINK HARD ABOUT STUFF, ELSE LEVELS WILL DIE!
+
+- Editor operations -> spawn/
+- Raycasting
+- Player camera
+- Damage
+- Physics
+
+- Light reflection from reflective rectangles
+
+- Checkerboarding
+- Don't compute P in intersect functions
+- Material data can be 1 byte per component
+- Have there be exactly MAX_{X} objects for a scene -> no more ct{X}
   
