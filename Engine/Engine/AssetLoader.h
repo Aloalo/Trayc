@@ -18,6 +18,7 @@ namespace engine
         std::string GUIPath(const std::string &name) const;
         // From root resources folder
         std::string ResourcePath(const std::string &name) const;
+        std::string LevelsPath() const;
 
         Scene LoadScene(const std::string &path, const std::string &name) const;
         Object3D CreateObject(const Scene *scene, int meshIdx, int materialIdx) const;

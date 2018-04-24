@@ -181,7 +181,7 @@ bool anyHit(in vec3 origin, in vec3 direction, in float maxLambda)
 
 vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss)
 {
-    vec3 ret = ambientColor;
+    vec3 ret = ambientColor * diffuseSpecular.xyz;
     for (int i = 0; i < ctLights; ++i) {
         Light light = lights[i];
         vec3 L = light.positionRadius.xyz - P;
@@ -287,7 +287,7 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
     return retColor;
 }
 
-vec3 rayTrace_4(in vec3 origin, in vec3 direction)
+vec3 rayTrace_2(in vec3 origin, in vec3 direction)
 {
     vec3 new_origin;
     vec3 new_direction;
@@ -311,8 +311,8 @@ vec3 rayTrace_##DEPTH(in vec3 origin, in vec3 direction) \
     return color; \
 }
 
-RAY_TRACE_MACRO(3, 4)
-RAY_TRACE_MACRO(2, 3)
+// RAY_TRACE_MACRO(3, 4)
+// RAY_TRACE_MACRO(2, 3)
 RAY_TRACE_MACRO(1, 2)
 RAY_TRACE_MACRO(0, 1)
 

@@ -1,9 +1,12 @@
 
 #include <Engine/Engine.h>
+#include <Engine/Core/Defines.h>
 #include <Engine/Core/RotationalCameraHandler.h>
 #include <Engine/Core/DefaultCameraHandler.h>
 #include <Engine/Utils/Setting.h>
+#include <Engine/Engine/RayTraceRenderPass.h>
 #include "GUIView.h"
+#include "RTRTEditor.h"
 
 using namespace engine;
 using namespace std;
@@ -63,13 +66,21 @@ void Init(RayTracedGame &game, const char *progName)
     const RTLight light = { vec4(10.0f, 10.0f, 10.0f, 0.3f), vec3(1.0f), 0 };
     game.mRenderer.AddLight(light);
 
-    const float recOffset = offsets[0] - 20.0f * R;
-    const RTRectangle r1 = { vec4(-50.0f, -50.0f, 50.0f, 50.0f), vec4(0.1f, 0.6f, 0.4f, 0.5f), vec2(128.0f, 0.0f), recOffset, 0 };
+    const float recOffset = offsets[0] - 30.0f * R;
+    RTRectangle r1 = { vec4(-50.0f, -50.0f, 50.0f, 50.0f), vec4(0.1f, 0.6f, 0.4f, 0.5f), vec2(128.0f, 0.0f), recOffset, 0 };
     RTRectangle r2 = r1;
-    r2.offset *= -1;
+    r2.normal = 1;
+    RTRectangle r3 = r1;
+    r3.normal = 2;
+
     game.mRenderer.AddRectangle(r1);
     game.mRenderer.AddRectangle(r2);
+    game.mRenderer.AddRectangle(r3);
 
+    for (auto r : { r1, r2, r3 }) {
+        r.offset *= -1.0f;
+        game.mRenderer.AddRectangle(r);
+    }
 
     const RTBox box = { vec4(1.0f, 0.6f, 0.4f, 0.5f), vec4(512.0f, 1.0f, 0.0f, 0.0f), vec3(0.0f, 15.0f, 0.0f), 0, vec3(5.0f, 25.0f, 5.0f), 0 };
     game.mRenderer.AddBox(box);
@@ -86,6 +97,15 @@ int main(int argc, char *argv[])
     GUIView guiView(&game);
     game.mInputHandler.AddEventListener(&guiView);
     game.mRenderer.AddRenderable(&guiView);
+
+#if PRODUCTION
+    RTRTEditor editor(dynamic_cast<RayTraceRenderPass*>(game.mRenderer.GetRenderPass("rtPass")));
+    editor.SetLevelFromPass();
+    editor.SaveLevel();
+    //editor.LoadLevel("default");
+    game.mUpdateableMenager.AddUpdateable(&editor);
+#else
+#endif
 
     game.GameLoop();
     return 0;

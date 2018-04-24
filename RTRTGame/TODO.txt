@@ -1,11 +1,17 @@
 App:
-  -Light reflection from reflective rectangles
+  - Game <-> Level
+  - Player sphere
+  - Raycasting
+    - Player camera
+    - Damage
+  - Physics
   
 Shader:
-  -Refraction
+  - Light reflection from reflective rectangles
   
 Optimizations:
-  -Performace testbed
-  -Don't compute P in intersect functions
-  -Material data can be 1 byte per component
-  -Check if UB is slow
+  - Checkerboarding
+  - Don't compute P in intersect functions
+  - Material data can be 1 byte per component
+  - Have there be exactly MAX_{X} objects for a scene -> no more ct{X}
+  

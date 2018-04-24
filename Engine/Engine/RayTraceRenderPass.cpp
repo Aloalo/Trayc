@@ -64,7 +64,7 @@ namespace engine
 
         const Program &p = mRayTraceCombiner.Prog();
         p.Use();
-        p.SetUniform("ambientColor", vec3(0.1f));
+        p.SetUniform("ambientColor", vec3(0.05f));
         p.SetUniform("lightFallofFactor", 50.0f);
 
         Program::Unbind();

@@ -7,6 +7,14 @@ set(RTRTGame_SRCS_HDRS
     GUIView.h
     RTRTObjects.cpp
     RTRTObjects.h
+    RTRTLevel.cpp
+    RTRTLevel.h
+    RTRTGame.cpp
+    RTRTGame.h
+    RTRTGamelike.cpp
+    RTRTGamelike.h
+    RTRTEditor.cpp
+    RTRTEditor.h
 )
 
 source_group(Src FILES ${RTRTGame_SRCS_HDRS})

@@ -9,6 +9,16 @@ RTRTObject::~RTRTObject()
 {
 }
 
+RTRTSphere::RTRTSphere(const RTSphere &object)
+    : object(object)
+{
+}
+
+std::string RTRTSphere::Type() const
+{
+    return "RTSphere";
+}
+
 vec3 RTRTSphere::Position() const
 {
     return vec3(object.positionRadius);
@@ -23,6 +33,17 @@ const void* RTRTSphere::Data(int &size) const
 {
     size = sizeof(object);
     return reinterpret_cast<const void*>(&object);
+}
+
+RTRTRectangle::RTRTRectangle(const RTRectangle &object)
+    : object(object)
+{
+}
+
+
+std::string RTRTRectangle::Type() const
+{
+    return "RTRectangle";
 }
 
 vec3 RTRTRectangle::Position() const
@@ -79,6 +100,16 @@ const void* RTRTRectangle::Data(int &size) const
     return reinterpret_cast<const void*>(&object);
 }
 
+RTRTBox::RTRTBox(const RTBox &object)
+    : object(object)
+{
+}
+
+std::string RTRTBox::Type() const
+{
+    return "RTBox";
+}
+
 vec3 RTRTBox::Position() const
 {
     return object.minv;
@@ -95,6 +126,16 @@ const void* RTRTBox::Data(int &size) const
 {
     size = sizeof(object);
     return reinterpret_cast<const void*>(&object);
+}
+
+RTRTLight::RTRTLight(const RTLight &object)
+    : object(object)
+{
+}
+
+std::string RTRTLight::Type() const
+{
+    return "RTLight";
 }
 
 vec3 RTRTLight::Position() const

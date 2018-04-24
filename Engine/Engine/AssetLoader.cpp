@@ -64,6 +64,11 @@ namespace engine
         return mResourcePath + name;
     }
 
+    string AssetLoader::LevelsPath() const
+    {
+        return mResourcePath + "Levels/";
+    }
+
     Scene AssetLoader::LoadScene(const string &path, const string &name) const
     {
         const string nameNoExt = name.substr(0, name.find_last_of("."));
