@@ -84,7 +84,7 @@ void DebugView::Draw(const engine::RenderingContext &rContext) const
     if(mTexType == TextureType::S_SHADOWPROJECTION) {
         const ShadowProjectionRenderPass *shadowPass = dynamic_cast<const ShadowProjectionRenderPass*>(mRenderer->GetRenderPass("shadowProjectionPass"));
         const Texture2D &tex = shadowPass->GetProjectedShadowmap(1);
-        DebugDraw::Get().DrawTexture(tex, vec3(1.0f));
+        DebugDraw::Get().DrawTexture(tex, false);
         return;
     }
 
@@ -100,14 +100,14 @@ void DebugView::Draw(const engine::RenderingContext &rContext) const
         DebugDraw::Get().DrawNormal(tex);
         break;
     case TextureType::G_ALBEDO_TEXTURE:
-        DebugDraw::Get().DrawTexture(tex, vec3(Setting<float>("gamma")));
+        DebugDraw::Get().DrawTexture(tex, true);
         break;
     case TextureType::G_SPEC_GLOSS_TEXTURE:
         if(mDrawGloss) {
             DebugDraw::Get().DrawGloss(tex);
         }
         else {
-            DebugDraw::Get().DrawTexture(tex, vec3(1.0f));
+            DebugDraw::Get().DrawTexture(tex, false);
         }
         break;
     default:

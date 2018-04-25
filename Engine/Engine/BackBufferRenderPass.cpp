@@ -35,14 +35,15 @@ namespace engine
         mDraw.Init(AssetLoader::Get().ShaderPath("C_TexToScreen").data(), vector<string>(1, "TONEMAPPING"));
         mDraw.Prog().Use();
         mDraw.Prog().SetUniform("tex", TextureType::FINAL_SLOT);
-        mDraw.Prog().SetUniform("gamma", vec3(Setting<float>("gamma")));
     }
 
     void BackBufferRenderPass::Render(const RenderingContext &rContext) const
     {
         mDraw.Prog().Use();
         mDraw.Prog().SetUniform("exposure", Setting<float>("exposure"));
+        glEnable(GL_FRAMEBUFFER_SRGB);
         mDraw.Draw();
+        glDisable(GL_FRAMEBUFFER_SRGB);
     }
 
 }

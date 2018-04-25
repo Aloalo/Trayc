@@ -12,7 +12,7 @@ namespace engine
     public:
         void DrawDepth(const Texture2D &tex, float nearRange, float farRange) const;
         // Draws rgb part of the texture on screen
-        void DrawTexture(const Texture2D &tex, const glm::vec3 &gamma) const;
+        void DrawTexture(const Texture2D &tex, bool gammaCorrect) const;
         void DrawNormal(const Texture2D &tex) const;
         void DrawGloss(const Texture2D &tex) const;
 

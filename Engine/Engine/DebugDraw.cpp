@@ -19,12 +19,17 @@ namespace engine
         Program::Unbind();
     }
 
-    void DebugDraw::DrawTexture(const Texture2D &tex, const vec3 &gamma) const
+    void DebugDraw::DrawTexture(const Texture2D &tex, bool gammaCorrect) const
     {
         TextureCombiner::SetTexture(TextureType::DEBUG_SLOT, &tex);
         mDrawTex.Prog().Use();
-        mDrawTex.Prog().SetUniform("gamma", gamma);
+
+        if (gammaCorrect) {
+            glEnable(GL_FRAMEBUFFER_SRGB);
+        }
+
         mDrawTex.Draw();
+        glDisable(GL_FRAMEBUFFER_SRGB);
         Program::Unbind();
     }
 

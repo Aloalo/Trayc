@@ -1,5 +1,4 @@
 
-#include "GammaCorrection.glsl"
 #include "Tonemap.glsl"
 
 in vec2 uv;
@@ -14,5 +13,5 @@ void main()
 #ifdef TONEMAPPING
     color = Tonemap(color);
 #endif
-    outColor = vec4(linearTosRGB(color), 1.0);
+    outColor = vec4(color, 1.0);
 }
