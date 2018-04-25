@@ -15,12 +15,20 @@ namespace engine
     {
     }
 
+    BackBufferRenderPass::~BackBufferRenderPass(void)
+    {
+        mNoiseTex.Destroy();
+    }
+
     void BackBufferRenderPass::Init()
     {
         const auto& renderPasses = mRenderer->GetRenderPasses();
         // BackBufferRenderPass is actually the last pass 
         const RenderPass* lastPass = renderPasses[renderPasses.size() - 2];
         mFinalTex = &lastPass->GetDstBuffer().GetAttachment(0);
+
+        mNoiseTex.Init(AssetLoader::Get().TexturePath("noise.png").c_str(), false, TextureType::D_NOISE);
+        mNoiseTex.BindToSlot(TextureType::D_NOISE);
 
         CompileShaders();
     }
@@ -35,12 +43,14 @@ namespace engine
         mDraw.Init(AssetLoader::Get().ShaderPath("C_TexToScreen").data(), vector<string>(1, "TONEMAPPING"));
         mDraw.Prog().Use();
         mDraw.Prog().SetUniform("tex", TextureType::FINAL_SLOT);
+        mDraw.Prog().SetUniform("noiseTex", TextureType::D_NOISE);
     }
 
     void BackBufferRenderPass::Render(const RenderingContext &rContext) const
     {
         mDraw.Prog().Use();
         mDraw.Prog().SetUniform("exposure", Setting<float>("exposure"));
+        mDraw.Prog().SetUniform("noiseScale", vec2(mFinalTex->Size()) / vec2(mNoiseTex.Size()));
         glEnable(GL_FRAMEBUFFER_SRGB);
         mDraw.Draw();
         glDisable(GL_FRAMEBUFFER_SRGB);

@@ -287,6 +287,7 @@ namespace engine
 
     RayTracer::~RayTracer(void)
     {
+        mNoiseSampler.Destroy();
     }
 
     void RayTracer::AddSphere(const RTSphere &sphere)
@@ -323,6 +324,9 @@ namespace engine
         }
 
         mCamera = camera;
+
+        mNoiseSampler.InitNearestDataTexture();
+        mNoiseSampler.BindToSlot(TextureType::D_NOISE);
 
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);

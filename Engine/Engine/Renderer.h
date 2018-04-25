@@ -97,6 +97,7 @@ namespace engine
         virtual void InitRendering(const CameraHandler *camera) override;
         virtual void Render() const override;
 
+        TextureSampler mNoiseSampler;
         RayTraceRenderPass *mRTPass;
     };
 }

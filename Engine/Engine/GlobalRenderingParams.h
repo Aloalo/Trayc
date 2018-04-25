@@ -34,6 +34,9 @@ namespace engine
         E_EFFECT2 = 18,
         E_EFFECT3 = 19,
 
+        // Data textures
+        D_NOISE = 20,
+
         // For the irradiance map
         IRRADIANCE_SLOT = 27,
 

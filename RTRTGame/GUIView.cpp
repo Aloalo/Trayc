@@ -3,6 +3,7 @@
 #include <Engine/Engine/Game.h>
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Engine/RayTraceRenderPass.h>
+#include <Engine/Engine/BackBufferRenderPass.h>
 #include <easylogging++.h>
 #include <fstream>
 
@@ -85,6 +86,9 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
 
         RayTraceRenderPass *rtPass = dynamic_cast<RayTraceRenderPass*>(mGame->mRenderer.GetRenderPass("rtPass"));
         rtPass->CompileShaders();
+
+        BackBufferRenderPass *bbPass = dynamic_cast<BackBufferRenderPass*>(mGame->mRenderer.GetRenderPass("bbPass"));
+        bbPass->CompileShaders();
     }
     default:
         break;
@@ -93,10 +97,10 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
 
 void GUIView::Draw(const engine::RenderingContext &rContext) const
 {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    mProgram.Use();
-    mVA.Render(GL_TRIANGLE_FAN);
-    Program::Unbind();
-    glDisable(GL_BLEND);
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    //mProgram.Use();
+    //mVA.Render(GL_TRIANGLE_FAN);
+    //Program::Unbind();
+    //glDisable(GL_BLEND);
 }

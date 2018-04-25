@@ -12,6 +12,7 @@ namespace engine
     {
     public:
         BackBufferRenderPass(void);
+        ~BackBufferRenderPass(void);
 
         virtual void Init() override;
         virtual void Destroy() override;
@@ -21,6 +22,7 @@ namespace engine
         virtual void Render(const RenderingContext &rContext) const override;
     private:
         const Texture2D *mFinalTex;
+        Texture2D mNoiseTex;
         TextureCombiner mDraw;
     };
 }
