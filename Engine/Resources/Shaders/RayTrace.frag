@@ -15,6 +15,8 @@ uniform vec3 U;
 uniform vec3 V;
 uniform vec3 W;
 
+#define RAY_OFFSET 0.05
+
 bool intersectSphereSimple(in vec3 origin, in vec3 direction, in vec4 positionRadius, in float maxLambda)
 {
 	vec3 L = positionRadius.xyz - origin;
@@ -38,7 +40,7 @@ bool intersectSphereSimple(in vec3 origin, in vec3 direction, in vec4 positionRa
     return true;
 }
 
-bool intersectSphere(in vec3 origin, in vec3 direction, in vec4 positionRadius, inout float minLambda, out vec3 N, out vec3 P)
+bool intersectSphere(in vec3 origin, in vec3 direction, in vec4 positionRadius, inout float minLambda, inout vec3 N, inout vec3 P)
 {
 	vec3 L = positionRadius.xyz - origin;
 	float t = dot(L, direction);
@@ -90,7 +92,7 @@ bool intersectRectangleSimple(in vec3 origin, in vec3 direction, in Rectangle re
     return true;
 }
 
-bool intersectRectangle(in vec3 origin, in vec3 direction, in Rectangle rectangle, inout float minLambda, out vec3 N, out vec3 P)
+bool intersectRectangle(in vec3 origin, in vec3 direction, in Rectangle rectangle, inout float minLambda, inout vec3 N, inout vec3 P)
 {
     float lambda = (rectangle.offset - origin[rectangle.normal]) / direction[rectangle.normal];
     
@@ -121,7 +123,7 @@ vec3 boxnormal(in vec3 t0, in vec3 t1, in float t)
     return pos - neg;
 }
 
-bool intersectBox(in vec3 origin, in vec3 direction, in Box b, inout float minLambda, out vec3 N, out vec3 P)
+bool intersectBox(in vec3 origin, in vec3 direction, in Box b, inout float minLambda, inout vec3 N, inout vec3 P)
 {
     vec3 tmin = (b.minv - origin) / direction;
     vec3 tmax = (b.maxv - origin) / direction;
@@ -188,8 +190,7 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss)
         float atten = 1.0 / length(L);
         L *= atten;
         
-        // TODO(jure): proper offsetting
-        if(anyHit(P + L * 0.1, L, 1.0 / atten)) {
+        if(anyHit(P + RAY_OFFSET * L, L, 1.0 / atten)) {
             continue;
         }
         
@@ -197,11 +198,11 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss)
         
         // Diffuse
         float dNL = max(0.0, dot(N, L));
-        ret += dNL * diffuseSpecular.rgb * lightIntensity;
         
         // Specular
         if(dNL > 0.0)
         {
+            ret += dNL * diffuseSpecular.rgb * lightIntensity;
             vec3 V = normalize(cameraPos - P);
             vec3 H = normalize(V + L);
             float dotNH = max(0.0, dot(N, H));
@@ -214,9 +215,15 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss)
 
 vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 new_direction, out float addFactor)
 {
+    vec4 diffuseSpecular;
     vec3 N, P, retColor = vec3(0.0);
     float minLambda = 100000.0;
+    float gloss;
     int hitIdx = -1;
+    
+    //////////////////////////////////////////////////
+    // ----------------- SPHERES ------------------ //
+    //////////////////////////////////////////////////
     for (int i = 0; i < ctSpheres; ++i) {
         if (intersectSphere(origin, direction, spheres[i].positionRadius, minLambda, N, P)) {
             hitIdx = i;
@@ -225,15 +232,15 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
     
     if (hitIdx != -1) {
         Sphere sphere = spheres[hitIdx];
-        retColor = shade(P, N, sphere.diffuseSpecular, sphere.materailData.r);
+        diffuseSpecular = sphere.diffuseSpecular;
+        gloss = sphere.materialData.r;
+        addFactor = sphere.materialData.y;
         hitIdx = -1;
-        if (sphere.materailData.y > 0.0) {
-            new_origin = P;
-            new_direction = reflect(direction, N);
-            addFactor = sphere.materailData.y;
-        }
-    }
+    } 
     
+    //////////////////////////////////////////////////
+    // --------------- RECTANGLES ----------------- //
+    //////////////////////////////////////////////////
     for (int i = 0; i < ctRectangles; ++i) {
         if (intersectRectangle(origin, direction, rectangles[i], minLambda, N, P)) {
             hitIdx = i;
@@ -242,17 +249,15 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
     
     if (hitIdx != -1) {
         Rectangle rectangle = rectangles[hitIdx];
-        retColor = shade(P, N, rectangle.diffuseSpecular, rectangle.materailData.r);
+        diffuseSpecular = rectangle.diffuseSpecular;
+        gloss = rectangle.materialData.r;
+        addFactor = rectangle.materialData.y;
         hitIdx = -1;
-        
-        addFactor = -1.0;
-        if (rectangle.materailData.y > 0.0) {
-            new_origin = P;
-            new_direction = reflect(direction, N);
-            addFactor = rectangle.materailData.y;
-        }
     }
     
+    //////////////////////////////////////////////////
+    // ------------------ BOXES ------------------- //
+    //////////////////////////////////////////////////
     for (int i = 0; i < ctBoxes; ++i) {
         if (intersectBox(origin, direction, boxes[i], minLambda, N, P)) {
             hitIdx = i;
@@ -261,18 +266,15 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
     
     if (hitIdx != -1) {
         Box box = boxes[hitIdx];
-        retColor = shade(P, N, box.diffuseSpecular, box.materailData.r);
+        diffuseSpecular = box.diffuseSpecular;
+        gloss = box.gloss;
+        addFactor = box.reflectivity;
         hitIdx = -1;
-        
-        addFactor = -1.0;
-        if (box.materailData.y > 0.0) {
-            new_origin = P;
-            new_direction = reflect(direction, N);
-            addFactor = box.materailData.y;
-        }
     }
     
-    
+    //////////////////////////////////////////////////
+    // ----------------- LIGHTS ------------------- //
+    //////////////////////////////////////////////////
     for (int i = 0; i < ctLights; ++i) {
         if (intersectSphere(origin, direction, lights[i].positionRadius, minLambda, N, P)) {
             hitIdx = i;
@@ -283,6 +285,13 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
         retColor = lights[hitIdx].intensity;
         addFactor = -1.0;
     }
+    else {
+        retColor = shade(P, N, diffuseSpecular, gloss);
+        if (addFactor > 0.0) {
+            new_direction = reflect(direction, N);
+            new_origin = P;
+        }
+    }
     
     return retColor;
 }
@@ -292,8 +301,7 @@ vec3 rayTrace_2(in vec3 origin, in vec3 direction)
     vec3 new_origin;
     vec3 new_direction;
     float addFactor;
-    vec3 color = rayTrace(origin + direction * 0.1, direction, new_origin, new_direction, addFactor);
-    return color;
+    return rayTrace(origin + RAY_OFFSET * direction, direction, new_origin, new_direction, addFactor);
 }
 
 #define RAY_TRACE_MACRO(DEPTH, NEXT) \
@@ -302,10 +310,10 @@ vec3 rayTrace_##DEPTH(in vec3 origin, in vec3 direction) \
     vec3 new_origin; \
     vec3 new_direction; \
     float addFactor = -1.0; \
-    vec3 color = rayTrace(origin + direction * 0.1, direction, new_origin, new_direction, addFactor); \
+    vec3 color = rayTrace(origin + RAY_OFFSET * direction, direction, new_origin, new_direction, addFactor); \
     \
     if (addFactor > 0.0) { \
-        color += addFactor * rayTrace_##NEXT(new_origin, new_direction); \
+        color += addFactor * rayTrace_##NEXT(new_origin + RAY_OFFSET * new_direction, new_direction); \
     } \
     \
     return color; \

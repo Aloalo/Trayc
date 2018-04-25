@@ -9,7 +9,9 @@ namespace engine
     {
         glm::vec4 positionRadius;
         glm::vec4 diffuseSpecular;
-        glm::vec4 materailData;
+		glm::vec2 materialData;
+		float phi;
+		float theta;
     };
 
     struct RTLight
@@ -23,7 +25,7 @@ namespace engine
     {
         glm::vec4 rect;
         glm::vec4 diffuseSpecular;
-        glm::vec2 materailData;
+        glm::vec2 materialData;
         float offset;
         int normal;
     };
@@ -31,11 +33,10 @@ namespace engine
     struct RTBox
     {
         glm::vec4 diffuseSpecular;
-        glm::vec4 materailData;
         glm::vec3 minv;
-        int __padding1;
+        float reflectivity;
         glm::vec3 maxv;
-        int __padding2;
+		float gloss;
     };
 }
 

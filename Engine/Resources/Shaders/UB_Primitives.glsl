@@ -3,20 +3,23 @@ struct Sphere
 {
     vec4 positionRadius;
     vec4 diffuseSpecular;
-    vec4 materailData; // gloss, reflectivity, refracticity, IoR
+    vec2 materialData; // gloss, reflectivity
+    float phi;
+    float theta;
 };
 
 struct Light
 {
     vec4 positionRadius;
     vec3 intensity;
+    // 4 bytes of padding here
 };
 
 struct Rectangle
 {
     vec4 rect;
     vec4 diffuseSpecular;
-    vec2 materailData;
+    vec2 materialData;
     float offset;
     int normal;
 };
@@ -24,9 +27,10 @@ struct Rectangle
 struct Box
 {
     vec4 diffuseSpecular;
-    vec4 materailData;
     vec3 minv;
+    float reflectivity;
     vec3 maxv;
+    float gloss;
 };
 
 layout(std140) uniform Primitives

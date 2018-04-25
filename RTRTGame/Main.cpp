@@ -52,10 +52,10 @@ void Init(RayTracedGame &game, const char *progName)
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
             for (int k = 0; k < N; ++k) {
-                RTSphere sphere = { vec4(offsets[i], offsets[j], offsets[k], R), vec4(0.1f, 0.6f, 0.4f, 0.5f), vec4(512.0f, 0.0f, 0.0f, 0.0f) };
+                RTSphere sphere = { vec4(offsets[i], offsets[j], offsets[k], R), vec4(0.1f, 0.6f, 0.4f, 0.5f), vec2(512.0f, 0.0f) };
 
                 if (i == N-1) {
-                    sphere.materailData.y = 0.5f;
+                    sphere.materialData.y = 0.5f;
                 }
 
                 game.mRenderer.AddSphere(sphere);
@@ -63,7 +63,7 @@ void Init(RayTracedGame &game, const char *progName)
         }
     }
 
-    const RTLight light = { vec4(10.0f, 10.0f, 10.0f, 0.3f), vec3(1.0f), 0 };
+    const RTLight light = { vec4(10.0f, 10.0f, 10.0f, 0.3f), vec3(1.0f) };
     game.mRenderer.AddLight(light);
 
     const float recOffset = offsets[0] - 30.0f * R;
@@ -82,13 +82,13 @@ void Init(RayTracedGame &game, const char *progName)
         game.mRenderer.AddRectangle(r);
     }
 
-    const RTBox box = { vec4(1.0f, 0.6f, 0.4f, 0.5f), vec4(512.0f, 1.0f, 0.0f, 0.0f), vec3(0.0f, 15.0f, 0.0f), 0, vec3(5.0f, 25.0f, 5.0f), 0 };
+    const RTBox box = { vec4(1.0f, 0.6f, 0.4f, 0.5f), vec3(0.0f, 15.0f, 0.0f), 1.0f, vec3(5.0f, 25.0f, 5.0f), 512.0f };
     game.mRenderer.AddBox(box);
 }
 
 int main(int argc, char *argv[])
 {
-    InitLogging(argc, argv, false);
+    InitLogging(argc, argv, true);
     RayTracedGame game(1.0f / 60.0f);
     Init(game, argv[0]);
 

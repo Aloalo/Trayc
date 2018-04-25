@@ -1,10 +1,4 @@
-
-- Nail down RT type structures
-    - Optimization pass
-    - Does player sphere get saved?
-    - THINK HARD ABOUT STUFF, ELSE LEVELS WILL DIE!
-
-- Editor operations -> spawn/
+- Editor operations -> spawn/move/scale...
 - Raycasting
 - Player camera
 - Damage
@@ -13,7 +7,5 @@
 - Light reflection from reflective rectangles
 
 - Checkerboarding
-- Don't compute P in intersect functions
-- Material data can be 1 byte per component
 - Have there be exactly MAX_{X} objects for a scene -> no more ct{X}
   
