@@ -34,14 +34,14 @@ namespace engine
             MAKE_CONSTANT(CT_SPHERES, mSpheres.size()),
             MAKE_CONSTANT(CT_LIGHTS, mLights.size()),
             MAKE_CONSTANT(CT_RECTANGLES, mRectangles.size()),
-            MAKE_CONSTANT(CT_BOXES, mBoxes.size())
+            MAKE_CONSTANT(CT_BOXES, mBoxes.size()),
+            MAKE_CONSTANT(CT_REFLECTIVE_RECT, ctReflectiveRect),
         };
         mRayTraceCombiner.Init(AssetLoader::Get().ShaderPath("RayTrace").data(), defines, constants);
 
         const Program &p = mRayTraceCombiner.Prog();
         p.Use();
 		p.SetUniform("ambientColor", vec3(0.05f));
-		p.SetUniform("ctReflectiveRect", ctReflectiveRect);
         p.SetUniform("lightFallofFactor", 5.0f);
 
         Program::Unbind();

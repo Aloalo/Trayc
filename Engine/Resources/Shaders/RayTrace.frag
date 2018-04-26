@@ -11,8 +11,6 @@ uniform vec3 U;
 uniform vec3 V;
 uniform vec3 W;
 
-uniform int ctReflectiveRect;
-
 #define RAY_OFFSET 0.05
 
 bool intersectSphereSimple(in vec3 origin, in vec3 direction, in vec4 positionRadius, in float maxLambda)
@@ -187,19 +185,18 @@ vec3 blinnPhongShade(in vec4 diffuseSpecular, in vec3 intensity, in vec3 N, in v
     float dNL = max(0.0, dot(N, L));
     
     // Specular
-    vec3 ret = vec3(0.0);
     if(dNL > 0.0)
     {
-        ret += dNL * diffuseSpecular.rgb * lightIntensity;
+        vec3 ret = dNL * diffuseSpecular.rgb * lightIntensity;
         vec3 V = normalize(cameraPos - P);
         vec3 H = normalize(V + L);
         float dotNH = max(0.0, dot(N, H));
-        ret += diffuseSpecular.a * pow(dotNH, gloss) * lightIntensity;
+        return ret + diffuseSpecular.a * pow(dotNH, gloss) * lightIntensity;
     }
-    return ret;
+    return vec3(0.0);
 }
 
-vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss)
+vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss, in int skipRect)
 {
     vec3 ret = ambientColor * diffuseSpecular.xyz;
     for (int i = 0; i < CT_LIGHTS; ++i) {
@@ -215,7 +212,11 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss)
         ret += blinnPhongShade(diffuseSpecular, light.intensity, N, L, P, atten, gloss);
     }
     
-    for (int i = 0; i < ctReflectiveRect; ++i) {
+    for (int i = 0; i < CT_REFLECTIVE_RECT; ++i) {
+        if (i == skipRect) {
+            continue;
+        }
+        
         Rectangle rect = rectangles[i];
         vec3 planeN = RECT_NORMALS[rect.normal];
         vec3 planeP = vec3(0.0);
@@ -226,9 +227,11 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss)
             vec3 lightP = light.positionRadius.xyz;
             
             // Are light and P on the same side of the plane
-            if (sign(dot(N, planeP - P)) != sign(dot(N, planeP - lightP))) {
+            if (sign(dot(planeN, planeP - P)) != sign(dot(planeN, planeP - lightP))) {
                 continue;
             }
+            
+            // ret = ret * 0.0001 + vec3(0,1,0);
             
             float yl = abs(lightP[rect.normal] - rect.offset);
             float y = abs(P[rect.normal] - rect.offset);
@@ -259,10 +262,6 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss)
                 continue;
             }
             
-            // TODO(jure): fix artefact
-            // TODO(jure): fix wierd strip on spheres
-            // ret = ret * 0.0001 + vec3(1,0,0);
-            
             float atten = 1.0 / (dist1 + dist2);
             ret += blinnPhongShade(diffuseSpecular, light.intensity, N, L, P, atten, gloss);
         }
@@ -278,6 +277,7 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
     float minLambda = 100000.0;
     float gloss;
     int hitIdx = -1;
+    int skipRect = -1;
     
     //////////////////////////////////////////////////
     // --------------- RECTANGLES ----------------- //
@@ -293,6 +293,7 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
         diffuseSpecular = rectangle.diffuseSpecular;
         gloss = rectangle.materialData.r;
         addFactor = rectangle.materialData.y;
+        skipRect = hitIdx;
         hitIdx = -1;
     }
     
@@ -310,7 +311,7 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
         diffuseSpecular = box.diffuseSpecular;
         gloss = box.gloss;
         addFactor = box.reflectivity;
-        hitIdx = -1;
+        hitIdx = skipRect = -1;
     }
     
     //////////////////////////////////////////////////
@@ -327,7 +328,7 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
         diffuseSpecular = sphere.diffuseSpecular;
         gloss = sphere.materialData.r;
         addFactor = sphere.materialData.y;
-        hitIdx = -1;
+        hitIdx = skipRect = -1;
     } 
     
     //////////////////////////////////////////////////
@@ -344,7 +345,7 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
         addFactor = -1.0;
     }
     else {
-        retColor = shade(P, N, diffuseSpecular, gloss);
+        retColor = shade(P, N, diffuseSpecular, gloss, skipRect);
         if (addFactor > 0.0) {
             new_direction = reflect(direction, N);
             new_origin = P;
