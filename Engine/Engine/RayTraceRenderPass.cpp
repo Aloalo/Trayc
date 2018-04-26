@@ -19,46 +19,14 @@ namespace engine
     {
     }
 
-    void RayTraceRenderPass::AddSphere(const RTSphere &sphere)
-    {
-        if (mSpheres.size() > PrimitivesUB::MAX_SPHERES) {
-            throw exception("Exceeded MAX_SPHERES");
-        }
-        mSpheres.push_back(sphere);
-    }
-
-    void RayTraceRenderPass::AddLight(const RTLight &light)
-    {
-        if (mLights.size() > PrimitivesUB::MAX_LIGHTS) {
-            throw exception("Exceeded MAX_LIGHTS");
-        }
-        mLights.push_back(light);
-    }
-
-    void RayTraceRenderPass::AddRectangle(const RTRectangle &rect)
-    {
-        if (mRectangles.size() > PrimitivesUB::MAX_RECTANGLES) {
-            throw exception("Exceeded MAX_RECTANGLES");
-        }
-        mRectangles.push_back(rect);
-    }
-
-    void RayTraceRenderPass::AddBox(const RTBox &box)
-    {
-        if (mBoxes.size() > PrimitivesUB::MAX_BOXES) {
-            throw exception("Exceeded MAX_BOXES");
-        }
-        mBoxes.push_back(box);
-    }
-
     void RayTraceRenderPass::CompileShaders()
     {
         const Shader::Defines defines = {};
         const Shader::Constants constants = {
-            MAKE_CONSTANT(MAX_SPHERES, PrimitivesUB::MAX_SPHERES),
-            MAKE_CONSTANT(MAX_LIGHTS, PrimitivesUB::MAX_LIGHTS),
-            MAKE_CONSTANT(MAX_RECTANGLES, PrimitivesUB::MAX_RECTANGLES),
-            MAKE_CONSTANT(MAX_BOXES, PrimitivesUB::MAX_BOXES)
+            MAKE_CONSTANT(CT_SPHERES, mSpheres.size()),
+            MAKE_CONSTANT(CT_LIGHTS, mLights.size()),
+            MAKE_CONSTANT(CT_RECTANGLES, mRectangles.size()),
+            MAKE_CONSTANT(CT_BOXES, mBoxes.size())
         };
         mRayTraceCombiner.Init(AssetLoader::Get().ShaderPath("RayTrace").data(), defines, constants);
 
@@ -74,9 +42,6 @@ namespace engine
     {
         const int width = Setting<int>("screenWidth");
         const int height = Setting<int>("screenHeight");
-
-        // Init shader
-        CompileShaders();
 
         GLint value = -1;
         glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &value);
@@ -103,10 +68,20 @@ namespace engine
     void RayTraceRenderPass::UploadToGPU(const Camera &cam) const
     {
         const auto primitivesUB = UniformBuffers::Get().Primitives();
-        primitivesUB.rectangles(mRectangles);
-        primitivesUB.boxes(mBoxes);
-        primitivesUB.spheres(mSpheres);
-        primitivesUB.lights(mLights);
+		size_t offset = 0;
+        primitivesUB.rectangles(mRectangles, offset);
+		offset += mRectangles.size() * sizeof(RTRectangle);
+        primitivesUB.boxes(mBoxes, offset);
+		offset += mBoxes.size() * sizeof(RTBox);
+		primitivesUB.spheres(mSpheres, offset);
+		offset += mSpheres.size() * sizeof(RTSphere);
+		primitivesUB.lights(mLights, offset);
+
+		offset += mLights.size() * sizeof(RTLight);
+
+		if (offset > PrimitivesUB::MAX_SIZE) {
+			throw exception("PrimitivesUB size larger then max: " + offset);
+		}
     }
 
     void RayTraceRenderPass::Render(const RenderingContext &rContext) const
@@ -122,10 +97,6 @@ namespace engine
         p.SetUniform("U", cam.GetRight() * halfTanFov * cam.mAspectRatio);
         p.SetUniform("V", cam.GetUp() * halfTanFov);
         p.SetUniform("W", cam.GetDirection());
-        p.SetUniform("ctSpheres", static_cast<int>(mSpheres.size()));
-        p.SetUniform("ctLights", static_cast<int>(mLights.size()));
-        p.SetUniform("ctRectangles", static_cast<int>(mRectangles.size()));
-        p.SetUniform("ctBoxes", static_cast<int>(mBoxes.size()));
 
         mRayTraceCombiner.Draw();
     }

@@ -11,7 +11,7 @@ namespace engine
     {
     public:
         using Defines = std::vector<std::string>;
-        using Constant = std::pair<std::string, int>;
+        using Constant = std::pair<std::string, size_t>;
         using Constants = std::vector<Constant>;
 
         virtual ~Shader(void);

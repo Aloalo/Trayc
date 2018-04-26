@@ -290,27 +290,6 @@ namespace engine
         mNoiseSampler.Destroy();
     }
 
-    void RayTracer::AddSphere(const RTSphere &sphere)
-    {
-        mRTPass->AddSphere(sphere);
-    }
-
-
-    void RayTracer::AddLight(const RTLight &light)
-    {
-        mRTPass->AddLight(light);
-    }
-
-    void RayTracer::AddRectangle(const RTRectangle &rect)
-    {
-        mRTPass->AddRectangle(rect);
-    }
-
-    void RayTracer::AddBox(const RTBox &box)
-    {
-        mRTPass->AddBox(box);
-    }
-
     void RayTracer::SetScreenSize(int width, int height)
     {
         GetRenderPass("bbPass")->ResizeDstBuffer(width, height);

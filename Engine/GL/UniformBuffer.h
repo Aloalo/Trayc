@@ -10,10 +10,10 @@
         SetSubData(offset, x); \
         }
 
-#define UNIFORM_ARRAY_MACRO(tp,name,offset) \
-    void (name(const tp &x) const) \
+#define UNIFORM_ARRAY_MACRO(tp,name) \
+    void (name(const tp &x, size_t offset) const) \
         { \
-        SetSubData(offset, static_cast<int>(sizeof(x[0]) * x.size()), x.data()); \
+        SetSubData(static_cast<int>(offset), static_cast<int>(sizeof(x[0]) * x.size()), x.data()); \
         }
 
 namespace engine

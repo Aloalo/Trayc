@@ -28,14 +28,9 @@ namespace engine
         mViewRayData.Init(2 * sizeof(vec4));
         mMatrices.Init(6 * sizeof(mat4));
 
-        const auto primitivesSize = PrimitivesUB::MAX_SPHERES * sizeof(RTSphere) +
-            PrimitivesUB::MAX_LIGHTS * sizeof(RTLight) +
-            PrimitivesUB::MAX_RECTANGLES * sizeof(RTRectangle) +
-            PrimitivesUB::MAX_BOXES * sizeof(RTBox);
+        LOG(INFO) << "[UniformBuffers::UniformBuffers] PrimitivesUB max size: " << PrimitivesUB::MAX_SIZE;
 
-        LOG(INFO) << "PrimitivesUB size: " << primitivesSize;
-
-        mPrimitives.Init(primitivesSize);
+        mPrimitives.Init(PrimitivesUB::MAX_SIZE);
     }
 
     void UniformBuffers::Destroy()

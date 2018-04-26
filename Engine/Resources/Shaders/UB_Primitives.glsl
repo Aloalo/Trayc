@@ -35,8 +35,8 @@ struct Box
 
 layout(std140) uniform Primitives
 {
-    Rectangle rectangles[MAX_RECTANGLES];
-    Box boxes[MAX_BOXES];
-    Sphere spheres[MAX_SPHERES];
-    Light lights[MAX_LIGHTS];
+    Rectangle rectangles[CT_RECTANGLES];
+    Box boxes[CT_BOXES];
+    Sphere spheres[CT_SPHERES];
+    Light lights[CT_LIGHTS];
 };

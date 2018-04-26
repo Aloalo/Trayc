@@ -58,13 +58,13 @@ void Init(RayTracedGame &game, const char *progName)
                     sphere.materialData.y = 0.5f;
                 }
 
-                game.mRenderer.AddSphere(sphere);
+                game.mRenderer.mRTPass->mSpheres.push_back(sphere);
             }
         }
     }
 
     const RTLight light = { vec4(10.0f, 10.0f, 10.0f, 0.3f), vec3(1.0f) };
-    game.mRenderer.AddLight(light);
+	game.mRenderer.mRTPass->mLights.push_back(light);
 
     const float recOffset = offsets[0] - 30.0f * R;
     RTRectangle r1 = { vec4(-50.0f, -50.0f, 50.0f, 50.0f), vec4(0.1f, 0.6f, 0.4f, 0.5f), vec2(128.0f, 0.0f), recOffset, 0 };
@@ -73,17 +73,17 @@ void Init(RayTracedGame &game, const char *progName)
     RTRectangle r3 = r1;
     r3.normal = 2;
 
-    game.mRenderer.AddRectangle(r1);
-    game.mRenderer.AddRectangle(r2);
-    game.mRenderer.AddRectangle(r3);
+	game.mRenderer.mRTPass->mRectangles.push_back(r1);
+    game.mRenderer.mRTPass->mRectangles.push_back(r2);
+    game.mRenderer.mRTPass->mRectangles.push_back(r3);
 
     for (auto r : { r1, r2, r3 }) {
         r.offset *= -1.0f;
-        game.mRenderer.AddRectangle(r);
+        game.mRenderer.mRTPass->mRectangles.push_back(r);
     }
 
     const RTBox box = { vec4(1.0f, 0.6f, 0.4f, 0.5f), vec3(0.0f, 15.0f, 0.0f), 1.0f, vec3(5.0f, 25.0f, 5.0f), 512.0f };
-    game.mRenderer.AddBox(box);
+    game.mRenderer.mRTPass->mBoxes.push_back(box);
 }
 
 int main(int argc, char *argv[])

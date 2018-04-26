@@ -20,11 +20,6 @@ namespace engine
 
         void CompileShaders();
 
-        void AddSphere(const RTSphere &sphere);
-        void AddLight(const RTLight &light);
-        void AddRectangle(const RTRectangle &rect);
-        void AddBox(const RTBox &box);
-
         std::vector<RTSphere> mSpheres;
         std::vector<RTLight> mLights;
         std::vector<RTRectangle> mRectangles;

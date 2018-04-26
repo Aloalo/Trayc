@@ -7,5 +7,4 @@
 - Light reflection from reflective rectangles
 
 - Checkerboarding
-- Have there be exactly MAX_{X} objects for a scene -> no more ct{X}
   

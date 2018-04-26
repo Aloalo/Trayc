@@ -87,18 +87,14 @@ namespace engine
         RayTracer(void);
         ~RayTracer(void);
 
-        void AddSphere(const RTSphere &sphere);
-        void AddLight(const RTLight &light);
-        void AddRectangle(const RTRectangle &rect);
-        void AddBox(const RTBox &rect);
-
         virtual void SetScreenSize(int width, int height) override;
+
+		RayTraceRenderPass *mRTPass;
     private:
         virtual void InitRendering(const CameraHandler *camera) override;
         virtual void Render() const override;
 
         TextureSampler mNoiseSampler;
-        RayTraceRenderPass *mRTPass;
     };
 }
 

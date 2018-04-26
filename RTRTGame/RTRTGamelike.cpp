@@ -49,4 +49,6 @@ void RTRTGamelike::LoadLevel(const string &name)
             }
         }
     }
+
+	mRTPass->CompileShaders();
 }

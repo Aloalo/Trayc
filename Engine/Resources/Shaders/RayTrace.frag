@@ -2,10 +2,6 @@ in vec2 clipSpaceCoords;
 layout(location = 0) out vec3 outColor;
 
 #include "UB_Primitives.glsl"
-uniform int ctSpheres;
-uniform int ctLights;
-uniform int ctRectangles;
-uniform int ctBoxes;
 
 uniform vec3 ambientColor;
 uniform float lightFallofFactor;
@@ -160,20 +156,20 @@ bool intersectBoxSimple(in vec3 origin, in vec3 direction, in Box b, in float ma
 
 bool anyHit(in vec3 origin, in vec3 direction, in float maxLambda)
 {
-    for (int i = 0; i < ctSpheres; ++i) {
-        if (intersectSphereSimple(origin, direction, spheres[i].positionRadius, maxLambda)) {
-            return true;
-        }
-    }
-    
-    for (int i = 0; i < ctRectangles; ++i) {
+    for (int i = 0; i < CT_RECTANGLES; ++i) {
         if (intersectRectangleSimple(origin, direction, rectangles[i], maxLambda)) {
             return true;
         }
     }
     
-    for (int i = 0; i < ctBoxes; ++i) {
+    for (int i = 0; i < CT_BOXES; ++i) {
         if (intersectBoxSimple(origin, direction, boxes[i], maxLambda)) {
+            return true;
+        }
+    }
+    
+    for (int i = 0; i < CT_SPHERES; ++i) {
+        if (intersectSphereSimple(origin, direction, spheres[i].positionRadius, maxLambda)) {
             return true;
         }
     }
@@ -184,7 +180,7 @@ bool anyHit(in vec3 origin, in vec3 direction, in float maxLambda)
 vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss)
 {
     vec3 ret = ambientColor * diffuseSpecular.xyz;
-    for (int i = 0; i < ctLights; ++i) {
+    for (int i = 0; i < CT_LIGHTS; ++i) {
         Light light = lights[i];
         vec3 L = light.positionRadius.xyz - P;
         float atten = 1.0 / length(L);
@@ -222,26 +218,9 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
     int hitIdx = -1;
     
     //////////////////////////////////////////////////
-    // ----------------- SPHERES ------------------ //
-    //////////////////////////////////////////////////
-    for (int i = 0; i < ctSpheres; ++i) {
-        if (intersectSphere(origin, direction, spheres[i].positionRadius, minLambda, N, P)) {
-            hitIdx = i;
-        }
-    }
-    
-    if (hitIdx != -1) {
-        Sphere sphere = spheres[hitIdx];
-        diffuseSpecular = sphere.diffuseSpecular;
-        gloss = sphere.materialData.r;
-        addFactor = sphere.materialData.y;
-        hitIdx = -1;
-    } 
-    
-    //////////////////////////////////////////////////
     // --------------- RECTANGLES ----------------- //
     //////////////////////////////////////////////////
-    for (int i = 0; i < ctRectangles; ++i) {
+    for (int i = 0; i < CT_RECTANGLES; ++i) {
         if (intersectRectangle(origin, direction, rectangles[i], minLambda, N, P)) {
             hitIdx = i;
         }
@@ -258,7 +237,7 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
     //////////////////////////////////////////////////
     // ------------------ BOXES ------------------- //
     //////////////////////////////////////////////////
-    for (int i = 0; i < ctBoxes; ++i) {
+    for (int i = 0; i < CT_BOXES; ++i) {
         if (intersectBox(origin, direction, boxes[i], minLambda, N, P)) {
             hitIdx = i;
         }
@@ -273,9 +252,26 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
     }
     
     //////////////////////////////////////////////////
+    // ----------------- SPHERES ------------------ //
+    //////////////////////////////////////////////////
+    for (int i = 0; i < CT_SPHERES; ++i) {
+        if (intersectSphere(origin, direction, spheres[i].positionRadius, minLambda, N, P)) {
+            hitIdx = i;
+        }
+    }
+    
+    if (hitIdx != -1) {
+        Sphere sphere = spheres[hitIdx];
+        diffuseSpecular = sphere.diffuseSpecular;
+        gloss = sphere.materialData.r;
+        addFactor = sphere.materialData.y;
+        hitIdx = -1;
+    } 
+    
+    //////////////////////////////////////////////////
     // ----------------- LIGHTS ------------------- //
     //////////////////////////////////////////////////
-    for (int i = 0; i < ctLights; ++i) {
+    for (int i = 0; i < CT_LIGHTS; ++i) {
         if (intersectSphere(origin, direction, lights[i].positionRadius, minLambda, N, P)) {
             hitIdx = i;
         }

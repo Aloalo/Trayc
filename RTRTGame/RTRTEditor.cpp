@@ -33,6 +33,8 @@ void RTRTEditor::SetLevelFromPass()
     for (const auto &o : mRTPass->mLights) {
         mLevel.mObjects.push_back(RTRTObjectFactory(o));
     }
+
+	mRTPass->CompileShaders();
 }
 
 void RTRTEditor::SaveLevel() const
