@@ -11,6 +11,8 @@ uniform vec3 U;
 uniform vec3 V;
 uniform vec3 W;
 
+uniform int ctReflectiveRect;
+
 #define RAY_OFFSET 0.05
 
 bool intersectSphereSimple(in vec3 origin, in vec3 direction, in vec4 positionRadius, in float maxLambda)
@@ -177,6 +179,26 @@ bool anyHit(in vec3 origin, in vec3 direction, in float maxLambda)
     return false;
 }
 
+vec3 blinnPhongShade(in vec4 diffuseSpecular, in vec3 intensity, in vec3 N, in vec3 L, in vec3 P, in float atten, in float gloss)
+{
+    vec3 lightIntensity = lightFallofFactor * atten * intensity;
+    
+    // Diffuse
+    float dNL = max(0.0, dot(N, L));
+    
+    // Specular
+    vec3 ret = vec3(0.0);
+    if(dNL > 0.0)
+    {
+        ret += dNL * diffuseSpecular.rgb * lightIntensity;
+        vec3 V = normalize(cameraPos - P);
+        vec3 H = normalize(V + L);
+        float dotNH = max(0.0, dot(N, H));
+        ret += diffuseSpecular.a * pow(dotNH, gloss) * lightIntensity;
+    }
+    return ret;
+}
+
 vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss)
 {
     vec3 ret = ambientColor * diffuseSpecular.xyz;
@@ -190,19 +212,59 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss)
             continue;
         }
         
-        vec3 lightIntensity = lightFallofFactor * atten * atten * light.intensity;
+        ret += blinnPhongShade(diffuseSpecular, light.intensity, N, L, P, atten, gloss);
+    }
+    
+    for (int i = 0; i < ctReflectiveRect; ++i) {
+        Rectangle rect = rectangles[i];
+        vec3 planeN = RECT_NORMALS[rect.normal];
+        vec3 planeP = vec3(0.0);
+        planeP[rect.normal] = rect.offset;
         
-        // Diffuse
-        float dNL = max(0.0, dot(N, L));
-        
-        // Specular
-        if(dNL > 0.0)
-        {
-            ret += dNL * diffuseSpecular.rgb * lightIntensity;
-            vec3 V = normalize(cameraPos - P);
-            vec3 H = normalize(V + L);
-            float dotNH = max(0.0, dot(N, H));
-            ret += diffuseSpecular.a * pow(dotNH, gloss) * lightIntensity;
+        for (int j = 0; j < CT_LIGHTS; ++j) {
+            Light light = lights[j];
+            vec3 lightP = light.positionRadius.xyz;
+            
+            // Are light and P on the same side of the plane
+            if (sign(dot(N, planeP - P)) != sign(dot(N, planeP - lightP))) {
+                continue;
+            }
+            
+            float yl = abs(lightP[rect.normal] - rect.offset);
+            float y = abs(P[rect.normal] - rect.offset);
+            
+            vec3 projP = P;
+            lightP[rect.normal] = projP[rect.normal] = rect.offset;
+            float x = distance(lightP, projP);
+            float x1 = yl / (y + yl);
+            
+            vec3 reflectionPoint = lightP + (projP - lightP) * x1;
+            
+            vec2 planePoint = vec2(reflectionPoint[(rect.normal + 1) % 3], reflectionPoint[(rect.normal + 2) % 3]);
+            if (any(lessThan(planePoint, rect.rect.xy)) || any(greaterThan(planePoint, rect.rect.zw))) {
+                continue;
+            }
+            
+            vec3 RtoLight = light.positionRadius.xyz - reflectionPoint;
+            float dist1 = length(RtoLight);
+            RtoLight /= dist1;
+            if(anyHit(reflectionPoint + RAY_OFFSET * RtoLight, RtoLight, dist1 - 2.0 * RAY_OFFSET)) {
+                continue;
+            }
+            
+            vec3 L = reflectionPoint - P;
+            float dist2 = length(L);
+            L /= dist2;
+            if(anyHit(P + RAY_OFFSET * L, L, dist2 - 2.0 * RAY_OFFSET)) {
+                continue;
+            }
+            
+            // TODO(jure): fix artefact
+            // TODO(jure): fix wierd strip on spheres
+            // ret = ret * 0.0001 + vec3(1,0,0);
+            
+            float atten = 1.0 / (dist1 + dist2);
+            ret += blinnPhongShade(diffuseSpecular, light.intensity, N, L, P, atten, gloss);
         }
     }
     

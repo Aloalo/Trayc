@@ -21,6 +21,10 @@ void RTRTEditor::Update(float dt)
 
 void RTRTEditor::SetLevelFromPass()
 {
+	sort(mRTPass->mRectangles.begin(), mRTPass->mRectangles.end(), [](const RTRectangle &a, const RTRectangle &b) {
+		return a.materialData.y > b.materialData.y;
+	});
+
     for (const auto &o : mRTPass->mSpheres) {
         mLevel.mObjects.push_back(RTRTObjectFactory(o));
     }

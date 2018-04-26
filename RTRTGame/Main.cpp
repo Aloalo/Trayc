@@ -82,6 +82,9 @@ void Init(RayTracedGame &game, const char *progName)
         game.mRenderer.mRTPass->mRectangles.push_back(r);
     }
 
+	const RTRectangle reflectiveRect = { vec4(-5.0f, -5.0f, 10.0f, 10.0f), vec4(1.0f), vec2(1024.0f, 1.0f), recOffset + 2.0f, 2 };
+	game.mRenderer.mRTPass->mRectangles.push_back(reflectiveRect);
+
     const RTBox box = { vec4(1.0f, 0.6f, 0.4f, 0.5f), vec3(0.0f, 15.0f, 0.0f), 1.0f, vec3(5.0f, 25.0f, 5.0f), 512.0f };
     game.mRenderer.mRTPass->mBoxes.push_back(box);
 }

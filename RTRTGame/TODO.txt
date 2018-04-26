@@ -4,7 +4,5 @@
 - Damage
 - Physics
 
-- Light reflection from reflective rectangles
-
 - Checkerboarding
   

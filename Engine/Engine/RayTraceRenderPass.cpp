@@ -21,6 +21,14 @@ namespace engine
 
     void RayTraceRenderPass::CompileShaders()
     {
+		const int ctRect = static_cast<int>(mRectangles.size());
+		int ctReflectiveRect = 0;
+		for (; ctReflectiveRect < ctRect; ++ctReflectiveRect) {
+			if (mRectangles[ctReflectiveRect].materialData.y == 0.0f) {
+				break;
+			}
+		}
+
         const Shader::Defines defines = {};
         const Shader::Constants constants = {
             MAKE_CONSTANT(CT_SPHERES, mSpheres.size()),
@@ -32,8 +40,9 @@ namespace engine
 
         const Program &p = mRayTraceCombiner.Prog();
         p.Use();
-        p.SetUniform("ambientColor", vec3(0.05f));
-        p.SetUniform("lightFallofFactor", 50.0f);
+		p.SetUniform("ambientColor", vec3(0.05f));
+		p.SetUniform("ctReflectiveRect", ctReflectiveRect);
+        p.SetUniform("lightFallofFactor", 5.0f);
 
         Program::Unbind();
     }
