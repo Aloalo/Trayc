@@ -37,6 +37,8 @@ namespace engine
         // Data textures
         D_NOISE = 20,
 
+        CHECKERED_1 = 21,
+
         // For the irradiance map
         IRRADIANCE_SLOT = 27,
 

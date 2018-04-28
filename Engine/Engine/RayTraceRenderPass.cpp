@@ -29,7 +29,7 @@ namespace engine
 			}
 		}
 
-        const Shader::Defines defines = {};
+        const Shader::Defines defines = (mCheckerboarding ? Shader::Defines{"CHECKERBOARDING"} : Shader::Defines{});
         const Shader::Constants constants = {
             MAKE_CONSTANT(CT_SPHERES, mSpheres.size()),
             MAKE_CONSTANT(CT_LIGHTS, mLights.size()),
@@ -45,6 +45,56 @@ namespace engine
         p.SetUniform("lightFallofFactor", 5.0f);
 
         Program::Unbind();
+    }
+
+    void RayTraceRenderPass::ResizeDstBuffer(int width, int height)
+    {
+        if (mCheckerboarding) {
+            mCombineFB.Resize(width, height);
+            width /= 2;
+        }
+        mDstFB.Resize(width, height);
+    }
+
+    void RayTraceRenderPass::SetCheckerboarding(bool flag)
+    {
+        assert(mCheckerboarding != flag);
+
+        mCheckerboarding = flag;
+        if (flag) {
+            const int width = mDstFB.Width();
+            const int height = mDstFB.Height();
+
+            mDstFB.Resize(width / 2, height);
+
+            mDstFB.GetAttachment(0).BindToSlot(TextureType::CHECKERED_1);
+
+            mCombineFB.Init(width, height);
+            mCombineFB.AddAttachment(GL_RGB16F, GL_RGB, GL_FLOAT); //Lighting out
+            mCombineFB.Compile();
+
+            mCombineFB.GetAttachment(0).BindToSlot(TextureType::FINAL_SLOT);
+
+            mCheckerCombiner.Init(AssetLoader::Get().ShaderPath("C_TexToScreen").data(), AssetLoader::Get().ShaderPath("C_CheckerCombiner").data(), Shader::Defines());
+
+            const Program &p = mCheckerCombiner.Prog();
+            p.Use();
+            p.SetUniform("tex", TextureType::CHECKERED_1);
+            p.Unbind();
+        }
+        else {
+            mCombineFB.Destroy();   
+            mCheckerCombiner.Destroy();
+
+            mDstFB.Resize(mDstFB.Width() * 2, mDstFB.Height());
+            mDstFB.GetAttachment(0).BindToSlot(TextureType::FINAL_SLOT);
+        }
+    }
+
+    void RayTraceRenderPass::ToggleCheckerboarding()
+    {
+        SetCheckerboarding(!mCheckerboarding);
+        CompileShaders();
     }
 
     void RayTraceRenderPass::Init()
@@ -64,14 +114,15 @@ namespace engine
         mDstFB.AddAttachment(GL_RGB16F, GL_RGB, GL_FLOAT); //Lighting out
         mDstFB.Compile();
 
-        // Bind own textures to appropriate slots
-        mDstFB.GetAttachment(0).BindToSlot(TextureType::FINAL_SLOT);
+        SetCheckerboarding(Setting<bool>("checkerboarding"));
     }
 
     void RayTraceRenderPass::Destroy()
     {
         mDstFB.Destroy();
+        mCombineFB.Destroy();
         mRayTraceCombiner.Destroy();
+        mCheckerCombiner.Destroy();
     }
 
     void RayTraceRenderPass::UploadToGPU(const Camera &cam) const
@@ -107,6 +158,16 @@ namespace engine
         p.SetUniform("V", cam.GetUp() * halfTanFov);
         p.SetUniform("W", cam.GetDirection());
 
+        if (mCheckerboarding) {
+            p.SetUniform("invTexWidth", 0.5f / static_cast<float>(mDstFB.Width()));
+        }
+
         mRayTraceCombiner.Draw();
+
+        if (mCheckerboarding) {
+            mCombineFB.Bind();
+            glViewport(0, 0, mCombineFB.Width(), mCombineFB.Height());
+            mCheckerCombiner.Draw();
+        }
     }
 }

@@ -13,6 +13,10 @@ uniform vec3 W;
 
 #define RAY_OFFSET 0.05
 
+#ifdef CHECKERBOARDING
+    uniform float invTexWidth;
+#endif
+
 bool intersectSphereSimple(in vec3 origin, in vec3 direction, in vec4 positionRadius, in float maxLambda)
 {
 	vec3 L = positionRadius.xyz - origin;
@@ -372,7 +376,7 @@ vec3 rayTrace_##DEPTH(in vec3 origin, in vec3 direction) \
     vec3 color = rayTrace(origin + RAY_OFFSET * direction, direction, new_origin, new_direction, addFactor); \
     \
     if (addFactor > 0.0) { \
-        color += addFactor * rayTrace_##NEXT(new_origin + RAY_OFFSET * new_direction, new_direction); \
+        color = mix(color, rayTrace_##NEXT(new_origin + RAY_OFFSET * new_direction, new_direction), addFactor); \
     } \
     \
     return color; \
@@ -385,8 +389,15 @@ RAY_TRACE_MACRO(0, 1)
 
 void main()
 {
+#ifdef CHECKERBOARDING
+    float windowSpaceXOffset = mod((gl_FragCoord.y - mod(gl_FragCoord.y, 2.0)) / 2.0, 2.0) * 2.0;
+    float clipSpaceX = (gl_FragCoord.x * 2.0 - mod(gl_FragCoord.x, 2.0) + windowSpaceXOffset) * invTexWidth * 2.0 - 1.0;
+    vec3 viewRay = normalize(clipSpaceX * U + clipSpaceCoords.y * V + W);
+#else
     vec3 viewRay = normalize(clipSpaceCoords.x * U + clipSpaceCoords.y * V + W);
+#endif
+    
     outColor = rayTrace_0(cameraPos, viewRay);
-
+    
     //outColor = outColor * 0.0001 + (dot(-normalize(cameraPos), normalize(viewRay)) > 0.98 ? vec4(1.0) : vec4(0.0));
 }

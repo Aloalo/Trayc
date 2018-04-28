@@ -90,6 +90,13 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
         BackBufferRenderPass *bbPass = dynamic_cast<BackBufferRenderPass*>(mGame->mRenderer.GetRenderPass("bbPass"));
         bbPass->CompileShaders();
     }
+    case SDLK_c:
+    {
+        LOG(INFO) << "Toggling checkerboarding";
+
+        RayTraceRenderPass *rtPass = dynamic_cast<RayTraceRenderPass*>(mGame->mRenderer.GetRenderPass("rtPass"));
+        rtPass->ToggleCheckerboarding();
+    }
     default:
         break;
     }

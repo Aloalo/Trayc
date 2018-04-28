@@ -75,8 +75,11 @@ namespace engine
         for(Attachment &a : mAttachments)
             a.first.Destroy();
 
+        mAttachments.clear();
         glDeleteRenderbuffers(1, &mRBID);
         glDeleteFramebuffers(1, &mID);
+
+        mRBID = mID = 0;
     }
 
     void FrameBuffer::AddColorAttachment(const Texture2D &tex)

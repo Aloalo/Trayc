@@ -17,8 +17,11 @@ namespace engine
         virtual void Destroy() override;
 
         virtual void Render(const RenderingContext &rContext) const override;
+        virtual void ResizeDstBuffer(int width, int height) override;
 
         void CompileShaders();
+        void SetCheckerboarding(bool flag);
+        void ToggleCheckerboarding();
 
         std::vector<RTSphere> mSpheres;
         std::vector<RTLight> mLights;
@@ -29,6 +32,10 @@ namespace engine
         void UploadToGPU(const Camera &cam) const;
 
         TextureCombiner mRayTraceCombiner;
+
+        TextureCombiner mCheckerCombiner;
+        FrameBuffer mCombineFB;
+        bool mCheckerboarding;
     };
 }
 

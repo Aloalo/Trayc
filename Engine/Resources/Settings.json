@@ -10,5 +10,7 @@
   "vsync": 1,
   "shadowResolution": 2048,
   "shadowBrightness": 0.0,
-  "softShadowsBlurPasses": 3
+  "softShadowsBlurPasses": 3,
+  "checkerboarding": true,
+  "fxaa": true
 }
