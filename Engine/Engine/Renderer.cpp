@@ -307,6 +307,7 @@ namespace engine
         mNoiseSampler.InitNearestDataTexture();
         mNoiseSampler.BindToSlot(TextureType::D_NOISE);
         mNoiseSampler.BindToSlot(TextureType::CHECKERED_1);
+        mNoiseSampler.BindToSlot(TextureType::CHECKERED_2);
 
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);

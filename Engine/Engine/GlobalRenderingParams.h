@@ -38,6 +38,7 @@ namespace engine
         D_NOISE = 20,
 
         CHECKERED_1 = 21,
+        CHECKERED_2 = 22,
 
         // For the irradiance map
         IRRADIANCE_SLOT = 27,

@@ -66,6 +66,12 @@ namespace engine
 
     void Texture::Destroy()
     {
+        for (int i = 0; i < 32; ++i) {
+            if (mBoundTextures[i] == mID) {
+                UnBindFromSlot(i);
+            }
+        }
+
         glDeleteTextures(1, &mID);
         mID = 0;
     }
