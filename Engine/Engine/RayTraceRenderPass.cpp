@@ -3,6 +3,7 @@
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Core/Camera.h>
 #include <Engine/Utils/Setting.h>
+#include <Engine/Utils/TimerQuery.h>
 #include <Engine/Utils/UniformBuffers.h>
 #include <easylogging++.h>
 
@@ -165,16 +166,25 @@ namespace engine
             p.SetUniform("invTexWidth", 0.5f / static_cast<float>(mDstFB.Width()));
         }
 
-        mRayTraceCombiner.Draw();
+        {
+            TimerQuery t("mRayTraceCombiner");
+            mRayTraceCombiner.Draw();
+        }
 
         if (mCheckerboarding) {
-            mReconstructionFBAvg.Bind();
-            glViewport(0, 0, mReconstructionFBAvg.Width(), mReconstructionFBAvg.Height());
-            mReconstructionCombinerAvg.Draw();
+            {
+                TimerQuery t("mReconstructionCombinerAvg");
+                mReconstructionFBAvg.Bind();
+                glViewport(0, 0, mReconstructionFBAvg.Width(), mReconstructionFBAvg.Height());
+                mReconstructionCombinerAvg.Draw();
+            }
 
-            mReconstructionFBFilter.Bind();
-            glViewport(0, 0, mReconstructionFBFilter.Width(), mReconstructionFBFilter.Height());
-            mReconstructionCombinerFilter.Draw();
+            {
+                TimerQuery t("mReconstructionCombinerFilter");
+                mReconstructionFBFilter.Bind();
+                glViewport(0, 0, mReconstructionFBFilter.Width(), mReconstructionFBFilter.Height());
+                mReconstructionCombinerFilter.Draw();
+            }
         }
     }
 }

@@ -3,6 +3,7 @@
 #include <Engine/Engine/Renderer.h>
 #include <Engine/Engine/DebugDraw.h>
 #include <Engine/Utils/Setting.h>
+#include <Engine/Utils/TimerQuery.h>
 #include <Engine/Engine/AssetLoader.h>
 
 using namespace glm;
@@ -47,6 +48,8 @@ namespace engine
 
     void BackBufferRenderPass::Render(const RenderingContext &rContext) const
     {
+        TimerQuery t("BackBufferRenderPass");
+
         mDraw.Prog().SetUniform("exposure", Setting<float>("exposure"));
         mDraw.Prog().SetUniform("noiseScale", vec2(mFinalTex->Size()) / vec2(mNoiseTex.Size()));
         glEnable(GL_FRAMEBUFFER_SRGB);

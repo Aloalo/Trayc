@@ -1,6 +1,7 @@
 
 #include <Engine/Engine/Game.h>
 #include <Engine/Utils/TextureEffects.h>
+#include <Engine/Utils/Profiler.h>
 #include <assert.h>
 
 using namespace std;
@@ -8,7 +9,11 @@ using namespace std;
 namespace engine
 {
     Game::Game(float timeStep, Renderer *renderer)
-        : mUpdateableMenager(timeStep), mRendererPtr(renderer), mFrameCap(100), mCtFramesPassed(0), mCameraHandler(nullptr)
+        : mUpdateableMenager(timeStep), mRendererPtr(renderer), 
+#if PROFILE_CPU
+        mFrameCap(100), mCtFramesPassed(0),
+#endif
+        mCameraHandler(nullptr)
     {
     }
 
@@ -59,10 +64,6 @@ namespace engine
         // Init rendering
         mRendererPtr->InitRendering(mCameraHandler);
         mRendererPtr->SetScreenSize(screenWidth, screenHeight);
-
-        mProfiler.AddProfileTarget("rendering", mFrameCap);
-        mProfiler.AddProfileTarget("events", mFrameCap);
-        mProfiler.AddProfileTarget("update", mFrameCap);
     }
 
     void Game::GameLoop()
@@ -73,26 +74,31 @@ namespace engine
 
     void Game::GameLoopStep()
     {
-        mProfiler.StartClock("events");
+        Profiler::Get().StartClock("events");
         mInputHandler.ProcessPolledEvents();
-        mProfiler.StopClock("events");
+        Profiler::Get().StopClock("events");
 
-        mProfiler.StartClock("update");
+        Profiler::Get().StartClock("update");
         mUpdateableMenager.Update();
-        mProfiler.StopClock("update");
+        Profiler::Get().StopClock("update");
 
-        mProfiler.StartClock("rendering");
+        Profiler::Get().StartClock("rendering");
         mRendererPtr->Render();
+        Profiler::Get().StopClock("rendering");
+
+        Profiler::Get().StartClock("swapBuffers");
         mContextHandler.SwapBuffers();
-        mProfiler.StopClock("rendering");
+        Profiler::Get().StopClock("swapBuffers");
 
         //Profiling
+#if PROFILE_CPU
         ++mCtFramesPassed;
         if(mCtFramesPassed == mFrameCap)
         {
             mCtFramesPassed = 0;
-            mProfiler.PrintProfile();
+            Profiler::Get().PrintProfile();
         }
+#endif
     }
 
     void Game::WindowEvent(const SDL_WindowEvent &e)
@@ -111,11 +117,6 @@ namespace engine
     Camera& Game::GetCamera()
     {
         return mCameraHandler->mCamera;
-    }
-
-    float Game::GetAverageFrameLength() const
-    {
-        return mProfiler.GetAverage();
     }
 
     const CameraHandler* Game::GetCameraHandler() const

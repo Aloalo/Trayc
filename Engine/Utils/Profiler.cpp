@@ -1,31 +1,55 @@
 
 #include <Engine/Utils/Profiler.h>
-
 #include <easylogging++.h>
-
-#include <ctime>
+#include <chrono>
 
 using namespace std;
 
 namespace engine
 {
+    using Clock = chrono::high_resolution_clock;
+
     void Profiler::StartClock(const std::string &targetName)
     {
-        mClockStarts[targetName] = clock();
+#if PROFILE_CPU
+        const int time = static_cast<int>(clock());
+
+        if (mProfileTargets.find(targetName) == mProfileTargets.end()) {
+            const int ctFrames = 100;
+            mProfileTargets[targetName] = deque<int>(ctFrames, 0);
+            mTargetOrder.push_back(targetName);
+        }
+
+        mClockStarts[targetName] = time;
+#endif
     }
 
     void Profiler::StopClock(const std::string &targetName)
     {
+#if PROFILE_CPU
+        const int time = static_cast<int>(clock());
+
         deque<int> &targetFrameLengths = mProfileTargets[targetName];
-        targetFrameLengths.push_back(int(clock()) - mClockStarts[targetName]);
+        targetFrameLengths.push_back(time - mClockStarts[targetName]);
         targetFrameLengths.pop_front();
+#endif
     }
 
-    void Profiler::AddProfileTarget(const std::string &targetName, int ctFrames)
+    void Profiler::PrintProfile() const
     {
-        mProfileTargets[targetName] = deque<int>(ctFrames, 0);
+#if PROFILE_CPU
+        float sum = 0.0f;
+        CLOG(INFO, "performance") << "------PROFILE------";
+        for (const auto &psf : GetAllTargetsAverage())
+        {
+            CLOG(INFO, "performance") << psf.first + ": " << psf.second;
+            sum += psf.second;
+        }
+        CLOG(INFO, "performance") << "NET: " << sum << endl;
+#endif
     }
 
+#if PROFILE_CPU
     float Profiler::GetTargetAverage(const std::string &targetName) const
     {
         int sum = 0;
@@ -48,20 +72,10 @@ namespace engine
     vector<psf> Profiler::GetAllTargetsAverage() const
     {
         vector<psf> ret;
-        for(const auto &si : mProfileTargets)
-            ret.push_back(psf(si.first, GetTargetAverage(si.first)));
+        for (const string &t : mTargetOrder) {
+            ret.push_back(psf(t, GetTargetAverage(t)));
+        }
         return ret;
     }
-
-    void Profiler::PrintProfile() const
-    {
-        float sum = 0.0f;
-        CLOG(INFO, "performance") << "------PROFILE------";
-        for(const auto &psf : GetAllTargetsAverage())
-        {
-            CLOG(INFO, "performance") << psf.first + ": " << psf.second;
-            sum += psf.second;
-        }
-        CLOG(INFO, "performance") << "NET: " << sum << endl;
-    }
+#endif
 }

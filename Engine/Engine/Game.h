@@ -1,12 +1,12 @@
 #ifndef EN_GAME_H
 #define EN_GAME_H
 
-#include <Engine/Utils/Profiler.h>
 #include <Engine/Engine/Renderer.h>
 #include <Engine/Core/UpdateableHandler.h>
 #include <Engine/Core/InputHandler.h>
 #include <Engine/Core/ContextHandler.h>
 #include <Engine/Core/CameraHandler.h>
+#include <Engine/Core/Defines.h>
 #include <vector>
 
 namespace engine
@@ -45,15 +45,15 @@ namespace engine
         Game& operator=(const Game &other);
 
         void GameLoopStep();
-        float GetAverageFrameLength() const;
 
         void Init(char const *programName, const char *windowTitle, int screenWidth, int screenHeight);
         CameraHandler *mCameraHandler;
 
         Renderer *mRendererPtr;
-        Profiler mProfiler;
+#if PROFILE_CPU
         int mFrameCap;
         int mCtFramesPassed; //For profiling
+#endif
     };
 
     class RasterizedGame : public Game
