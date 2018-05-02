@@ -41,14 +41,12 @@ namespace engine
     void BackBufferRenderPass::CompileShaders()
     {
         mDraw.Init(AssetLoader::Get().ShaderPath("C_TexToScreen").data(), vector<string>(1, "TONEMAPPING"));
-        mDraw.Prog().Use();
         mDraw.Prog().SetUniform("tex", TextureType::FINAL_SLOT);
         mDraw.Prog().SetUniform("noiseTex", TextureType::D_NOISE);
     }
 
     void BackBufferRenderPass::Render(const RenderingContext &rContext) const
     {
-        mDraw.Prog().Use();
         mDraw.Prog().SetUniform("exposure", Setting<float>("exposure"));
         mDraw.Prog().SetUniform("noiseScale", vec2(mFinalTex->Size()) / vec2(mNoiseTex.Size()));
         glEnable(GL_FRAMEBUFFER_SRGB);

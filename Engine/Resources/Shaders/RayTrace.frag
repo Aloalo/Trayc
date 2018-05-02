@@ -63,7 +63,7 @@ bool intersectSphere(in vec3 origin, in vec3 direction, in vec4 positionRadius, 
     
     minLambda = lambda;
     P = origin + lambda * direction;
-    N = (P - positionRadius.xyz) / positionRadius.w;
+    N = normalize(P - positionRadius.xyz);
     
     return true;
 }
@@ -194,8 +194,9 @@ vec3 blinnPhongShade(in vec4 diffuseSpecular, in vec3 intensity, in vec3 N, in v
         vec3 ret = dNL * diffuseSpecular.rgb * lightIntensity;
         vec3 V = normalize(cameraPos - P);
         vec3 H = normalize(V + L);
-        float dotNH = max(0.0, dot(N, H));
-        return ret + diffuseSpecular.a * pow(dotNH, gloss) * lightIntensity;
+        float dNH = max(0.0, dot(N, H));
+        
+        return ret + diffuseSpecular.a * pow(dNH, gloss) * lightIntensity;
     }
     return vec3(0.0);
 }
@@ -234,8 +235,6 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss, in int
             if (sign(dot(planeN, planeP - P)) != sign(dot(planeN, planeP - lightP))) {
                 continue;
             }
-            
-            // ret = ret * 0.0001 + vec3(0,1,0);
             
             float yl = abs(lightP[rect.normal] - rect.offset);
             float y = abs(P[rect.normal] - rect.offset);
@@ -364,7 +363,7 @@ vec3 rayTrace_2(in vec3 origin, in vec3 direction)
     vec3 new_origin;
     vec3 new_direction;
     float addFactor;
-    return rayTrace(origin + RAY_OFFSET * direction, direction, new_origin, new_direction, addFactor);
+    return rayTrace(origin, direction, new_origin, new_direction, addFactor);
 }
 
 #define RAY_TRACE_MACRO(DEPTH, NEXT) \
@@ -398,6 +397,4 @@ void main()
 #endif
     
     outColor = rayTrace_0(cameraPos, viewRay);
-    
-    //outColor = outColor * 0.0001 + (dot(-normalize(cameraPos), normalize(viewRay)) > 0.98 ? vec4(1.0) : vec4(0.0));
 }

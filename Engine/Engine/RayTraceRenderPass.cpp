@@ -156,7 +156,6 @@ namespace engine
         const float halfTanFov = tanf(radians(cam.mFoV)) * 0.5f;
 
         const Program &p = mRayTraceCombiner.Prog();
-        p.Use();
         p.SetUniform("cameraPos", cam.mPosition);
         p.SetUniform("U", cam.GetRight() * halfTanFov * cam.mAspectRatio);
         p.SetUniform("V", cam.GetUp() * halfTanFov);

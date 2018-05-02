@@ -5,5 +5,5 @@
 - Physics
 
 - FXAA
-- Checkerboarding
+- Don't shade stuff if reflectivity == 1
   
