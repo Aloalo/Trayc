@@ -17,6 +17,7 @@ uniform vec3 W;
     uniform float invTexWidth;
 #endif
 
+#if CT_SPHERES
 bool intersectSphereSimple(in vec3 origin, in vec3 direction, in vec4 positionRadius, in float maxLambda)
 {
 	vec3 L = positionRadius.xyz - origin;
@@ -39,6 +40,7 @@ bool intersectSphereSimple(in vec3 origin, in vec3 direction, in vec4 positionRa
     
     return true;
 }
+#endif
 
 bool intersectSphere(in vec3 origin, in vec3 direction, in vec4 positionRadius, inout float minLambda, inout vec3 N, inout vec3 P)
 {
@@ -68,6 +70,7 @@ bool intersectSphere(in vec3 origin, in vec3 direction, in vec4 positionRadius, 
     return true;
 }
 
+#if CT_RECTANGLES
 vec3 RECT_NORMALS[3] = vec3[](
     vec3(1.0, 0.0, 0.0),
     vec3(0.0, 1.0, 0.0),
@@ -115,7 +118,9 @@ bool intersectRectangle(in vec3 origin, in vec3 direction, in Rectangle rectangl
     
     return true;
 }
+#endif
 
+#if CT_BOXES
 vec3 boxnormal(in vec3 t0, in vec3 t1, in float t)
 {
     vec3 neg = vec3(t == t0.x ? 1.0f : 0.0f, t == t0.y ? 1.0f : 0.0f, t == t0.z ? 1.0f : 0.0f);
@@ -156,27 +161,34 @@ bool intersectBoxSimple(in vec3 origin, in vec3 direction, in Box b, in float ma
     
     return lmax > lmin && lmin < maxLambda;
 }
+#endif
 
 
 bool anyHit(in vec3 origin, in vec3 direction, in float maxLambda)
 {
+#if CT_RECTANGLES
     for (int i = 0; i < CT_RECTANGLES; ++i) {
         if (intersectRectangleSimple(origin, direction, rectangles[i], maxLambda)) {
             return true;
         }
     }
+#endif
     
+#if CT_BOXES
     for (int i = 0; i < CT_BOXES; ++i) {
         if (intersectBoxSimple(origin, direction, boxes[i], maxLambda)) {
             return true;
         }
     }
+#endif
     
+#if CT_SPHERES
     for (int i = 0; i < CT_SPHERES; ++i) {
         if (intersectSphereSimple(origin, direction, spheres[i].positionRadius, maxLambda)) {
             return true;
         }
     }
+#endif
     
     return false;
 }
@@ -217,6 +229,7 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss, in int
         ret += blinnPhongShade(diffuseSpecular, light.intensity, N, L, P, atten, gloss);
     }
     
+#if CT_REFLECTIVE_RECT
     for (int i = 0; i < CT_REFLECTIVE_RECT; ++i) {
         if (i == skipRect) {
             continue;
@@ -269,7 +282,7 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss, in int
             ret += blinnPhongShade(diffuseSpecular, light.intensity, N, L, P, atten, gloss);
         }
     }
-    
+#endif
     return ret;
 }
 
@@ -285,6 +298,7 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
     //////////////////////////////////////////////////
     // --------------- RECTANGLES ----------------- //
     //////////////////////////////////////////////////
+#if CT_RECTANGLES
     for (int i = 0; i < CT_RECTANGLES; ++i) {
         if (intersectRectangle(origin, direction, rectangles[i], minLambda, N, P)) {
             hitIdx = i;
@@ -299,10 +313,12 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
         skipRect = hitIdx;
         hitIdx = -1;
     }
+#endif
     
     //////////////////////////////////////////////////
     // ------------------ BOXES ------------------- //
     //////////////////////////////////////////////////
+#if CT_BOXES
     for (int i = 0; i < CT_BOXES; ++i) {
         if (intersectBox(origin, direction, boxes[i], minLambda, N, P)) {
             hitIdx = i;
@@ -316,10 +332,12 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
         addFactor = box.reflectivity;
         hitIdx = skipRect = -1;
     }
+#endif
     
     //////////////////////////////////////////////////
     // ----------------- SPHERES ------------------ //
     //////////////////////////////////////////////////
+#if CT_SPHERES
     for (int i = 0; i < CT_SPHERES; ++i) {
         if (intersectSphere(origin, direction, spheres[i].positionRadius, minLambda, N, P)) {
             hitIdx = i;
@@ -332,7 +350,8 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
         gloss = sphere.materialData.r;
         addFactor = sphere.materialData.y;
         hitIdx = skipRect = -1;
-    } 
+    }
+#endif
     
     //////////////////////////////////////////////////
     // ----------------- LIGHTS ------------------- //

@@ -5,5 +5,7 @@
 - Physics
 
 - FXAA
+
 - Don't shade stuff if reflectivity == 1
+- Optimize checkerboard reconstruction shaders
   

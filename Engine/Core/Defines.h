@@ -5,6 +5,6 @@
 #define DEPLOY !PRODUCTION
 
 #define PROFILE_CPU 1
-#define PROFILE_GPU (PROFILE_CPU && 0)
+#define PROFILE_GPU 0
 
 #endif
