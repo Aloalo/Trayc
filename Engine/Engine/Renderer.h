@@ -95,6 +95,7 @@ namespace engine
         virtual void Render() const override;
 
         TextureSampler mNoiseSampler;
+        TextureSampler mLinearSampler;
     };
 }
 

@@ -99,6 +99,14 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
         rtPass->ToggleCheckerboarding();
         break;
     }
+    case SDLK_f:
+    {
+        LOG(INFO) << "Toggling fxaa";
+
+        BackBufferRenderPass *bbPass = dynamic_cast<BackBufferRenderPass*>(mGame->mRenderer.GetRenderPass("bbPass"));
+        bbPass->ToggleFxaa();
+        break;
+    }
     default:
         break;
     }

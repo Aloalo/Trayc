@@ -281,13 +281,13 @@ namespace engine
     // -------------------------------------------
 
     RayTracer::RayTracer(void)
-
     {
     }
 
     RayTracer::~RayTracer(void)
     {
         mNoiseSampler.Destroy();
+        mLinearSampler.Destroy();
     }
 
     void RayTracer::SetScreenSize(int width, int height)
@@ -308,6 +308,9 @@ namespace engine
         mNoiseSampler.BindToSlot(TextureType::D_NOISE);
         mNoiseSampler.BindToSlot(TextureType::CHECKERED_1);
         mNoiseSampler.BindToSlot(TextureType::CHECKERED_2);
+
+        mLinearSampler.InitForDataTexture();
+        mLinearSampler.BindToSlot(TextureType::E_EFFECT3);
 
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);

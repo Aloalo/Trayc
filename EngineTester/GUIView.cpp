@@ -1,6 +1,7 @@
 
 #include "GUIView.h"
 #include <Engine/Engine/Game.h>
+#include <Engine/Engine/BackBufferRenderPass.h>
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Utils/Setting.h>
 #include <easylogging++.h>
@@ -102,6 +103,12 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
     {
         skyboxIdx = (skyboxIdx == 0 ? skyboxCount - 1 : skyboxIdx - 1);
         mGame->mRenderer.LoadSkybox(skyboxIdx);
+        break;
+    }
+    case SDLK_f:
+    {
+        BackBufferRenderPass *bbPass = dynamic_cast<BackBufferRenderPass*>(mGame->mRenderer.GetRenderPass("bbPass"));
+        bbPass->ToggleFxaa();
         break;
     }
     default:

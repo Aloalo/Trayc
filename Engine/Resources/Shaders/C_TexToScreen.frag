@@ -1,25 +1,36 @@
 
-#include "Tonemap.glsl"
+#ifdef TONEMAPPING
+    #include "Tonemap.glsl"
+#endif
+
+#ifdef DITHERING
+    #include "Dithering.glsl"
+#endif
+
+#ifdef GAMMA_LUMA
+    uniform vec3 gamma;
+#endif
 
 in vec2 uv;
-
 uniform sampler2D tex;
-uniform sampler2D noiseTex;
-uniform vec2 noiseScale;
-
-#define NOISE_SCALE 0.25/255.0
 
 layout(location = 0) out vec4 outColor;
 
 void main()
 {
-    vec3 color = texture(tex, uv).rgb;
+    vec4 color = texture(tex, uv);
     
 #ifdef TONEMAPPING
-    color = Tonemap(color);
+    color.rgb = Tonemap(color.rgb);
 #endif
 
-    color += mix(-NOISE_SCALE, NOISE_SCALE, texture(noiseTex, uv * noiseScale).r);
+#ifdef DITHERING
+    color.rgb = ApplyDither(color.rgb, uv);
+#endif
 
-    outColor = vec4(color, 1.0);
+#ifdef GAMMA_LUMA
+    color.a = dot(pow(color.rgb, gamma), vec3(0.299, 0.587, 0.114));
+#endif
+
+    outColor = color;
 }

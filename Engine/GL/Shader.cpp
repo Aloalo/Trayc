@@ -124,7 +124,7 @@ namespace engine
             stringstream strStream;
             strStream << in.rdbuf();
             string source(strStream.str());
-            auto pos = source.find_last_of('}');
+            auto pos = max(source.find_last_of('}'), source.find_last_of("#endif"));
             pos += (source[pos + 1] == ';');
             source.erase(pos + 1, source.length());
             return source;

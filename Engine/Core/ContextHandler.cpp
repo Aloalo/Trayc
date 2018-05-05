@@ -61,25 +61,28 @@ namespace engine
 
     void ContextHandler::CreateGLWindow(const char *title, int x, int y, int w, int h, Uint32 flags)
     {
+        SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32));
+        SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8));
+        SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8));
+        SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8));
+        SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8));
+        SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24));
+        SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, 1));
+        SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1));
+
         mWindow = SDL_CreateWindow(title, x, y, w, h, flags);
         SDLErrCheck(!mWindow);
     }
 
     void ContextHandler::InitGL(int verionMajor, int versionMinor, int profile)
     {
+#ifdef _DEBUG
+        SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG));
+#endif
+
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, verionMajor));
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, versionMinor));
         SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, profile));
-        SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32));
-
-        // When debugging turn off vsync and disable buffering 
-        SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1));
-
-        #ifdef _DEBUG
-            SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0));
-             SDLErrCheck(SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG));
-        #endif
-
 
         // create the opengl context
         mOpenglContext = SDL_GL_CreateContext(mWindow);

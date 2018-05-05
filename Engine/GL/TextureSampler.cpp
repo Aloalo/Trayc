@@ -66,8 +66,6 @@ namespace engine
         glSamplerParameteri(mID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glSamplerParameteri(mID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glSamplerParameteri(mID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glSamplerParameteri(mID, GL_TEXTURE_MAX_LEVEL, 0);
-        glSamplerParameteri(mID, GL_TEXTURE_BASE_LEVEL, 0);
     }
 
     void TextureSampler::InitForShadowmapTexture()
