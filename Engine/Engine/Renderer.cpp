@@ -308,6 +308,7 @@ namespace engine
         mNoiseSampler.BindToSlot(TextureType::D_NOISE);
         mNoiseSampler.BindToSlot(TextureType::CHECKERED_1);
         mNoiseSampler.BindToSlot(TextureType::CHECKERED_2);
+        mNoiseSampler.BindToSlot(TextureType::FINAL_SLOT);
 
         mLinearSampler.InitForDataTexture();
         mLinearSampler.BindToSlot(TextureType::E_EFFECT3);

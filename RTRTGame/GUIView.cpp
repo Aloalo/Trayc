@@ -50,10 +50,7 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
     {
     case SDLK_ESCAPE:
     {
-        Renderable::mIsActive = !Renderable::mIsActive;
-        CameraHandler *camHandler = mGame->GetCameraHandler();
-        camHandler->InputObserver::mActive = !camHandler->InputObserver::mActive;
-        mGame->mInputHandler.SetCursorFree(!mGame->mInputHandler.IsCursorFree());
+        DisableInput();
         break;
     }
     case SDLK_F1:
@@ -120,4 +117,12 @@ void GUIView::Draw(const engine::RenderingContext &rContext) const
     //mVA.Render(GL_TRIANGLE_FAN);
     //Program::Unbind();
     //glDisable(GL_BLEND);
+}
+
+void GUIView::DisableInput()
+{
+    Renderable::mIsActive = !Renderable::mIsActive;
+    CameraHandler *camHandler = mGame->GetCameraHandler();
+    camHandler->InputObserver::mActive = !camHandler->InputObserver::mActive;
+    mGame->mInputHandler.SetCursorFree(!mGame->mInputHandler.IsCursorFree());
 }

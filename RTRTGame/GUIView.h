@@ -20,6 +20,8 @@ public:
 
     virtual void KeyPress(const SDL_KeyboardEvent &e) override;
     virtual void Draw(const engine::RenderingContext &rContext) const override;
+
+    void DisableInput();
 private:
     engine::RayTracedGame *mGame;
     engine::VertexArray mVA;

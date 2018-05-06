@@ -12,7 +12,7 @@ uniform vec2 invScreenSize;
 #define FXAA_GATHER4_ALPHA 1
 
 // TODO(jure): check perf for this
-// FXAA_DISCARD
+// #define FXAA_DISCARD 1
 
 #include "Fxaa.glsl"
 

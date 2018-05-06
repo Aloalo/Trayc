@@ -89,15 +89,19 @@ namespace engine
 
     void BackBufferRenderPass::Render(const RenderingContext &rContext) const
     {
-        TimerQuery t("BackBufferRenderPass");
-        mDraw.Prog().SetUniform("exposure", Setting<float>("exposure"));
-        mDraw.Prog().SetUniform("noiseScale", vec2(mFinalTex->Size()) / vec2(mNoiseTex.Size()));
+        {
+            TimerQuery t("BackBufferRenderPass");
+            mDraw.Prog().SetUniform("exposure", Setting<float>("exposure"));
+            mDraw.Prog().SetUniform("noiseScale", vec2(mFinalTex->Size()) / vec2(mNoiseTex.Size()));
 
-        glEnable(GL_FRAMEBUFFER_SRGB);
-        mDraw.Draw();
-        glDisable(GL_FRAMEBUFFER_SRGB);
+            glEnable(GL_FRAMEBUFFER_SRGB);
+            mDraw.Draw();
+            glDisable(GL_FRAMEBUFFER_SRGB);
+        }
 
         if (mFxaa) {
+            TimerQuery t("FXAA");
+
             const int w = mDstFB.Width();
             const int h = mDstFB.Height();
 

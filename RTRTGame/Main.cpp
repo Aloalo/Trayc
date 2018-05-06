@@ -15,7 +15,8 @@ using namespace glm;
 DefaultCameraHandler ConstructDefaultCameraHandler(ivec2 ss, float FOV, float farDist, vec3 cameraPos)
 {
     const float nearDist = 0.01f;
-    const Camera camera(cameraPos, float(ss.x) / float(ss.y), FOV, nearDist, farDist);
+    Camera camera(cameraPos, float(ss.x) / float(ss.y), FOV, nearDist, farDist);
+    camera.mYaw = -3.14f / 2.0f;
 
     const float moveSpeed = 10.0f;
     const float rotationSpeed = 0.0015f;
