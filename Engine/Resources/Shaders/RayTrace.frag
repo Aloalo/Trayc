@@ -135,16 +135,19 @@ bool intersectBox(in vec3 origin, in vec3 direction, in Box b, inout float minLa
     
     vec3 near = min(tmin, tmax);
     vec3 far = max(tmin, tmax);
-    float lmin = max(0.0, max(max(near.x, near.y), near.z));
     float lmax = min(min(far.x, far.y), far.z);
+    float lmin = max(max(near.x, near.y), near.z);
     
-    if(lmin < 0.0 || lmax < lmin || lmin > minLambda) {
+    lmin = mix(lmax, lmin, step(0.0, lmin));
+    
+    if(lmax < 0.0 || lmax < lmin || lmin > minLambda) {
         return false;
     }
     
     minLambda = lmin;
     P = origin + direction * lmin;
     N = boxnormal(tmin, tmax, lmin);
+    N *= -sign(dot(N, direction));
     
     return true;
 }
@@ -156,8 +159,9 @@ bool intersectBoxSimple(in vec3 origin, in vec3 direction, in Box b, in float ma
     
     vec3 near = min(tmin, tmax);
     vec3 far = max(tmin, tmax);
-    float lmin = max(0.0, max(max(near.x, near.y), near.z));
     float lmax = min(min(far.x, far.y), far.z);
+    float lmin = max(max(near.x, near.y), near.z);
+    lmin = mix(lmax, lmin, step(0.0, lmin));
     
     return lmax > lmin && lmin < maxLambda;
 }

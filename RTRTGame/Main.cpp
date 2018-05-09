@@ -68,25 +68,11 @@ void Init(RayTracedGame &game, const char *progName)
 	game.mRenderer.mRTPass->mLights.push_back(light);
 
     const float recOffset = offsets[0] - 30.0f * R;
-    RTRectangle r1 = { vec4(-50.0f, -50.0f, 50.0f, 50.0f), vec4(0.1f, 0.6f, 0.4f, 0.5f), vec2(128.0f, 0.0f), recOffset, 0 };
-    RTRectangle r2 = r1;
-    r2.normal = 1;
-    RTRectangle r3 = r1;
-    r3.normal = 2;
-
-	game.mRenderer.mRTPass->mRectangles.push_back(r1);
-    game.mRenderer.mRTPass->mRectangles.push_back(r2);
-    game.mRenderer.mRTPass->mRectangles.push_back(r3);
-
-    for (auto r : { r1, r2, r3 }) {
-        r.offset *= -1.0f;
-        game.mRenderer.mRTPass->mRectangles.push_back(r);
-    }
-
 	const RTRectangle reflectiveRect = { vec4(-5.0f, -5.0f, 10.0f, 10.0f), vec4(1.0f), vec2(1024.0f, 0.9f), recOffset + 2.0f, 2 };
 	game.mRenderer.mRTPass->mRectangles.push_back(reflectiveRect);
 
-    const RTBox box = { vec4(1.0f, 0.6f, 0.4f, 0.5f), vec3(0.0f, 15.0f, 0.0f), 0.9f, vec3(5.0f, 25.0f, 5.0f), 512.0f };
+    const vec3 v{45.0f};
+    const RTBox box = { vec4(1.0f, 0.6f, 0.4f, 0.5f), -v, 0.0f, v, 512.0f };
     game.mRenderer.mRTPass->mBoxes.push_back(box);
 }
 
