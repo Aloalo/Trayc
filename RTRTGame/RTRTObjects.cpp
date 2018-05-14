@@ -9,8 +9,8 @@ RTRTObject::~RTRTObject()
 {
 }
 
-RTRTSphere::RTRTSphere(const RTSphere &object)
-    : object(object)
+RTRTSphere::RTRTSphere(RTSphere &object)
+    : mObject(&object)
 {
 }
 
@@ -21,22 +21,22 @@ std::string RTRTSphere::Type() const
 
 vec3 RTRTSphere::Position() const
 {
-    return vec3(object.positionRadius);
+    return vec3(mObject->positionRadius);
 }
 
 void RTRTSphere::SetPosition(const vec3 &pos)
 {
-    object.positionRadius = vec4(pos, object.positionRadius.w);
+    mObject->positionRadius = vec4(pos, mObject->positionRadius.w);
 }
 
 const void* RTRTSphere::Data(int &size) const
 {
-    size = sizeof(object);
-    return reinterpret_cast<const void*>(&object);
+    size = sizeof(RTSphere);
+    return static_cast<const void*>(mObject);
 }
 
-RTRTRectangle::RTRTRectangle(const RTRectangle &object)
-    : object(object)
+RTRTRectangle::RTRTRectangle(RTRectangle &object)
+    : mObject(&object)
 {
 }
 
@@ -48,60 +48,60 @@ std::string RTRTRectangle::Type() const
 
 vec3 RTRTRectangle::Position() const
 {
-    switch (object.normal)
+    switch (mObject->normal)
     {
     case 0:
-        return vec3(object.offset, vec2(object.rect));
+        return vec3(mObject->offset, vec2(mObject->rect));
     case 1:
-        return vec3(object.rect.y, object.offset, object.rect.x);
+        return vec3(mObject->rect.y, mObject->offset, mObject->rect.x);
     case 2:
-        return vec3(vec2(object.rect), object.offset);
+        return vec3(vec2(mObject->rect), mObject->offset);
     default:
-        throw exception("Invalid rectangle normal: " + object.normal);
+        throw exception("Invalid rectangle normal: " + mObject->normal);
     }
 }
 
 void RTRTRectangle::SetPosition(const vec3 &pos)
 {
-    const vec2 size = vec2(object.rect.z, object.rect.w) - vec2(object.rect);
+    const vec2 size = vec2(mObject->rect.z, mObject->rect.w) - vec2(mObject->rect);
 
-    switch (object.normal)
+    switch (mObject->normal)
     {
     case 0:
     {
-        object.offset = pos.x;
+        mObject->offset = pos.x;
         const vec2 minv = vec2(pos.y, pos.z);
-        object.rect = vec4(minv, minv + size);
+        mObject->rect = vec4(minv, minv + size);
         break;
     }
     case 1:
     {
         // X-Z plane is swizzled!
-        object.offset = pos.y;
+        mObject->offset = pos.y;
         const vec2 minv = vec2(pos.z, pos.x);
-        object.rect = vec4(minv, minv + size);
+        mObject->rect = vec4(minv, minv + size);
         break;
     }
     case 2:
     {
-        object.offset = pos.z;
+        mObject->offset = pos.z;
         const vec2 minv = vec2(pos.x, pos.y);
-        object.rect = vec4(minv, minv + size);
+        mObject->rect = vec4(minv, minv + size);
         break;
     }
     default:
-        throw exception("Invalid rectangle normal: " + object.normal);
+        throw exception("Invalid rectangle normal: " + mObject->normal);
     }
 }
 
 const void* RTRTRectangle::Data(int &size) const
 {
-    size = sizeof(object);
-    return reinterpret_cast<const void*>(&object);
+    size = sizeof(RTRectangle);
+    return static_cast<const void*>(mObject);
 }
 
-RTRTBox::RTRTBox(const RTBox &object)
-    : object(object)
+RTRTBox::RTRTBox(RTBox &object)
+    : mObject(&object)
 {
 }
 
@@ -112,24 +112,24 @@ std::string RTRTBox::Type() const
 
 vec3 RTRTBox::Position() const
 {
-    return object.minv;
+    return mObject->minv;
 }
 
 void RTRTBox::SetPosition(const vec3 &pos)
 {
-    const vec3 size = object.maxv - object.minv;
-    object.minv = pos;
-    object.maxv = pos + size;
+    const vec3 size = mObject->maxv - mObject->minv;
+    mObject->minv = pos;
+    mObject->maxv = pos + size;
 }
 
 const void* RTRTBox::Data(int &size) const
 {
-    size = sizeof(object);
-    return reinterpret_cast<const void*>(&object);
+    size = sizeof(RTBox);
+    return static_cast<const void*>(mObject);
 }
 
-RTRTLight::RTRTLight(const RTLight &object)
-    : object(object)
+RTRTLight::RTRTLight(RTLight &object)
+    : mObject(&object)
 {
 }
 
@@ -140,16 +140,16 @@ std::string RTRTLight::Type() const
 
 vec3 RTRTLight::Position() const
 {
-    return vec3(object.positionRadius);
+    return vec3(mObject->positionRadius);
 }
 
 void RTRTLight::SetPosition(const vec3 &pos)
 {
-    object.positionRadius = vec4(pos, object.positionRadius.w);
+    mObject->positionRadius = vec4(pos, mObject->positionRadius.w);
 }
 
 const void* RTRTLight::Data(int &size) const
 {
-    size = sizeof(object);
-    return reinterpret_cast<const void*>(&object);
+    size = sizeof(RTLight);
+    return static_cast<const void*>(mObject);
 }

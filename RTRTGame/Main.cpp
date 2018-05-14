@@ -90,9 +90,9 @@ int main(int argc, char *argv[])
 
 #if PRODUCTION
     RTRTEditor editor(dynamic_cast<RayTraceRenderPass*>(game.mRenderer.GetRenderPass("rtPass")));
-    editor.SetLevelFromPass();
-    editor.SaveLevel();
-    //editor.LoadLevel("default");
+    //editor.SetLevelFromPass();
+    //editor.SaveLevel();
+    editor.LoadLevel("default");
     game.mUpdateableMenager.AddUpdateable(&editor);
 #else
 #endif

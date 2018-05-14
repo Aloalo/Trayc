@@ -25,16 +25,16 @@ void RTRTEditor::SetLevelFromPass()
 		return a.materialData.y > b.materialData.y;
 	});
 
-    for (const auto &o : mRTPass->mSpheres) {
+    for (auto &o : mRTPass->mSpheres) {
         mLevel.mObjects.push_back(RTRTObjectFactory(o));
     }
-    for (const auto &o : mRTPass->mRectangles) {
+    for (auto &o : mRTPass->mRectangles) {
         mLevel.mObjects.push_back(RTRTObjectFactory(o));
     }
-    for (const auto &o : mRTPass->mBoxes) {
+    for (auto &o : mRTPass->mBoxes) {
         mLevel.mObjects.push_back(RTRTObjectFactory(o));
     }
-    for (const auto &o : mRTPass->mLights) {
+    for (auto &o : mRTPass->mLights) {
         mLevel.mObjects.push_back(RTRTObjectFactory(o));
     }
 

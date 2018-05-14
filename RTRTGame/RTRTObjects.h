@@ -26,7 +26,7 @@ public:
 class RTRTSphere : public RTRTObject
 {
 public:
-    RTRTSphere(const engine::RTSphere &object);
+    RTRTSphere(engine::RTSphere &object);
 
     virtual std::string Type() const override;
     virtual glm::vec3 Position() const override;
@@ -34,14 +34,14 @@ public:
     virtual const void* Data(int &size) const override;
 
 private:
-    engine::RTSphere object;
+    engine::RTSphere *mObject;
 };
 
 
 class RTRTRectangle : public RTRTObject
 {
 public:
-    RTRTRectangle(const engine::RTRectangle &object);
+    RTRTRectangle(engine::RTRectangle &object);
 
     virtual std::string Type() const override;
     virtual glm::vec3 Position() const override;
@@ -49,14 +49,14 @@ public:
     virtual const void* Data(int &size) const override;
 
 private:
-    engine::RTRectangle object;
+    engine::RTRectangle *mObject;
 };
 
 
 class RTRTBox : public RTRTObject
 {
 public:
-    RTRTBox(const engine::RTBox &object);
+    RTRTBox(engine::RTBox &object);
 
     virtual std::string Type() const override;
     virtual glm::vec3 Position() const override;
@@ -64,14 +64,14 @@ public:
     virtual const void* Data(int &size) const override;
 
 private:
-    engine::RTBox object;
+    engine::RTBox *mObject;
 };
 
 
 class RTRTLight : public RTRTObject
 {
 public:
-    RTRTLight(const engine::RTLight &object);
+    RTRTLight(engine::RTLight &object);
 
     virtual std::string Type() const override;
     virtual glm::vec3 Position() const override;
@@ -79,36 +79,32 @@ public:
     virtual const void* Data(int &size) const override;
 
 private:
-    engine::RTLight object;
+    engine::RTLight *mObject;
 };
 
-
 template<class T>
-inline RTRTObject* RTRTObjectFactory(const T &object)
-{
-    return nullptr;
-}
+inline RTRTObject* RTRTObjectFactory(T &object);
 
 template<>
-inline RTRTObject* RTRTObjectFactory<engine::RTSphere>(const engine::RTSphere &object)
+inline RTRTObject* RTRTObjectFactory<engine::RTSphere>(engine::RTSphere &object)
 {
     return new RTRTSphere(object);
 }
 
 template<>
-inline RTRTObject* RTRTObjectFactory<engine::RTRectangle>(const engine::RTRectangle &object)
+inline RTRTObject* RTRTObjectFactory<engine::RTRectangle>(engine::RTRectangle &object)
 {
     return new RTRTRectangle(object);
 }
 
 template<>
-inline RTRTObject* RTRTObjectFactory<engine::RTBox>(const engine::RTBox &object)
+inline RTRTObject* RTRTObjectFactory<engine::RTBox>(engine::RTBox &object)
 {
     return new RTRTBox(object);
 }
 
 template<>
-inline RTRTObject* RTRTObjectFactory<engine::RTLight>(const engine::RTLight &object)
+inline RTRTObject* RTRTObjectFactory<engine::RTLight>(engine::RTLight &object)
 {
     return new RTRTLight(object);
 }
