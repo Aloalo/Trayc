@@ -21,24 +21,9 @@ void RTRTEditor::Update(float dt)
 
 void RTRTEditor::SetLevelFromPass()
 {
-	sort(mRTPass->mRectangles.begin(), mRTPass->mRectangles.end(), [](const RTRectangle &a, const RTRectangle &b) {
-		return a.materialData.y > b.materialData.y;
-	});
-
-    for (auto &o : mRTPass->mSpheres) {
-        mLevel.mObjects.push_back(RTRTObjectFactory(o));
-    }
-    for (auto &o : mRTPass->mRectangles) {
-        mLevel.mObjects.push_back(RTRTObjectFactory(o));
-    }
-    for (auto &o : mRTPass->mBoxes) {
-        mLevel.mObjects.push_back(RTRTObjectFactory(o));
-    }
-    for (auto &o : mRTPass->mLights) {
-        mLevel.mObjects.push_back(RTRTObjectFactory(o));
-    }
-
-	mRTPass->CompileShaders();
+    mLevel = RTRTLevel{};
+    mLevel.SetLevelFromPass(mRTPass);
+    mRTPass->CompileShaders();
 }
 
 void RTRTEditor::SaveLevel() const

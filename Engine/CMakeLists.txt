@@ -51,9 +51,11 @@ set(Engine_Geometry
     Geometry/Frustum.cpp
     Geometry/Plane.h
     Geometry/Plane.cpp
+    Geometry/Ray.h
     Geometry/Sphere.h
     Geometry/Sphere.cpp
     Geometry/RayTracePrimitives.h
+    Geometry/RayTracePrimitives.cpp
 )
 
 set(Engine_GL

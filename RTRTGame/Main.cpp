@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
     RayTracedGame game(1.0f / 60.0f);
     Init(game, argv[0]);
 
-    // game.mContextHandler.VsyncMode(0);
+    game.mContextHandler.VsyncMode(0);
 
     GUIView guiView(&game);
     game.mInputHandler.AddEventListener(&guiView);

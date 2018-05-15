@@ -5,15 +5,27 @@
 
 #include "RTRTObjects.h"
 
+namespace engine
+{
+    class RayTraceRenderPass;
+}
+
 class RTRTLevel
 {
 public:
+    RTRTLevel(void);
     ~RTRTLevel(void);
 
+    void SetLevelFromPass(engine::RayTraceRenderPass *rtPass);
     void Update(float dt);
+    const RTRTObject* GetObject(int id) const;
+    RTRTObject* GetObject(int id);
 
     std::string mName = "default";
     std::vector<RTRTObject*> mObjects;
+
+private:
+    int mLatestObjID;
 };
 
 #endif

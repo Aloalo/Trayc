@@ -1,4 +1,12 @@
 #include "RTRTLevel.h"
+#include <Engine/Engine/RayTraceRenderPass.h>
+
+using namespace engine;
+
+RTRTLevel::RTRTLevel(void)
+    : mLatestObjID(1)
+{
+}
 
 RTRTLevel::~RTRTLevel(void)
 {
@@ -7,6 +15,49 @@ RTRTLevel::~RTRTLevel(void)
     }
 }
 
+void RTRTLevel::SetLevelFromPass(RayTraceRenderPass *rtPass)
+{
+    for (auto &o : rtPass->mSpheres) {
+        mObjects.push_back(RTRTObjectFactory(o, mLatestObjID));
+        ++mLatestObjID;
+    }
+    for (auto &o : rtPass->mRectangles) {
+        mObjects.push_back(RTRTObjectFactory(o, mLatestObjID));
+        ++mLatestObjID;
+    }
+    for (auto &o : rtPass->mBoxes) {
+        mObjects.push_back(RTRTObjectFactory(o, mLatestObjID));
+        ++mLatestObjID;
+    }
+    for (auto &o : rtPass->mLights) {
+        mObjects.push_back(RTRTObjectFactory(o, mLatestObjID));
+        ++mLatestObjID;
+    }
+}
+
+
 void RTRTLevel::Update(float dt)
 {
+}
+
+const RTRTObject* RTRTLevel::GetObject(int id) const
+{
+    for (const RTRTObject *o : mObjects) {
+        if (o->GetID() == id) {
+            return o;
+        }
+    }
+
+    return nullptr;
+}
+
+RTRTObject* RTRTLevel::GetObject(int id)
+{
+    for (RTRTObject *o : mObjects) {
+        if (o->GetID() == id) {
+            return o;
+        }
+    }
+
+    return nullptr;
 }

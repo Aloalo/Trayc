@@ -5,12 +5,22 @@ using namespace glm;
 using namespace engine;
 using namespace std;
 
+RTRTObject::RTRTObject(int id)
+    : mID(id)
+{
+}
+
 RTRTObject::~RTRTObject()
 {
 }
 
-RTRTSphere::RTRTSphere(RTSphere &object)
-    : mObject(&object)
+int RTRTObject::GetID() const
+{
+    return mID;
+}
+
+RTRTSphere::RTRTSphere(RTSphere &object, int id)
+    : RTRTObject(id), mObject(&object)
 {
 }
 
@@ -35,8 +45,8 @@ const void* RTRTSphere::Data(int &size) const
     return static_cast<const void*>(mObject);
 }
 
-RTRTRectangle::RTRTRectangle(RTRectangle &object)
-    : mObject(&object)
+RTRTRectangle::RTRTRectangle(RTRectangle &object, int id)
+    : RTRTObject(id), mObject(&object)
 {
 }
 
@@ -100,8 +110,8 @@ const void* RTRTRectangle::Data(int &size) const
     return static_cast<const void*>(mObject);
 }
 
-RTRTBox::RTRTBox(RTBox &object)
-    : mObject(&object)
+RTRTBox::RTRTBox(RTBox &object, int id)
+    : RTRTObject(id), mObject(&object)
 {
 }
 
@@ -128,8 +138,8 @@ const void* RTRTBox::Data(int &size) const
     return static_cast<const void*>(mObject);
 }
 
-RTRTLight::RTRTLight(RTLight &object)
-    : mObject(&object)
+RTRTLight::RTRTLight(RTLight &object, int id)
+    : RTRTObject(id), mObject(&object)
 {
 }
 

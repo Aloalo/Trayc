@@ -233,8 +233,8 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss, in int
         ret += blinnPhongShade(diffuseSpecular, light.intensity, N, L, P, atten, gloss);
     }
     
-#if CT_REFLECTIVE_RECT
-    for (int i = 0; i < CT_REFLECTIVE_RECT; ++i) {
+#if CT_RECTANGLES
+    for (int i = 0; i < CT_RECTANGLES; ++i) {
         if (i == skipRect) {
             continue;
         }

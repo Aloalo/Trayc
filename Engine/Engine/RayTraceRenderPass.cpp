@@ -22,11 +22,11 @@ namespace engine
 
     void RayTraceRenderPass::CompileShaders()
     {
-		const int ctRect = static_cast<int>(mRectangles.size());
-		int ctReflectiveRect = 0;
-		for (; ctReflectiveRect < ctRect; ++ctReflectiveRect) {
-			if (mRectangles[ctReflectiveRect].materialData.y == 0.0f) {
-				break;
+		const int ctRectangles = static_cast<int>(mRectangles.size());
+
+		for (const RTRectangle &r : mRectangles) {
+			if (r.materialData.y <= 0.0f) {
+                throw exception("Non reflective rectangle found");
 			}
 		}
 
@@ -34,9 +34,8 @@ namespace engine
         const Shader::Constants constants = {
             MAKE_CONSTANT(CT_SPHERES, mSpheres.size()),
             MAKE_CONSTANT(CT_LIGHTS, mLights.size()),
-            MAKE_CONSTANT(CT_RECTANGLES, mRectangles.size()),
+            MAKE_CONSTANT(CT_RECTANGLES, ctRectangles),
             MAKE_CONSTANT(CT_BOXES, mBoxes.size()),
-            MAKE_CONSTANT(CT_REFLECTIVE_RECT, ctReflectiveRect),
         };
         mRayTraceCombiner.Init(AssetLoader::Get().ShaderPath("RayTrace").data(), defines, constants);
 

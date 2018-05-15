@@ -26,29 +26,32 @@ void RTRTGamelike::LoadLevel(const string &name)
         const streamsize fsize = infile.tellg();
         infile.seekg(0, infile.beg);
 
-        if (infile.good()) {
-            if (type == "RTSphere") {
-                mRTPass->mSpheres.clear();
-                mRTPass->mSpheres.resize(fsize / sizeof(RTSphere));
-                infile.read(reinterpret_cast<char*>(mRTPass->mSpheres.data()), fsize);
-            }
-            else if (type == "RTRectangle") {
-                mRTPass->mRectangles.clear();
-                mRTPass->mRectangles.resize(fsize / sizeof(RTRectangle));
-                infile.read(reinterpret_cast<char*>(mRTPass->mRectangles.data()), fsize);
-            }
-            else if (type == "RTBox") {
-                mRTPass->mBoxes.clear();
-                mRTPass->mBoxes.resize(fsize / sizeof(RTBox));
-                infile.read(reinterpret_cast<char*>(mRTPass->mBoxes.data()), fsize);
-            }
-            else if (type == "RTLight") {
-                mRTPass->mLights.clear();
-                mRTPass->mLights.resize(fsize / sizeof(RTLight));
-                infile.read(reinterpret_cast<char*>(mRTPass->mLights.data()), fsize);
-            }
+        if (!infile.good()) {
+            throw exception(("File open failed: " + fname).c_str());
+        }
+
+        if (type == "RTSphere") {
+            mRTPass->mSpheres.clear();
+            mRTPass->mSpheres.resize(fsize / sizeof(RTSphere));
+            infile.read(reinterpret_cast<char*>(mRTPass->mSpheres.data()), fsize);
+        }
+        else if (type == "RTRectangle") {
+            mRTPass->mRectangles.clear();
+            mRTPass->mRectangles.resize(fsize / sizeof(RTRectangle));
+            infile.read(reinterpret_cast<char*>(mRTPass->mRectangles.data()), fsize);
+        }
+        else if (type == "RTBox") {
+            mRTPass->mBoxes.clear();
+            mRTPass->mBoxes.resize(fsize / sizeof(RTBox));
+            infile.read(reinterpret_cast<char*>(mRTPass->mBoxes.data()), fsize);
+        }
+        else if (type == "RTLight") {
+            mRTPass->mLights.clear();
+            mRTPass->mLights.resize(fsize / sizeof(RTLight));
+            infile.read(reinterpret_cast<char*>(mRTPass->mLights.data()), fsize);
         }
     }
 
-	mRTPass->CompileShaders();
+    mLevel.SetLevelFromPass(mRTPass);
+    mRTPass->CompileShaders();
 }
