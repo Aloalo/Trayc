@@ -5,11 +5,23 @@
 #include <glm/glm.hpp>
 #include <Engine/Geometry/RayTracePrimitives.h>
 #include <string>
-#include <type_traits>
 
-static const std::string OBJECT_TYPES[] = {
-    "RTSphere", "RTRectangle", "RTBox", "RTLight"
+enum class RTRTObjectType
+{
+    RTRTSphere,
+    RTRTRectangle,
+    RTRTBox,
+    RTRTLight
 };
+
+static const RTRTObjectType RTRT_OBJECT_TYPES[] = { 
+    RTRTObjectType::RTRTSphere ,
+    RTRTObjectType::RTRTRectangle,
+    RTRTObjectType::RTRTBox,
+    RTRTObjectType::RTRTLight
+};
+
+const char* GetRTRTObjectTypeName(RTRTObjectType type);
 
 class RTRTObject
 {
@@ -19,10 +31,11 @@ public:
 
     int GetID() const;
 
-    virtual std::string Type() const = 0;
+    virtual RTRTObjectType Type() const = 0;
     virtual glm::vec3 Position() const = 0;
     virtual void SetPosition(const glm::vec3 &pos) = 0;
     virtual const void* Data(int &size) const = 0;
+    virtual bool Intersect(const engine::Ray &ray, float &minLambda) const = 0;
 
 protected:
     int mID;
@@ -34,10 +47,11 @@ class RTRTSphere : public RTRTObject
 public:
     RTRTSphere(engine::RTSphere &object, int id);
 
-    virtual std::string Type() const override;
+    virtual RTRTObjectType Type() const override;
     virtual glm::vec3 Position() const override;
     virtual void SetPosition(const glm::vec3 &pos) override;
     virtual const void* Data(int &size) const override;
+    virtual bool Intersect(const engine::Ray &ray, float &minLambda) const override;
 
 private:
     engine::RTSphere *mObject;
@@ -49,10 +63,11 @@ class RTRTRectangle : public RTRTObject
 public:
     RTRTRectangle(engine::RTRectangle &object, int id);
 
-    virtual std::string Type() const override;
+    virtual RTRTObjectType Type() const override;
     virtual glm::vec3 Position() const override;
     virtual void SetPosition(const glm::vec3 &pos) override;
     virtual const void* Data(int &size) const override;
+    virtual bool Intersect(const engine::Ray &ray, float &minLambda) const override;
 
 private:
     engine::RTRectangle *mObject;
@@ -64,10 +79,11 @@ class RTRTBox : public RTRTObject
 public:
     RTRTBox(engine::RTBox &object, int id);
 
-    virtual std::string Type() const override;
+    virtual RTRTObjectType Type() const override;
     virtual glm::vec3 Position() const override;
     virtual void SetPosition(const glm::vec3 &pos) override;
     virtual const void* Data(int &size) const override;
+    virtual bool Intersect(const engine::Ray &ray, float &minLambda) const override;
 
 private:
     engine::RTBox *mObject;
@@ -79,10 +95,11 @@ class RTRTLight : public RTRTObject
 public:
     RTRTLight(engine::RTLight &object, int id);
 
-    virtual std::string Type() const override;
+    virtual RTRTObjectType Type() const override;
     virtual glm::vec3 Position() const override;
     virtual void SetPosition(const glm::vec3 &pos) override;
     virtual const void* Data(int &size) const override;
+    virtual bool Intersect(const engine::Ray &ray, float &minLambda) const override;
 
 private:
     engine::RTLight *mObject;

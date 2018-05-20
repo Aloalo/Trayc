@@ -1,16 +1,16 @@
 #ifndef RTRT_RTRT_GAME_H
 #define RTRT_RTRT_GAME_H
 
+#include "RTRTGamelike.h"
 #include <Engine/Core/Updateable.h>
-#include "RTRTLevel.h"
 
-class RTRTGame : public engine::Updateable
+
+class RTRTGame : public RTRTGamelike, public engine::Updateable
 {
 public:
-    virtual void Update(float dt) override;
+    RTRTGame(engine::RayTraceRenderPass *rtPass, const engine::Camera *camera);
 
-private:
-    RTRTLevel mLevel;
+    virtual void Update(float dt) override;
 };
 
 #endif

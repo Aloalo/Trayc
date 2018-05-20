@@ -2,12 +2,13 @@
 #define EN_RAY_TRACE_PRIMITIVES_H
 
 #include <Engine/Geometry/Ray.h>
+#include <limits>
 
 namespace engine
 {
     struct RTSphere
     {
-        bool Intersect(const Ray &ray, float &lambda) const;
+        bool Intersect(const Ray &ray, float &minLambda) const;
 
         glm::vec4 positionRadius;
         glm::vec4 diffuseSpecular;
@@ -18,7 +19,7 @@ namespace engine
 
     struct RTLight
     {
-        bool Intersect(const Ray &ray, float &lambda) const;
+        bool Intersect(const Ray &ray, float &minLambda) const;
 
         glm::vec4 positionRadius;
         glm::vec3 intensity;
@@ -27,7 +28,7 @@ namespace engine
 
     struct RTRectangle
     {
-        bool Intersect(const Ray &ray, float &lambda) const;
+        bool Intersect(const Ray &ray, float &minLambda) const;
 
         glm::vec4 rect;
         glm::vec4 diffuseSpecular;
@@ -38,7 +39,7 @@ namespace engine
 
     struct RTBox
     {
-        bool Intersect(const Ray &ray, float &lambda) const;
+        bool Intersect(const Ray &ray, float &minLambda) const;
 
         glm::vec4 diffuseSpecular;
         glm::vec3 minv;

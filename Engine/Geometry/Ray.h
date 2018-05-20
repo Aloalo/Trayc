@@ -7,7 +7,7 @@ namespace engine
 {
     struct Ray
     {
-        glm::vec3 mPosition;
+        glm::vec3 mOrigin;
         glm::vec3 mDirection;
     };
 }

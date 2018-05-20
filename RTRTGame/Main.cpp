@@ -89,11 +89,12 @@ int main(int argc, char *argv[])
     game.mRenderer.AddRenderable(&guiView);
 
 #if PRODUCTION
-    RTRTEditor editor(dynamic_cast<RayTraceRenderPass*>(game.mRenderer.GetRenderPass("rtPass")));
+    RTRTEditor editor(dynamic_cast<RayTraceRenderPass*>(game.mRenderer.GetRenderPass("rtPass")), game.mRenderer.GetCamera());
     //editor.SetLevelFromPass();
     //editor.SaveLevel();
     editor.LoadLevel("default");
     game.mUpdateableMenager.AddUpdateable(&editor);
+    game.mInputHandler.AddEventListener(&editor);
 #else
 #endif
 

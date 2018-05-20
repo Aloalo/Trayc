@@ -1,4 +1,5 @@
 #include "RTRTGamelike.h"
+#include <Engine/Core/Camera.h>
 #include <Engine/Engine/AssetLoader.h>
 #include <Engine/Engine/RayTraceRenderPass.h>
 #include <easylogging++.h>
@@ -8,8 +9,8 @@
 using namespace std;
 using namespace engine;
 
-RTRTGamelike::RTRTGamelike(RayTraceRenderPass *rtPass)
-    : mRTPass(rtPass)
+RTRTGamelike::RTRTGamelike(RayTraceRenderPass *rtPass, const Camera *camera)
+    : mRTPass(rtPass), mCamera(camera)
 {
 }
 
@@ -20,8 +21,8 @@ void RTRTGamelike::LoadLevel(const string &name)
     LOG(INFO) << "[RTRTEditor::LoadLevel] Loading level " << levelsPath;
 
     mLevel = RTRTLevel();
-    for (const auto &type : OBJECT_TYPES) {
-        const auto fname = levelsPath + "_" + type;
+    for (RTRTObjectType type : RTRT_OBJECT_TYPES) {
+        const auto fname = levelsPath + "_" + GetRTRTObjectTypeName(type);
         ifstream infile(fname, ios::ate | ios::binary);
         const streamsize fsize = infile.tellg();
         infile.seekg(0, infile.beg);
@@ -30,25 +31,36 @@ void RTRTGamelike::LoadLevel(const string &name)
             throw exception(("File open failed: " + fname).c_str());
         }
 
-        if (type == "RTSphere") {
+        switch (type)
+        {
+        case RTRTObjectType::RTRTSphere:
+        {
             mRTPass->mSpheres.clear();
             mRTPass->mSpheres.resize(fsize / sizeof(RTSphere));
             infile.read(reinterpret_cast<char*>(mRTPass->mSpheres.data()), fsize);
+            break;
         }
-        else if (type == "RTRectangle") {
+        case RTRTObjectType::RTRTRectangle:
+        {
             mRTPass->mRectangles.clear();
             mRTPass->mRectangles.resize(fsize / sizeof(RTRectangle));
             infile.read(reinterpret_cast<char*>(mRTPass->mRectangles.data()), fsize);
+            break;
         }
-        else if (type == "RTBox") {
+        case RTRTObjectType::RTRTBox:
+        {
             mRTPass->mBoxes.clear();
             mRTPass->mBoxes.resize(fsize / sizeof(RTBox));
             infile.read(reinterpret_cast<char*>(mRTPass->mBoxes.data()), fsize);
+            break;
         }
-        else if (type == "RTLight") {
+        case RTRTObjectType::RTRTLight:
+        {
             mRTPass->mLights.clear();
             mRTPass->mLights.resize(fsize / sizeof(RTLight));
             infile.read(reinterpret_cast<char*>(mRTPass->mLights.data()), fsize);
+            break;
+        }
         }
     }
 

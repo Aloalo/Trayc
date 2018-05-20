@@ -34,11 +34,7 @@ bool intersectSphereSimple(in vec3 origin, in vec3 direction, in vec4 positionRa
     }
     
     float lambda = t - sqrt(radius2 - d2);
-    if (lambda > maxLambda) {
-        return false;
-    }
-    
-    return true;
+    return lambda < maxLambda;
 }
 #endif
 
@@ -88,11 +84,7 @@ bool intersectRectangleSimple(in vec3 origin, in vec3 direction, in Rectangle re
     vec3 hitPoint = origin + lambda * direction;
     vec2 planePoint = vec2(hitPoint[(rectangle.normal + 1) % 3], hitPoint[(rectangle.normal + 2) % 3]);
     
-    if (any(lessThan(planePoint, rectangle.rect.xy)) || any(greaterThan(planePoint, rectangle.rect.zw))) {
-        return false;
-    }
-    
-    return true;
+    return !(any(lessThan(planePoint, rectangle.rect.xy)) || any(greaterThan(planePoint, rectangle.rect.zw)));
 }
 
 bool intersectRectangle(in vec3 origin, in vec3 direction, in Rectangle rectangle, inout float minLambda, inout vec3 N, inout vec3 P)

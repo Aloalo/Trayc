@@ -5,6 +5,23 @@ using namespace glm;
 using namespace engine;
 using namespace std;
 
+const char* GetRTRTObjectTypeName(RTRTObjectType type)
+{
+    switch (type)
+    {
+    case RTRTObjectType::RTRTSphere:
+        return "RTRTSphere";
+    case RTRTObjectType::RTRTRectangle:
+        return "RTRTRectangle";
+    case RTRTObjectType::RTRTBox:
+        return "RTRTBox";
+    case RTRTObjectType::RTRTLight:
+        return "RTRTLight";
+    default:
+        throw exception("Unknown RTRTObjectType");
+    }
+}
+
 RTRTObject::RTRTObject(int id)
     : mID(id)
 {
@@ -24,9 +41,9 @@ RTRTSphere::RTRTSphere(RTSphere &object, int id)
 {
 }
 
-std::string RTRTSphere::Type() const
+RTRTObjectType RTRTSphere::Type() const
 {
-    return "RTSphere";
+    return RTRTObjectType::RTRTSphere;
 }
 
 vec3 RTRTSphere::Position() const
@@ -45,15 +62,20 @@ const void* RTRTSphere::Data(int &size) const
     return static_cast<const void*>(mObject);
 }
 
+bool RTRTSphere::Intersect(const Ray &ray, float &minLambda) const
+{
+    return mObject->Intersect(ray, minLambda);
+}
+
 RTRTRectangle::RTRTRectangle(RTRectangle &object, int id)
     : RTRTObject(id), mObject(&object)
 {
 }
 
 
-std::string RTRTRectangle::Type() const
+RTRTObjectType RTRTRectangle::Type() const
 {
-    return "RTRectangle";
+    return RTRTObjectType::RTRTRectangle;
 }
 
 vec3 RTRTRectangle::Position() const
@@ -110,14 +132,19 @@ const void* RTRTRectangle::Data(int &size) const
     return static_cast<const void*>(mObject);
 }
 
+bool RTRTRectangle::Intersect(const Ray &ray, float &minLambda) const
+{
+    return mObject->Intersect(ray, minLambda);
+}
+
 RTRTBox::RTRTBox(RTBox &object, int id)
     : RTRTObject(id), mObject(&object)
 {
 }
 
-std::string RTRTBox::Type() const
+RTRTObjectType RTRTBox::Type() const
 {
-    return "RTBox";
+    return RTRTObjectType::RTRTBox;
 }
 
 vec3 RTRTBox::Position() const
@@ -138,14 +165,19 @@ const void* RTRTBox::Data(int &size) const
     return static_cast<const void*>(mObject);
 }
 
+bool RTRTBox::Intersect(const Ray &ray, float &minLambda) const
+{
+    return mObject->Intersect(ray, minLambda);
+}
+
 RTRTLight::RTRTLight(RTLight &object, int id)
     : RTRTObject(id), mObject(&object)
 {
 }
 
-std::string RTRTLight::Type() const
+RTRTObjectType RTRTLight::Type() const
 {
-    return "RTLight";
+    return RTRTObjectType::RTRTLight;
 }
 
 vec3 RTRTLight::Position() const
@@ -162,4 +194,9 @@ const void* RTRTLight::Data(int &size) const
 {
     size = sizeof(RTLight);
     return static_cast<const void*>(mObject);
+}
+
+bool RTRTLight::Intersect(const Ray &ray, float &minLambda) const
+{
+    return mObject->Intersect(ray, minLambda);
 }

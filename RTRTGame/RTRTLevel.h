@@ -21,6 +21,9 @@ public:
     const RTRTObject* GetObject(int id) const;
     RTRTObject* GetObject(int id);
 
+    RTRTObject* RayCast(const engine::Ray &ray, float &lambda);
+    RTRTObject* RayCast(const engine::Ray &ray);
+
     std::string mName = "default";
     std::vector<RTRTObject*> mObjects;
 
