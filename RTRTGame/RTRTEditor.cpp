@@ -45,7 +45,7 @@ void RTRTEditor::KeyPress(const SDL_KeyboardEvent &e)
         case SDLK_o:
             mSelectedObject->SetPosition(vec3(p.x, p.y + dp, p.z));
             break;
-        case SDLK_p:
+        case SDLK_u:
             mSelectedObject->SetPosition(vec3(p.x, p.y - dp, p.z));
             break;
         default:

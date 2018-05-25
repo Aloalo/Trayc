@@ -33,8 +33,8 @@ namespace engine
 
         TextureCombiner mRayTraceCombiner;
 
-        TextureCombiner mReconstructionCombinerAvg, mReconstructionCombinerFilter;
-        FrameBuffer mReconstructionFBAvg, mReconstructionFBFilter;
+        TextureCombiner mReconstructionCombiner;
+        FrameBuffer mReconstructionFB;
         bool mCheckerboarding;
     };
 }

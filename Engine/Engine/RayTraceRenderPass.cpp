@@ -47,8 +47,7 @@ namespace engine
     void RayTraceRenderPass::ResizeDstBuffer(int width, int height)
     {
         if (mCheckerboarding) {
-            mReconstructionFBAvg.Resize(width, height);
-            mReconstructionFBFilter.Resize(width, height);
+            mReconstructionFB.Resize(width, height);
             width /= 2;
         }
         mDstFB.Resize(width, height);
@@ -64,28 +63,20 @@ namespace engine
             const int height = mDstFB.Height();
 
             mDstFB.Resize(width / 2, height);
-            mDstFB.GetAttachment(0).BindToSlot(TextureType::CHECKERED_1);
+            mDstFB.GetAttachment(0).BindToSlot(TextureType::CHECKERED);
             
-            for (FrameBuffer *fb : { &mReconstructionFBAvg, &mReconstructionFBFilter }) {
-                fb->Init(width, height);
-                fb->AddAttachment(GL_RGB16F, GL_RGB, GL_FLOAT); //Lighting out
-                fb->Compile();
-            }
+            mReconstructionFB.Init(width, height);
+            mReconstructionFB.AddAttachment(GL_RGB16F, GL_RGB, GL_FLOAT); //Lighting out
+            mReconstructionFB.Compile();
 
-            mReconstructionFBAvg.GetAttachment(0).BindToSlot(TextureType::CHECKERED_2);
-            mReconstructionFBFilter.GetAttachment(0).BindToSlot(TextureType::FINAL_SLOT);
+            mReconstructionFB.GetAttachment(0).BindToSlot(TextureType::FINAL_SLOT);
 
-            mReconstructionCombinerAvg.Init(AssetLoader::Get().ShaderPath("C_TexToScreen").data(), AssetLoader::Get().ShaderPath("C_CheckerCombiner").data(), Shader::Defines());
-            mReconstructionCombinerFilter.Init(AssetLoader::Get().ShaderPath("C_TexToScreen").data(), AssetLoader::Get().ShaderPath("C_CheckerFilter").data(), Shader::Defines());
-
-            mReconstructionCombinerAvg.Prog().SetUniform("tex", TextureType::CHECKERED_1);
-            mReconstructionCombinerFilter.Prog().SetUniform("tex", TextureType::CHECKERED_2);
+            mReconstructionCombiner.Init(AssetLoader::Get().ShaderPath("C_TexToScreen").data(), AssetLoader::Get().ShaderPath("C_CheckerCombiner").data(), Shader::Defines());
+            mReconstructionCombiner.Prog().SetUniform("tex", TextureType::CHECKERED);
         }
         else {
-            mReconstructionFBAvg.Destroy();
-            mReconstructionFBFilter.Destroy();
-            mReconstructionCombinerAvg.Destroy();
-            mReconstructionCombinerFilter.Destroy();
+            mReconstructionFB.Destroy();
+            mReconstructionCombiner.Destroy();
 
             mDstFB.Resize(mDstFB.Width() * 2, mDstFB.Height());
             mDstFB.GetAttachment(0).BindToSlot(TextureType::FINAL_SLOT);
@@ -121,12 +112,10 @@ namespace engine
     void RayTraceRenderPass::Destroy()
     {
         mDstFB.Destroy();
-        mReconstructionFBAvg.Destroy();
-        mReconstructionFBFilter.Destroy();
+        mReconstructionFB.Destroy();
 
         mRayTraceCombiner.Destroy();
-        mReconstructionCombinerAvg.Destroy();
-        mReconstructionCombinerFilter.Destroy();
+        mReconstructionCombiner.Destroy();
     }
 
     void RayTraceRenderPass::UploadToGPU(const Camera &cam) const
@@ -171,19 +160,10 @@ namespace engine
         }
 
         if (mCheckerboarding) {
-            {
-                TimerQuery t("mReconstructionCombinerAvg");
-                mReconstructionFBAvg.Bind();
-                glViewport(0, 0, mReconstructionFBAvg.Width(), mReconstructionFBAvg.Height());
-                mReconstructionCombinerAvg.Draw();
-            }
-
-            {
-                TimerQuery t("mReconstructionCombinerFilter");
-                mReconstructionFBFilter.Bind();
-                glViewport(0, 0, mReconstructionFBFilter.Width(), mReconstructionFBFilter.Height());
-                mReconstructionCombinerFilter.Draw();
-            }
+            TimerQuery t("mReconstructionCombiner");
+            mReconstructionFB.Bind();
+            glViewport(0, 0, mReconstructionFB.Width(), mReconstructionFB.Height());
+            mReconstructionCombiner.Draw();
         }
     }
 }

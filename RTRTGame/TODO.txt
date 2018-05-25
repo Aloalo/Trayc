@@ -1,9 +1,8 @@
 - Editor operations -> spawn/move/scale...
-- Raycasting
 - Player camera
 - Damage
 - Physics
 
 - Don't shade stuff if reflectivity == 1
-- Optimize checkerboard reconstruction shaders
-  
+- White dots on box edges
+- AA Rectangle vs normal rectangle performance
