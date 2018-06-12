@@ -4,5 +4,5 @@
 - Physics
 
 - Don't shade stuff if reflectivity == 1
-- White dots on box edges
+- normalize() for Sphere and Box normals might not be needed (check performance)
 - AA Rectangle vs normal rectangle performance

@@ -115,8 +115,8 @@ bool intersectRectangle(in vec3 origin, in vec3 direction, in Rectangle rectangl
 #if CT_BOXES
 vec3 boxnormal(in vec3 t0, in vec3 t1, in float t)
 {
-    vec3 neg = vec3(t == t0.x ? 1.0f : 0.0f, t == t0.y ? 1.0f : 0.0f, t == t0.z ? 1.0f : 0.0f);
-    vec3 pos = vec3(t == t1.x ? 1.0f : 0.0f, t == t1.y ? 1.0f : 0.0f, t == t1.z ? 1.0f : 0.0f);
+    vec3 neg = vec3(t == t0.x ? 1.0 : 0.0, t == t0.y ? 1.0 : 0.0, t == t0.z ? 1.0 : 0.0);
+    vec3 pos = vec3(t == t1.x ? 1.0 : 0.0, t == t1.y ? 1.0 : 0.0, t == t1.z ? 1.0 : 0.0);
     return pos - neg;
 }
 
@@ -138,7 +138,7 @@ bool intersectBox(in vec3 origin, in vec3 direction, in Box b, inout float minLa
     
     minLambda = lmin;
     P = origin + direction * lmin;
-    N = boxnormal(tmin, tmax, lmin);
+    N = normalize(boxnormal(tmin, tmax, lmin));
     N *= -sign(dot(N, direction));
     
     return true;
