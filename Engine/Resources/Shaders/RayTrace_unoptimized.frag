@@ -22,10 +22,18 @@ bool intersectSphereSimple(in vec3 origin, in vec3 direction, in vec4 positionRa
 {
 	vec3 L = positionRadius2.xyz - origin;
 	float t = dot(L, direction);
-	float d2 = dot(L, L) - sign(t) * t * t;
-    float r2d2_diff = positionRadius2.w - d2;
-    float lambda = t - sqrt(abs(r2d2_diff));
-    return r2d2_diff > 0.0 && lambda > 0.0 && lambda < maxLambda;
+	
+	if (t < 0.0) {
+        return false;
+    }
+	float d2 = dot(L, L) - t * t;
+	
+	if (d2 > positionRadius2.w) {
+        return false;
+    }
+    
+    float lambda = t - sqrt(positionRadius2.w - d2);
+    return lambda < maxLambda;
 }
 #endif
 
@@ -33,11 +41,19 @@ bool intersectSphere(in vec3 origin, in vec3 direction, in vec4 positionRadius2,
 {
 	vec3 L = positionRadius2.xyz - origin;
 	float t = dot(L, direction);
-	float d2 = dot(L, L) - sign(t) * t * t;
-    float r2d2_diff = positionRadius2.w - d2;
-	float lambda = t - sqrt(r2d2_diff);
+	
+	if (t < 0.0) {
+        return false;
+    }
+	float d2 = dot(L, L) - t * t;
+	
+	if (d2 > positionRadius2.w) {
+        return false;
+    }
+
+	float lambda = t - sqrt(positionRadius2.w - d2);
     
-    if (r2d2_diff < 0.0 || lambda < 0.0 || lambda > minLambda) {
+    if (lambda > minLambda) {
         return false;
     }
     

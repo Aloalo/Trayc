@@ -53,7 +53,7 @@ void Init(RayTracedGame &game, const char *progName)
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
             for (int k = 0; k < N; ++k) {
-                RTSphere sphere = { vec4(offsets[i], offsets[j], offsets[k], R), vec4(0.1f, 0.6f, 0.4f, 0.5f), vec2(512.0f, 0.0f) };
+                RTSphere sphere = { vec4(offsets[i], offsets[j], offsets[k], R * R), vec4(0.1f, 0.6f, 0.4f, 0.5f), vec2(512.0f, 0.0f) };
 
                 if (i == N-1) {
                     sphere.materialData.y = 0.5f;
@@ -64,7 +64,7 @@ void Init(RayTracedGame &game, const char *progName)
         }
     }
 
-    const RTLight light = { vec4(10.0f, 10.0f, 10.0f, 0.3f), vec3(1.0f) };
+    const RTLight light = { vec4(10.0f, 10.0f, 10.0f, 0.3f * 0.3f), vec3(1.0f) };
 	game.mRenderer.mRTPass->mLights.push_back(light);
 
     const float recOffset = offsets[0] - 30.0f * R;
@@ -102,14 +102,15 @@ int main(int argc, char *argv[])
     game.mContextHandler.VsyncMode(1);
 
     GUIView guiView(&game);
+    //guiView.DisableInput();
     game.mInputHandler.AddEventListener(&guiView);
     game.mRenderer.AddRenderable(&guiView);
 
 #if PRODUCTION
     RTRTEditor editor(dynamic_cast<RayTraceRenderPass*>(game.mRenderer.GetRenderPass("rtPass")), game.mRenderer.GetCamera());
-    //editor.SetLevelFromPass();
+    editor.SetLevelFromPass();
     //editor.SaveLevel();
-    editor.LoadLevel("default");
+    //editor.LoadLevel("default");
     game.mUpdateableMenager.AddUpdateable(&editor);
     game.mInputHandler.AddEventListener(&editor);
 #else

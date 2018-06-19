@@ -4,5 +4,4 @@
 - Physics
 
 - Don't shade stuff if reflectivity == 1
-- normalize() for Sphere and Box normals might not be needed (check performance)
-- AA Rectangle vs normal rectangle performance
+- normalize() for Box normals might not be needed (check performance)

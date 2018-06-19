@@ -48,12 +48,12 @@ RTRTObjectType RTRTSphere::Type() const
 
 vec3 RTRTSphere::Position() const
 {
-    return vec3(mObject->positionRadius);
+    return vec3(mObject->positionRadius2);
 }
 
 void RTRTSphere::SetPosition(const vec3 &pos)
 {
-    mObject->positionRadius = vec4(pos, mObject->positionRadius.w);
+    mObject->positionRadius2 = vec4(pos, mObject->positionRadius2.w);
 }
 
 const void* RTRTSphere::Data(int &size) const
@@ -148,12 +148,12 @@ RTRTObjectType RTRTLight::Type() const
 
 vec3 RTRTLight::Position() const
 {
-    return vec3(mObject->positionRadius);
+    return vec3(mObject->positionRadius2);
 }
 
 void RTRTLight::SetPosition(const vec3 &pos)
 {
-    mObject->positionRadius = vec4(pos, mObject->positionRadius.w);
+    mObject->positionRadius2 = vec4(pos, mObject->positionRadius2.w);
 }
 
 const void* RTRTLight::Data(int &size) const

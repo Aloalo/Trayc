@@ -38,6 +38,7 @@ namespace engine
             MAKE_CONSTANT(CT_BOXES, mBoxes.size()),
         };
         mRayTraceCombiner.Init(AssetLoader::Get().ShaderPath("RayTrace").data(), defines, constants);
+        //mRayTraceCombiner.Init(AssetLoader::Get().ShaderPath("RayTrace").data(), AssetLoader::Get().ShaderPath("RayTrace_unoptimized").data(), defines, constants);
 
         const Program &p = mRayTraceCombiner.Prog();
 		p.SetUniform("ambientColor", vec3(0.05f));

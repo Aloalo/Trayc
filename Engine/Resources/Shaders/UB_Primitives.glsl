@@ -2,7 +2,7 @@
 #if CT_SPHERES
     struct Sphere
     {
-        vec4 positionRadius;
+        vec4 positionRadius2; // radius is squared
         vec4 diffuseSpecular;
         vec2 materialData; // gloss, reflectivity
         float phi;
@@ -12,7 +12,7 @@
 
 struct Light
 {
-    vec4 positionRadius;
+    vec4 positionRadius2; // radius is squared
     vec3 intensity;
     // 4 bytes of padding here
 };

@@ -4,9 +4,9 @@ using namespace glm;
 
 namespace engine
 {
-    static inline bool IntersectSphere(const Ray &ray, const vec4 &positionRadius, float &minLambda)
+    static inline bool IntersectSphere(const Ray &ray, const vec4 &positionRadius2, float &minLambda)
     {
-        const vec3 L = vec3(positionRadius) - ray.mOrigin;
+        const vec3 L = vec3(positionRadius2) - ray.mOrigin;
         const float t = dot(L, ray.mDirection);
 
         if (t < 0.0) {
@@ -15,12 +15,11 @@ namespace engine
 
         const float d2 = dot(L, L) - t * t;
 
-        const float radius2 = positionRadius.w * positionRadius.w;
-        if (d2 > radius2) {
+        if (d2 > positionRadius2.w) {
             return false;
         }
 
-        const float lambda = t - sqrt(radius2 - d2);
+        const float lambda = t - sqrt(positionRadius2.w - d2);
         if (lambda > minLambda) {
             return false;
         }
@@ -31,12 +30,12 @@ namespace engine
 
     bool RTSphere::Intersect(const Ray &ray, float &minLambda) const
     {
-        return IntersectSphere(ray, positionRadius, minLambda);
+        return IntersectSphere(ray, positionRadius2, minLambda);
     }
 
     bool RTLight::Intersect(const Ray &ray, float &minLambda) const
     {
-        return IntersectSphere(ray, positionRadius, minLambda);
+        return IntersectSphere(ray, positionRadius2, minLambda);
     }
 
     bool RTRectangle::Intersect(const Ray &ray, float &minLambda) const

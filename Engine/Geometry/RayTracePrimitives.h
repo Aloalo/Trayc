@@ -10,7 +10,7 @@ namespace engine
     {
         bool Intersect(const Ray &ray, float &minLambda) const;
 
-        glm::vec4 positionRadius;
+        glm::vec4 positionRadius2; // radius is squared
         glm::vec4 diffuseSpecular;
 		glm::vec2 materialData;
 		float phi;
@@ -21,7 +21,7 @@ namespace engine
     {
         bool Intersect(const Ray &ray, float &minLambda) const;
 
-        glm::vec4 positionRadius;
+        glm::vec4 positionRadius2; // radius is squared
         glm::vec3 intensity;
         int __padding;
     };
