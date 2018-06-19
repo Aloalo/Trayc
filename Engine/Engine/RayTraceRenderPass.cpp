@@ -25,7 +25,7 @@ namespace engine
 		const int ctRectangles = static_cast<int>(mRectangles.size());
 
 		for (const RTRectangle &r : mRectangles) {
-			if (r.materialData.y <= 0.0f) {
+			if (r.p2.w <= 0.0f) {
                 throw exception("Non reflective rectangle found");
 			}
 		}

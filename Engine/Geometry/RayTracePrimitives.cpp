@@ -41,17 +41,23 @@ namespace engine
 
     bool RTRectangle::Intersect(const Ray &ray, float &minLambda) const
     {
-        const float lambda = (offset - ray.mOrigin[normal]) / ray.mDirection[normal];
+        const vec3 v1 = vec3(p2) - vec3(p1);
+        const vec3 v2 = vec3(p3) - vec3(p2);
+        const vec3 normal = normalize(cross(v1, v2));
+
+        const float lambda = (dot(normal, vec3(p1)) - dot(ray.mOrigin, normal)) / dot(ray.mDirection, normal);
 
         if (lambda < 0.0 || lambda > minLambda) {
             return false;
         }
 
         const vec3 hitPoint = ray.mOrigin + lambda * ray.mDirection;
-        // The values for the X-Z plane should be swizzled for Rectangle.rect.xy, Rectangle.rect.zw
-        const vec2 planePoint = vec2(hitPoint[(normal + 1) % 3], hitPoint[(normal + 2) % 3]);
+        const vec3 v4 = hitPoint - vec3(p1);
+        const vec3 v5 = hitPoint - vec3(p3);
+        // p4 = p1 + p3 - p2
+        const vec3 v6 = hitPoint - vec3(p1) - vec3(p3) + vec3(p2);
 
-        if (any(lessThan(planePoint, vec2(rect))) || any(greaterThan(planePoint, vec2(rect.z, rect.w)))) {
+        if (dot(v1, v4) < 0.0 || dot(v1, v5) > 0.0 || dot(v2, v4) < 0.0 || dot(v2, v6) > 0.0) {
             return false;
         }
 

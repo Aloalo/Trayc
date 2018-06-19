@@ -80,50 +80,16 @@ RTRTObjectType RTRTRectangle::Type() const
 
 vec3 RTRTRectangle::Position() const
 {
-    switch (mObject->normal)
-    {
-    case 0:
-        return vec3(mObject->offset, vec2(mObject->rect));
-    case 1:
-        return vec3(mObject->rect.y, mObject->offset, mObject->rect.x);
-    case 2:
-        return vec3(vec2(mObject->rect), mObject->offset);
-    default:
-        throw exception("Invalid rectangle normal: " + mObject->normal);
-    }
+    return 0.5f * (vec3(mObject->p1) + vec3(mObject->p3));
 }
 
 void RTRTRectangle::SetPosition(const vec3 &pos)
 {
-    const vec2 size = vec2(mObject->rect.z, mObject->rect.w) - vec2(mObject->rect);
+    const vec3 d = pos - Position();
 
-    switch (mObject->normal)
-    {
-    case 0:
-    {
-        mObject->offset = pos.x;
-        const vec2 minv = vec2(pos.y, pos.z);
-        mObject->rect = vec4(minv, minv + size);
-        break;
-    }
-    case 1:
-    {
-        // X-Z plane is swizzled!
-        mObject->offset = pos.y;
-        const vec2 minv = vec2(pos.z, pos.x);
-        mObject->rect = vec4(minv, minv + size);
-        break;
-    }
-    case 2:
-    {
-        mObject->offset = pos.z;
-        const vec2 minv = vec2(pos.x, pos.y);
-        mObject->rect = vec4(minv, minv + size);
-        break;
-    }
-    default:
-        throw exception("Invalid rectangle normal: " + mObject->normal);
-    }
+    mObject->p1 = vec4(vec3(mObject->p1) + d, mObject->p1.w);
+    mObject->p2 = vec4(vec3(mObject->p2) + d, mObject->p2.w);
+    mObject->p3 = vec4(vec3(mObject->p3) + d, mObject->p3.w);
 }
 
 const void* RTRTRectangle::Data(int &size) const

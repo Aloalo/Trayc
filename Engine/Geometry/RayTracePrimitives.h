@@ -30,11 +30,11 @@ namespace engine
     {
         bool Intersect(const Ray &ray, float &minLambda) const;
 
-        glm::vec4 rect;
-        glm::vec4 diffuseSpecular;
-        glm::vec2 materialData;
-        float offset;
-        int normal;
+        glm::vec4 p1; // p1.xyz, gloss 
+        glm::vec4 p2; // p2.xyz, reflectivity
+        glm::vec4 p3; // p3.xyz, specular
+        glm::vec3 diffuse;
+        int __padding;
     };
 
     struct RTBox

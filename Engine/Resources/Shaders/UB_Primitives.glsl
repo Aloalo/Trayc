@@ -20,11 +20,11 @@ struct Light
 #if CT_RECTANGLES
     struct Rectangle
     {
-        vec4 rect;
-        vec4 diffuseSpecular;
-        vec2 materialData;
-        float offset;
-        int normal;
+        vec4 p1; // p1.xyz, gloss
+        vec4 p2; // p2.xyz, reflectivity
+        vec4 p3; // p3.xyz, specular
+        vec3 diffuse;
+        // 4 bytes of padding here
     };
 #endif
 

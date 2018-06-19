@@ -67,45 +67,52 @@ bool intersectSphere(in vec3 origin, in vec3 direction, in vec4 positionRadius, 
 }
 
 #if CT_RECTANGLES
-vec3 RECT_NORMALS[3] = vec3[](
-    vec3(1.0, 0.0, 0.0),
-    vec3(0.0, 1.0, 0.0),
-    vec3(0.0, 0.0, 1.0)
-);
+bool pointInRectangle(in vec3 point, in Rectangle rectangle, in vec3 v1, in vec3 v2)
+{
+    vec3 v4 = point - rectangle.p1.xyz;
+    vec3 v5 = point - rectangle.p3.xyz;
+    // p4 = rectangle.p1 + rectangle.p3 - rectangle.p2
+    vec3 v6 = point - rectangle.p1.xyz - rectangle.p3.xyz + rectangle.p2.xyz;
+    return !(dot(v1, v4) < 0.0 || dot(v1, v5) > 0.0 || dot(v2, v4) < 0.0 || dot(v2, v6) > 0.0);
+}
 
 bool intersectRectangleSimple(in vec3 origin, in vec3 direction, in Rectangle rectangle, in float maxLambda)
 {
-    float lambda = (rectangle.offset - origin[rectangle.normal]) / direction[rectangle.normal];
+    vec3 v1 = rectangle.p2.xyz - rectangle.p1.xyz;
+    vec3 v2 = rectangle.p3.xyz - rectangle.p2.xyz;
+    vec3 normal = normalize(cross(v1, v2));
+    
+    float lambda = (dot(normal, rectangle.p1.xyz) - dot(origin, normal)) /  dot(direction, normal);
     
     if (lambda < 0.0 || lambda > maxLambda) {
         return false;
     }
     
     vec3 hitPoint = origin + lambda * direction;
-    vec2 planePoint = vec2(hitPoint[(rectangle.normal + 1) % 3], hitPoint[(rectangle.normal + 2) % 3]);
-    
-    return !(any(lessThan(planePoint, rectangle.rect.xy)) || any(greaterThan(planePoint, rectangle.rect.zw)));
+    return pointInRectangle(hitPoint, rectangle, v1, v2);
 }
 
 bool intersectRectangle(in vec3 origin, in vec3 direction, in Rectangle rectangle, inout float minLambda, inout vec3 N, inout vec3 P)
 {
-    float lambda = (rectangle.offset - origin[rectangle.normal]) / direction[rectangle.normal];
+    vec3 v1 = rectangle.p2.xyz - rectangle.p1.xyz;
+    vec3 v2 = rectangle.p3.xyz - rectangle.p2.xyz;
+    vec3 normal = normalize(cross(v1, v2));
+    
+    float lambda = (dot(normal, rectangle.p1.xyz) - dot(origin, normal)) /  dot(direction, normal);
     
     if (lambda < 0.0 || lambda > minLambda) {
         return false;
     }
     
     vec3 hitPoint = origin + lambda * direction;
-    // The values for the X-Z plane should be swizzled for Rectangle.rect.xy, Rectangle.rect.zw
-    vec2 planePoint = vec2(hitPoint[(rectangle.normal + 1) % 3], hitPoint[(rectangle.normal + 2) % 3]);
     
-    if (any(lessThan(planePoint, rectangle.rect.xy)) || any(greaterThan(planePoint, rectangle.rect.zw))) {
+    if (!pointInRectangle(hitPoint, rectangle, v1, v2)) {
         return false;
     }
 	
     minLambda = lambda;
     P = hitPoint;
-    N = RECT_NORMALS[rectangle.normal];
+    N = normal;
     N *= -sign(dot(N, direction));
     
     return true;
@@ -232,31 +239,31 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss, in int
         }
         
         Rectangle rect = rectangles[i];
-        vec3 planeN = RECT_NORMALS[rect.normal];
-        vec3 planeP = vec3(0.0);
-        planeP[rect.normal] = rect.offset;
+        vec3 v1 = rect.p2.xyz - rect.p1.xyz;
+        vec3 v2 = rect.p3.xyz - rect.p2.xyz;
+        vec3 planeN = normalize(cross(v1, v2));
+        
+        float t2 = dot(planeN, P - rect.p1.xyz);
+        vec3 projectedP = P - t2 * planeN;
         
         for (int j = 0; j < CT_LIGHTS; ++j) {
             Light light = lights[j];
             vec3 lightP = light.positionRadius.xyz;
             
             // Are light and P on the same side of the plane
-            if (sign(dot(planeN, planeP - P)) != sign(dot(planeN, planeP - lightP))) {
+            float t1 = dot(planeN, lightP - rect.p1.xyz);
+            if (t1 * t2 < 0.0) {
                 continue;
             }
             
-            float yl = abs(lightP[rect.normal] - rect.offset);
-            float y = abs(P[rect.normal] - rect.offset);
+            vec3 projectedLightP = lightP - t1 * planeN;
             
-            vec3 projP = P;
-            lightP[rect.normal] = projP[rect.normal] = rect.offset;
-            float x = distance(lightP, projP);
-            float x1 = yl / (y + yl);
+            t1 = abs(t1);
+            float t = t1 / (t1 + abs(t2));
             
-            vec3 reflectionPoint = lightP + (projP - lightP) * x1;
+            vec3 reflectionPoint = projectedLightP + t * (projectedP - projectedLightP);
             
-            vec2 planePoint = vec2(reflectionPoint[(rect.normal + 1) % 3], reflectionPoint[(rect.normal + 2) % 3]);
-            if (any(lessThan(planePoint, rect.rect.xy)) || any(greaterThan(planePoint, rect.rect.zw))) {
+            if (!pointInRectangle(reflectionPoint, rect, v1, v2)) {
                 continue;
             }
             
@@ -274,7 +281,7 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss, in int
                 continue;
             }
             
-            float atten = 1.0 / (dist1 + dist2);
+            float atten = rect.p2.w / (dist1 + dist2);
             ret += blinnPhongShade(diffuseSpecular, light.intensity, N, L, P, atten, gloss);
         }
     }
@@ -303,9 +310,9 @@ vec3 rayTrace(in vec3 origin, in vec3 direction, out vec3 new_origin, out vec3 n
     
     if (hitIdx != -1) {
         Rectangle rectangle = rectangles[hitIdx];
-        diffuseSpecular = rectangle.diffuseSpecular;
-        gloss = rectangle.materialData.r;
-        addFactor = rectangle.materialData.y;
+        diffuseSpecular = vec4(rectangle.diffuse, rectangle.p3.w);
+        gloss = rectangle.p1.w;
+        addFactor = rectangle.p2.w;
         skipRect = hitIdx;
         hitIdx = -1;
     }
