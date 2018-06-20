@@ -65,13 +65,7 @@ bool intersectRectangleSimple(in vec3 origin, in vec3 direction, in Rectangle re
     vec3 normal = normalize(cross(v1, v2));
     
     float lambda = (dot(normal, rectangle.p1.xyz) - dot(origin, normal)) /  dot(direction, normal);
-    
-    if (lambda < 0.0 || lambda > maxLambda) {
-        return false;
-    }
-    
-    vec3 hitPoint = origin + lambda * direction;
-    return pointInRectangle(hitPoint, rectangle, v1, v2);
+    return lambda > 0.0 && lambda < maxLambda && pointInRectangle(origin + lambda * direction, rectangle, v1, v2);
 }
 
 bool intersectRectangle(in vec3 origin, in vec3 direction, in Rectangle rectangle, inout float minLambda, inout vec3 N, inout vec3 P)
@@ -186,16 +180,11 @@ vec3 blinnPhongShade(in vec4 diffuseSpecular, in vec3 intensity, in vec3 N, in v
     float dNL = max(0.0, dot(N, L));
     
     // Specular
-    if(dNL > 0.0)
-    {
-        vec3 ret = dNL * diffuseSpecular.rgb * lightIntensity;
-        vec3 V = normalize(cameraPos - P);
-        vec3 H = normalize(V + L);
-        float dNH = max(0.0, dot(N, H));
-        
-        return ret + diffuseSpecular.a * pow(dNH, gloss) * lightIntensity;
-    }
-    return vec3(0.0);
+    vec3 V = normalize(cameraPos - P);
+    vec3 H = normalize(V + L);
+    float dNH = max(0.0, dot(N, H));
+    
+    return lightIntensity * (dNL * diffuseSpecular.rgb + diffuseSpecular.a * pow(dNH, gloss));
 }
 
 vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss, in int skipRect)
