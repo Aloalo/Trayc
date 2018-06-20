@@ -71,7 +71,7 @@ bool pointInRectangle(in vec3 point, in Rectangle rectangle, in vec3 v1, in vec3
     vec3 v5 = point - rectangle.p3.xyz;
     // p4 = rectangle.p1 + rectangle.p3 - rectangle.p2
     vec3 v6 = point - rectangle.p1.xyz - rectangle.p3.xyz + rectangle.p2.xyz;
-    return !(dot(v1, v4) < 0.0 || dot(v1, v5) > 0.0 || dot(v2, v4) < 0.0 || dot(v2, v6) > 0.0);
+    return dot(v1, v4) > 0.0 && dot(v1, v5) < 0.0 && dot(v2, v4) > 0.0 && dot(v2, v6) < 0.0;
 }
 
 bool intersectRectangleSimple(in vec3 origin, in vec3 direction, in Rectangle rectangle, in float maxLambda)
