@@ -80,17 +80,6 @@ void Init(RayTracedGame &game, const char *progName)
     const vec3 v{45.0f};
     const RTBox box = { vec4(1.0f, 0.6f, 0.4f, 0.5f), -v, 0.0f, v, 512.0f };
     game.mRenderer.mRTPass->mBoxes.push_back(box);
-
-    //for (int i = 0; i < 50; ++i) {
-    //    vec3 p = vec3(-5.0f, -5.0f, float(i) - 102.0f);
-    //    const RTRectangle reflectiveRect = {
-    //        vec4(p, 1024.0f),
-    //        vec4(p + vec3(0.0f, 10.0f, 0.0f), 0.0f),
-    //        vec4(p + vec3(10.0f, 10.0f, 0.0f), 1.0f),
-    //        vec3(1.0f)
-    //    };
-    //    game.mRenderer.mRTPass->mRectangles.push_back(reflectiveRect);
-    //}
 }
 
 int main(int argc, char *argv[])

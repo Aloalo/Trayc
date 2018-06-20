@@ -1,7 +1,3 @@
-- Editor operations -> spawn/move/scale...
-- Player camera
-- Damage
-- Physics
-
+Performance:
 - Don't shade stuff if reflectivity == 1
-- normalize() for Box normals might not be needed (check performance)
+- Is checkerboarding needed?
