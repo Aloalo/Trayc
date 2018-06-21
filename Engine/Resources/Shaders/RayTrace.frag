@@ -381,13 +381,6 @@ RAY_TRACE_MACRO(0, 1)
 
 void main()
 {
-#ifdef CHECKERBOARDING
-    float windowSpaceXOffset = mod((gl_FragCoord.y - mod(gl_FragCoord.y, 2.0)) / 2.0, 2.0) * 2.0;
-    float clipSpaceX = (gl_FragCoord.x * 2.0 - mod(gl_FragCoord.x, 2.0) + windowSpaceXOffset) * invTexWidth * 2.0 - 1.0;
-    vec3 viewRay = normalize(clipSpaceX * U + clipSpaceCoords.y * V + W);
-#else
     vec3 viewRay = normalize(clipSpaceCoords.x * U + clipSpaceCoords.y * V + W);
-#endif
-    
     outColor = rayTrace_0(cameraPos, viewRay);
 }

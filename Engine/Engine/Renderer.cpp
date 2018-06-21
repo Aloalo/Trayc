@@ -29,7 +29,7 @@ using namespace stdext;
 namespace engine
 {
     Renderer::Renderer(void)
-        : mCamera(nullptr)
+        : mCamera(nullptr), mScreenSize(Setting<int>("screenWidth"), Setting<int>("screenHeight"))
     {
     }
 
@@ -58,7 +58,12 @@ namespace engine
         erase(mRenderables, renderable);
     }
 
-    const RenderPass* Renderer::GetRenderPass(const string &name) const
+	ivec2 Renderer::ScreenSize() const
+	{
+		return mScreenSize;
+	}
+
+	const RenderPass* Renderer::GetRenderPass(const string &name) const
     {
         return *find_if(mRenderPasses.begin(), mRenderPasses.end(), [&](const RenderPass *rPass)
         {
@@ -169,6 +174,8 @@ namespace engine
 
     void Rasterizer::SetScreenSize(int width, int height)
     {
+		mScreenSize = ivec2(width, height);
+
         SetViewRayData();
 
         const auto &matrices = UniformBuffers::Get().Matrices();
@@ -292,6 +299,8 @@ namespace engine
 
     void RayTracer::SetScreenSize(int width, int height)
     {
+		mScreenSize = ivec2(width, height);
+
         GetRenderPass("bbPass")->ResizeDstBuffer(width, height);
         GetRenderPass("rtPass")->ResizeDstBuffer(width, height);
     }
@@ -307,10 +316,10 @@ namespace engine
         mNoiseSampler.InitNearestDataTexture();
         mNoiseSampler.BindToSlot(TextureType::D_NOISE);
         mNoiseSampler.BindToSlot(TextureType::CHECKERED);
-        mNoiseSampler.BindToSlot(TextureType::FINAL_SLOT);
-
+        
         mLinearSampler.InitForDataTexture();
         mLinearSampler.BindToSlot(TextureType::E_EFFECT3);
+		mLinearSampler.BindToSlot(TextureType::FINAL_SLOT);
 
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);

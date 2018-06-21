@@ -11,6 +11,6 @@
   "shadowResolution": 2048,
   "shadowBrightness": 0.0,
   "softShadowsBlurPasses": 3,
-  "checkerboarding": false,
-  "fxaa": true
+  "fxaa": true,
+  "rayTraceQuality": 10
 }

@@ -31,6 +31,7 @@ namespace engine
         void RemoveRenderable(Renderable *renderable);
 
         virtual void SetScreenSize(int width, int height) = 0;
+		glm::ivec2 ScreenSize() const;
 
         const RenderPass* GetRenderPass(const std::string &name) const;
         RenderPass* GetRenderPass(const std::string &name);
@@ -50,6 +51,7 @@ namespace engine
         virtual void Render() const = 0;
 
         const CameraHandler *mCamera;
+		glm::ivec2 mScreenSize;
 
         std::vector<Renderable*> mRenderables;
         std::vector<RenderPass*> mRenderPasses;

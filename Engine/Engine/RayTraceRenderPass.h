@@ -20,8 +20,7 @@ namespace engine
         virtual void ResizeDstBuffer(int width, int height) override;
 
         void CompileShaders();
-        void SetCheckerboarding(bool flag);
-        void ToggleCheckerboarding();
+		void SetRayTraceQuality(int quality);
 
         std::vector<RTSphere> mSpheres;
         std::vector<RTLight> mLights;
@@ -32,10 +31,7 @@ namespace engine
         void UploadToGPU(const Camera &cam) const;
 
         TextureCombiner mRayTraceCombiner;
-
-        TextureCombiner mReconstructionCombiner;
-        FrameBuffer mReconstructionFB;
-        bool mCheckerboarding;
+		int mRayTraceQuality; // 1 to 10
     };
 }
 

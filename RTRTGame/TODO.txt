@@ -1,3 +1,2 @@
 Performance:
 - Don't shade stuff if reflectivity == 1
-- Is checkerboarding needed?

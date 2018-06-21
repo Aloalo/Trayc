@@ -88,14 +88,6 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
         bbPass->CompileShaders();
         break;
     }
-    case SDLK_c:
-    {
-        LOG(INFO) << "Toggling checkerboarding";
-
-        RayTraceRenderPass *rtPass = dynamic_cast<RayTraceRenderPass*>(mGame->mRenderer.GetRenderPass("rtPass"));
-        rtPass->ToggleCheckerboarding();
-        break;
-    }
     case SDLK_f:
     {
         LOG(INFO) << "Toggling fxaa";
@@ -104,6 +96,21 @@ void GUIView::KeyPress(const SDL_KeyboardEvent &e)
         bbPass->ToggleFxaa();
         break;
     }
+	case SDLK_9:
+	case SDLK_8:
+	case SDLK_7:
+	case SDLK_6:
+	case SDLK_5:
+	case SDLK_4:
+	{
+		const int rtQuality = static_cast<int>(e.keysym.sym - SDLK_9) + 10;
+
+		LOG(INFO) << "Setting Ray Trace quality: " << rtQuality;
+
+		RayTraceRenderPass *rtPass = dynamic_cast<RayTraceRenderPass*>(mGame->mRenderer.GetRenderPass("rtPass"));
+		rtPass->SetRayTraceQuality(rtQuality);
+		break;
+	}
     default:
         break;
     }
