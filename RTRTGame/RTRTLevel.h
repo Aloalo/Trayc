@@ -19,7 +19,7 @@ public:
     void SetLevelFromPass(engine::RayTraceRenderPass *rtPass);
     void Update(float dt);
     const RTRTObject* GetObject(int id) const;
-    RTRTObject* GetObject(int id);
+    RTRTObject* GetRTRTObject(int id);
 
     RTRTObject* RayCast(const engine::Ray &ray, float &lambda);
     RTRTObject* RayCast(const engine::Ray &ray);

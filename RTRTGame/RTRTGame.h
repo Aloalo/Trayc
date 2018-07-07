@@ -3,9 +3,10 @@
 
 #include "RTRTGamelike.h"
 #include <Engine/Core/Updateable.h>
+#include <Engine/Core/InputObserver.h>
 
 
-class RTRTGame : public RTRTGamelike, public engine::Updateable
+class RTRTGame : public RTRTGamelike, public engine::Updateable, public engine::InputObserver
 {
 public:
     RTRTGame(engine::RayTraceRenderPass *rtPass, const engine::Camera *camera);

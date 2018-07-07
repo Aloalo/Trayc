@@ -57,6 +57,14 @@ namespace engine
 		ResizeDstBuffer(mRenderer->ScreenSize().x, mRenderer->ScreenSize().y);
 	}
 
+    void RayTraceRenderPass::Clear()
+    {
+        mSpheres.clear();
+        mLights.clear();
+        mRectangles.clear();
+        mBoxes.clear();
+    }
+
     void RayTraceRenderPass::Init()
     {
         GLint value = -1;

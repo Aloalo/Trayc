@@ -53,7 +53,7 @@ const RTRTObject* RTRTLevel::GetObject(int id) const
     return nullptr;
 }
 
-RTRTObject* RTRTLevel::GetObject(int id)
+RTRTObject* RTRTLevel::GetRTRTObject(int id)
 {
     for (RTRTObject *o : mObjects) {
         if (o->GetID() == id) {

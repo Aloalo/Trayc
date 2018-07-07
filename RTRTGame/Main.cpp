@@ -7,6 +7,7 @@
 #include <Engine/Engine/RayTraceRenderPass.h>
 #include "GUIView.h"
 #include "RTRTEditor.h"
+#include "RTRTGame.h"
 
 using namespace engine;
 using namespace std;
@@ -96,12 +97,12 @@ int main(int argc, char *argv[])
     game.mRenderer.AddRenderable(&guiView);
 
 #if PRODUCTION
-    RTRTEditor editor(dynamic_cast<RayTraceRenderPass*>(game.mRenderer.GetRenderPass("rtPass")), game.mRenderer.GetCamera());
-    editor.SetLevelFromPass();
-    //editor.SaveLevel();
-    //editor.LoadLevel("default");
-    game.mUpdateableMenager.AddUpdateable(&editor);
-    game.mInputHandler.AddEventListener(&editor);
+    RTRTGame rtrtGamelike(dynamic_cast<RayTraceRenderPass*>(game.mRenderer.GetRenderPass("rtPass")), game.mRenderer.GetCamera());
+    //rtrtGamelike.SetLevelFromPass();
+    //rtrtGamelike.SaveLevel();
+    rtrtGamelike.LoadLevel("default");
+    game.mUpdateableMenager.AddUpdateable(&rtrtGamelike);
+    game.mInputHandler.AddEventListener(&rtrtGamelike);
 #else
 #endif
 

@@ -2,6 +2,8 @@ project(RTRTGame)
 
 # Define the source files.
 set(RTRTGame_SRCS_HDRS
+    Animation.h
+    Animation.cpp
     Main.cpp
     GUIView.cpp
     GUIView.h

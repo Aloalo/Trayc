@@ -15,7 +15,6 @@ public:
     virtual void KeyPress(const SDL_KeyboardEvent &e) override;
     virtual void MouseButton(const SDL_MouseButtonEvent &e) override;
 
-    void SetLevelFromPass();
     void SaveLevel() const;
 
 private:

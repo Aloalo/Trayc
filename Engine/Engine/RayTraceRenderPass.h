@@ -22,6 +22,8 @@ namespace engine
         void CompileShaders();
 		void SetRayTraceQuality(int quality);
 
+        void Clear();
+
         std::vector<RTSphere> mSpheres;
         std::vector<RTLight> mLights;
         std::vector<RTRectangle> mRectangles;

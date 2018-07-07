@@ -2,6 +2,7 @@
 #include <Engine/Engine/RayTraceRenderPass.h>
 #include <Engine/Engine/AssetLoader.h>
 #include <easylogging++.h>
+#include <jsonxx/jsonxx.h>
 #include <fstream>
 #include <map>
 #include <cstdio>
@@ -9,6 +10,7 @@
 using namespace engine;
 using namespace glm;
 using namespace std;
+using namespace jsonxx;
 
 RTRTEditor::RTRTEditor(RayTraceRenderPass *rtPass, const Camera *camera)
     : RTRTGamelike(rtPass, camera), mSelectedObject(nullptr)
@@ -48,6 +50,9 @@ void RTRTEditor::KeyPress(const SDL_KeyboardEvent &e)
         case SDLK_u:
             mSelectedObject->SetPosition(vec3(p.x, p.y - dp, p.z));
             break;
+        case SDLK_m:
+            SaveLevel();
+            break;
         default:
             break;
         }
@@ -69,32 +74,17 @@ void RTRTEditor::MouseButton(const SDL_MouseButtonEvent &e)
     }
 }
 
-void RTRTEditor::SetLevelFromPass()
-{
-    mLevel = RTRTLevel{};
-    mLevel.SetLevelFromPass(mRTPass);
-    mRTPass->CompileShaders();
-}
-
 void RTRTEditor::SaveLevel() const
 {
     const string levelsPath = AssetLoader::Get().LevelsPath() + mLevel.mName;
 
     LOG(INFO) << "[RTRTEditor::SaveLevel] Saving level " << levelsPath;
- 
-    map<RTRTObjectType, ofstream> counter;
+
+    Array objects;
 
     for (const auto *o : mLevel.mObjects) {
-
-        if (counter.find(o->Type()) == counter.end()) {
-            const string fname = levelsPath + "_" + GetRTRTObjectTypeName(o->Type());
-            remove(fname.c_str());
-            counter[o->Type()] = ofstream(fname, ios::app | ios::out | ios::binary);
-        }
-
-        int size = -1;
-        const void *data = o->Data(size);
-
-        counter[o->Type()].write(static_cast<const char*>(data), size);
+        objects << o->GetJsonObject();
     }
+
+    ofstream(levelsPath + ".json", ofstream::out) << objects.json();
 }

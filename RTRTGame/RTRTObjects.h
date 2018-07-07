@@ -1,10 +1,10 @@
 #ifndef RTRT_RTRT_OBJECTS_H
 #define RTRT_RTRT_OBJECTS_H
 
-#define GLM_SWIZZLE_XYZW
 #include <glm/glm.hpp>
 #include <Engine/Geometry/RayTracePrimitives.h>
 #include <string>
+#include <jsonxx/jsonxx.h>
 
 enum class RTRTObjectType
 {
@@ -26,7 +26,7 @@ const char* GetRTRTObjectTypeName(RTRTObjectType type);
 class RTRTObject
 {
 public:
-    RTRTObject(int id);
+    RTRTObject(int id, float yaw = 0.0f);
     virtual ~RTRTObject();
 
     int GetID() const;
@@ -34,11 +34,14 @@ public:
     virtual RTRTObjectType Type() const = 0;
     virtual glm::vec3 Position() const = 0;
     virtual void SetPosition(const glm::vec3 &pos) = 0;
+    virtual void RotateYaw(float angle);
     virtual const void* Data(int &size) const = 0;
     virtual bool Intersect(const engine::Ray &ray, float &minLambda) const = 0;
+    virtual jsonxx::Object GetJsonObject() const = 0;
 
 protected:
     int mID;
+    float mYaw;
 };
 
 
@@ -52,6 +55,7 @@ public:
     virtual void SetPosition(const glm::vec3 &pos) override;
     virtual const void* Data(int &size) const override;
     virtual bool Intersect(const engine::Ray &ray, float &minLambda) const override;
+    virtual jsonxx::Object GetJsonObject() const override;
 
 private:
     engine::RTSphere *mObject;
@@ -61,16 +65,19 @@ private:
 class RTRTRectangle : public RTRTObject
 {
 public:
-    RTRTRectangle(engine::RTRectangle &object, int id);
+    RTRTRectangle(engine::RTRectangle &object, int id, float yaw = 0.0f);
 
     virtual RTRTObjectType Type() const override;
     virtual glm::vec3 Position() const override;
     virtual void SetPosition(const glm::vec3 &pos) override;
+    virtual void RotateYaw(float angle) override;
     virtual const void* Data(int &size) const override;
     virtual bool Intersect(const engine::Ray &ray, float &minLambda) const override;
+    virtual jsonxx::Object GetJsonObject() const override;
 
 private:
     engine::RTRectangle *mObject;
+    
 };
 
 
@@ -84,6 +91,7 @@ public:
     virtual void SetPosition(const glm::vec3 &pos) override;
     virtual const void* Data(int &size) const override;
     virtual bool Intersect(const engine::Ray &ray, float &minLambda) const override;
+    virtual jsonxx::Object GetJsonObject() const override;
 
 private:
     engine::RTBox *mObject;
@@ -100,10 +108,13 @@ public:
     virtual void SetPosition(const glm::vec3 &pos) override;
     virtual const void* Data(int &size) const override;
     virtual bool Intersect(const engine::Ray &ray, float &minLambda) const override;
+    virtual jsonxx::Object GetJsonObject() const override;
 
 private:
     engine::RTLight *mObject;
 };
+
+RTRTObject* RTRTObjectFactory(const jsonxx::Object &object);
 
 template<class T>
 inline RTRTObject* RTRTObjectFactory(T &object, int id);
