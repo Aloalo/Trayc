@@ -65,8 +65,11 @@ void Init(RayTracedGame &game, const char *progName)
         }
     }
 
-    const RTLight light = { vec4(10.0f, 10.0f, 10.0f, 0.3f * 0.3f), vec3(1.0f) };
+    const RTLight light = { vec4(10.0f, 10.0f, 10.0f, 0.3f * 0.3f), vec4(0.0f), vec3(1.0f), -1.0f };
 	game.mRenderer.mRTPass->mLights.push_back(light);
+
+    const RTLight light1 = { vec4(11.0f, 10.0f, 10.0f, 0.3f * 0.3f), vec4(normalize(vec3(-1.0f, 0.0f, 0.0f)), 0.93f), vec3(1.0f), 1.0f };
+    game.mRenderer.mRTPass->mLights.push_back(light1);
 
     const float recOffset = offsets[0] - 30.0f * R;
     const vec3 p = vec3(recOffset, -5.0f, -5.0f);
@@ -97,7 +100,7 @@ int main(int argc, char *argv[])
     game.mRenderer.AddRenderable(&guiView);
 
 #if PRODUCTION
-    RTRTGame rtrtGamelike(dynamic_cast<RayTraceRenderPass*>(game.mRenderer.GetRenderPass("rtPass")), game.mRenderer.GetCamera());
+    RTRTEditor rtrtGamelike(dynamic_cast<RayTraceRenderPass*>(game.mRenderer.GetRenderPass("rtPass")), game.mRenderer.GetCamera());
     //rtrtGamelike.SetLevelFromPass();
     //rtrtGamelike.SaveLevel();
     rtrtGamelike.LoadLevel("default");

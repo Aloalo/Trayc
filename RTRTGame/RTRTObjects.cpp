@@ -93,7 +93,9 @@ RTRTObject* RTRTObjectFactory(const Object &object)
     {
         RTLight rtObject;
         rtObject.positionRadius2 = ArrayToVec<vec4>(object.get<Array>("positionRadius2"));
+        rtObject.directionAngle = ArrayToVec<vec4>(object.get<Array>("directionAngle"));
         rtObject.intensity = ArrayToVec<vec3>(object.get<Array>("intensity"));
+        rtObject.spotExponent = static_cast<float>(object.get<Number>("spotExponent"));
 
         return new RTRTLight(rtObject, id);
     }
@@ -314,6 +316,8 @@ Object RTRTLight::GetJsonObject() const
     ret << "ID" << mID;
     ret << "type" << static_cast<int>(Type());
     ret << "positionRadius2" << VecToArray(mObject->positionRadius2);
+    ret << "directionAngle" << VecToArray(mObject->directionAngle);
     ret << "intensity" << VecToArray(mObject->intensity);
+    ret << "spotExponent" << mObject->spotExponent;
     return ret;
 }

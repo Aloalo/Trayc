@@ -13,8 +13,9 @@
 struct Light
 {
     vec4 positionRadius2; // radius is squared
+    vec4 directionAngle; // direction.xyz, cos(SpotCutoff)
     vec3 intensity;
-    // 4 bytes of padding here
+    float spotExponent;
 };
 
 #if CT_RECTANGLES

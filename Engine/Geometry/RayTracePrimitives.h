@@ -22,8 +22,9 @@ namespace engine
         bool Intersect(const Ray &ray, float &minLambda) const;
 
         glm::vec4 positionRadius2; // radius is squared
+        glm::vec4 directionAngle; // direction.xyz, cos(SpotCutoff)
         glm::vec3 intensity;
-        int __padding;
+        float spotExponent;
     };
 
     struct RTRectangle

@@ -196,7 +196,12 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss, in int
         float atten = 1.0 / length(L);
         L *= atten;
         
-        if(anyHit(P + RAY_OFFSET * L, L, 1.0 / atten)) {
+        if (light.spotExponent > 0.0) {
+            float dLS = max(0.0, dot(L, light.directionAngle.xyz));
+            atten *= step(light.directionAngle.w, dLS) * pow(dLS, light.spotExponent);
+        }
+        
+        if (atten == 0.0 || anyHit(P + RAY_OFFSET * L, L, 1.0 / atten)) {
             continue;
         }
         
@@ -241,6 +246,11 @@ vec3 shade(in vec3 P, in vec3 N, in vec4 diffuseSpecular, in float gloss, in int
             vec3 RtoLight = light.positionRadius2.xyz - reflectionPoint;
             float dist1 = length(RtoLight);
             RtoLight /= dist1;
+            
+            if (step(light.directionAngle.w, dot(RtoLight, light.directionAngle.xyz)) == 0.0) {
+                continue;
+            }
+            
             if(anyHit(reflectionPoint + RAY_OFFSET * RtoLight, RtoLight, dist1 - 2.0 * RAY_OFFSET)) {
                 continue;
             }
