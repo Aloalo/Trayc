@@ -85,6 +85,11 @@ void RTRTGamelike::LoadLevel(const string &name)
     mLevel.SetLevelFromPass(mRTPass);
     mRTPass->CompileShaders();
 
-    // TODO(jure): temp
-    // mAnimations.push_back(new YawRotationAnimation(mLevel.GetRTRTObject(126), 1.0f));
+    mAnimations = Animation::LoadAnimations(&mLevel, levelPath + "_animations.json");
+}
+
+void RTRTGamelike::RemoveObject(RTRTObject *object)
+{
+    mLevel.mObjects.erase(std::remove(mLevel.mObjects.begin(), mLevel.mObjects.end(), object), mLevel.mObjects.end());
+    // TODO(jure): remove from rendering
 }

@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     game.mRenderer.AddRenderable(&guiView);
 
 #if PRODUCTION
-    RTRTEditor rtrtGamelike(dynamic_cast<RayTraceRenderPass*>(game.mRenderer.GetRenderPass("rtPass")), game.mRenderer.GetCamera());
+    RTRTGame rtrtGamelike(dynamic_cast<RayTraceRenderPass*>(game.mRenderer.GetRenderPass("rtPass")), game.mRenderer.GetCamera());
     //rtrtGamelike.SetLevelFromPass();
     //rtrtGamelike.SaveLevel();
     rtrtGamelike.LoadLevel("default");

@@ -19,6 +19,7 @@ public:
 
     void SetLevelFromPass();
     void LoadLevel(const std::string &name);
+    void RemoveObject(RTRTObject *object);
 
 protected:
     engine::RayTraceRenderPass *mRTPass;

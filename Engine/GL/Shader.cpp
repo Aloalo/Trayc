@@ -62,18 +62,23 @@ namespace engine
             glShaderSource(mID, 1, &src, &len);
         glCompileShader(mID);
 
+        GLint infoLogLength = 0;
+        glGetShaderiv(mID, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+        GLchar *strInfoLog = nullptr;
+        if (infoLogLength > 0) {
+            strInfoLog = new GLchar[infoLogLength + 1];
+            glGetShaderInfoLog(mID, infoLogLength, nullptr, strInfoLog);
+        }
+
         GLint status;
         glGetShaderiv(mID, GL_COMPILE_STATUS, &status);
-        if(status == GL_FALSE)
-        {
-            GLint infoLogLength;
-            glGetShaderiv(mID, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-            GLchar *strInfoLog = new GLchar[infoLogLength+1];
-            glGetShaderInfoLog(mID, infoLogLength, nullptr, strInfoLog);
-
+        if(status == GL_FALSE) {
             LOG(ERROR) << "[Shader::Init2] Compile failure in " << GetTypeString() << " shader " << name << endl << strInfoLog;
-            LOG(ERROR) << "[Shader::Init2] " << endl << src;
+            delete[] strInfoLog;
+        }
+        else if (infoLogLength > 0) {
+            LOG(WARNING) << "[Shader::Init2] Compile warning in " << GetTypeString() << " shader " << name << endl << strInfoLog;
             delete[] strInfoLog;
         }
     }

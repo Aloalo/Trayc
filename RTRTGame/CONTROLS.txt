@@ -1,0 +1,14 @@
+Debug:
+    F1 : screenshot
+    F2 : recompile shaders
+    F : toggle fxaa
+    4/5/6/7/8/9 : rendering quality
+    
+Common:
+    W/A/S/D + Mouse : camera control
+    
+Editor:
+    LMB : select object
+    I/J/K/L/U/O : move object
+    DELETE : remove object
+    M : save level

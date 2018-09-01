@@ -53,6 +53,12 @@ void RTRTEditor::KeyPress(const SDL_KeyboardEvent &e)
         case SDLK_m:
             SaveLevel();
             break;
+        case SDLK_DELETE:
+            if (mSelectedObject != nullptr) {
+                RemoveObject(mSelectedObject);
+                mSelectedObject = nullptr;
+            }
+            break;
         default:
             break;
         }
