@@ -114,7 +114,7 @@ namespace engine
         const Camera &cam = *rContext.mCamera;
         UploadToGPU(cam);
 
-        const float halfTanFov = tanf(radians(cam.mFoV)) * 0.5f;
+        const float halfTanFov = tanf(radians(cam.mFoV * 0.5f));
 
         const Program &p = mRayTraceCombiner.Prog();
         p.SetUniform("cameraPos", cam.mPosition);
